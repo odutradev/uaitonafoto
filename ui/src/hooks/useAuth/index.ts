@@ -11,7 +11,7 @@ import {
 import { useCallback, useEffect } from 'react'
 
 import { syncAuthUser } from '@services/auth/sync'
-import { firebaseAuth } from '@lib/firebase/config'
+import { firebaseAuth } from '@services/auth/firebase'
 import useAuthStore from '@stores/auth'
 
 import type { RegisterCredentials, LoginCredentials, UseAuthReturn } from './types'

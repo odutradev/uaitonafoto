@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-import { firebaseAuth } from '@lib/firebase/config'
+import { firebaseAuth } from '@services/auth/firebase'
 import useAuthStore from '@stores/auth'
 
 import type { InternalAxiosRequestConfig, AxiosInstance } from 'axios'
