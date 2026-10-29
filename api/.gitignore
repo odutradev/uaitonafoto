@@ -44,5 +44,4 @@ package-lock.json
 
 # cache files
 cache/*
-ope-sgp-api-merged.txt
-eproc-service
+*-merged.txt

@@ -3,13 +3,13 @@ import { enrichTemplate } from '@email/utils'
 import type { LocalEmailTemplate } from '@email/types'
 
 export const passwordResetTemplateDef: LocalEmailTemplate = {
-  subject: 'Redefinição de Senha - Alvará da Sorte',
+  subject: 'Redefinição de Senha - uai to na foto',
   markdownBody: `
-# 🔐 Redefinição de Senha - Alvará da Sorte
+# 🔐 Redefinição de Senha - uai to na foto
 
 Olá, **{{userName}}**!
 
-Recebemos uma solicitação para redefinir a senha da sua conta no **Alvará da Sorte**.
+Recebemos uma solicitação para redefinir a senha da sua conta no **uai to na foto**.
 
 Para criar uma nova senha, acesse o link abaixo:
 
@@ -27,4 +27,3 @@ Se o botão acima não funcionar, copie e cole o endereço abaixo no seu navegad
 }
 
 export const passwordResetTemplate = enrichTemplate(passwordResetTemplateDef)
-

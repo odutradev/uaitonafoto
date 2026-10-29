@@ -3,8 +3,8 @@
 * npm run dev: Inicia o servidor em modo de desenvolvimento (watch).  
 * npm run build: Compila o projeto para o diretório dist/.  
 * npm start: Inicia o servidor em modo de produção (a partir do dist/).  
-* npm run docs:swagger: Gera o arquivo JSON do Swagger na pasta cache/docs/.  
-* npm run docs:postman: Gera a coleção Postman na pasta cache/docs/.  
+* npm run check: Valida a tipagem TypeScript do projeto sem emitir arquivos.  
+
 
 ## **Guia Estrutural e Arquitetural da API**
 

@@ -47,7 +47,7 @@ const resolveFrontendBaseUrl = (redirectUrl?: string, requestOrigin?: string): s
     return allowedOrigins[0]
   }
 
-  return (process.env.FRONTEND_URL || 'http://localhost:5173').replace(/\/+$/, '')
+  return (process.env.FRONTEND_URL || 'http://localhost:1000').replace(/\/+$/, '')
 }
 
 export const syncAuthUser = defineAction(

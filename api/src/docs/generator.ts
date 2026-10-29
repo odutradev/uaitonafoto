@@ -1,4 +1,4 @@
-﻿import { OpenApiGeneratorV3 } from '@asteasolutions/zod-to-openapi'
+import { OpenApiGeneratorV3 } from '@asteasolutions/zod-to-openapi'
 
 import { registry } from '@/docs/registry'
 import { appConfig } from '@/config/app'
@@ -30,7 +30,7 @@ export const generateDocs = () => {
   return generator.generateDocument({
     openapi: '3.0.0',
     info: {
-      title: 'OPE SGP API Documentation',
+      title: appConfig.title,
       version: appConfig.version,
       description: API_DESCRIPTION
     }

@@ -2,7 +2,7 @@ import { defineConfig } from 'tsup'
 
 export default defineConfig((options) => ({
   entry: ['src/server.ts'],
-  target: 'node18',
+  target: 'node22',
   format: ['cjs'],
   splitting: false,
   sourcemap: !!options.watch,

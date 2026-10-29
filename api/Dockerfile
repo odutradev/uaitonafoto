@@ -1,4 +1,4 @@
-FROM node:18-alpine AS builder
+FROM node:22-alpine AS builder
 WORKDIR /app
 COPY api/package*.json ./
 COPY package.json ./root-package.json
@@ -7,7 +7,7 @@ COPY api/ .
 COPY package.json ./root-package.json
 RUN npm run build
 
-FROM node:18-alpine
+FROM node:22-alpine
 WORKDIR /app
 RUN apk add --no-cache wget curl
 COPY api/package*.json ./

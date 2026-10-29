@@ -1,17 +1,16 @@
 {
-  "name": "api",
-  "version": "1.2.0",
-  "description": "",
+  "name": "uaitonafoto-api",
+  "version": "1.0.0",
+  "description": "API do uai to na foto",
   "license": "ISC",
   "author": "https://github.com/odutradev",
   "main": "dist/server.js",
   "scripts": {
     "dev": "tsup --watch",
     "build": "tsup",
+    "check": "tsc --noEmit",
     "start": "node dist/server.js",
-    "publish": "npx pub --bump-package --build --push",
-    "docs:swagger": "npx tsx src/scripts/generate-swagger.ts",
-    "docs:postman": "npx tsx src/scripts/generate-postman.ts"
+    "publish": "npx pub --bump-package --build --push"
   },
   "dependencies": {
     "@asteasolutions/zod-to-openapi": "^7.3.0",

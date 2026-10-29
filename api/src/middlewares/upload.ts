@@ -2,16 +2,16 @@ import multer, { MulterError } from 'multer'
 import sendError from '@/error'
 import type { Request, Response, NextFunction } from 'express'
 
-export const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB
+export const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB
 
-export const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'] as const
+export const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'] as const
 export type AllowedMimeType = (typeof ALLOWED_MIME_TYPES)[number]
 
 export const MIME_EXTENSION_MAP: Record<string, string> = {
   'image/jpeg': 'jpg',
   'image/jpg': 'jpg',
   'image/png': 'png',
-  'application/pdf': 'pdf'
+  'image/webp': 'webp'
 }
 
 const multerInstance = multer({
@@ -40,7 +40,7 @@ const upload = {
               return sendError({
                 res,
                 code: 'bad_request',
-                details: 'O arquivo enviado excede o limite máximo permitido de 5MB.'
+                details: 'O arquivo enviado excede o limite máximo permitido de 10MB.'
               })
             }
           }
@@ -49,7 +49,7 @@ const upload = {
             return sendError({
               res,
               code: 'bad_request',
-              details: 'Formato de arquivo inválido. Tipos permitidos: JPEG, PNG e PDF.'
+              details: 'Formato de arquivo inválido. Tipos permitidos: JPEG, PNG e WebP.'
             })
           }
 

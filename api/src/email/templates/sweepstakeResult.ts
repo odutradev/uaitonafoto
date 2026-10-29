@@ -3,9 +3,9 @@ import { enrichTemplate } from '@email/utils'
 import type { LocalEmailTemplate } from '@email/types'
 
 export const sweepstakeResultTemplateDef: LocalEmailTemplate = {
-  subject: 'Resultado do Bolão: {{sweepstakeTitle}} - Alvará da Sorte',
+  subject: 'Resultado do Bolão: {{sweepstakeTitle}} - uai to na foto',
   markdownBody: `
-# 🎲 Resultado do Bolão - Alvará da Sorte
+# 🎲 Resultado do Bolão - uai to na foto
 
 Olá, **{{userName}}**!
 
@@ -24,7 +24,7 @@ Os resultados do bolão **{{sweepstakeTitle}}** acabam de ser apurados!
 ### 📋 Jogos Realizados e Acertos
 {{gamesList}}
 
-Acompanhe os detalhes completos acessando a plataforma do **Alvará da Sorte**.
+Acompanhe os detalhes completos acessando a plataforma do **uai to na foto**.
 
 Boa sorte a todos os participantes! 🍀
 `
