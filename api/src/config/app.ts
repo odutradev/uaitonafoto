@@ -21,9 +21,7 @@ const resolvePackageVersion = (): string => {
         const parsed = JSON.parse(fs.readFileSync(candidate, 'utf-8')) as { version?: string }
         if (parsed.version) return parsed.version
       }
-    } catch {
-      // Try next candidate
-    }
+    } catch {}
   }
 
   return '1.0.0'

@@ -2,7 +2,7 @@ import multer, { MulterError } from 'multer'
 import sendError from '@error'
 import type { Request, Response, NextFunction } from 'express'
 
-export const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB
+export const MAX_FILE_SIZE = 10 * 1024 * 1024
 
 export const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'] as const
 export type AllowedMimeType = (typeof ALLOWED_MIME_TYPES)[number]
