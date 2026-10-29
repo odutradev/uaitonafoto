@@ -3,20 +3,19 @@ import { createTheme } from '@mui/material/styles'
 import type { Theme } from '@mui/material/styles'
 
 export const brandColors = {
-  amareloFlash: '#FFCF1F', // o flash, a cor da marca. Sempre fundo ou preenchimento.
-  tinta: '#17140F', // texto, símbolo e telão.
-  papel: '#FBF8F1', // fundo principal claro
-  areia: '#EFE9DA', // fundo secundário
-  areiaDark: '#E4DDCB', // contraste sutil
-  bordaClara: '#E7E1D2', // linhas divisórias no modo claro
-  cinzaTexto: '#5E584C', // texto secundário no modo claro
-  // Modo Escuro
-  darkBg: '#12100C', // fundo do modo escuro
-  darkPaper: '#1E1A14', // superfície de cards no modo escuro
-  darkSurface: '#28231B', // superfície secundária / areia dark
-  darkBorder: '#383227', // bordas no modo escuro
-  darkTextPrimary: '#FBF8F1', // texto primário no modo escuro
-  darkTextSecondary: '#ABA392' // texto secundário no modo escuro
+  amareloFlash: '#FFCF1F',
+  tinta: '#17140F',
+  papel: '#FBF8F1',
+  areia: '#EFE9DA',
+  areiaDark: '#E4DDCB',
+  bordaClara: '#E7E1D2',
+  cinzaTexto: '#5E584C',
+  darkBg: '#12100C',
+  darkPaper: '#1E1A14',
+  darkSurface: '#28231B',
+  darkBorder: '#383227',
+  darkTextPrimary: '#FBF8F1',
+  darkTextSecondary: '#ABA392'
 } as const
 
 export const getAppTheme = (mode: 'light' | 'dark'): Theme => {
