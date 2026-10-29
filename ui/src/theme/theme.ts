@@ -2,78 +2,177 @@ import { createTheme } from '@mui/material/styles'
 
 import type { Theme } from '@mui/material/styles'
 
-export const getAppTheme = (mode: 'light' | 'dark'): Theme =>
-  createTheme({
+export const brandColors = {
+  amareloFlash: '#FFCF1F', // o flash, a cor da marca. Sempre fundo ou preenchimento.
+  tinta: '#17140F', // texto, símbolo e telão.
+  papel: '#FBF8F1', // fundo principal claro
+  areia: '#EFE9DA', // fundo secundário
+  areiaDark: '#E4DDCB', // contraste sutil
+  bordaClara: '#E7E1D2', // linhas divisórias
+  cinzaTexto: '#5E584C', // texto secundário
+  darkPaper: '#2B271F',
+  darkSurface: '#3A352B',
+  darkBorder: '#2E2A22'
+} as const
+
+export const getAppTheme = (mode: 'light' | 'dark'): Theme => {
+  const isLight = mode === 'light'
+
+  return createTheme({
     palette: {
       mode,
       primary: {
-        main: '#7189ff',
-        light: '#a3b5ff',
-        dark: '#3d54c7'
+        main: brandColors.amareloFlash,
+        light: '#FFE266',
+        dark: '#E0B200',
+        contrastText: brandColors.tinta
       },
       secondary: {
-        main: '#624cab',
-        light: '#9885d6',
-        dark: '#4a3b82'
+        main: brandColors.tinta,
+        light: brandColors.darkPaper,
+        dark: '#0D0B08',
+        contrastText: brandColors.papel
       },
       background: {
-        default: mode === 'light' ? '#fafafa' : '#121212',
-        paper: mode === 'light' ? '#ffffff' : '#1e1e1e'
+        default: isLight ? brandColors.papel : brandColors.tinta,
+        paper: isLight ? '#FFFFFF' : brandColors.darkPaper
       },
       text: {
-        primary: mode === 'light' ? 'rgba(0, 0, 0, 0.87)' : '#ffffff',
-        secondary: mode === 'light' ? 'rgba(0, 0, 0, 0.6)' : 'rgba(255, 255, 255, 0.7)'
-      }
+        primary: isLight ? brandColors.tinta : brandColors.papel,
+        secondary: isLight ? brandColors.cinzaTexto : '#CFC8B8'
+      },
+      divider: isLight ? brandColors.bordaClara : brandColors.darkBorder
     },
     typography: {
-      fontFamily: ['Montserrat', 'Inter', 'system-ui', 'Avenir', 'Helvetica', 'Arial', 'sans-serif'].join(','),
+      fontFamily: [
+        'DM Sans',
+        '-apple-system',
+        'BlinkMacSystemFont',
+        '"Segoe UI"',
+        'Roboto',
+        'sans-serif'
+      ].join(','),
       h1: {
-        lineHeight: 1.1,
+        fontFamily: "'Bricolage Grotesque', sans-serif",
+        fontWeight: 800,
+        letterSpacing: '-0.05em',
+        lineHeight: 1
+      },
+      h2: {
+        fontFamily: "'Bricolage Grotesque', sans-serif",
+        fontWeight: 800,
+        letterSpacing: '-0.045em',
+        lineHeight: 1.05
+      },
+      h3: {
+        fontFamily: "'Bricolage Grotesque', sans-serif",
+        fontWeight: 800,
+        letterSpacing: '-0.04em',
+        lineHeight: 1.1
+      },
+      h4: {
+        fontFamily: "'Bricolage Grotesque', sans-serif",
+        fontWeight: 800,
+        letterSpacing: '-0.035em',
+        lineHeight: 1.15
+      },
+      h5: {
+        fontFamily: "'Bricolage Grotesque', sans-serif",
         fontWeight: 700,
-        fontSize: '3.2em'
+        letterSpacing: '-0.03em',
+        lineHeight: 1.2
       },
       h6: {
-        fontWeight: 500,
-        fontSize: '1em'
+        fontFamily: "'Bricolage Grotesque', sans-serif",
+        fontWeight: 700,
+        letterSpacing: '-0.02em',
+        lineHeight: 1.25
+      },
+      button: {
+        fontFamily: "'Bricolage Grotesque', 'DM Sans', sans-serif",
+        fontWeight: 800,
+        letterSpacing: '-0.02em',
+        textTransform: 'none'
       }
+    },
+    shape: {
+      borderRadius: 16
     },
     components: {
       MuiCssBaseline: {
         styleOverrides: {
           body: {
+            backgroundColor: isLight ? brandColors.papel : brandColors.tinta,
+            color: isLight ? brandColors.tinta : brandColors.papel,
             transition: 'background-color 0.3s ease, color 0.3s ease'
-          }
-        }
-      },
-      MuiInputBase: {
-        styleOverrides: {
-          input: {
-            borderRadius: 'inherit',
-            caretColor: mode === 'light' ? 'rgba(0, 0, 0, 0.87)' : '#ffffff',
-            '&:-webkit-autofill': {
-              WebkitTextFillColor: mode === 'light' ? 'rgba(0, 0, 0, 0.87) !important' : '#ffffff !important',
-              WebkitBoxShadow: mode === 'light' ? '0 0 0 100px #ffffff inset !important' : '0 0 0 100px #1e1e1e inset !important'
-            }
           }
         }
       },
       MuiButton: {
         styleOverrides: {
           root: {
-            transition: 'border-color 0.25s, background-color 0.25s, color 0.25s',
             textTransform: 'none',
-            padding: '0.6em 1.2em',
-            borderRadius: '8px',
-            fontWeight: 500,
-            fontSize: '1em',
+            borderRadius: '9999px',
+            padding: '10px 24px',
+            fontSize: '1rem',
+            boxShadow: 'none',
             '&:hover': {
-              borderColor: '#a3b5ff'
+              boxShadow: 'none'
+            }
+          },
+          containedPrimary: {
+            backgroundColor: brandColors.amareloFlash,
+            color: brandColors.tinta,
+            '&:hover': {
+              backgroundColor: '#F5C30A'
+            }
+          },
+          containedSecondary: {
+            backgroundColor: brandColors.tinta,
+            color: brandColors.papel,
+            '&:hover': {
+              backgroundColor: brandColors.darkPaper
+            }
+          },
+          outlined: {
+            borderColor: isLight ? brandColors.tinta : brandColors.amareloFlash,
+            borderWidth: '1.5px',
+            color: isLight ? brandColors.tinta : brandColors.amareloFlash,
+            '&:hover': {
+              borderWidth: '1.5px',
+              backgroundColor: isLight ? 'rgba(23, 20, 15, 0.04)' : 'rgba(255, 207, 31, 0.08)'
+            }
+          }
+        }
+      },
+      MuiPaper: {
+        styleOverrides: {
+          root: {
+            borderRadius: 20,
+            border: `1px solid ${isLight ? brandColors.bordaClara : brandColors.darkBorder}`,
+            boxShadow: isLight
+              ? '0 1px 3px rgba(23, 20, 15, 0.05), 0 10px 25px -5px rgba(23, 20, 15, 0.04)'
+              : '0 4px 20px rgba(0, 0, 0, 0.4)'
+          }
+        }
+      },
+      MuiOutlinedInput: {
+        styleOverrides: {
+          root: {
+            borderRadius: 14,
+            '& .MuiOutlinedInput-notchedOutline': {
+              borderColor: isLight ? brandColors.bordaClara : brandColors.darkBorder
             },
-            '&:focus-visible': {
-              outline: '4px auto -webkit-focus-ring-color'
+            '&:hover .MuiOutlinedInput-notchedOutline': {
+              borderColor: isLight ? brandColors.tinta : brandColors.amareloFlash
+            },
+            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+              borderColor: isLight ? brandColors.tinta : brandColors.amareloFlash,
+              borderWidth: '2px'
             }
           }
         }
       }
     }
   })
+}

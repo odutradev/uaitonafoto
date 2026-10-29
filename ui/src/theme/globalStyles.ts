@@ -6,6 +6,24 @@ const GlobalStyles = createGlobalStyle`
     margin: 0;
     padding: 0;
   }
+
+  html, body {
+    background-color: #FBF8F1;
+    color: #17140F;
+    font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Headings default to Bricolage Grotesque */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Bricolage Grotesque', sans-serif;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
 `
 
 export default GlobalStyles

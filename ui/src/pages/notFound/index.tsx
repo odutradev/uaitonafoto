@@ -1,6 +1,8 @@
 import { Box, Button, Container, Stack, Typography } from '@mui/material'
 import { Link as RouterLink } from 'react-router-dom'
 
+import { Logo } from '@components/common/Logo'
+
 const NotFound = () => {
   return (
     <Container maxWidth="sm">
@@ -14,14 +16,24 @@ const NotFound = () => {
           py: 6
         }}
       >
-        <Stack spacing={2.5} alignItems="center">
-          <Typography variant="h3" component="h1" fontWeight={700}>
+        <Stack spacing={3} alignItems="center">
+          <RouterLink to="/" style={{ textDecoration: 'none' }}>
+            <Logo size="medium" />
+          </RouterLink>
+          <Typography
+            variant="h1"
+            sx={{
+              fontSize: { xs: '5rem', sm: '7rem' },
+              color: 'secondary.main',
+              lineHeight: 1
+            }}
+          >
             404
           </Typography>
-          <Typography variant="body1" color="text.secondary">
-            Página não encontrada no uai to na foto.
+          <Typography variant="body1" color="text.secondary" sx={{ fontSize: '1.125rem' }}>
+            Essa página não está na foto.
           </Typography>
-          <Button component={RouterLink} to="/" variant="contained">
+          <Button component={RouterLink} to="/" variant="contained" size="large">
             Voltar ao início
           </Button>
         </Stack>
@@ -31,4 +43,3 @@ const NotFound = () => {
 }
 
 export default NotFound
-

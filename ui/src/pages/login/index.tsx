@@ -3,6 +3,7 @@ import { Link as RouterLink, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 
 import useAuth from '@hooks/useAuth'
+import { Logo } from '@components/common/Logo'
 
 import type { FormEvent } from 'react'
 
@@ -39,11 +40,16 @@ const Login = () => {
   return (
     <Container maxWidth="xs">
       <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', py: 6 }}>
-        <Paper elevation={2} sx={{ p: 4, width: '100%', borderRadius: 3 }}>
-          <Stack component="form" onSubmit={handleSubmit} spacing={2.5}>
-            <Typography variant="h5" component="h1" fontWeight={700} textAlign="center">
-              uai to na foto
+        <Paper elevation={0} sx={{ p: { xs: 3, sm: 4 }, width: '100%', bgcolor: '#FFFFFF' }}>
+          <Stack component="form" onSubmit={handleSubmit} spacing={2.5} alignItems="center">
+            <RouterLink to="/" style={{ textDecoration: 'none' }}>
+              <Logo size="medium" sx={{ mb: 1 }} />
+            </RouterLink>
+
+            <Typography variant="body2" color="text.secondary" textAlign="center">
+              Acesse sua conta para gerenciar eventos e telões
             </Typography>
+
             <TextField
               label="E-mail"
               type="email"
@@ -60,13 +66,35 @@ const Login = () => {
               required
               fullWidth
             />
-            <Button type="submit" variant="contained" disabled={submitting} fullWidth>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              disabled={submitting}
+              fullWidth
+              size="large"
+              sx={{ height: 48 }}
+            >
               Entrar
             </Button>
-            <Button type="button" variant="outlined" onClick={handleGoogleLogin} disabled={submitting} fullWidth>
+            <Button
+              type="button"
+              variant="outlined"
+              onClick={handleGoogleLogin}
+              disabled={submitting}
+              fullWidth
+              size="large"
+              sx={{ height: 48 }}
+            >
               Continuar com Google
             </Button>
-            <Button component={RouterLink} to="/" variant="text" size="small">
+            <Button
+              component={RouterLink}
+              to="/"
+              variant="text"
+              size="small"
+              sx={{ color: 'text.secondary' }}
+            >
               Voltar ao início
             </Button>
           </Stack>
@@ -77,4 +105,3 @@ const Login = () => {
 }
 
 export default Login
-

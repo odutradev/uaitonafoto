@@ -4,6 +4,7 @@ import { useState } from 'react'
 
 import { confirmPasswordReset, requestPasswordReset } from '@services/auth/passwordReset'
 import useQueryParams from '@hooks/useQueryParams'
+import { Logo } from '@components/common/Logo'
 
 import type { FormEvent } from 'react'
 
@@ -36,11 +37,16 @@ const ResetPassword = () => {
   return (
     <Container maxWidth="xs">
       <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', py: 6 }}>
-        <Paper elevation={2} sx={{ p: 4, width: '100%', borderRadius: 3 }}>
-          <Stack component="form" onSubmit={handleSubmit} spacing={2.5}>
-            <Typography variant="h5" component="h1" fontWeight={700} textAlign="center">
-              Redefinir senha — uai to na foto
+        <Paper elevation={0} sx={{ p: { xs: 3, sm: 4 }, width: '100%', bgcolor: '#FFFFFF' }}>
+          <Stack component="form" onSubmit={handleSubmit} spacing={2.5} alignItems="center">
+            <RouterLink to="/" style={{ textDecoration: 'none' }}>
+              <Logo size="medium" sx={{ mb: 1 }} />
+            </RouterLink>
+
+            <Typography variant="h5" component="h1" fontWeight={800} textAlign="center">
+              redefinir senha
             </Typography>
+
             {token ? (
               <TextField
                 label="Nova senha"
@@ -60,15 +66,31 @@ const ResetPassword = () => {
                 fullWidth
               />
             )}
+
             {submitted && !token && (
               <Typography variant="body2" color="success.main" textAlign="center">
-                Se o e-mail estiver cadastrado, enviaremos o link de redefinição.
+                Se o e-mail estiver cadastrado, você receberá um link de recuperação.
               </Typography>
             )}
-            <Button type="submit" variant="contained" disabled={submitting} fullWidth>
-              {token ? 'Salvar nova senha' : 'Enviar link'}
+
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              disabled={submitting}
+              fullWidth
+              size="large"
+              sx={{ height: 48 }}
+            >
+              {token ? 'Salvar nova senha' : 'Enviar link de recuperação'}
             </Button>
-            <Button component={RouterLink} to="/login" variant="text" size="small">
+            <Button
+              component={RouterLink}
+              to="/login"
+              variant="text"
+              size="small"
+              sx={{ color: 'text.secondary' }}
+            >
               Voltar ao login
             </Button>
           </Stack>
@@ -79,4 +101,3 @@ const ResetPassword = () => {
 }
 
 export default ResetPassword
-
