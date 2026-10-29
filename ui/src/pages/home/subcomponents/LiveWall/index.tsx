@@ -5,9 +5,17 @@ import { BrandSymbol } from '@components/index'
 
 import {
   getLiveWallBadgeStyles,
+  getLiveWallBrandTitleStyles,
   getLiveWallOuterBoxStyles,
   getLiveWallScreenStyles,
-  liveWallHeaderStyles
+  getLiveWallTitleStyles,
+  getMosaicTileStyles,
+  liveWallBrandBoxStyles,
+  liveWallDescriptionStyles,
+  liveWallHeaderStyles,
+  liveWallQrCodeStyles,
+  liveWallQrInstructionStyles,
+  liveWallQrStackStyles
 } from './styles'
 import type { LiveWallProps } from './types'
 
@@ -15,17 +23,9 @@ export const LiveWall = ({ data, isDark, liveWallAccent, mosaicTiles }: LiveWall
   return (
     <Box sx={getLiveWallOuterBoxStyles(isDark)}>
       <Box sx={liveWallHeaderStyles}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+        <Box sx={liveWallBrandBoxStyles}>
           <BrandSymbol size={32} variant="auto" />
-          <Typography
-            sx={{
-              fontFamily: "'Bricolage Grotesque', sans-serif",
-              fontWeight: 800,
-              fontSize: '1.25rem',
-              letterSpacing: '-0.04em',
-              color: liveWallAccent
-            }}
-          >
+          <Typography sx={getLiveWallBrandTitleStyles(liveWallAccent)}>
             {data.brandName}
           </Typography>
         </Box>
@@ -37,26 +37,19 @@ export const LiveWall = ({ data, isDark, liveWallAccent, mosaicTiles }: LiveWall
 
       <Box sx={getLiveWallScreenStyles(isDark)}>
         <Box>
-          <Typography
-            variant="h3"
-            sx={{
-              color: liveWallAccent,
-              fontSize: { xs: '1.75rem', sm: '2.1rem' },
-              mb: 1
-            }}
-          >
+          <Typography variant="h3" sx={getLiveWallTitleStyles(liveWallAccent)}>
             {data.title}
           </Typography>
-          <Typography variant="body1" sx={{ color: 'text.secondary', maxWidth: '420px', lineHeight: 1.5 }}>
+          <Typography variant="body1" sx={liveWallDescriptionStyles}>
             {data.description}
           </Typography>
         </Box>
 
-        <Stack spacing={1} alignItems="center" sx={{ flexShrink: 0 }}>
-          <QrCodeIcon sx={{ fontSize: { xs: 80, sm: 96 }, color: 'primary.main' }} />
+        <Stack spacing={1} alignItems="center" sx={liveWallQrStackStyles}>
+          <QrCodeIcon sx={liveWallQrCodeStyles} />
           <Typography
             variant="caption"
-            sx={{ color: 'text.secondary', fontWeight: 700, textAlign: 'center', maxWidth: 130 }}
+            sx={liveWallQrInstructionStyles}
           >
             {data.qrInstruction}
           </Typography>
@@ -64,10 +57,10 @@ export const LiveWall = ({ data, isDark, liveWallAccent, mosaicTiles }: LiveWall
       </Box>
 
       <Stack direction="row" spacing={1.5}>
-        <Box sx={{ flex: 1, height: 48, bgcolor: mosaicTiles[0], borderRadius: '12px' }} />
-        <Box sx={{ flex: 1, height: 48, bgcolor: mosaicTiles[1], borderRadius: '12px' }} />
-        <Box sx={{ flex: 1, height: 48, bgcolor: mosaicTiles[2], borderRadius: '12px' }} />
-        <Box sx={{ flex: 1, height: 48, bgcolor: mosaicTiles[0], borderRadius: '12px' }} />
+        <Box sx={getMosaicTileStyles(mosaicTiles[0])} />
+        <Box sx={getMosaicTileStyles(mosaicTiles[1])} />
+        <Box sx={getMosaicTileStyles(mosaicTiles[2])} />
+        <Box sx={getMosaicTileStyles(mosaicTiles[0])} />
       </Stack>
     </Box>
   )
