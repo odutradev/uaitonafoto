@@ -35,10 +35,6 @@ const Home = () => {
         component="header"
         sx={{
           py: 2,
-          px: { xs: 2, md: 5 },
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
           borderBottom: 1,
           borderColor: 'divider',
           bgcolor: isDark ? 'rgba(18, 16, 12, 0.85)' : 'rgba(251, 248, 241, 0.85)',
@@ -48,29 +44,38 @@ const Home = () => {
           backdropFilter: 'blur(10px)'
         }}
       >
-        <RouterLink to="/" style={{ textDecoration: 'none' }}>
-          <Logo size="medium" variant="auto" />
-        </RouterLink>
+        <Container
+          maxWidth="lg"
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between'
+          }}
+        >
+          <RouterLink to="/" style={{ textDecoration: 'none' }}>
+            <Logo size="medium" variant="auto" />
+          </RouterLink>
 
-        <Stack direction="row" spacing={1.5} alignItems="center">
-          <ThemeToggle />
+          <Stack direction="row" spacing={1.5} alignItems="center">
+            <ThemeToggle />
 
-          <Button
-            component={RouterLink}
-            to="/login"
-            variant="contained"
-            color="primary"
-            size="medium"
-            endIcon={<ArrowForwardIcon />}
-            sx={{
-              px: 2.5,
-              fontWeight: 800,
-              fontSize: '0.9375rem'
-            }}
-          >
-            Entrar
-          </Button>
-        </Stack>
+            <Button
+              component={RouterLink}
+              to="/login"
+              variant="contained"
+              color="primary"
+              size="medium"
+              endIcon={<ArrowForwardIcon />}
+              sx={{
+                px: 2.5,
+                fontWeight: 800,
+                fontSize: '0.9375rem'
+              }}
+            >
+              Entrar
+            </Button>
+          </Stack>
+        </Container>
       </Box>
 
       <Container maxWidth="lg" sx={{ pt: { xs: 6, md: 10 }, pb: { xs: 6, md: 9 } }}>
@@ -571,7 +576,6 @@ const Home = () => {
         component="footer"
         sx={{
           py: 4,
-          px: 3,
           borderTop: 1,
           borderColor: 'divider',
           bgcolor: 'background.default',
