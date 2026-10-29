@@ -9,17 +9,20 @@ const logger = createLogger('email')
 
 const requiredEnvVariables = ['EMAIL_HOST', 'EMAIL_PORT', 'EMAIL_USER', 'EMAIL_PASS']
 
+const getMissingEnvVariables = (): string[] => requiredEnvVariables.filter((envVar) => !process.env[envVar])
+
+export const isEmailConfigured = (): boolean => getMissingEnvVariables().length === 0
+
 const email: EmailModule = {
   transporter: null,
   initializeEmail: async (): Promise<EmailInstance> => {
-    try {
-      requiredEnvVariables.forEach((envVar) => {
-        if (!process.env[envVar]) {
-          logger.error(`[initializeEmail] Missing environment variable: "${envVar}"`)
-          process.exit(1)
-        }
-      })
+    const missing = getMissingEnvVariables()
 
+    if (missing.length > 0) {
+      throw new Error(`Missing email environment variables: ${missing.join(', ')}`)
+    }
+
+    try {
       const port = Number(process.env.EMAIL_PORT)
 
       const config: EmailConfig = {

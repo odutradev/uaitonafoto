@@ -1,7 +1,7 @@
 import 'dotenv/config'
 
 import { validateEnv } from '@config/env'
-import { connectEmail } from '@email'
+import { connectEmail, isEmailConfigured } from '@email'
 import database from '@database'
 import createLogger from '@utils/logger'
 import buildApp from '@/app'
@@ -18,7 +18,12 @@ const startServer = async (): Promise<void> => {
     logger.info(`uai to na foto API running on port ${port}`)
 
     await database.connect()
-    await connectEmail()
+
+    if (isEmailConfigured()) {
+      await connectEmail()
+    } else {
+      logger.warn('Email service disabled: EMAIL_* variables are not configured')
+    }
   })
 }
 
