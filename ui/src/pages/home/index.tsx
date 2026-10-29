@@ -20,6 +20,27 @@ import { Link as RouterLink } from 'react-router-dom'
 
 import { BrandSymbol, Logo, ThemeToggle } from '@components/index'
 import { brandColors } from '@theme/theme'
+import {
+  finalCtaData,
+  footerData,
+  guestFeedData,
+  headerData,
+  heroData,
+  howItWorksData,
+  liveWallData
+} from './data'
+
+const renderStepIcon = (iconName: string) => {
+  switch (iconName) {
+    case 'camera':
+      return <PhotoCameraIcon sx={{ fontSize: 32 }} />
+    case 'tv':
+      return <ConnectedTvIcon sx={{ fontSize: 32 }} />
+    case 'qr_code':
+    default:
+      return <QrCodeIcon sx={{ fontSize: 32 }} />
+  }
+}
 
 const Home = () => {
   const theme = useTheme()
@@ -61,7 +82,7 @@ const Home = () => {
 
             <Button
               component={RouterLink}
-              to="/login"
+              to={headerData.loginButton.href}
               variant="contained"
               color="primary"
               size="medium"
@@ -72,7 +93,7 @@ const Home = () => {
                 fontSize: '0.9375rem'
               }}
             >
-              Entrar
+              {headerData.loginButton.text}
             </Button>
           </Stack>
         </Container>
@@ -92,7 +113,7 @@ const Home = () => {
                 }}
               />
             }
-            label="compartilhamento de fotos em tempo real"
+            label={heroData.tag}
             sx={{
               bgcolor: isDark ? brandColors.darkSurface : brandColors.areia,
               color: isDark ? brandColors.amareloFlash : brandColors.tinta,
@@ -117,7 +138,7 @@ const Home = () => {
               color: 'text.primary'
             }}
           >
-            aponte a câmera, entre na foto e veja ela subir no telão.
+            {heroData.title}
           </Typography>
 
           <Typography
@@ -129,9 +150,7 @@ const Home = () => {
               maxWidth: '680px'
             }}
           >
-            A experiência definitiva para casamentos, festas e eventos corporativos.
-            Zero fricção: o convidado escaneia o QR Code, tira a foto e ela vai pro telão na hora.
-            Sem aplicativo e sem cadastro.
+            {heroData.description}
           </Typography>
 
           <Stack
@@ -141,7 +160,7 @@ const Home = () => {
           >
             <Button
               component={RouterLink}
-              to="/login"
+              to={heroData.primaryCta.href}
               variant="contained"
               color="primary"
               size="large"
@@ -153,12 +172,12 @@ const Home = () => {
               }}
               endIcon={<ArrowForwardIcon />}
             >
-              Criar meu evento
+              {heroData.primaryCta.text}
             </Button>
 
             <Button
               component={RouterLink}
-              to="/login"
+              to={heroData.secondaryCta.href}
               variant="outlined"
               size="large"
               sx={{
@@ -168,7 +187,7 @@ const Home = () => {
                 fontWeight: 700
               }}
             >
-              Acessar plataforma
+              {heroData.secondaryCta.text}
             </Button>
           </Stack>
         </Stack>
@@ -193,7 +212,7 @@ const Home = () => {
                 color: 'text.primary'
               }}
             >
-              como o uai to na foto funciona
+              {howItWorksData.title}
             </Typography>
             <Typography
               variant="body1"
@@ -203,7 +222,7 @@ const Home = () => {
                 color: 'text.secondary'
               }}
             >
-              Três passos simples que qualquer convidado faz em menos de 10 segundos.
+              {howItWorksData.subtitle}
             </Typography>
           </Stack>
 
@@ -214,104 +233,55 @@ const Home = () => {
               gap: 3.5
             }}
           >
-            <Card
-              elevation={0}
-              sx={{
-                borderRadius: '24px',
-                p: 2,
-                display: 'flex',
-                flexDirection: 'column'
-              }}
-            >
-              <CardContent sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 2 }}>
-                <Box
-                  sx={{
-                    width: 56,
-                    height: 56,
-                    borderRadius: '16px',
-                    bgcolor: brandColors.amareloFlash,
-                    color: brandColors.tinta,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}
-                >
-                  <QrCodeIcon sx={{ fontSize: 32 }} />
-                </Box>
-                <Typography variant="h4" sx={{ fontSize: '1.6rem', color: 'text.primary' }}>
-                  1. escaneia o qr code
-                </Typography>
-                <Typography variant="body1" sx={{ lineHeight: 1.6, color: 'text.secondary' }}>
-                  O convidado aponta a câmera do celular para o QR Code na mesa ou no telão. Abre direto no navegador sem precisar instalar nada.
-                </Typography>
-              </CardContent>
-            </Card>
+            {howItWorksData.steps.map((step, index) => {
+              const isStep2 = index === 1
+              const iconBg = isStep2
+                ? isDark
+                  ? brandColors.amareloFlash
+                  : brandColors.tinta
+                : brandColors.amareloFlash
+              const iconColor = isStep2
+                ? isDark
+                  ? brandColors.tinta
+                  : brandColors.amareloFlash
+                : brandColors.tinta
 
-            <Card
-              elevation={0}
-              sx={{
-                borderRadius: '24px',
-                p: 2,
-                display: 'flex',
-                flexDirection: 'column'
-              }}
-            >
-              <CardContent sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 2 }}>
-                <Box
+              return (
+                <Card
+                  key={step.id || step.title}
+                  elevation={0}
                   sx={{
-                    width: 56,
-                    height: 56,
-                    borderRadius: '16px',
-                    bgcolor: isDark ? brandColors.amareloFlash : brandColors.tinta,
-                    color: isDark ? brandColors.tinta : brandColors.amareloFlash,
+                    borderRadius: '24px',
+                    p: 2,
                     display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
+                    flexDirection: 'column'
                   }}
                 >
-                  <PhotoCameraIcon sx={{ fontSize: 32 }} />
-                </Box>
-                <Typography variant="h4" sx={{ fontSize: '1.6rem', color: 'text.primary' }}>
-                  2. entra na foto
-                </Typography>
-                <Typography variant="body1" sx={{ lineHeight: 1.6, color: 'text.secondary' }}>
-                  Informa apenas o primeiro nome, tira a foto ou escolhe da galeria. Compressão automática inteligente para redes móveis no evento.
-                </Typography>
-              </CardContent>
-            </Card>
-
-            <Card
-              elevation={0}
-              sx={{
-                borderRadius: '24px',
-                p: 2,
-                display: 'flex',
-                flexDirection: 'column'
-              }}
-            >
-              <CardContent sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 2 }}>
-                <Box
-                  sx={{
-                    width: 56,
-                    height: 56,
-                    borderRadius: '16px',
-                    bgcolor: brandColors.amareloFlash,
-                    color: brandColors.tinta,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}
-                >
-                  <ConnectedTvIcon sx={{ fontSize: 32 }} />
-                </Box>
-                <Typography variant="h4" sx={{ fontSize: '1.6rem', color: 'text.primary' }}>
-                  3. sobe pro telão
-                </Typography>
-                <Typography variant="body1" sx={{ lineHeight: 1.6, color: 'text.secondary' }}>
-                  A foto ganha destaque instantâneo no telão da festa, integra o mosaico dinâmico e fica disponível para todos curtirem no feed mobile.
-                </Typography>
-              </CardContent>
-            </Card>
+                  <CardContent sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 2 }}>
+                    <Box
+                      sx={{
+                        width: 56,
+                        height: 56,
+                        borderRadius: '16px',
+                        bgcolor: iconBg,
+                        color: iconColor,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}
+                    >
+                      {renderStepIcon(step.icon)}
+                    </Box>
+                    <Typography variant="h4" sx={{ fontSize: '1.6rem', color: 'text.primary' }}>
+                      {step.title}
+                    </Typography>
+                    <Typography variant="body1" sx={{ lineHeight: 1.6, color: 'text.secondary' }}>
+                      {step.description}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              )
+            })}
           </Box>
         </Container>
       </Box>
@@ -351,7 +321,7 @@ const Home = () => {
                     color: liveWallAccent
                   }}
                 >
-                  uai to na foto
+                  {liveWallData.brandName}
                 </Typography>
               </Box>
               <Box
@@ -367,7 +337,7 @@ const Home = () => {
                 }}
               >
                 <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: liveWallAccent }} />
-                telão ao vivo
+                {liveWallData.badge}
               </Box>
             </Box>
 
@@ -396,10 +366,10 @@ const Home = () => {
                     mb: 1
                   }}
                 >
-                  transmita em smart tvs e projetores
+                  {liveWallData.title}
                 </Typography>
                 <Typography variant="body1" sx={{ color: 'text.secondary', maxWidth: '420px', lineHeight: 1.5 }}>
-                  Modo 16:9 otimizado com destaque de cada foto por 5 segundos antes de alimentar o mosaico ao vivo.
+                  {liveWallData.description}
                 </Typography>
               </Box>
 
@@ -419,7 +389,7 @@ const Home = () => {
                   variant="caption"
                   sx={{ color: 'text.secondary', fontWeight: 700, textAlign: 'center', maxWidth: 130 }}
                 >
-                  escaneie e entre no telão
+                  {liveWallData.qrInstruction}
                 </Typography>
               </Stack>
             </Box>
@@ -445,7 +415,7 @@ const Home = () => {
             }}
           >
             <Chip
-              label="Feed Mobile do Convidado"
+              label={guestFeedData.badge}
               sx={{
                 alignSelf: 'flex-start',
                 bgcolor: isDark ? brandColors.darkSurface : brandColors.areia,
@@ -454,10 +424,10 @@ const Home = () => {
               }}
             />
             <Typography variant="h3" sx={{ fontSize: { xs: '1.75rem', sm: '2.2rem' }, color: 'text.primary' }}>
-              interação na palma da mão
+              {guestFeedData.title}
             </Typography>
             <Typography variant="body1" sx={{ lineHeight: 1.6, color: 'text.secondary' }}>
-              Os convidados curtem fotos em tempo real com o botão de coração, adicionam legendas divertidas e baixam recordações direto pelo celular.
+              {guestFeedData.description}
             </Typography>
 
             <Box
@@ -474,10 +444,10 @@ const Home = () => {
             >
               <Stack spacing={0.5}>
                 <Typography variant="subtitle1" fontWeight={800} color="text.primary">
-                  marina adicionou uma foto
+                  {guestFeedData.activityCard.action}
                 </Typography>
                 <Typography variant="caption" color="text.secondary">
-                  há 2 minutos
+                  {guestFeedData.activityCard.timeAgo}
                 </Typography>
               </Stack>
               <Box
@@ -498,14 +468,14 @@ const Home = () => {
 
             <Button
               component={RouterLink}
-              to="/login"
+              to={guestFeedData.cta.href}
               variant="contained"
               color="primary"
               size="large"
               fullWidth
               sx={{ height: 52, fontWeight: 800 }}
             >
-              Experimentar agora
+              {guestFeedData.cta.text}
             </Button>
           </Box>
         </Box>
@@ -538,7 +508,7 @@ const Home = () => {
               maxWidth: '780px'
             }}
           >
-            pronto para transformar as fotos do seu próximo evento?
+            {finalCtaData.title}
           </Typography>
 
           <Typography
@@ -549,12 +519,12 @@ const Home = () => {
               maxWidth: '560px'
             }}
           >
-            Casamentos, formaturas, aniversários ou eventos corporativos com a melhor experiência de live wall do Brasil.
+            {finalCtaData.description}
           </Typography>
 
           <Button
             component={RouterLink}
-            to="/login"
+            to={finalCtaData.button.href}
             variant="contained"
             color="primary"
             size="large"
@@ -567,7 +537,7 @@ const Home = () => {
               mt: 1
             }}
           >
-            Ir para o Login
+            {finalCtaData.button.text}
           </Button>
         </Box>
       </Container>
@@ -595,7 +565,7 @@ const Home = () => {
           <Logo size="small" variant="auto" />
 
           <Typography variant="body2" color="text.secondary">
-            © {new Date().getFullYear()} uai to na foto. todos os direitos reservados.
+            © {new Date().getFullYear()} {footerData.copyrightSuffix}
           </Typography>
         </Container>
       </Box>
