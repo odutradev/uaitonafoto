@@ -11,8 +11,8 @@ export interface LogoProps extends BoxProps {
 }
 
 /**
- * Logo oficial uai to na foto:
- * Símbolo + texto tipográfico em Bricolage Grotesque ExtraBold (sempre minúsculo).
+ * Logo oficial uaiToNaFoto:
+ * Símbolo + letreiro tipográfico em Bricolage Grotesque ExtraBold (uaiToNaFoto).
  */
 export const Logo = ({
   size = 'medium',
@@ -61,7 +61,7 @@ export const Logo = ({
             paddingBottom: '2px'
           }}
         >
-          uai to na foto
+          uaiToNaFoto
         </Typography>
       )}
     </Box>
