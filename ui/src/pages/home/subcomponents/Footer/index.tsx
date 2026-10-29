@@ -20,3 +20,4 @@ export const Footer = ({ data }: FooterProps) => {
 }
 
 export default Footer
+

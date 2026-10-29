@@ -74,3 +74,4 @@ export const LiveWall = ({ data, isDark, liveWallAccent, mosaicTiles }: LiveWall
 }
 
 export default LiveWall
+

@@ -4,3 +4,4 @@ export interface GuestFeedProps {
   data: GuestFeedData
   isDark: boolean
 }
+

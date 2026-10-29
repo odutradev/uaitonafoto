@@ -12,3 +12,4 @@ export const errorWrapperStyles: SxProps<Theme> = {
 export const errorTitleStyles: SxProps<Theme> = {
   fontWeight: 800
 }
+

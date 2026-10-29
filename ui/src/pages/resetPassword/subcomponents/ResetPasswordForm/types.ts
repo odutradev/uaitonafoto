@@ -10,3 +10,4 @@ export interface ResetPasswordFormProps {
   submitted: boolean
   onSubmit: (event: FormEvent<HTMLFormElement>) => Promise<void>
 }
+

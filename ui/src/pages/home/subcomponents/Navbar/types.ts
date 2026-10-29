@@ -4,3 +4,4 @@ export interface NavbarProps {
   data: HeaderData
   isDark: boolean
 }
+

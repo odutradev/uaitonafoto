@@ -35,3 +35,4 @@ export const submitButtonStyles: SxProps<Theme> = {
 export const backButtonStyles: SxProps<Theme> = {
   color: 'text.secondary'
 }
+

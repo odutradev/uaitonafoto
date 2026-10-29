@@ -1,1 +1,2 @@
 export { NotFoundContent } from './NotFoundContent'
+

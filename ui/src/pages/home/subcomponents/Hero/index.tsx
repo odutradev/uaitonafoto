@@ -75,3 +75,4 @@ export const Hero = ({ data, isDark }: HeroProps) => {
 }
 
 export default Hero
+

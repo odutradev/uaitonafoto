@@ -51,3 +51,4 @@ export const secondaryButtonStyles: SxProps<Theme> = {
   fontSize: '1.125rem',
   fontWeight: 700
 }
+

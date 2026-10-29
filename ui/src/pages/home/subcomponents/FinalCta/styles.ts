@@ -35,3 +35,4 @@ export const ctaButtonStyles: SxProps<Theme> = {
   fontWeight: 800,
   mt: 1
 }
+

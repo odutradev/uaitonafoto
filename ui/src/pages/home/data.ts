@@ -162,3 +162,4 @@ export const {
 } = landingPageData
 
 export default landingPageData
+

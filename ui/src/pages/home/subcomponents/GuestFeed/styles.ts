@@ -45,3 +45,4 @@ export const guestFeedButtonStyles: SxProps<Theme> = {
   height: 52,
   fontWeight: 800
 }
+

@@ -54,3 +54,4 @@ export const useResetPasswordForm = (): UseResetPasswordFormReturn => {
 }
 
 export default useResetPasswordForm
+

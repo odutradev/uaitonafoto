@@ -63,3 +63,4 @@ export const getStepIconBoxStyles = (isStep2: boolean, isDark: boolean): SxProps
     justifyContent: 'center'
   }
 }
+

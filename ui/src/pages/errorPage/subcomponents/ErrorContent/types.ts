@@ -4,3 +4,4 @@ export interface ErrorContentProps {
   homeHref?: string
   buttonText?: string
 }
+

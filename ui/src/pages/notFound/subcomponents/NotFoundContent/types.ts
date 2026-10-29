@@ -4,3 +4,4 @@ export interface NotFoundContentProps {
   homeHref?: string
   buttonText?: string
 }
+

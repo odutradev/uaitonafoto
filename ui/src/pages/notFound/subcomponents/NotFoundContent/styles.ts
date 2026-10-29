@@ -18,3 +18,4 @@ export const errorCodeStyles: SxProps<Theme> = {
 export const descriptionStyles: SxProps<Theme> = {
   fontSize: '1.125rem'
 }
+

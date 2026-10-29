@@ -41,3 +41,4 @@ export const backButtonStyles: SxProps<Theme> = {
   color: 'text.secondary',
   alignSelf: 'center'
 }
+

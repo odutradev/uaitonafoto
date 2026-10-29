@@ -22,3 +22,4 @@ export const loginButtonStyles: SxProps<Theme> = {
   fontWeight: 800,
   fontSize: '0.9375rem'
 }
+

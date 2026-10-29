@@ -6,3 +6,4 @@ export interface LiveWallProps {
   liveWallAccent: string
   mosaicTiles: readonly string[]
 }
+

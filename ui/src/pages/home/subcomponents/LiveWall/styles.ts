@@ -45,3 +45,4 @@ export const getLiveWallScreenStyles = (isDark: boolean): SxProps<Theme> => ({
   border: 1,
   borderColor: 'divider'
 })
+

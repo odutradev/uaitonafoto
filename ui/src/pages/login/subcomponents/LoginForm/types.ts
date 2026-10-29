@@ -9,3 +9,4 @@ export interface LoginFormProps {
   onSubmit: (event: FormEvent<HTMLFormElement>) => Promise<void>
   onGoogleLogin: () => Promise<void>
 }
+

@@ -68,3 +68,4 @@ export const HowItWorks = ({ data, isDark }: HowItWorksProps) => {
 }
 
 export default HowItWorks
+

@@ -35,3 +35,4 @@ export const NotFoundContent = ({
 }
 
 export default NotFoundContent
+

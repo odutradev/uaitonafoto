@@ -15,3 +15,4 @@ export const footerContainerStyles: SxProps<Theme> = {
   justifyContent: 'space-between',
   gap: 2
 }
+

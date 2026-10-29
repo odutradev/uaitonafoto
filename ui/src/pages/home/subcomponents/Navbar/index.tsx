@@ -36,3 +36,4 @@ export const Navbar = ({ data, isDark }: NavbarProps) => {
 }
 
 export default Navbar
+
