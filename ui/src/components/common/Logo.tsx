@@ -1,11 +1,12 @@
 import { Box, Typography } from '@mui/material'
+import { useTheme } from '@mui/material/styles'
 import type { BoxProps } from '@mui/material'
 
 import { BrandSymbol } from './BrandSymbol'
 
 export interface LogoProps extends BoxProps {
   size?: 'small' | 'medium' | 'large' | number
-  variant?: 'light' | 'dark'
+  variant?: 'light' | 'dark' | 'auto'
   symbolOnly?: boolean
 }
 
@@ -15,12 +16,13 @@ export interface LogoProps extends BoxProps {
  */
 export const Logo = ({
   size = 'medium',
-  variant = 'light',
+  variant = 'auto',
   symbolOnly = false,
   sx,
   ...rest
 }: LogoProps) => {
-  const isDark = variant === 'dark'
+  const theme = useTheme()
+  const isDark = variant === 'auto' ? theme.palette.mode === 'dark' : variant === 'dark'
 
   const dimensions =
     typeof size === 'number'

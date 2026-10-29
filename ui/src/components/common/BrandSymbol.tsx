@@ -1,8 +1,9 @@
+import { useTheme } from '@mui/material/styles'
 import type { SVGProps } from 'react'
 
 export interface BrandSymbolProps extends SVGProps<SVGSVGElement> {
   size?: number | string
-  variant?: 'light' | 'dark'
+  variant?: 'light' | 'dark' | 'auto'
 }
 
 /**
@@ -11,11 +12,12 @@ export interface BrandSymbolProps extends SVGProps<SVGSVGElement> {
  */
 export const BrandSymbol = ({
   size = 40,
-  variant = 'light',
+  variant = 'auto',
   style,
   ...rest
 }: BrandSymbolProps) => {
-  const isDark = variant === 'dark'
+  const theme = useTheme()
+  const isDark = variant === 'auto' ? theme.palette.mode === 'dark' : variant === 'dark'
   const rectFill = isDark ? '#FFCF1F' : '#17140F'
   const circleFill = isDark ? '#17140F' : '#FFCF1F'
 

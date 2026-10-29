@@ -8,11 +8,15 @@ export const brandColors = {
   papel: '#FBF8F1', // fundo principal claro
   areia: '#EFE9DA', // fundo secundário
   areiaDark: '#E4DDCB', // contraste sutil
-  bordaClara: '#E7E1D2', // linhas divisórias
-  cinzaTexto: '#5E584C', // texto secundário
-  darkPaper: '#2B271F',
-  darkSurface: '#3A352B',
-  darkBorder: '#2E2A22'
+  bordaClara: '#E7E1D2', // linhas divisórias no modo claro
+  cinzaTexto: '#5E584C', // texto secundário no modo claro
+  // Modo Escuro
+  darkBg: '#12100C', // fundo do modo escuro
+  darkPaper: '#1E1A14', // superfície de cards no modo escuro
+  darkSurface: '#28231B', // superfície secundária / areia dark
+  darkBorder: '#383227', // bordas no modo escuro
+  darkTextPrimary: '#FBF8F1', // texto primário no modo escuro
+  darkTextSecondary: '#ABA392' // texto secundário no modo escuro
 } as const
 
 export const getAppTheme = (mode: 'light' | 'dark'): Theme => {
@@ -28,18 +32,18 @@ export const getAppTheme = (mode: 'light' | 'dark'): Theme => {
         contrastText: brandColors.tinta
       },
       secondary: {
-        main: brandColors.tinta,
-        light: brandColors.darkPaper,
-        dark: '#0D0B08',
-        contrastText: brandColors.papel
+        main: isLight ? brandColors.tinta : brandColors.amareloFlash,
+        light: isLight ? brandColors.darkPaper : '#FFE266',
+        dark: isLight ? '#0D0B08' : '#E0B200',
+        contrastText: isLight ? brandColors.papel : brandColors.tinta
       },
       background: {
-        default: isLight ? brandColors.papel : brandColors.tinta,
+        default: isLight ? brandColors.papel : brandColors.darkBg,
         paper: isLight ? '#FFFFFF' : brandColors.darkPaper
       },
       text: {
-        primary: isLight ? brandColors.tinta : brandColors.papel,
-        secondary: isLight ? brandColors.cinzaTexto : '#CFC8B8'
+        primary: isLight ? brandColors.tinta : brandColors.darkTextPrimary,
+        secondary: isLight ? brandColors.cinzaTexto : brandColors.darkTextSecondary
       },
       divider: isLight ? brandColors.bordaClara : brandColors.darkBorder
     },
@@ -102,8 +106,8 @@ export const getAppTheme = (mode: 'light' | 'dark'): Theme => {
       MuiCssBaseline: {
         styleOverrides: {
           body: {
-            backgroundColor: isLight ? brandColors.papel : brandColors.tinta,
-            color: isLight ? brandColors.tinta : brandColors.papel,
+            backgroundColor: isLight ? brandColors.papel : brandColors.darkBg,
+            color: isLight ? brandColors.tinta : brandColors.darkTextPrimary,
             transition: 'background-color 0.3s ease, color 0.3s ease'
           }
         }
@@ -128,16 +132,16 @@ export const getAppTheme = (mode: 'light' | 'dark'): Theme => {
             }
           },
           containedSecondary: {
-            backgroundColor: brandColors.tinta,
-            color: brandColors.papel,
+            backgroundColor: isLight ? brandColors.tinta : brandColors.amareloFlash,
+            color: isLight ? brandColors.papel : brandColors.tinta,
             '&:hover': {
-              backgroundColor: brandColors.darkPaper
+              backgroundColor: isLight ? brandColors.darkPaper : '#FFE266'
             }
           },
           outlined: {
-            borderColor: isLight ? brandColors.tinta : brandColors.amareloFlash,
+            borderColor: isLight ? brandColors.tinta : brandColors.bordaClara,
             borderWidth: '1.5px',
-            color: isLight ? brandColors.tinta : brandColors.amareloFlash,
+            color: isLight ? brandColors.tinta : brandColors.darkTextPrimary,
             '&:hover': {
               borderWidth: '1.5px',
               backgroundColor: isLight ? 'rgba(23, 20, 15, 0.04)' : 'rgba(255, 207, 31, 0.08)'
@@ -150,9 +154,21 @@ export const getAppTheme = (mode: 'light' | 'dark'): Theme => {
           root: {
             borderRadius: 20,
             border: `1px solid ${isLight ? brandColors.bordaClara : brandColors.darkBorder}`,
+            backgroundColor: isLight ? '#FFFFFF' : brandColors.darkPaper,
+            color: isLight ? brandColors.tinta : brandColors.darkTextPrimary,
             boxShadow: isLight
               ? '0 1px 3px rgba(23, 20, 15, 0.05), 0 10px 25px -5px rgba(23, 20, 15, 0.04)'
               : '0 4px 20px rgba(0, 0, 0, 0.4)'
+          }
+        }
+      },
+      MuiCard: {
+        styleOverrides: {
+          root: {
+            borderRadius: 24,
+            border: `1px solid ${isLight ? brandColors.bordaClara : brandColors.darkBorder}`,
+            backgroundColor: isLight ? '#FFFFFF' : brandColors.darkPaper,
+            color: isLight ? brandColors.tinta : brandColors.darkTextPrimary
           }
         }
       },
@@ -160,6 +176,8 @@ export const getAppTheme = (mode: 'light' | 'dark'): Theme => {
         styleOverrides: {
           root: {
             borderRadius: 14,
+            backgroundColor: isLight ? '#FFFFFF' : brandColors.darkPaper,
+            color: isLight ? brandColors.tinta : brandColors.darkTextPrimary,
             '& .MuiOutlinedInput-notchedOutline': {
               borderColor: isLight ? brandColors.bordaClara : brandColors.darkBorder
             },

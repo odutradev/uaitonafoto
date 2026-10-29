@@ -8,8 +8,6 @@ const GlobalStyles = createGlobalStyle`
   }
 
   html, body {
-    background-color: #FBF8F1;
-    color: #17140F;
     font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
