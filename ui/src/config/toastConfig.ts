@@ -1,7 +1,12 @@
 import { Bounce } from 'react-toastify'
 
 import type { ToastContainerProps, ToastPosition } from 'react-toastify'
-import type { ToastMessages } from '@hooks/useAction/types'
+
+export interface ToastMessages {
+  success?: string
+  pending?: string
+  error?: string
+}
 
 export const getToastContainerConfig = (theme: 'light' | 'dark'): ToastContainerProps => ({
   position: 'top-center' as ToastPosition,
