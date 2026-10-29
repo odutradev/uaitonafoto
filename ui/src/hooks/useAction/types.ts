@@ -4,10 +4,10 @@ export interface ToastMessages {
   error: string
 }
 
-export interface UseActionProps {
+export interface UseActionProps<TData = unknown> {
   toastMessages?: Partial<ToastMessages>
   onError?: (error: Error) => void
-  action: () => Promise<any>
-  callback?: (data: any) => any
+  action: () => Promise<TData>
+  callback?: (data: TData) => unknown
   silent?: boolean
 }

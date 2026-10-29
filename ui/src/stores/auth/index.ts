@@ -53,7 +53,7 @@ const useAuthStore = create<AuthStore>()(
     }),
     {
       storage: createJSONStorage(() => localStorage),
-      name: 'auth-store'
+      name: 'uaitonafoto-auth-store'
     }
   )
 )

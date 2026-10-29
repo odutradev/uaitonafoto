@@ -40,12 +40,12 @@ const useSystemStore = create<SystemStore>()(
         })),
       reset: () => {
         set({ system: systemStoreDefaultValues })
-        localStorage.removeItem('system-store')
+        localStorage.removeItem('uaitonafoto-system-store')
       }
     }),
     {
       storage: createJSONStorage(() => localStorage),
-      name: 'system-store'
+      name: 'uaitonafoto-system-store'
     }
   )
 )

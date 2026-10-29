@@ -13,7 +13,7 @@ export interface LogItem {
   userEmail?: string
   targetId?: string
   targetName?: string
-  details?: Record<string, any>
+  details?: Record<string, unknown>
   errorMessage?: string
   errorStack?: string
   ipAddress?: string

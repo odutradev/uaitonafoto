@@ -10,7 +10,3 @@ export const isValidCPF = (cpf: string): boolean => {
   }
   return calcDigit(10, 9) === Number(cleanCPF.charAt(9)) && calcDigit(11, 10) === Number(cleanCPF.charAt(10))
 }
-
-export const isValidRegistration = (registration: string): boolean => {
-  return /^[a-zA-Z]-\d{7}$/.test(registration)
-}

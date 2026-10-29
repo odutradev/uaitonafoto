@@ -4,11 +4,9 @@ export type User = {
   name: string
   email: string
   fullName?: string
-  department?: string
   phone?: string
   photoUrl?: string
   authProviderId?: string
-  notifySweepstakeResult?: boolean
   createdAt: string
   updatedAt: string
 }
@@ -34,8 +32,6 @@ export type UpdateUserPayload = {
   name?: string
   email?: string
   fullName?: string
-  department?: string
   phone?: string
   role?: 'admin' | 'user'
-  notifySweepstakeResult?: boolean
 }

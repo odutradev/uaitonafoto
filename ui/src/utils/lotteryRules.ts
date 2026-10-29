@@ -1,5 +1,3 @@
-import lotteriesRulesJson from '../data/lotteriesRules.json'
-
 export interface LotteryRule {
   name: string
   totalNumbers: number
@@ -10,7 +8,7 @@ export interface LotteryRule {
 
 export type LotteryRulesMap = Record<string, LotteryRule>
 
-export const LOTTERIES_RULES = lotteriesRulesJson as LotteryRulesMap
+export const LOTTERIES_RULES: LotteryRulesMap = {}
 
 export const normalizeLotteryKey = (type?: string): string => {
   if (!type) return 'megasena'
@@ -19,7 +17,15 @@ export const normalizeLotteryKey = (type?: string): string => {
 
 export const getLotteryRule = (type?: string): LotteryRule => {
   const key = normalizeLotteryKey(type)
-  return LOTTERIES_RULES[key] || LOTTERIES_RULES.megasena
+  return (
+    LOTTERIES_RULES[key] || {
+      name: key,
+      totalNumbers: 60,
+      minNumbers: 6,
+      maxNumbers: 6,
+      prices: {}
+    }
+  )
 }
 
 export const getGamePrice = (type: string | undefined, numbersCount: number): number => {
@@ -57,4 +63,3 @@ export const getEquivalentGamesCount = (type: string | undefined, numbersCount: 
   const rule = getLotteryRule(type)
   return combinations(numbersCount, rule.minNumbers)
 }
-

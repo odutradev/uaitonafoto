@@ -4,11 +4,11 @@ import { defaultToastMessages } from '@config/toastConfig'
 
 import type { UseActionProps } from './types'
 
-const useAction = async ({ toastMessages, callback, onError, action, silent }: UseActionProps): Promise<void> => {
+const useAction = async <TData = unknown>({ toastMessages, callback, onError, action, silent }: UseActionProps<TData>): Promise<void> => {
   const send = async () => {
     const result = await action()
     if (result && typeof result === 'object' && 'error' in result) {
-      throw new Error(result.error)
+      throw new Error(String((result as { error: unknown }).error))
     }
     if (callback) setTimeout(() => callback(result), 500)
   }

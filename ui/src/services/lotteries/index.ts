@@ -1,4 +1,4 @@
-﻿import axios from 'axios'
+import axios from 'axios'
 import api from '@services/api'
 import type { ListLotteriesResponse, LotteryItemResponse } from './types'
 
@@ -37,14 +37,14 @@ export const fetchDirectFromCaixa = async (type: string, contestNumber?: number)
     ? `https://servicebus2.caixa.gov.br/portaldeloterias/api/${normalizedType}/${contestNumber}`
     : `https://servicebus2.caixa.gov.br/portaldeloterias/api/${normalizedType}`
 
-  const response = await axios.get<any>(url, { timeout: 6000 })
+  const response = await axios.get<Record<string, unknown>>(url, { timeout: 6000 })
   const raw = response.data
 
   const contest = Number(raw.numero || raw.concurso)
   const nextContest = Number(raw.numeroConcursoProximo || raw.proximoConcurso) || contest + 1
-  const drawDate = parseDateToIso(raw.dataProximoConcurso || raw.dataApuracao || raw.data)
+  const drawDate = parseDateToIso((raw.dataProximoConcurso || raw.dataApuracao || raw.data) as string | undefined)
 
-  let dezenas = (raw.listaDezenas || raw.dezenasSorteadasOrdemSorteio || raw.dezenas || []).map(String)
+  let dezenas = ((raw.listaDezenas || raw.dezenasSorteadasOrdemSorteio || raw.dezenas || []) as unknown[]).map(String)
   if (normalizedType === 'duplasena' && dezenas.length > 6) {
     dezenas = dezenas.slice(0, 6)
   }

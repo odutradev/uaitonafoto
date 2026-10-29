@@ -11,12 +11,10 @@ export interface SyncResponse {
 }
 
 export interface UpdateMePayload {
-  department?: string
   fullName?: string
   photoUrl?: string
   phone?: string
   name?: string
-  notifySweepstakeResult?: boolean
 }
 
 export interface ForgotPasswordPayload {

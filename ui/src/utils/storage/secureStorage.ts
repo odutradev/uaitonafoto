@@ -2,7 +2,7 @@ import CryptoJS from 'crypto-js'
 
 import type { StateStorage } from 'zustand/middleware'
 
-const SECRET_KEY = import.meta.env.VITE_STORAGE_KEY ?? 'ui-fallback-secret-key-2026'
+const SECRET_KEY = import.meta.env.VITE_STORAGE_KEY ?? 'uaitonafoto-fallback-secret-key-2026'
 
 export const secureStorage: StateStorage = {
   getItem: (name: string): string | null => {

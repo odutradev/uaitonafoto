@@ -1,4 +1,4 @@
-const VERSION_STORAGE_KEY = 'ui_app_version'
+const VERSION_STORAGE_KEY = 'uaitonafoto_app_version'
 
 export const clearBrowserCaches = async (): Promise<void> => {
   try {

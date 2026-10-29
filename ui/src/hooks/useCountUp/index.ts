@@ -21,9 +21,8 @@ export const useCountUp = (target: number, duration = 2200, startDelay = 200): n
 
     const step = getStep(target)
     let animationFrameId: number
-    let timeoutId: ReturnType<typeof setTimeout>
 
-    timeoutId = setTimeout(() => {
+    const timeoutId = setTimeout(() => {
       const startTime = performance.now()
 
       const animate = (now: number) => {
