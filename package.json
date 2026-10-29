@@ -1,6 +1,6 @@
 {
   "name": "uaitonafoto",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "private": true,
   "description": "Plataforma em tempo real para compartilhamento e exibição de fotos em eventos — uai to na foto",
   "scripts": {
