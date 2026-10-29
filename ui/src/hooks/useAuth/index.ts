@@ -1,4 +1,13 @@
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signInWithPopup, GoogleAuthProvider, OAuthProvider, updateProfile, signOut } from 'firebase/auth'
+import {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  onAuthStateChanged,
+  signInWithPopup,
+  GoogleAuthProvider,
+  OAuthProvider,
+  updateProfile,
+  signOut
+} from 'firebase/auth'
 import { useCallback, useEffect } from 'react'
 
 import { syncAuthUser } from '@services/auth/sync'
@@ -30,6 +39,11 @@ const useAuth = (): UseAuthReturn => {
   )
 
   useEffect(() => {
+    if (!firebaseAuth) {
+      setLoading(false)
+      return
+    }
+
     const unsubscribe = onAuthStateChanged(firebaseAuth, async (currentUser) => {
       if (!currentUser) {
         clearAuth()
@@ -50,29 +64,45 @@ const useAuth = (): UseAuthReturn => {
   }, [handleSync, clearAuth, setLoading])
 
   const loginWithEmail = async ({ email, password }: LoginCredentials) => {
+    if (!firebaseAuth) {
+      throw new Error('Firebase não configurado. Adicione as credenciais no .env para autenticar.')
+    }
     const { user } = await signInWithEmailAndPassword(firebaseAuth, email, password)
     await handleSync(user, 'password')
   }
 
   const registerWithEmail = async ({ password, email, name }: RegisterCredentials) => {
+    if (!firebaseAuth) {
+      throw new Error('Firebase não configurado. Adicione as credenciais no .env para autenticar.')
+    }
     const { user } = await createUserWithEmailAndPassword(firebaseAuth, email, password)
     await updateProfile(user, { displayName: name })
     await handleSync(user, 'password', name)
   }
 
   const loginWithGoogle = async () => {
+    if (!firebaseAuth) {
+      throw new Error('Firebase não configurado. Adicione as credenciais no .env para autenticar.')
+    }
     const provider = new GoogleAuthProvider()
     const { user } = await signInWithPopup(firebaseAuth, provider)
     await handleSync(user, 'google.com')
   }
 
   const loginWithApple = async () => {
+    if (!firebaseAuth) {
+      throw new Error('Firebase não configurado. Adicione as credenciais no .env para autenticar.')
+    }
     const provider = new OAuthProvider('apple.com')
     const { user } = await signInWithPopup(firebaseAuth, provider)
     await handleSync(user, 'apple.com')
   }
 
   const logout = async () => {
+    if (!firebaseAuth) {
+      clearAuth()
+      return
+    }
     setLoading(true)
     await signOut(firebaseAuth)
     clearAuth()

@@ -63,7 +63,7 @@ api.interceptors.response.use(
       isRefreshing = true
 
       try {
-        const currentUser = firebaseAuth.currentUser
+        const currentUser = firebaseAuth?.currentUser
         if (!currentUser) throw new Error('Sessão expirada')
 
         const firebaseToken = await currentUser.getIdToken(true)
