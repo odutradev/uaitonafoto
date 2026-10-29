@@ -54,18 +54,11 @@ export default defineConfig(({ mode }) => {
         '@assets': path.resolve(__dirname, './src/assets'),
         '@components': path.resolve(__dirname, './src/components'),
         '@config': path.resolve(__dirname, './src/config'),
-        '@core': path.resolve(__dirname, './src/core'),
         '@hooks': path.resolve(__dirname, './src/hooks'),
         '@interceptor': path.resolve(__dirname, './src/api/interceptor'),
-        '@lib': path.resolve(__dirname, './src/lib'),
-        '@modules': path.resolve(__dirname, './src/modules'),
         '@pages': path.resolve(__dirname, './src/pages'),
-        '@services': path.resolve(__dirname, './src/services'),
-        '@shareds': path.resolve(__dirname, './src/shareds'),
         '@stores': path.resolve(__dirname, './src/stores'),
         '@theme': path.resolve(__dirname, './src/theme'),
-        '@appTypes': path.resolve(__dirname, './src/types'),
-        '@utils': path.resolve(__dirname, './src/utils'),
         '@': path.resolve(__dirname, './src')
       }
     },
