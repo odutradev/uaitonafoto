@@ -9,7 +9,7 @@
 
 ## **Guia Estrutural e Arquitetural do Frontend (UI)**
 
-Este documento define os padrões para desenvolvimento no Frontend. Toda a aplicação fica centralizada em `src/`, utilizando path aliases dedicados por módulo (`@assets`, `@components`, `@config`, `@hooks`, `@pages`, `@services`, `@stores`, `@theme`, `@utils`) além do alias base `@/*`.
+Este documento define os padrões para desenvolvimento no Frontend. Toda a aplicação fica centralizada em `src/`, utilizando path aliases dedicados por módulo (`@assets`, `@components`, `@config`, `@hooks`, `@pages`, `@services`, `@stores`, `@theme`) além do alias base `@/*`.
 
 ### **Estrutura de Diretórios**
 
