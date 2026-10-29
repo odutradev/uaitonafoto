@@ -187,6 +187,14 @@ export const getAppTheme = (mode: 'light' | 'dark'): Theme => {
               borderColor: isLight ? brandColors.tinta : brandColors.amareloFlash,
               borderWidth: '2px'
             }
+          },
+          input: {
+            '&:-webkit-autofill': {
+              WebkitBoxShadow: `0 0 0 100px ${isLight ? '#FFFFFF' : brandColors.darkPaper} inset`,
+              WebkitTextFillColor: isLight ? brandColors.tinta : brandColors.darkTextPrimary,
+              caretColor: isLight ? brandColors.tinta : brandColors.darkTextPrimary,
+              borderRadius: 'inherit'
+            }
           }
         }
       }
