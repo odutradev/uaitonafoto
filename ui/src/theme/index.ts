@@ -228,3 +228,4 @@ export const getAppTheme = (mode: 'light' | 'dark'): Theme => {
     }
   })
 }
+
