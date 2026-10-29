@@ -464,7 +464,7 @@ const Home = () => {
             >
               <Stack spacing={0.5}>
                 <Typography variant="subtitle1" fontWeight={800} color="text.primary">
-                  marina entrou na foto
+                  marina adicionou uma foto
                 </Typography>
                 <Typography variant="caption" color="text.secondary">
                   há 2 minutos
