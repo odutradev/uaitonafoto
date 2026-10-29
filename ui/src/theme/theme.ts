@@ -104,10 +104,35 @@ export const getAppTheme = (mode: 'light' | 'dark'): Theme => {
     components: {
       MuiCssBaseline: {
         styleOverrides: {
+          html: {
+            scrollbarWidth: 'thin',
+            scrollbarColor: 'rgba(255, 207, 31, 0.45) transparent'
+          },
           body: {
             backgroundColor: isLight ? brandColors.papel : brandColors.darkBg,
             color: isLight ? brandColors.tinta : brandColors.darkTextPrimary,
             transition: 'background-color 0.3s ease, color 0.3s ease'
+          },
+          '*::-webkit-scrollbar': {
+            width: '8px',
+            height: '8px'
+          },
+          '*::-webkit-scrollbar-track': {
+            backgroundColor: 'transparent'
+          },
+          '*::-webkit-scrollbar-thumb': {
+            backgroundColor: 'rgba(255, 207, 31, 0.45)',
+            borderRadius: '9999px',
+            transition: 'background-color 0.2s ease',
+            '&:hover': {
+              backgroundColor: 'rgba(255, 207, 31, 0.75)'
+            },
+            '&:active': {
+              backgroundColor: 'rgba(255, 207, 31, 0.9)'
+            }
+          },
+          '*::-webkit-scrollbar-corner': {
+            backgroundColor: 'transparent'
           }
         }
       },
