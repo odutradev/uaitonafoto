@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 290 64" fill="none">
+  <g transform="translate(0, 0)">
+    <rect x="4" y="4" width="56" height="56" rx="17" fill="#FFCF1F"/>
+    <circle cx="37.5" cy="27.5" r="11" fill="#17140F"/>
+  </g>
+  <text x="74" y="45" font-family="'Bricolage Grotesque', Arial, sans-serif" font-size="36" font-weight="800" letter-spacing="-0.045em" fill="#FFCF1F">uai to na foto</text>
+</svg>
