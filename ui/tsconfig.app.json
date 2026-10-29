@@ -21,6 +21,8 @@
     "baseUrl": "./",
     "paths": {
       "@/*": ["./src/*"],
+      "@actions": ["./src/api/actions"],
+      "@actions/*": ["./src/api/actions/*"],
       "@assets": ["./src/assets"],
       "@assets/*": ["./src/assets/*"],
       "@components": ["./src/components"],
@@ -31,6 +33,8 @@
       "@core/*": ["./src/core/*"],
       "@hooks": ["./src/hooks"],
       "@hooks/*": ["./src/hooks/*"],
+      "@interceptor": ["./src/api/interceptor"],
+      "@interceptor/*": ["./src/api/interceptor/*"],
       "@modules": ["./src/modules"],
       "@modules/*": ["./src/modules/*"],
       "@pages": ["./src/pages"],

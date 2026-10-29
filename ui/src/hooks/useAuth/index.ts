@@ -10,8 +10,7 @@ import {
 } from 'firebase/auth'
 import { useCallback, useEffect } from 'react'
 
-import { syncAuthUser } from '@services/auth/sync'
-import { firebaseAuth } from '@services/auth/firebase'
+import { syncAuthUser, firebaseAuth } from '@actions/auth'
 import useAuthStore from '@stores/auth'
 
 import type { RegisterCredentials, LoginCredentials, UseAuthReturn } from './types'

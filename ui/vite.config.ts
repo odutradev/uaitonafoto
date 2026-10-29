@@ -50,11 +50,13 @@ export default defineConfig(({ mode }) => {
     resolve: {
       alias: {
         '@mui/styled-engine': '@mui/styled-engine-sc',
+        '@actions': path.resolve(__dirname, './src/api/actions'),
         '@assets': path.resolve(__dirname, './src/assets'),
         '@components': path.resolve(__dirname, './src/components'),
         '@config': path.resolve(__dirname, './src/config'),
         '@core': path.resolve(__dirname, './src/core'),
         '@hooks': path.resolve(__dirname, './src/hooks'),
+        '@interceptor': path.resolve(__dirname, './src/api/interceptor'),
         '@lib': path.resolve(__dirname, './src/lib'),
         '@modules': path.resolve(__dirname, './src/modules'),
         '@pages': path.resolve(__dirname, './src/pages'),

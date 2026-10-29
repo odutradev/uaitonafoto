@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { confirmPasswordReset, requestPasswordReset } from '@services/auth/passwordReset'
+import { confirmPasswordReset, requestPasswordReset } from '@actions/auth'
 import useQueryParams from '@hooks/useQueryParams'
 import type { FormEvent } from 'react'
 

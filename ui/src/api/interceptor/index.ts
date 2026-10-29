@@ -1,11 +1,11 @@
 import axios from 'axios'
 
-import { firebaseAuth } from '@services/auth/firebase'
+import { firebaseAuth } from '@actions/auth/firebase'
 import useAuthStore from '@stores/auth'
 import defaultConfig from '@config/default'
 
 import type { AxiosInstance } from 'axios'
-import type { SyncResponse } from '@services/auth/types'
+import type { SyncResponse } from '@actions/auth/types'
 import type { QueueItem, RetryConfig } from './types'
 
 const api: AxiosInstance = axios.create({
