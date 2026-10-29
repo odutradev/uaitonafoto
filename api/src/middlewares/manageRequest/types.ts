@@ -1,4 +1,4 @@
-import type { ResponseErrorsParams } from '@/error/types'
+import type { ResponseErrorsParams } from '@error/types'
 import type { Request, Response } from 'express'
 import type { z } from 'zod'
 

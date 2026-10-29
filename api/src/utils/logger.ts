@@ -1,4 +1,4 @@
-﻿import { formatTimestamp } from '@/utils/date'
+import { formatTimestamp } from '@utils/date'
 
 export type Logger = {
   success: (message: unknown, ...args: unknown[]) => void

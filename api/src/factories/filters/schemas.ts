@@ -1,7 +1,7 @@
-﻿import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi'
+import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi'
 import { z } from 'zod'
 
-import type { FilterConfig } from '@/factories/filters/types'
+import type { FilterConfig } from '@factories/filters/types'
 
 extendZodWithOpenApi(z)
 

@@ -8,7 +8,7 @@
 
 ## **Guia Estrutural e Arquitetural da API**
 
-Este documento define os padrões para desenvolvimento na API. Toda a aplicação fica centralizada diretamente em `src/`, utilizando o alias base `@/*`.
+Este documento define os padrões para desenvolvimento na API. Toda a aplicação fica centralizada diretamente em `src/`, utilizando path aliases dedicados por módulo (`@actions`, `@config`, `@database`, `@docs`, `@email`, `@error`, `@factories`, `@middlewares`, `@repositories`, `@routes`, `@services`, `@appTypes`, `@utils`) além do alias base `@/*`.
 
 ### **Estrutura de Diretórios**
 
@@ -38,11 +38,11 @@ A pasta `src/` organiza a aplicação de forma limpa e modular:
 As ações **não usam** controllers tradicionais do Express. Elas usam a factory `defineAction` que integra rotas, validação Zod, OpenAPI e injeção de dependências (`ids`, `manageError`).
 
 ```ts
-import defineAction from '@/factories/defineAction'  
+import defineAction from '@factories/defineAction'
 import { schemaExemplo } from './schemas'  
-import repositorioEntidade from '@/repositories/entidade'
+import repositorioEntidade from '@repositories/entidade'
 
-import type { ManageRequestResponse, ManageRequestBody } from '@/middlewares/manageRequest/types'  
+import type { ManageRequestResponse, ManageRequestBody } from '@middlewares/manageRequest/types'
 import type { ExemploRequest, ExemploResponse } from './types'
 
 export const criarExemplo = defineAction(  
@@ -77,10 +77,10 @@ Toda validação e documentação deve ser feita via Zod com o plugin `@asteasol
 import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi'  
 import { z } from 'zod'
 
-import { createPaginatedSchema, paginationQuerySchema } from '@/factories/pagination/schemas'  
-import { createFilterQuerySchema } from '@/factories/filters/schemas'
+import { createPaginatedSchema, paginationQuerySchema } from '@factories/pagination/schemas'
+import { createFilterQuerySchema } from '@factories/filters/schemas'
 
-import type { FilterConfig } from '@/factories/filters/types'
+import type { FilterConfig } from '@factories/filters/types'
 
 extendZodWithOpenApi(z)
 
@@ -128,13 +128,13 @@ export type ListEntidadesResponse = z.infer<typeof listEntidadesResponseSchema>
 Centraliza as interações com o Firebase Realtime Database. Utiliza filtragem em memória para compensar limitações do RTDB em consultas complexas.
 
 ```ts
-import { firebaseDb } from '@/database/connection'
-import { entidadeFiltersConfig } from '@/actions/entidade/schemas'  
-import { parseFilters, applyInMemoryFilters } from '@/factories/filters/utils'  
-import { getPaginationOptions, buildPaginatedResponse } from '@/factories/pagination/utils'
+import { firebaseDb } from '@database'
+import { entidadeFiltersConfig } from '@actions/entidade/schemas'
+import { parseFilters, applyInMemoryFilters } from '@factories/filters/utils'
+import { getPaginationOptions, buildPaginatedResponse } from '@factories/pagination/utils'
 
 import type { FindAllEntidadeFilters, CreateEntidadePayload, EntidadeType } from './types'  
-import type { PaginatedResponse } from '@/factories/pagination/types'  
+import type { PaginatedResponse } from '@factories/pagination/types'
 
 const REF_PATH = 'entidades'
 
@@ -180,8 +180,8 @@ As rotas são organizadas por domínio em arquivos dedicados (`routes/<dominio>.
 ```ts
 // routes/entidade.routes.ts
 import { Router } from 'express'
-import { criarExemplo } from '@/actions/entidade/index'
-import authMiddleware from '@/middlewares/auth'
+import { criarExemplo } from '@actions/entidade'
+import authMiddleware from '@middlewares/auth'
 
 const entidadeRoutes = Router()
 
@@ -193,7 +193,7 @@ export default entidadeRoutes
 ```ts
 // routes/api.ts
 import { Router } from 'express'
-import entidadeRoutes from '@/routes/entidade.routes'
+import entidadeRoutes from '@routes/entidade.routes'
 
 const apiRouter = Router()
 

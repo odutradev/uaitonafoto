@@ -1,4 +1,4 @@
-﻿import type { FilterConfig } from '@/factories/filters/types'
+import type { FilterConfig } from '@factories/filters/types'
 
 export const parseFilters = (filtersString?: string, config?: FilterConfig): Record<string, string> => {
   if (!filtersString) return {}

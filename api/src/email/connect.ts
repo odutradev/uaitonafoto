@@ -1,7 +1,7 @@
-﻿import nodemailer from 'nodemailer'
+import nodemailer from 'nodemailer'
 
 import { markdownPlugin } from '@email/markdownPlugin'
-import createLogger from '@/utils/logger'
+import createLogger from '@utils/logger'
 
 import type { EmailTransporter, EmailInstance, EmailModule, EmailConfig } from '@email/types'
 

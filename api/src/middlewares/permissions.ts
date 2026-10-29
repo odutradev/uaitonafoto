@@ -1,4 +1,4 @@
-﻿import sendError from '@/error/index'
+import sendError from '@error'
 
 import type { NextFunction, Response, Request } from 'express'
 

@@ -1,6 +1,6 @@
-import { firebaseDb } from '@/database/connection'
-import { removeUndefined } from '@/utils/object'
-import createLogger from '@/utils/logger'
+import { firebaseDb } from '@database'
+import { removeUndefined } from '@utils/object'
+import createLogger from '@utils/logger'
 
 import type { CreateLogPayload, LogEntity } from './types'
 
@@ -30,3 +30,4 @@ const logRepository = {
 }
 
 export default logRepository
+

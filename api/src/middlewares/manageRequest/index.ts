@@ -1,7 +1,7 @@
-import createLogger from '@/utils/logger'
-import sendError from '@/error'
+import createLogger from '@utils/logger'
+import sendError from '@error'
 
-import type { ManageRequestBody, ManageErrorParams, ServiceFunction, RouteSchema, ManageRequestSchema, FileData } from '@/middlewares/manageRequest/types'
+import type { ManageRequestBody, ManageErrorParams, ServiceFunction, RouteSchema, ManageRequestSchema, FileData } from '@middlewares/manageRequest/types'
 import type { RequestHandler, Response, Request } from 'express'
 import type { z } from 'zod'
 

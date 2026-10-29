@@ -1,7 +1,7 @@
-import manageRequest from '@/middlewares/manageRequest'
-import { registry } from '@/docs/registry'
+import manageRequest from '@middlewares/manageRequest'
+import { registry } from '@docs/registry'
 
-import type { ManageRequestSchema, ServiceFunction, RouteSchema } from '@/middlewares/manageRequest/types'
+import type { ManageRequestSchema, ServiceFunction, RouteSchema } from '@middlewares/manageRequest/types'
 import type { RouteConfig } from '@asteasolutions/zod-to-openapi'
 import type { ActionMetadata, ResponseConfig } from './types'
 import type { RequestHandler } from 'express'

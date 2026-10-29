@@ -1,7 +1,7 @@
 import { Router } from 'express'
 
-import { forgotPassword, resetPassword, syncAuthUser, updateMe, getMe } from '@/actions/auth/index'
-import authMiddleware from '@/middlewares/auth'
+import { forgotPassword, resetPassword, syncAuthUser, updateMe, getMe } from '@actions/auth'
+import authMiddleware from '@middlewares/auth'
 
 const authRoutes = Router()
 

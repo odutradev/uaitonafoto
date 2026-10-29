@@ -1,5 +1,5 @@
-import { firebaseDb } from '@/database/connection'
-import { removeUndefined } from '@/utils/object'
+import { firebaseDb } from '@database'
+import { removeUndefined } from '@utils/object'
 
 import type { UpdateUserPayload, UpsertUserPayload, UserEntity } from './types'
 
@@ -80,3 +80,4 @@ const userRepository = {
 }
 
 export default userRepository
+

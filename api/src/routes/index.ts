@@ -1,8 +1,8 @@
 import swaggerUi from 'swagger-ui-express'
 
-import { generateDocs } from '@/docs/generator'
-import { appConfig } from '@/config/app'
-import apiRouter from '@/routes/api'
+import { generateDocs } from '@docs/generator'
+import { appConfig } from '@config/app'
+import apiRouter from '@routes/api'
 
 import type { Application, Response, Request, NextFunction } from 'express'
 

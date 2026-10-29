@@ -1,16 +1,16 @@
 import jwt from 'jsonwebtoken'
 
 import { forgotPasswordSchema, resetPasswordSchema, syncResponseSchema, updateUserSchema, syncUserSchema, userSchema } from './schemas'
-import { passwordResetTemplate } from '@/email/templates/passwordReset'
-import { authRateLimiter } from '@/middlewares/rateLimit'
-import { getJwtSecret } from '@/config/env'
-import { firebaseAuth } from '@/database/connection'
-import userRepository from '@/repositories/user/index'
-import logRepository from '@/repositories/log/index'
-import defineAction from '@/factories/defineAction'
+import { passwordResetTemplate } from '@email/templates/passwordReset'
+import { authRateLimiter } from '@middlewares/rateLimit'
+import { getJwtSecret } from '@config/env'
+import { firebaseAuth } from '@database'
+import userRepository from '@repositories/user'
+import logRepository from '@repositories/log'
+import defineAction from '@factories/defineAction'
 
 import type { ForgotPasswordRequest, ResetPasswordRequest, SyncUserResponse, UpdateUserRequest, SyncUserRequest, UserResponse } from './types'
-import type { ManageRequestResponse, ManageRequestBody } from '@/middlewares/manageRequest/types'
+import type { ManageRequestResponse, ManageRequestBody } from '@middlewares/manageRequest/types'
 
 interface PasswordResetTokenPayload {
   purpose: 'password-reset'

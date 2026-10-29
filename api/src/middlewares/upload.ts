@@ -1,5 +1,5 @@
 import multer, { MulterError } from 'multer'
-import sendError from '@/error'
+import sendError from '@error'
 import type { Request, Response, NextFunction } from 'express'
 
 export const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB

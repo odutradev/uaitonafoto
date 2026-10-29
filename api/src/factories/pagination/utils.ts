@@ -1,4 +1,4 @@
-﻿import type { PaginatedResponse, PaginatedData, PaginationQuery } from '@/factories/pagination/types'
+import type { PaginatedResponse, PaginatedData, PaginationQuery } from '@factories/pagination/types'
 
 export const getPaginationOptions = (query?: PaginationQuery) => {
   const page = Math.max(1, query?.page ?? 1)

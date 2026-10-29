@@ -1,4 +1,4 @@
-import createLogger from '@/utils/logger'
+import createLogger from '@utils/logger'
 
 import type { ErrorCatalogEntry, ResponseErrorsParams, SendErrorParams } from './types'
 
@@ -38,3 +38,4 @@ const sendError = ({ res, code, error, details, local }: SendErrorParams): void 
 }
 
 export default sendError
+

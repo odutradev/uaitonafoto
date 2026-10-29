@@ -1,5 +1,5 @@
-import { firebaseApp } from '@/database/connection'
-import createLogger from '@/utils/logger'
+import { firebaseApp } from '@database/connection'
+import createLogger from '@utils/logger'
 
 const logger = createLogger('database')
 

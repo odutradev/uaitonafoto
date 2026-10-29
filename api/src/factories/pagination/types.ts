@@ -1,4 +1,4 @@
-﻿import { paginationQuerySchema } from '@/factories/pagination/schemas'
+import { paginationQuerySchema } from '@factories/pagination/schemas'
 
 import type { z } from 'zod'
 

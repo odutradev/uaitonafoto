@@ -1,5 +1,5 @@
 import rateLimit from 'express-rate-limit'
-import sendError from '@/error'
+import sendError from '@error'
 
 export const globalRateLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,

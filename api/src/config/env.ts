@@ -1,4 +1,4 @@
-import createLogger from '@/utils/logger'
+import createLogger from '@utils/logger'
 
 const logger = createLogger('env')
 
@@ -44,3 +44,4 @@ export const validateEnv = (): void => {
     process.exit(1)
   }
 }
+
