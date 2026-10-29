@@ -588,19 +588,6 @@ const Home = () => {
           <Typography variant="body2" color="text.secondary">
             © {new Date().getFullYear()} uai to na foto. todos os direitos reservados.
           </Typography>
-
-          <Stack direction="row" spacing={1} alignItems="center">
-            <ThemeToggle showTooltip={false} size="small" />
-            <Button
-              component={RouterLink}
-              to="/login"
-              variant="text"
-              size="small"
-              sx={{ color: 'text.primary', fontWeight: 700 }}
-            >
-              Login
-            </Button>
-          </Stack>
         </Container>
       </Box>
     </Box>
