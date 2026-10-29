@@ -1,7 +1,7 @@
 import { Box, Button, Chip, Container, Stack, Typography } from '@mui/material'
 import { ArrowForward as ArrowForwardIcon } from '@mui/icons-material'
 import { Link as RouterLink } from 'react-router-dom'
-import { brandColors } from '@theme/theme'
+import { brandColors } from '@theme'
 
 import {
   getChipStyles,
@@ -25,7 +25,7 @@ export const Hero = ({ data, isDark }: HeroProps) => {
                 width: 8,
                 height: 8,
                 borderRadius: '50%',
-                bgcolor: isDark ? brandColors.amareloFlash : brandColors.tinta,
+                bgcolor: isDark ? brandColors.flashYellow : brandColors.ink,
                 ml: 1
               }}
             />

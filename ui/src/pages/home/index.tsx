@@ -1,7 +1,7 @@
 import { Box, Container } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 
-import { brandColors } from '@theme/theme'
+import { brandColors } from '@theme'
 import {
   finalCtaData,
   footerData,
@@ -24,10 +24,10 @@ import {
 const Home = () => {
   const theme = useTheme()
   const isDark = theme.palette.mode === 'dark'
-  const liveWallAccent = isDark ? brandColors.amareloFlash : brandColors.tinta
+  const liveWallAccent = isDark ? brandColors.flashYellow : brandColors.ink
   const mosaicTiles = isDark
     ? [brandColors.darkSurface, brandColors.darkBorder, brandColors.darkPaper]
-    : [brandColors.areia, brandColors.areiaDark, brandColors.bordaClara]
+    : [brandColors.sand, brandColors.sandDark, brandColors.lightBorder]
 
   return (
     <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', bgcolor: 'background.default' }}>

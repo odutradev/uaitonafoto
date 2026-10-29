@@ -1,5 +1,5 @@
 import type { SxProps, Theme } from '@mui/material'
-import { brandColors } from '@theme/theme'
+import { brandColors } from '@theme'
 import type { LogoDimensions, LogoSize } from './types'
 
 export const getLogoDimensions = (size: LogoSize): LogoDimensions => {
@@ -24,7 +24,7 @@ export const getLogoContainerStyles = (isDark: boolean, gap: number | string): S
   gap,
   userSelect: 'none',
   textDecoration: 'none',
-  color: isDark ? brandColors.amareloFlash : brandColors.tinta
+  color: isDark ? brandColors.flashYellow : brandColors.ink
 })
 
 export const getLogoTextStyles = (fontSize: number | string): SxProps<Theme> => ({

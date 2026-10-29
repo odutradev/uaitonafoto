@@ -1,5 +1,5 @@
 import type { SxProps, Theme } from '@mui/material'
-import { brandColors } from '@theme/theme'
+import { brandColors } from '@theme'
 
 export const heroContainerStyles: SxProps<Theme> = {
   pt: { xs: 6, md: 10 },
@@ -12,8 +12,8 @@ export const heroStackStyles: SxProps<Theme> = {
 }
 
 export const getChipStyles = (isDark: boolean): SxProps<Theme> => ({
-  bgcolor: isDark ? brandColors.darkSurface : brandColors.areia,
-  color: isDark ? brandColors.amareloFlash : brandColors.tinta,
+  bgcolor: isDark ? brandColors.darkSurface : brandColors.sand,
+  color: isDark ? brandColors.flashYellow : brandColors.ink,
   fontWeight: 700,
   fontSize: '0.875rem',
   letterSpacing: '0.02em',

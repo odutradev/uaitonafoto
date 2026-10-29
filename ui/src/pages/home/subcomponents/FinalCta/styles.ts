@@ -1,8 +1,8 @@
 import type { SxProps, Theme } from '@mui/material'
-import { brandColors } from '@theme/theme'
+import { brandColors } from '@theme'
 
 export const getCtaBoxStyles = (isDark: boolean): SxProps<Theme> => ({
-  bgcolor: isDark ? brandColors.darkPaper : brandColors.areia,
+  bgcolor: isDark ? brandColors.darkPaper : brandColors.sand,
   color: 'text.primary',
   borderRadius: '32px',
   p: { xs: 4, sm: 6, md: 8 },

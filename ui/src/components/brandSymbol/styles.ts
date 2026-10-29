@@ -1,5 +1,5 @@
 import type { CSSProperties } from 'react'
-import { brandColors } from '@theme/theme'
+import { brandColors } from '@theme'
 
 export const baseSvgStyles: CSSProperties = {
   flexShrink: 0,
@@ -8,6 +8,6 @@ export const baseSvgStyles: CSSProperties = {
 }
 
 export const getSymbolColors = (isDark: boolean) => ({
-  rectFill: isDark ? brandColors.amareloFlash : brandColors.tinta,
-  circleFill: isDark ? brandColors.tinta : brandColors.amareloFlash
+  rectFill: isDark ? brandColors.flashYellow : brandColors.ink,
+  circleFill: isDark ? brandColors.ink : brandColors.flashYellow
 })

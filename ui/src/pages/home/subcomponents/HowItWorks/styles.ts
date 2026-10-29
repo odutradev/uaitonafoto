@@ -1,8 +1,8 @@
 import type { SxProps, Theme } from '@mui/material'
-import { brandColors } from '@theme/theme'
+import { brandColors } from '@theme'
 
 export const getSectionBoxStyles = (isDark: boolean): SxProps<Theme> => ({
-  bgcolor: isDark ? brandColors.darkSurface : brandColors.areia,
+  bgcolor: isDark ? brandColors.darkSurface : brandColors.sand,
   py: { xs: 8, md: 10 },
   borderTop: 1,
   borderBottom: 1,
@@ -43,14 +43,14 @@ export const stepCardStyles: SxProps<Theme> = {
 export const getStepIconBoxStyles = (isStep2: boolean, isDark: boolean): SxProps<Theme> => {
   const iconBg = isStep2
     ? isDark
-      ? brandColors.amareloFlash
-      : brandColors.tinta
-    : brandColors.amareloFlash
+      ? brandColors.flashYellow
+      : brandColors.ink
+    : brandColors.flashYellow
   const iconColor = isStep2
     ? isDark
-      ? brandColors.tinta
-      : brandColors.amareloFlash
-    : brandColors.tinta
+      ? brandColors.ink
+      : brandColors.flashYellow
+    : brandColors.ink
 
   return {
     width: 56,

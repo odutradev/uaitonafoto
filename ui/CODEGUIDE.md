@@ -108,7 +108,7 @@ Isole todos os estilos visuais utilizando a tipagem `SxProps<Theme>` do MUI ou f
 
 ```ts
 import type { SxProps, Theme } from '@mui/material'
-import { brandColors } from '@theme/theme'
+import { brandColors } from '@theme'
 
 export const getLogoContainerStyles = (isDark: boolean, gap: number | string): SxProps<Theme> => ({
   display: 'inline-flex',
@@ -116,7 +116,7 @@ export const getLogoContainerStyles = (isDark: boolean, gap: number | string): S
   gap,
   userSelect: 'none',
   textDecoration: 'none',
-  color: isDark ? brandColors.amareloFlash : brandColors.tinta
+  color: isDark ? brandColors.flashYellow : brandColors.ink
 })
 ```
 

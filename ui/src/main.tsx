@@ -8,7 +8,7 @@ import { StrictMode, useMemo } from 'react'
 import { initCacheAndVersionManager } from '@utils/cacheManager'
 import { getToastContainerConfig } from '@config/toastConfig'
 import useSystemStore from '@stores/system'
-import { getAppTheme } from '@theme/theme'
+import { getAppTheme } from '@theme'
 import appRouter from '@/router'
 
 initCacheAndVersionManager()

@@ -1,5 +1,5 @@
 import type { SxProps, Theme } from '@mui/material'
-import { brandColors } from '@theme/theme'
+import { brandColors } from '@theme'
 
 export const guestFeedContainerStyles: SxProps<Theme> = {
   bgcolor: 'background.paper',
@@ -14,13 +14,13 @@ export const guestFeedContainerStyles: SxProps<Theme> = {
 
 export const getGuestFeedChipStyles = (isDark: boolean): SxProps<Theme> => ({
   alignSelf: 'flex-start',
-  bgcolor: isDark ? brandColors.darkSurface : brandColors.areia,
+  bgcolor: isDark ? brandColors.darkSurface : brandColors.sand,
   color: 'text.primary',
   fontWeight: 700
 })
 
 export const getActivityBoxStyles = (isDark: boolean): SxProps<Theme> => ({
-  bgcolor: isDark ? brandColors.darkSurface : brandColors.papel,
+  bgcolor: isDark ? brandColors.darkSurface : brandColors.paper,
   p: 2.5,
   borderRadius: '20px',
   border: 1,
@@ -34,11 +34,11 @@ export const heartIconBoxStyles: SxProps<Theme> = {
   width: 44,
   height: 44,
   borderRadius: '50%',
-  bgcolor: brandColors.amareloFlash,
+  bgcolor: brandColors.flashYellow,
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  color: brandColors.tinta
+  color: brandColors.ink
 }
 
 export const guestFeedButtonStyles: SxProps<Theme> = {

@@ -1,5 +1,5 @@
 import type { SxProps, Theme } from '@mui/material'
-import { brandColors } from '@theme/theme'
+import { brandColors } from '@theme'
 
 export const getLiveWallOuterBoxStyles = (isDark: boolean): SxProps<Theme> => ({
   bgcolor: isDark ? brandColors.darkBg : 'background.paper',
@@ -32,7 +32,7 @@ export const getLiveWallBadgeStyles = (liveWallAccent: string): SxProps<Theme> =
 })
 
 export const getLiveWallScreenStyles = (isDark: boolean): SxProps<Theme> => ({
-  bgcolor: isDark ? brandColors.darkPaper : brandColors.areia,
+  bgcolor: isDark ? brandColors.darkPaper : brandColors.sand,
   borderRadius: '20px',
   p: { xs: 3, sm: 4 },
   display: 'flex',
