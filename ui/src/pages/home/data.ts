@@ -1,4 +1,73 @@
-export const landingPageData = {
+export interface LinkItem {
+  text: string
+  href: string
+}
+
+export interface HeaderData {
+  loginButton: LinkItem
+}
+
+export interface HeroData {
+  tag: string
+  title: string
+  description: string
+  primaryCta: LinkItem
+  secondaryCta: LinkItem
+}
+
+export interface StepItem {
+  id: string
+  icon: 'qr_code' | 'camera' | 'tv' | string
+  title: string
+  description: string
+}
+
+export interface HowItWorksData {
+  title: string
+  subtitle: string
+  steps: StepItem[]
+}
+
+export interface LiveWallData {
+  brandName: string
+  badge: string
+  title: string
+  description: string
+  qrInstruction: string
+}
+
+export interface GuestFeedData {
+  badge: string
+  title: string
+  description: string
+  activityCard: {
+    action: string
+    timeAgo: string
+  }
+  cta: LinkItem
+}
+
+export interface FinalCtaData {
+  title: string
+  description: string
+  button: LinkItem
+}
+
+export interface FooterData {
+  copyrightSuffix: string
+}
+
+export interface LandingPageData {
+  header: HeaderData
+  hero: HeroData
+  howItWorks: HowItWorksData
+  liveWall: LiveWallData
+  guestFeed: GuestFeedData
+  finalCta: FinalCtaData
+  footer: FooterData
+}
+
+export const landingPageData: LandingPageData = {
   header: {
     loginButton: {
       text: 'Entrar',
