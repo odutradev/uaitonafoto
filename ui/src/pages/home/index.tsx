@@ -24,6 +24,10 @@ import { brandColors } from '@theme/theme'
 const Home = () => {
   const theme = useTheme()
   const isDark = theme.palette.mode === 'dark'
+  const liveWallAccent = isDark ? brandColors.amareloFlash : brandColors.tinta
+  const mosaicTiles = isDark
+    ? [brandColors.darkSurface, brandColors.darkBorder, brandColors.darkPaper]
+    : [brandColors.areia, brandColors.areiaDark, brandColors.bordaClara]
 
   return (
     <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', bgcolor: 'background.default' }}>
@@ -318,28 +322,28 @@ const Home = () => {
         >
           <Box
             sx={{
-              bgcolor: '#12100C',
-              color: brandColors.papel,
+              bgcolor: isDark ? brandColors.darkBg : 'background.paper',
+              color: 'text.primary',
               borderRadius: '28px',
               p: { xs: 3, md: 4.5 },
               display: 'flex',
               flexDirection: 'column',
               gap: 3,
               border: 1,
-              borderColor: brandColors.darkBorder,
-              boxShadow: '0 20px 40px rgba(0, 0, 0, 0.4)'
+              borderColor: 'divider',
+              boxShadow: isDark ? '0 20px 40px rgba(0, 0, 0, 0.4)' : '0 20px 40px rgba(23, 20, 15, 0.08)'
             }}
           >
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                <BrandSymbol size={32} variant="dark" />
+                <BrandSymbol size={32} variant="auto" />
                 <Typography
                   sx={{
                     fontFamily: "'Bricolage Grotesque', sans-serif",
                     fontWeight: 800,
                     fontSize: '1.25rem',
                     letterSpacing: '-0.04em',
-                    color: brandColors.amareloFlash
+                    color: liveWallAccent
                   }}
                 >
                   uai to na foto
@@ -350,21 +354,21 @@ const Home = () => {
                   display: 'flex',
                   alignItems: 'center',
                   gap: 1,
-                  color: brandColors.amareloFlash,
+                  color: liveWallAccent,
                   fontSize: '0.8rem',
                   fontWeight: 700,
                   letterSpacing: '0.06em',
                   textTransform: 'uppercase'
                 }}
               >
-                <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: brandColors.amareloFlash }} />
+                <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: liveWallAccent }} />
                 telão ao vivo
               </Box>
             </Box>
 
             <Box
               sx={{
-                bgcolor: '#1E1A14',
+                bgcolor: isDark ? brandColors.darkPaper : brandColors.areia,
                 borderRadius: '20px',
                 p: { xs: 3, sm: 4 },
                 display: 'flex',
@@ -374,21 +378,22 @@ const Home = () => {
                 gap: 3,
                 textAlign: { xs: 'center', sm: 'left' },
                 minHeight: 220,
-                border: `1px solid ${brandColors.darkBorder}`
+                border: 1,
+                borderColor: 'divider'
               }}
             >
               <Box>
                 <Typography
                   variant="h3"
                   sx={{
-                    color: brandColors.amareloFlash,
+                    color: liveWallAccent,
                     fontSize: { xs: '1.75rem', sm: '2.1rem' },
                     mb: 1
                   }}
                 >
                   transmita em smart tvs e projetores
                 </Typography>
-                <Typography variant="body1" sx={{ color: '#CFC8B8', maxWidth: '420px', lineHeight: 1.5 }}>
+                <Typography variant="body1" sx={{ color: 'text.secondary', maxWidth: '420px', lineHeight: 1.5 }}>
                   Modo 16:9 otimizado com destaque de cada foto por 5 segundos antes de alimentar o mosaico ao vivo.
                 </Typography>
               </Box>
@@ -407,7 +412,7 @@ const Home = () => {
                 </Box>
                 <Typography
                   variant="caption"
-                  sx={{ color: '#CFC8B8', fontWeight: 700, textAlign: 'center', maxWidth: 130 }}
+                  sx={{ color: 'text.secondary', fontWeight: 700, textAlign: 'center', maxWidth: 130 }}
                 >
                   escaneie e entre no telão
                 </Typography>
@@ -415,10 +420,10 @@ const Home = () => {
             </Box>
 
             <Stack direction="row" spacing={1.5}>
-              <Box sx={{ flex: 1, height: 48, bgcolor: '#28231B', borderRadius: '12px' }} />
-              <Box sx={{ flex: 1, height: 48, bgcolor: '#383227', borderRadius: '12px' }} />
-              <Box sx={{ flex: 1, height: 48, bgcolor: '#1E1A14', borderRadius: '12px' }} />
-              <Box sx={{ flex: 1, height: 48, bgcolor: '#28231B', borderRadius: '12px' }} />
+              <Box sx={{ flex: 1, height: 48, bgcolor: mosaicTiles[0], borderRadius: '12px' }} />
+              <Box sx={{ flex: 1, height: 48, bgcolor: mosaicTiles[1], borderRadius: '12px' }} />
+              <Box sx={{ flex: 1, height: 48, bgcolor: mosaicTiles[2], borderRadius: '12px' }} />
+              <Box sx={{ flex: 1, height: 48, bgcolor: mosaicTiles[0], borderRadius: '12px' }} />
             </Stack>
           </Box>
 
@@ -504,8 +509,8 @@ const Home = () => {
       <Container maxWidth="lg" sx={{ pb: { xs: 8, md: 10 } }}>
         <Box
           sx={{
-            bgcolor: isDark ? brandColors.darkPaper : brandColors.tinta,
-            color: brandColors.papel,
+            bgcolor: isDark ? brandColors.darkPaper : brandColors.areia,
+            color: 'text.primary',
             borderRadius: '32px',
             p: { xs: 4, sm: 6, md: 8 },
             textAlign: 'center',
@@ -514,16 +519,16 @@ const Home = () => {
             alignItems: 'center',
             gap: 3.5,
             border: 1,
-            borderColor: isDark ? brandColors.darkBorder : 'transparent',
-            boxShadow: '0 20px 40px rgba(0, 0, 0, 0.3)'
+            borderColor: 'divider',
+            boxShadow: isDark ? '0 20px 40px rgba(0, 0, 0, 0.3)' : '0 20px 40px rgba(23, 20, 15, 0.08)'
           }}
         >
-          <Logo size="large" variant="dark" />
+          <Logo size="large" variant="auto" />
 
           <Typography
             variant="h2"
             sx={{
-              color: brandColors.papel,
+              color: 'text.primary',
               fontSize: { xs: '2rem', sm: '3rem', md: '3.75rem' },
               maxWidth: '780px'
             }}
@@ -534,7 +539,7 @@ const Home = () => {
           <Typography
             variant="body1"
             sx={{
-              color: '#CFC8B8',
+              color: 'text.secondary',
               fontSize: { xs: '1.1rem', sm: '1.25rem' },
               maxWidth: '560px'
             }}
