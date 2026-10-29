@@ -43,8 +43,6 @@
       "@stores/*": ["./src/stores/*"],
       "@theme": ["./src/theme"],
       "@theme/*": ["./src/theme/*"],
-      "@appTypes": ["./src/types"],
-      "@appTypes/*": ["./src/types/*"],
       "@utils": ["./src/utils"],
       "@utils/*": ["./src/utils/*"]
     }
