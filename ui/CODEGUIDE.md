@@ -21,16 +21,16 @@ A pasta `src/` organiza a aplicação de forma limpa, modular e desacoplada:
 * `src/stores/` (Gerenciamento de estado global com Zustand)
 * `src/services/` (Comunicação com APIs externas e serviços Firebase)
 * `src/hooks/` (Hooks customizados reutilizáveis)
-* `src/components/` (Componentes compartilhados e globais)
+* `src/components/` (Componentes compartilhados e globais — sem barrel file)
 * `src/pages/` (Páginas da aplicação e seus subcomponentes locais)
 
 ---
 
 ### **Padrão Obrigatório de Pastas: A Tríade (index, styles, types)**
 
-Tanto os componentes compartilhados (`src/components/`) quanto as páginas e seus subcomponentes (`src/pages/`) devem **obrigatoriamente** ser organizados em pastas individuais contendo a seguinte estrutura com 3 arquivos:
+Tanto os componentes compartilhados (`src/components/`) quanto as páginas e seus subcomponentes (`src/pages/`) devem **obrigatoriamente** ser organizados em pastas individuais (convenção camelCase) contendo a seguinte estrutura com 3 arquivos:
 
-1. `index.tsx`: O componente React responsável pela lógica e estrutura do JSX. Exporta o componente de forma nomeada e default, e reexporta suas interfaces de propriedades.
+1. `index.tsx`: O componente React com a estrutura do JSX. Deve conter **apenas** `export default NomeComponente`. **Não** deve reexportar tipos do arquivo `types.ts`.
 2. `styles.ts`: Objeto de estilos ou funções geradoras com tipagem `SxProps<Theme>` do Material-UI (`@mui/material`). Nenhum estilo inline complexo deve permanecer no JSX.
 3. `types.ts`: Definições de tipos, contratos e interfaces TypeScript exclusivas do componente.
 
@@ -46,12 +46,13 @@ src/components/
 │   ├── index.tsx
 │   ├── styles.ts
 │   └── types.ts
-├── brandSymbol/
-│   ├── index.tsx
-│   ├── styles.ts
-│   └── types.ts
-└── index.ts  <-- Barrel export centralizado de todos os componentes
+└── brandSymbol/
+    ├── index.tsx
+    ├── styles.ts
+    └── types.ts
 ```
+
+> **Atenção:** **NÃO deve existir** arquivo barrel (`src/components/index.ts`) para reexportar componentes. Todo consumo deve ser feito via import direto pelo path alias: `import Logo from '@components/logo'`.
 
 #### **Estrutura de Exemplo para Páginas (`src/pages/`):**
 
@@ -84,7 +85,7 @@ src/pages/
 
 ---
 
-### **Regras de Implementação**
+### **Regras de Implementação para Componentes**
 
 #### **1. Types (`types.ts`)**
 Centralize todas as interfaces e tipos que definem as propriedades e variações visuais aceitas pelo componente:
@@ -103,7 +104,7 @@ export interface LogoProps extends BoxProps {
 ```
 
 #### **2. Styles (`styles.ts`)**
-Isole todos os estilos visuais utilizando a tipagem `SxProps<Theme>` do MUI ou funções que dependem do tema / propriedades:
+Isole todos os estilos visuais utilizando a tipagem `SxProps<Theme>` do MUI ou funções geradoras:
 
 ```ts
 import type { SxProps, Theme } from '@mui/material'
@@ -120,7 +121,7 @@ export const getLogoContainerStyles = (isDark: boolean, gap: number | string): S
 ```
 
 #### **3. Componente (`index.tsx`)**
-Consome os estilos e os tipos criados nos arquivos adjacentes, mantendo o JSX limpo e focado em apresentação estrutural:
+Consome os estilos e os tipos criados nos arquivos adjacentes. Deve manter apenas o `export default`:
 
 ```tsx
 import { Box } from '@mui/material'
@@ -129,7 +130,7 @@ import { useTheme } from '@mui/material/styles'
 import { getLogoContainerStyles } from './styles'
 import type { LogoProps } from './types'
 
-export const Logo = ({ size = 'medium', sx, ...rest }: LogoProps) => {
+const Logo = ({ size = 'medium', sx, ...rest }: LogoProps) => {
   const theme = useTheme()
   const isDark = theme.palette.mode === 'dark'
 
@@ -144,18 +145,22 @@ export const Logo = ({ size = 'medium', sx, ...rest }: LogoProps) => {
   )
 }
 
-export type { LogoProps } from './types'
 export default Logo
 ```
 
-#### **4. Barrel Export (`src/components/index.ts`)**
-Todos os componentes são centralizados e exportados através de `src/components/index.ts` para facilitar os imports pelo alias `@components/index` ou `@components`:
+#### **4. Padrão de Importação Direta (Sem Barrel File)**
+Importe componentes diretamente pela pasta correspondente utilizando default import:
 
-```ts
-export { BrandSymbol } from './brandSymbol'
-export type { BrandSymbolProps } from './brandSymbol'
-export { Logo } from './logo'
-export type { LogoProps } from './logo'
-export { ThemeToggle } from './themeToggle'
-export type { ThemeToggleProps } from './themeToggle'
+```tsx
+// Correto:
+import Logo from '@components/logo'
+import ThemeToggle from '@components/themeToggle'
+import BrandSymbol from '@components/brandSymbol'
+
+// Caso necessite tipagens externamente, importe diretamente de /types:
+import type { LogoProps } from '@components/logo/types'
+
+// Proibido:
+// import { Logo } from '@components/index'
+// import { Logo } from '@components'
 ```
