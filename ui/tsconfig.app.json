@@ -31,8 +31,6 @@
       "@core/*": ["./src/core/*"],
       "@hooks": ["./src/hooks"],
       "@hooks/*": ["./src/hooks/*"],
-      "@lib": ["./src/lib"],
-      "@lib/*": ["./src/lib/*"],
       "@modules": ["./src/modules"],
       "@modules/*": ["./src/modules/*"],
       "@pages": ["./src/pages"],

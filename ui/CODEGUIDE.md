@@ -9,7 +9,7 @@
 
 ## **Guia Estrutural e Arquitetural do Frontend (UI)**
 
-Este documento define os padrões para desenvolvimento no Frontend. Toda a aplicação fica centralizada em `src/`, utilizando path aliases dedicados por módulo (`@assets`, `@components`, `@config`, `@hooks`, `@lib`, `@pages`, `@services`, `@stores`, `@theme`, `@appTypes`, `@utils`) além do alias base `@/*`.
+Este documento define os padrões para desenvolvimento no Frontend. Toda a aplicação fica centralizada em `src/`, utilizando path aliases dedicados por módulo (`@assets`, `@components`, `@config`, `@hooks`, `@pages`, `@services`, `@stores`, `@theme`, `@appTypes`, `@utils`) além do alias base `@/*`.
 
 ### **Estrutura de Diretórios**
 
@@ -19,7 +19,7 @@ A pasta `src/` organiza a aplicação de forma limpa, modular e desacoplada:
 * `src/router.tsx` (Definição de rotas da aplicação via React Router)
 * `src/theme/` (Configurações do tema MUI, paleta de cores e tipografia)
 * `src/stores/` (Gerenciamento de estado global com Zustand)
-* `src/services/` (Comunicação com APIs externas e serviços Firebase)
+* `src/services/` (Comunicação com APIs externas e inicialização centralizada do Firebase Auth em `services/auth/firebase.ts`)
 * `src/hooks/` (Hooks customizados reutilizáveis)
 * `src/components/` (Componentes compartilhados e globais — sem barrel file)
 * `src/pages/` (Páginas da aplicação e seus subcomponentes locais)
