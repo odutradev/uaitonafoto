@@ -366,29 +366,52 @@ const Home = () => {
               sx={{
                 bgcolor: '#1E1A14',
                 borderRadius: '20px',
-                p: { xs: 3, sm: 5 },
+                p: { xs: 3, sm: 4 },
                 display: 'flex',
-                flexDirection: 'column',
+                flexDirection: { xs: 'column', sm: 'row' },
                 alignItems: 'center',
-                justifyContent: 'center',
-                textAlign: 'center',
+                justifyContent: 'space-between',
+                gap: 3,
+                textAlign: { xs: 'center', sm: 'left' },
                 minHeight: 220,
                 border: `1px solid ${brandColors.darkBorder}`
               }}
             >
-              <Typography
-                variant="h3"
-                sx={{
-                  color: brandColors.amareloFlash,
-                  fontSize: { xs: '1.75rem', sm: '2.4rem' },
-                  mb: 1
-                }}
-              >
-                transmita em smart tvs e projetores
-              </Typography>
-              <Typography variant="body1" sx={{ color: '#CFC8B8', maxWidth: '420px', lineHeight: 1.5 }}>
-                Modo 16:9 otimizado com destaque de cada foto por 5 segundos antes de alimentar o mosaico ao vivo.
-              </Typography>
+              <Box>
+                <Typography
+                  variant="h3"
+                  sx={{
+                    color: brandColors.amareloFlash,
+                    fontSize: { xs: '1.75rem', sm: '2.1rem' },
+                    mb: 1
+                  }}
+                >
+                  transmita em smart tvs e projetores
+                </Typography>
+                <Typography variant="body1" sx={{ color: '#CFC8B8', maxWidth: '420px', lineHeight: 1.5 }}>
+                  Modo 16:9 otimizado com destaque de cada foto por 5 segundos antes de alimentar o mosaico ao vivo.
+                </Typography>
+              </Box>
+
+              <Stack spacing={1} alignItems="center" sx={{ flexShrink: 0 }}>
+                <Box
+                  sx={{
+                    p: 1,
+                    bgcolor: '#FFFFFF',
+                    borderRadius: '14px',
+                    lineHeight: 0,
+                    border: `3px solid ${brandColors.amareloFlash}`
+                  }}
+                >
+                  <QrCodeIcon sx={{ fontSize: 96, color: brandColors.tinta }} />
+                </Box>
+                <Typography
+                  variant="caption"
+                  sx={{ color: '#CFC8B8', fontWeight: 700, textAlign: 'center', maxWidth: 130 }}
+                >
+                  escaneie e entre no telão
+                </Typography>
+              </Stack>
             </Box>
 
             <Stack direction="row" spacing={1.5}>
