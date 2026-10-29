@@ -374,17 +374,7 @@ const Home = () => {
               </Box>
 
               <Stack spacing={1} alignItems="center" sx={{ flexShrink: 0 }}>
-                <Box
-                  sx={{
-                    p: 1,
-                    bgcolor: '#FFFFFF',
-                    borderRadius: '14px',
-                    lineHeight: 0,
-                    border: `3px solid ${brandColors.amareloFlash}`
-                  }}
-                >
-                  <QrCodeIcon sx={{ fontSize: 96, color: brandColors.tinta }} />
-                </Box>
+                <QrCodeIcon sx={{ fontSize: { xs: 80, sm: 96 }, color: 'primary.main' }} />
                 <Typography
                   variant="caption"
                   sx={{ color: 'text.secondary', fontWeight: 700, textAlign: 'center', maxWidth: 130 }}
