@@ -25,3 +25,4 @@ export interface SendErrorParams {
   details?: unknown
   local?: string
 }
+

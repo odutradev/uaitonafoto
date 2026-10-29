@@ -22,3 +22,4 @@ export interface LogEntity extends CreateLogPayload {
   id: string
   createdAt: string
 }
+

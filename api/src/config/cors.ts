@@ -32,3 +32,4 @@ const configureCors = (): RequestHandler => {
 }
 
 export default configureCors
+

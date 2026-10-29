@@ -35,3 +35,4 @@ export const appConfig: AppConfig = {
   mode: process.env.NODE_ENV || process.env.ENV || 'development',
   version: resolvePackageVersion()
 }
+
