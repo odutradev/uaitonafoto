@@ -1,4 +1,4 @@
-import { getLotteryRule } from './lotteryRules'
+import { getLotteryRule } from '@utils/lotteryRules'
 
 export interface GameAllocationItem {
   numbersCount: number

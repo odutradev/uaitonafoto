@@ -1,0 +1,6 @@
+export { default as ResetPassword } from './resetPassword'
+export { default as ErrorPage } from './errorPage'
+export { default as NotFound } from './notFound'
+export { default as Login } from './login'
+export { default as Home } from './home'
+

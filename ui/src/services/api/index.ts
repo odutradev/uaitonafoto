@@ -1,10 +1,10 @@
-﻿import axios from 'axios'
+import axios from 'axios'
 
 import { firebaseAuth } from '@lib/firebase/config'
 import useAuthStore from '@stores/auth'
 
 import type { InternalAxiosRequestConfig, AxiosInstance } from 'axios'
-import type { SyncResponse } from '../auth/types'
+import type { SyncResponse } from '@services/auth/types'
 import defaultConfig from '@config/default'
 
 interface RetryConfig extends InternalAxiosRequestConfig {

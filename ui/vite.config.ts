@@ -56,20 +56,21 @@ export default defineConfig(({ mode }) => {
     resolve: {
       alias: {
         '@mui/styled-engine': '@mui/styled-engine-sc',
-        '@components': path.resolve(__dirname, './src/components'),
-        '@services': path.resolve(__dirname, './src/services'),
-        '@appTypes': path.resolve(__dirname, './src/types'),
-        '@modules': path.resolve(__dirname, './src/modules'),
-        '@shareds': path.resolve(__dirname, './src/shareds'),
-        '@config': path.resolve(__dirname, './src/config'),
         '@assets': path.resolve(__dirname, './src/assets'),
+        '@components': path.resolve(__dirname, './src/components'),
+        '@config': path.resolve(__dirname, './src/config'),
+        '@core': path.resolve(__dirname, './src/core'),
+        '@hooks': path.resolve(__dirname, './src/hooks'),
+        '@lib': path.resolve(__dirname, './src/lib'),
+        '@modules': path.resolve(__dirname, './src/modules'),
+        '@pages': path.resolve(__dirname, './src/pages'),
+        '@services': path.resolve(__dirname, './src/services'),
+        '@shareds': path.resolve(__dirname, './src/shareds'),
         '@stores': path.resolve(__dirname, './src/stores'),
         '@theme': path.resolve(__dirname, './src/theme'),
+        '@appTypes': path.resolve(__dirname, './src/types'),
         '@utils': path.resolve(__dirname, './src/utils'),
-        '@hooks': path.resolve(__dirname, './src/hooks'),
-        '@pages': path.resolve(__dirname, './src/pages'),
-        '@core': path.resolve(__dirname, './src/core'),
-        '@lib': path.resolve(__dirname, './src/lib')
+        '@': path.resolve(__dirname, './src')
       }
     },
     build: {

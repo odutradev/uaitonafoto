@@ -1,11 +1,7 @@
 import { createBrowserRouter } from 'react-router-dom'
 import { createElement } from 'react'
 
-import ResetPassword from '@pages/resetPassword'
-import ErrorPage from '@pages/errorPage'
-import NotFound from '@pages/notFound'
-import Login from '@pages/login'
-import Home from '@pages/home'
+import { ErrorPage, Home, Login, NotFound, ResetPassword } from '@pages'
 
 import type { RouteObject } from 'react-router-dom'
 import type { AppRoute } from '@appTypes/module'

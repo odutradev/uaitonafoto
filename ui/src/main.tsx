@@ -9,7 +9,7 @@ import { initCacheAndVersionManager } from '@utils/cacheManager'
 import { getToastContainerConfig } from '@config/toastConfig'
 import useSystemStore from '@stores/system'
 import { getAppTheme } from '@theme/theme'
-import appRouter from './router'
+import appRouter from '@/router'
 
 initCacheAndVersionManager()
 
