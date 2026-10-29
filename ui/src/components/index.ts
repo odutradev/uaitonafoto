@@ -1,6 +1,0 @@
-export { BrandSymbol } from './brandSymbol'
-export type { BrandSymbolProps } from './brandSymbol'
-export { Logo } from './logo'
-export type { LogoProps } from './logo'
-export { ThemeToggle } from './themeToggle'
-export type { ThemeToggleProps } from './themeToggle'
