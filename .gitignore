@@ -1,0 +1,59 @@
+# Dependencies
+node_modules/
+*/node_modules/
+
+# Production builds
+dist/
+*/dist/
+dist-ssr/
+build/
+*/build/
+.next/
+out/
+.vite/
+.vercel/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Coverage
+coverage/
+
+# Environment files and API keys
+.env
+.env.*
+!.env.example
+*.local
+api/.env
+ui/.env
+
+# OS metadata
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+ehthumbs.db
+
+# IDEs
+.idea/
+*.iml
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Merged files
+*-merged.txt
