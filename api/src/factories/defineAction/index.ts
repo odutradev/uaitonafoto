@@ -1,11 +1,16 @@
-﻿import manageRequest from '@/middlewares/manageRequest'
+import manageRequest from '@/middlewares/manageRequest'
 import { registry } from '@/docs/registry'
 
 import type { ManageRequestSchema, ServiceFunction, RouteSchema } from '@/middlewares/manageRequest/types'
+import type { RouteConfig } from '@asteasolutions/zod-to-openapi'
 import type { ActionMetadata, ResponseConfig } from './types'
 import type { RequestHandler } from 'express'
 
-const defineAction = <T extends ManageRequestSchema = unknown>(metadata: ActionMetadata, service: ServiceFunction<T>, schema?: RouteSchema): RequestHandler | RequestHandler[] => {
+const defineAction = <T extends ManageRequestSchema = ManageRequestSchema>(
+  metadata: ActionMetadata,
+  service: ServiceFunction<T>,
+  schema?: RouteSchema
+): RequestHandler | RequestHandler[] => {
   const defaultResponses: Record<string, ResponseConfig> = {
     200: { description: 'Sucesso' },
     400: { description: 'Requisição inválida' },
@@ -18,7 +23,7 @@ const defineAction = <T extends ManageRequestSchema = unknown>(metadata: ActionM
   }
 
   const mergedResponses = { ...defaultResponses, ...metadata.responses }
-  const responses: Record<string, unknown> = {}
+  const responses: RouteConfig['responses'] = {}
 
   Object.entries(mergedResponses).forEach(([code, value]) => {
     responses[code] = {

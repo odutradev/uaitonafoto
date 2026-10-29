@@ -1,8 +1,10 @@
+import type { ZodRequestBody } from '@asteasolutions/zod-to-openapi'
 import type { RequestHandler } from 'express'
+import type { z } from 'zod'
 
 export type ResponseConfig = {
   description: string
-  schema?: unknown
+  schema?: z.ZodTypeAny
 }
 
 export type ActionMetadata = {
@@ -15,5 +17,5 @@ export type ActionMetadata = {
   security?: Array<Record<string, string[]>>
   responses?: Record<string, ResponseConfig>
   middlewares?: RequestHandler[]
-  requestBody?: unknown
+  requestBody?: ZodRequestBody
 }

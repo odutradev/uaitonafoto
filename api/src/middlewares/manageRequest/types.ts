@@ -1,4 +1,4 @@
-﻿import type { ResponseErrorsParams } from '@/error/types'
+import type { ResponseErrorsParams } from '@/error/types'
 import type { Request, Response } from 'express'
 import type { z } from 'zod'
 
@@ -40,7 +40,7 @@ export type RouteSchema = {
   body?: z.AnyZodObject
 }
 
-export type ManageRequestBody<T extends ManageRequestSchema = unknown> = {
+export type ManageRequestBody<T extends ManageRequestSchema = ManageRequestSchema> = {
   manageError: (data: ManageErrorParams) => void
   defaultExpress: DefaultExpressContext
   ids: RequestIdentifiers
@@ -50,6 +50,6 @@ export type ManageRequestBody<T extends ManageRequestSchema = unknown> = {
   file?: FileData
 }
 
-export type ServiceFunction<T extends ManageRequestSchema = unknown> = (
+export type ServiceFunction<T extends ManageRequestSchema = ManageRequestSchema> = (
   requestBody: ManageRequestBody<T>
 ) => ManageRequestResponse | unknown

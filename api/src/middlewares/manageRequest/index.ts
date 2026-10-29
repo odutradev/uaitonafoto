@@ -14,7 +14,7 @@ const formatZodError = (error: z.ZodError) => {
   }))
 }
 
-const manageRequest = <T extends ManageRequestSchema = unknown>(
+const manageRequest = <T extends ManageRequestSchema = ManageRequestSchema>(
   service: ServiceFunction<T>,
   schema?: RouteSchema
 ): RequestHandler => {
@@ -44,7 +44,7 @@ const manageRequest = <T extends ManageRequestSchema = unknown>(
 
           if (!result.success) return manageError({ code: 'validation_error', error: result.error, details: formatZodError(result.error) })
 
-          req.query = result.data as unknown
+          req.query = result.data as typeof req.query
         }
 
         if (schema.body) {
