@@ -1,0 +1,19 @@
+{
+  "name": "monorepo",
+  "version": "3.1.1",
+  "private": true,
+  "description": "",
+  "scripts": {
+    "dev": "concurrently -n \"API,UI\" -c \"blue,magenta\" \"npm run dev:api\" \"npm run dev:ui\"",
+    "dev:api": "npm --prefix api run dev",
+    "dev:ui": "npm --prefix ui run dev",
+    "build:api": "npm --prefix api run build",
+    "build:ui": "npm --prefix ui run build",
+    "build": "npm run build:api && npm run build:ui",
+    "publish": "npx pub --bump-package --build --push"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.6",
+    "project-publisher": "latest"
+  }
+}
