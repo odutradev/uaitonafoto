@@ -49,33 +49,6 @@ const Home = () => {
         </RouterLink>
 
         <Stack direction="row" spacing={1.5} alignItems="center">
-          <Box
-            sx={{
-              display: { xs: 'none', sm: 'flex' },
-              alignItems: 'center',
-              gap: 1,
-              fontSize: '0.8125rem',
-              fontWeight: 800,
-              letterSpacing: '0.08em',
-              textTransform: 'uppercase',
-              color: isDark ? brandColors.amareloFlash : brandColors.tinta,
-              px: 1.5,
-              py: 0.5,
-              borderRadius: '9999px',
-              bgcolor: isDark ? 'rgba(255, 207, 31, 0.1)' : 'rgba(23, 20, 15, 0.05)'
-            }}
-          >
-            <Box
-              sx={{
-                width: 8,
-                height: 8,
-                borderRadius: '50%',
-                bgcolor: isDark ? brandColors.amareloFlash : brandColors.tinta
-              }}
-            />
-            <span>ao vivo</span>
-          </Box>
-
           <ThemeToggle />
 
           <Button
