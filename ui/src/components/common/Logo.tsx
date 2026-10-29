@@ -10,10 +10,6 @@ export interface LogoProps extends BoxProps {
   symbolOnly?: boolean
 }
 
-/**
- * Logo oficial uaiToNaFoto:
- * Símbolo + letreiro tipográfico em Bricolage Grotesque ExtraBold (uaiToNaFoto).
- */
 export const Logo = ({
   size = 'medium',
   variant = 'auto',

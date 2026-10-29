@@ -27,7 +27,6 @@ const Home = () => {
 
   return (
     <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', bgcolor: 'background.default' }}>
-      {/* ─── NAVBAR ─── */}
       <Box
         component="header"
         sx={{
@@ -97,7 +96,6 @@ const Home = () => {
         </Stack>
       </Box>
 
-      {/* ─── HERO SECTION ─── */}
       <Container maxWidth="lg" sx={{ pt: { xs: 6, md: 10 }, pb: { xs: 6, md: 9 } }}>
         <Stack spacing={3.5} alignItems="center" textAlign="center" maxWidth="860px" mx="auto">
           <Chip
@@ -194,7 +192,6 @@ const Home = () => {
         </Stack>
       </Container>
 
-      {/* ─── ZERO FRICÇÃO / COMO FUNCIONA ─── */}
       <Box
         sx={{
           bgcolor: isDark ? brandColors.darkSurface : brandColors.areia,
@@ -235,7 +232,6 @@ const Home = () => {
               gap: 3.5
             }}
           >
-            {/* Passo 1 */}
             <Card
               elevation={0}
               sx={{
@@ -269,7 +265,6 @@ const Home = () => {
               </CardContent>
             </Card>
 
-            {/* Passo 2 */}
             <Card
               elevation={0}
               sx={{
@@ -303,7 +298,6 @@ const Home = () => {
               </CardContent>
             </Card>
 
-            {/* Passo 3 */}
             <Card
               elevation={0}
               sx={{
@@ -340,7 +334,6 @@ const Home = () => {
         </Container>
       </Box>
 
-      {/* ─── DUPLA EXPERIÊNCIA (FEED MOBILE & TELÃO) ─── */}
       <Container maxWidth="lg" sx={{ py: { xs: 8, md: 12 } }}>
         <Box
           sx={{
@@ -350,7 +343,6 @@ const Home = () => {
             alignItems: 'center'
           }}
         >
-          {/* Card Telão (Visual de Smart TV / Projeção cinematográfica) */}
           <Box
             sx={{
               bgcolor: '#12100C',
@@ -434,7 +426,6 @@ const Home = () => {
             </Stack>
           </Box>
 
-          {/* Card Mobile */}
           <Box
             sx={{
               bgcolor: 'background.paper',
@@ -514,7 +505,6 @@ const Home = () => {
         </Box>
       </Container>
 
-      {/* ─── CALL TO ACTION FINAL ─── */}
       <Container maxWidth="lg" sx={{ pb: { xs: 8, md: 10 } }}>
         <Box
           sx={{
@@ -576,7 +566,6 @@ const Home = () => {
         </Box>
       </Container>
 
-      {/* ─── FOOTER ─── */}
       <Box
         component="footer"
         sx={{

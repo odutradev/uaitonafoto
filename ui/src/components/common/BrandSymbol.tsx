@@ -6,10 +6,6 @@ export interface BrandSymbolProps extends SVGProps<SVGSVGElement> {
   variant?: 'light' | 'dark' | 'auto'
 }
 
-/**
- * Símbolo oficial uai to na foto:
- * Um quadro e uma pessoa dentro dele. O ponto fora do centro é o convidado entrando na foto.
- */
 export const BrandSymbol = ({
   size = 40,
   variant = 'auto',
