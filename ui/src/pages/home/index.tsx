@@ -8,6 +8,7 @@ import {
   Stack,
   Typography
 } from '@mui/material'
+import { useTheme } from '@mui/material/styles'
 import {
   ArrowForward as ArrowForwardIcon,
   ConnectedTv as ConnectedTvIcon,
@@ -17,56 +18,66 @@ import {
 } from '@mui/icons-material'
 import { Link as RouterLink } from 'react-router-dom'
 
-import { BrandSymbol, Logo } from '@components/index'
+import { BrandSymbol, Logo, ThemeToggle } from '@components/index'
 import { brandColors } from '@theme/theme'
 
 const Home = () => {
+  const theme = useTheme()
+  const isDark = theme.palette.mode === 'dark'
+
   return (
     <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', bgcolor: 'background.default' }}>
       {/* ─── NAVBAR ─── */}
       <Box
         component="header"
         sx={{
-          py: 2.5,
-          px: { xs: 2.5, md: 5 },
+          py: 2,
+          px: { xs: 2, md: 5 },
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          borderBottom: `1px solid ${brandColors.bordaClara}`,
-          bgcolor: 'background.default',
+          borderBottom: 1,
+          borderColor: 'divider',
+          bgcolor: isDark ? 'rgba(18, 16, 12, 0.85)' : 'rgba(251, 248, 241, 0.85)',
           position: 'sticky',
           top: 0,
           zIndex: 10,
-          backdropFilter: 'blur(8px)'
+          backdropFilter: 'blur(10px)'
         }}
       >
         <RouterLink to="/" style={{ textDecoration: 'none' }}>
-          <Logo size="medium" />
+          <Logo size="medium" variant="auto" />
         </RouterLink>
 
-        <Stack direction="row" spacing={2} alignItems="center">
+        <Stack direction="row" spacing={1.5} alignItems="center">
           <Box
             sx={{
               display: { xs: 'none', sm: 'flex' },
               alignItems: 'center',
               gap: 1,
-              fontSize: '0.875rem',
-              fontWeight: 700,
-              letterSpacing: '0.06em',
+              fontSize: '0.8125rem',
+              fontWeight: 800,
+              letterSpacing: '0.08em',
               textTransform: 'uppercase',
-              color: 'text.primary'
+              color: isDark ? brandColors.amareloFlash : brandColors.tinta,
+              px: 1.5,
+              py: 0.5,
+              borderRadius: '9999px',
+              bgcolor: isDark ? 'rgba(255, 207, 31, 0.1)' : 'rgba(23, 20, 15, 0.05)'
             }}
           >
             <Box
               sx={{
-                width: 10,
-                height: 10,
+                width: 8,
+                height: 8,
                 borderRadius: '50%',
-                bgcolor: 'text.primary'
+                bgcolor: isDark ? brandColors.amareloFlash : brandColors.tinta
               }}
             />
             <span>ao vivo</span>
           </Box>
+
+          <ThemeToggle />
 
           <Button
             component={RouterLink}
@@ -75,7 +86,11 @@ const Home = () => {
             color="primary"
             size="medium"
             endIcon={<ArrowForwardIcon />}
-            sx={{ px: 3, fontWeight: 800 }}
+            sx={{
+              px: 2.5,
+              fontWeight: 800,
+              fontSize: '0.9375rem'
+            }}
           >
             Entrar
           </Button>
@@ -83,21 +98,32 @@ const Home = () => {
       </Box>
 
       {/* ─── HERO SECTION ─── */}
-      <Container maxWidth="lg" sx={{ pt: { xs: 8, md: 12 }, pb: { xs: 8, md: 10 } }}>
-        <Stack spacing={4} alignItems="center" textAlign="center" maxWidth="860px" mx="auto">
+      <Container maxWidth="lg" sx={{ pt: { xs: 6, md: 10 }, pb: { xs: 6, md: 9 } }}>
+        <Stack spacing={3.5} alignItems="center" textAlign="center" maxWidth="860px" mx="auto">
           <Chip
-            icon={<Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: brandColors.tinta, ml: 1 }} />}
+            icon={
+              <Box
+                sx={{
+                  width: 8,
+                  height: 8,
+                  borderRadius: '50%',
+                  bgcolor: isDark ? brandColors.amareloFlash : brandColors.tinta,
+                  ml: 1
+                }}
+              />
+            }
             label="compartilhamento de fotos em tempo real"
             sx={{
-              bgcolor: brandColors.areia,
-              color: brandColors.tinta,
+              bgcolor: isDark ? brandColors.darkSurface : brandColors.areia,
+              color: isDark ? brandColors.amareloFlash : brandColors.tinta,
               fontWeight: 700,
               fontSize: '0.875rem',
               letterSpacing: '0.02em',
-              py: 2.5,
+              py: 2.2,
               px: 1,
               borderRadius: '9999px',
-              border: `1px solid ${brandColors.bordaClara}`
+              border: 1,
+              borderColor: 'divider'
             }}
           />
 
@@ -107,7 +133,7 @@ const Home = () => {
             sx={{
               fontSize: { xs: '2.5rem', sm: '3.75rem', md: '4.75rem' },
               letterSpacing: '-0.05em',
-              lineHeight: { xs: 1.05, md: 0.98 },
+              lineHeight: { xs: 1.08, md: 0.98 },
               color: 'text.primary'
             }}
           >
@@ -117,8 +143,8 @@ const Home = () => {
           <Typography
             variant="body1"
             sx={{
-              fontSize: { xs: '1.125rem', md: '1.35rem' },
-              lineHeight: 1.5,
+              fontSize: { xs: '1.125rem', md: '1.3rem' },
+              lineHeight: 1.55,
               color: 'text.secondary',
               maxWidth: '680px'
             }}
@@ -128,7 +154,11 @@ const Home = () => {
             Sem aplicativo e sem cadastro.
           </Typography>
 
-          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ pt: 2, width: { xs: '100%', sm: 'auto' } }}>
+          <Stack
+            direction={{ xs: 'column', sm: 'row' }}
+            spacing={2}
+            sx={{ pt: 1.5, width: { xs: '100%', sm: 'auto' } }}
+          >
             <Button
               component={RouterLink}
               to="/login"
@@ -165,13 +195,35 @@ const Home = () => {
       </Container>
 
       {/* ─── ZERO FRICÇÃO / COMO FUNCIONA ─── */}
-      <Box sx={{ bgcolor: brandColors.areia, py: { xs: 8, md: 10 }, borderTop: `1px solid ${brandColors.bordaClara}` }}>
+      <Box
+        sx={{
+          bgcolor: isDark ? brandColors.darkSurface : brandColors.areia,
+          py: { xs: 8, md: 10 },
+          borderTop: 1,
+          borderBottom: 1,
+          borderColor: 'divider',
+          transition: 'background-color 0.3s ease'
+        }}
+      >
         <Container maxWidth="lg">
           <Stack spacing={2} textAlign="center" alignItems="center" mb={6}>
-            <Typography variant="h2" sx={{ fontSize: { xs: '2rem', md: '2.75rem' } }}>
+            <Typography
+              variant="h2"
+              sx={{
+                fontSize: { xs: '2rem', md: '2.75rem' },
+                color: 'text.primary'
+              }}
+            >
               como o uai to na foto funciona
             </Typography>
-            <Typography variant="body1" color="text.secondary" sx={{ maxWidth: '540px', fontSize: '1.1rem' }}>
+            <Typography
+              variant="body1"
+              sx={{
+                maxWidth: '540px',
+                fontSize: '1.1rem',
+                color: 'text.secondary'
+              }}
+            >
               Três passos simples que qualquer convidado faz em menos de 10 segundos.
             </Typography>
           </Stack>
@@ -185,8 +237,8 @@ const Home = () => {
           >
             {/* Passo 1 */}
             <Card
+              elevation={0}
               sx={{
-                bgcolor: '#FFFFFF',
                 borderRadius: '24px',
                 p: 2,
                 display: 'flex',
@@ -200,18 +252,18 @@ const Home = () => {
                     height: 56,
                     borderRadius: '16px',
                     bgcolor: brandColors.amareloFlash,
+                    color: brandColors.tinta,
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'center',
-                    color: brandColors.tinta
+                    justifyContent: 'center'
                   }}
                 >
                   <QrCodeIcon sx={{ fontSize: 32 }} />
                 </Box>
-                <Typography variant="h4" sx={{ fontSize: '1.6rem' }}>
+                <Typography variant="h4" sx={{ fontSize: '1.6rem', color: 'text.primary' }}>
                   1. escaneia o qr code
                 </Typography>
-                <Typography variant="body1" color="text.secondary" sx={{ lineHeight: 1.5 }}>
+                <Typography variant="body1" sx={{ lineHeight: 1.6, color: 'text.secondary' }}>
                   O convidado aponta a câmera do celular para o QR Code na mesa ou no telão. Abre direto no navegador sem precisar instalar nada.
                 </Typography>
               </CardContent>
@@ -219,8 +271,8 @@ const Home = () => {
 
             {/* Passo 2 */}
             <Card
+              elevation={0}
               sx={{
-                bgcolor: '#FFFFFF',
                 borderRadius: '24px',
                 p: 2,
                 display: 'flex',
@@ -233,19 +285,19 @@ const Home = () => {
                     width: 56,
                     height: 56,
                     borderRadius: '16px',
-                    bgcolor: brandColors.tinta,
+                    bgcolor: isDark ? brandColors.amareloFlash : brandColors.tinta,
+                    color: isDark ? brandColors.tinta : brandColors.amareloFlash,
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'center',
-                    color: brandColors.amareloFlash
+                    justifyContent: 'center'
                   }}
                 >
                   <PhotoCameraIcon sx={{ fontSize: 32 }} />
                 </Box>
-                <Typography variant="h4" sx={{ fontSize: '1.6rem' }}>
+                <Typography variant="h4" sx={{ fontSize: '1.6rem', color: 'text.primary' }}>
                   2. entra na foto
                 </Typography>
-                <Typography variant="body1" color="text.secondary" sx={{ lineHeight: 1.5 }}>
+                <Typography variant="body1" sx={{ lineHeight: 1.6, color: 'text.secondary' }}>
                   Informa apenas o primeiro nome, tira a foto ou escolhe da galeria. Compressão automática inteligente para redes móveis no evento.
                 </Typography>
               </CardContent>
@@ -253,8 +305,8 @@ const Home = () => {
 
             {/* Passo 3 */}
             <Card
+              elevation={0}
               sx={{
-                bgcolor: '#FFFFFF',
                 borderRadius: '24px',
                 p: 2,
                 display: 'flex',
@@ -268,18 +320,18 @@ const Home = () => {
                     height: 56,
                     borderRadius: '16px',
                     bgcolor: brandColors.amareloFlash,
+                    color: brandColors.tinta,
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'center',
-                    color: brandColors.tinta
+                    justifyContent: 'center'
                   }}
                 >
                   <ConnectedTvIcon sx={{ fontSize: 32 }} />
                 </Box>
-                <Typography variant="h4" sx={{ fontSize: '1.6rem' }}>
+                <Typography variant="h4" sx={{ fontSize: '1.6rem', color: 'text.primary' }}>
                   3. sobe pro telão
                 </Typography>
-                <Typography variant="body1" color="text.secondary" sx={{ lineHeight: 1.5 }}>
+                <Typography variant="body1" sx={{ lineHeight: 1.6, color: 'text.secondary' }}>
                   A foto ganha destaque instantâneo no telão da festa, integra o mosaico dinâmico e fica disponível para todos curtirem no feed mobile.
                 </Typography>
               </CardContent>
@@ -293,22 +345,24 @@ const Home = () => {
         <Box
           sx={{
             display: 'grid',
-            gridTemplateColumns: { xs: '1fr', md: '1.4fr 1fr' },
+            gridTemplateColumns: { xs: '1fr', md: '1.35fr 1fr' },
             gap: 4,
             alignItems: 'center'
           }}
         >
-          {/* Card Telão */}
+          {/* Card Telão (Visual de Smart TV / Projeção cinematográfica) */}
           <Box
             sx={{
-              bgcolor: brandColors.tinta,
+              bgcolor: '#12100C',
               color: brandColors.papel,
               borderRadius: '28px',
               p: { xs: 3, md: 4.5 },
               display: 'flex',
               flexDirection: 'column',
               gap: 3,
-              boxShadow: '0 20px 40px rgba(23, 20, 15, 0.25)'
+              border: 1,
+              borderColor: brandColors.darkBorder,
+              boxShadow: '0 20px 40px rgba(0, 0, 0, 0.4)'
             }}
           >
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -326,7 +380,18 @@ const Home = () => {
                   uai to na foto
                 </Typography>
               </Box>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: brandColors.amareloFlash, fontSize: '0.8rem', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 1,
+                  color: brandColors.amareloFlash,
+                  fontSize: '0.8rem',
+                  fontWeight: 700,
+                  letterSpacing: '0.06em',
+                  textTransform: 'uppercase'
+                }}
+              >
                 <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: brandColors.amareloFlash }} />
                 telão ao vivo
               </Box>
@@ -334,7 +399,7 @@ const Home = () => {
 
             <Box
               sx={{
-                bgcolor: brandColors.darkPaper,
+                bgcolor: '#1E1A14',
                 borderRadius: '20px',
                 p: { xs: 3, sm: 5 },
                 display: 'flex',
@@ -346,29 +411,37 @@ const Home = () => {
                 border: `1px solid ${brandColors.darkBorder}`
               }}
             >
-              <Typography variant="h3" sx={{ color: brandColors.amareloFlash, fontSize: { xs: '1.75rem', sm: '2.5rem' }, mb: 1 }}>
+              <Typography
+                variant="h3"
+                sx={{
+                  color: brandColors.amareloFlash,
+                  fontSize: { xs: '1.75rem', sm: '2.4rem' },
+                  mb: 1
+                }}
+              >
                 transmita em smart tvs e projetores
               </Typography>
-              <Typography variant="body1" sx={{ color: '#CFC8B8', maxWidth: '420px' }}>
-                Modo 16:9 otimizado com exibição de cada foto por 5 segundos antes de alimentar o mosaico ao vivo.
+              <Typography variant="body1" sx={{ color: '#CFC8B8', maxWidth: '420px', lineHeight: 1.5 }}>
+                Modo 16:9 otimizado com destaque de cada foto por 5 segundos antes de alimentar o mosaico ao vivo.
               </Typography>
             </Box>
 
             <Stack direction="row" spacing={1.5}>
-              <Box sx={{ flex: 1, height: 48, bgcolor: brandColors.darkSurface, borderRadius: '12px' }} />
-              <Box sx={{ flex: 1, height: 48, bgcolor: '#4A4437', borderRadius: '12px' }} />
-              <Box sx={{ flex: 1, height: 48, bgcolor: brandColors.darkPaper, borderRadius: '12px' }} />
-              <Box sx={{ flex: 1, height: 48, bgcolor: brandColors.darkSurface, borderRadius: '12px' }} />
+              <Box sx={{ flex: 1, height: 48, bgcolor: '#28231B', borderRadius: '12px' }} />
+              <Box sx={{ flex: 1, height: 48, bgcolor: '#383227', borderRadius: '12px' }} />
+              <Box sx={{ flex: 1, height: 48, bgcolor: '#1E1A14', borderRadius: '12px' }} />
+              <Box sx={{ flex: 1, height: 48, bgcolor: '#28231B', borderRadius: '12px' }} />
             </Stack>
           </Box>
 
           {/* Card Mobile */}
           <Box
             sx={{
-              bgcolor: '#FFFFFF',
+              bgcolor: 'background.paper',
               borderRadius: '28px',
               p: { xs: 3, sm: 4 },
-              border: `1px solid ${brandColors.bordaClara}`,
+              border: 1,
+              borderColor: 'divider',
               display: 'flex',
               flexDirection: 'column',
               gap: 2.5
@@ -376,28 +449,34 @@ const Home = () => {
           >
             <Chip
               label="Feed Mobile do Convidado"
-              sx={{ alignSelf: 'flex-start', bgcolor: brandColors.areia, fontWeight: 700 }}
+              sx={{
+                alignSelf: 'flex-start',
+                bgcolor: isDark ? brandColors.darkSurface : brandColors.areia,
+                color: 'text.primary',
+                fontWeight: 700
+              }}
             />
-            <Typography variant="h3" sx={{ fontSize: { xs: '1.75rem', sm: '2.2rem' } }}>
+            <Typography variant="h3" sx={{ fontSize: { xs: '1.75rem', sm: '2.2rem' }, color: 'text.primary' }}>
               interação na palma da mão
             </Typography>
-            <Typography variant="body1" color="text.secondary" sx={{ lineHeight: 1.5 }}>
+            <Typography variant="body1" sx={{ lineHeight: 1.6, color: 'text.secondary' }}>
               Os convidados curtem fotos em tempo real com o botão de coração, adicionam legendas divertidas e baixam recordações direto pelo celular.
             </Typography>
 
             <Box
               sx={{
-                bgcolor: brandColors.papel,
+                bgcolor: isDark ? brandColors.darkSurface : brandColors.papel,
                 p: 2.5,
                 borderRadius: '20px',
-                border: `1px solid ${brandColors.bordaClara}`,
+                border: 1,
+                borderColor: 'divider',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between'
               }}
             >
               <Stack spacing={0.5}>
-                <Typography variant="subtitle1" fontWeight={800}>
+                <Typography variant="subtitle1" fontWeight={800} color="text.primary">
                   marina entrou na foto
                 </Typography>
                 <Typography variant="caption" color="text.secondary">
@@ -424,7 +503,7 @@ const Home = () => {
               component={RouterLink}
               to="/login"
               variant="contained"
-              color="secondary"
+              color="primary"
               size="large"
               fullWidth
               sx={{ height: 52, fontWeight: 800 }}
@@ -439,7 +518,7 @@ const Home = () => {
       <Container maxWidth="lg" sx={{ pb: { xs: 8, md: 10 } }}>
         <Box
           sx={{
-            bgcolor: brandColors.tinta,
+            bgcolor: isDark ? brandColors.darkPaper : brandColors.tinta,
             color: brandColors.papel,
             borderRadius: '32px',
             p: { xs: 4, sm: 6, md: 8 },
@@ -448,7 +527,9 @@ const Home = () => {
             flexDirection: 'column',
             alignItems: 'center',
             gap: 3.5,
-            boxShadow: '0 20px 40px rgba(23, 20, 15, 0.3)'
+            border: 1,
+            borderColor: isDark ? brandColors.darkBorder : 'transparent',
+            boxShadow: '0 20px 40px rgba(0, 0, 0, 0.3)'
           }}
         >
           <Logo size="large" variant="dark" />
@@ -501,7 +582,8 @@ const Home = () => {
         sx={{
           py: 4,
           px: 3,
-          borderTop: `1px solid ${brandColors.bordaClara}`,
+          borderTop: 1,
+          borderColor: 'divider',
           bgcolor: 'background.default',
           mt: 'auto'
         }}
@@ -516,15 +598,24 @@ const Home = () => {
             gap: 2
           }}
         >
-          <Logo size="small" />
+          <Logo size="small" variant="auto" />
 
           <Typography variant="body2" color="text.secondary">
             © {new Date().getFullYear()} uai to na foto. todos os direitos reservados.
           </Typography>
 
-          <Button component={RouterLink} to="/login" variant="text" size="small" sx={{ color: 'text.primary', fontWeight: 700 }}>
-            Login
-          </Button>
+          <Stack direction="row" spacing={1} alignItems="center">
+            <ThemeToggle showTooltip={false} size="small" />
+            <Button
+              component={RouterLink}
+              to="/login"
+              variant="text"
+              size="small"
+              sx={{ color: 'text.primary', fontWeight: 700 }}
+            >
+              Login
+            </Button>
+          </Stack>
         </Container>
       </Box>
     </Box>

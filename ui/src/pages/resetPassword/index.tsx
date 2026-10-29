@@ -4,7 +4,7 @@ import { useState } from 'react'
 
 import { confirmPasswordReset, requestPasswordReset } from '@services/auth/passwordReset'
 import useQueryParams from '@hooks/useQueryParams'
-import { Logo } from '@components/common/Logo'
+import { Logo, ThemeToggle } from '@components/index'
 
 import type { FormEvent } from 'react'
 
@@ -36,14 +36,18 @@ const ResetPassword = () => {
 
   return (
     <Container maxWidth="xs">
-      <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', py: 6 }}>
-        <Paper elevation={0} sx={{ p: { xs: 3, sm: 4 }, width: '100%', bgcolor: '#FFFFFF' }}>
+      <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', py: 6, position: 'relative' }}>
+        <Box sx={{ position: 'absolute', top: 20, right: 0 }}>
+          <ThemeToggle />
+        </Box>
+
+        <Paper elevation={0} sx={{ p: { xs: 3, sm: 4 }, width: '100%', bgcolor: 'background.paper' }}>
           <Stack component="form" onSubmit={handleSubmit} spacing={2.5} alignItems="center">
             <RouterLink to="/" style={{ textDecoration: 'none' }}>
               <Logo size="medium" sx={{ mb: 1 }} />
             </RouterLink>
 
-            <Typography variant="h5" component="h1" fontWeight={800} textAlign="center">
+            <Typography variant="h5" component="h1" fontWeight={800} textAlign="center" color="text.primary">
               redefinir senha
             </Typography>
 
@@ -80,7 +84,7 @@ const ResetPassword = () => {
               disabled={submitting}
               fullWidth
               size="large"
-              sx={{ height: 48 }}
+              sx={{ height: 48, fontWeight: 800 }}
             >
               {token ? 'Salvar nova senha' : 'Enviar link de recuperação'}
             </Button>

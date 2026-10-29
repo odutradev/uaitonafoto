@@ -3,7 +3,7 @@ import { Link as RouterLink, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 
 import useAuth from '@hooks/useAuth'
-import { Logo } from '@components/common/Logo'
+import { Logo, ThemeToggle } from '@components/index'
 
 import type { FormEvent } from 'react'
 
@@ -39,8 +39,12 @@ const Login = () => {
 
   return (
     <Container maxWidth="xs">
-      <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', py: 6 }}>
-        <Paper elevation={0} sx={{ p: { xs: 3, sm: 4 }, width: '100%', bgcolor: '#FFFFFF' }}>
+      <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', py: 6, position: 'relative' }}>
+        <Box sx={{ position: 'absolute', top: 20, right: 0 }}>
+          <ThemeToggle />
+        </Box>
+
+        <Paper elevation={0} sx={{ p: { xs: 3, sm: 4 }, width: '100%', bgcolor: 'background.paper' }}>
           <Stack component="form" onSubmit={handleSubmit} spacing={2.5} alignItems="center">
             <RouterLink to="/" style={{ textDecoration: 'none' }}>
               <Logo size="medium" sx={{ mb: 1 }} />
@@ -73,7 +77,7 @@ const Login = () => {
               disabled={submitting}
               fullWidth
               size="large"
-              sx={{ height: 48 }}
+              sx={{ height: 48, fontWeight: 800 }}
             >
               Entrar
             </Button>
@@ -84,7 +88,7 @@ const Login = () => {
               disabled={submitting}
               fullWidth
               size="large"
-              sx={{ height: 48 }}
+              sx={{ height: 48, fontWeight: 700 }}
             >
               Continuar com Google
             </Button>
