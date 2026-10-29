@@ -19,9 +19,7 @@ export default defineConfig(({ mode }) => {
         const pkg = JSON.parse(fs.readFileSync(dockerPkg, 'utf-8'))
         if (pkg.version) return pkg.version
       }
-    } catch {
-      // ignore
-    }
+    } catch {}
 
     try {
       const rootPkg = path.resolve(__dirname, '../package.json')
@@ -29,9 +27,7 @@ export default defineConfig(({ mode }) => {
         const pkg = JSON.parse(fs.readFileSync(rootPkg, 'utf-8'))
         if (pkg.version) return pkg.version
       }
-    } catch {
-      // ignore
-    }
+    } catch {}
 
     try {
       const localPkg = path.resolve(__dirname, 'package.json')
@@ -39,9 +35,7 @@ export default defineConfig(({ mode }) => {
         const pkg = JSON.parse(fs.readFileSync(localPkg, 'utf-8'))
         if (pkg.version) return pkg.version
       }
-    } catch {
-      // ignore
-    }
+    } catch {}
 
     return '1.0.0'
   }

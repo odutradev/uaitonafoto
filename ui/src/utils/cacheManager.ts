@@ -11,9 +11,7 @@ export const clearBrowserCaches = async (): Promise<void> => {
       const registrations = await navigator.serviceWorker.getRegistrations()
       await Promise.all(registrations.map((registration) => registration.unregister()))
     }
-  } catch {
-    // Falha silenciosa em navegadores com restrições de sandbox
-  }
+  } catch {}
 }
 
 export const initCacheAndVersionManager = (): void => {
@@ -30,7 +28,6 @@ export const initCacheAndVersionManager = (): void => {
     }
   }
 
-  // Intercepta falhas de dynamic import quando novos bundles são implantados
   window.addEventListener('vite:preloadError', (event) => {
     event.preventDefault()
     clearBrowserCaches().finally(() => {

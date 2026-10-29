@@ -70,9 +70,7 @@ export const getLotteries = async (): Promise<ListLotteriesResponse> => {
     if (hasData) {
       return response.data
     }
-  } catch {
-    // Continue to browser direct fallback
-  }
+  } catch {}
 
   try {
     const types = Object.keys(LOTTERY_METADATA)
@@ -114,9 +112,7 @@ export const getLotteryByType = async (type: string, contestNumber?: number): Pr
     ) {
       return response.data
     }
-  } catch {
-    // Continue to browser direct fallback
-  }
+  } catch {}
 
   const direct = await fetchDirectFromCaixa(type, contestNumber)
   if (direct) return direct
