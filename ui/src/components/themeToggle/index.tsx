@@ -6,7 +6,7 @@ import useSystemStore from '@stores/system'
 import { getThemeToggleButtonStyles, themeToggleIconStyles } from './styles'
 import type { ThemeToggleProps } from './types'
 
-export const ThemeToggle = ({
+const ThemeToggle = ({
   showTooltip = true,
   sx,
   ...rest
@@ -40,5 +40,4 @@ export const ThemeToggle = ({
   )
 }
 
-export type { ThemeToggleProps } from './types'
 export default ThemeToggle

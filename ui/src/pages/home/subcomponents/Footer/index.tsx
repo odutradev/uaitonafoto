@@ -1,6 +1,6 @@
 import { Box, Container, Typography } from '@mui/material'
 
-import { Logo } from '@components/index'
+import Logo from '@components/logo'
 
 import { footerBoxStyles, footerContainerStyles } from './styles'
 import type { FooterProps } from './types'

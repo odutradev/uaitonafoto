@@ -1,7 +1,8 @@
 import { Box, Button, Container, Paper, Stack, TextField, Typography } from '@mui/material'
 import { Link as RouterLink } from 'react-router-dom'
 
-import { Logo, ThemeToggle } from '@components/index'
+import Logo from '@components/logo'
+import ThemeToggle from '@components/themeToggle'
 
 import {
   backButtonStyles,

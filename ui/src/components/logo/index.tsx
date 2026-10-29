@@ -1,11 +1,11 @@
 import { Box, Typography } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 
-import { BrandSymbol } from '../brandSymbol'
+import BrandSymbol from '../brandSymbol'
 import { getLogoContainerStyles, getLogoDimensions, getLogoTextStyles } from './styles'
 import type { LogoProps } from './types'
 
-export const Logo = ({
+const Logo = ({
   size = 'medium',
   variant = 'auto',
   symbolOnly = false,
@@ -37,5 +37,4 @@ export const Logo = ({
   )
 }
 
-export type { LogoProps } from './types'
 export default Logo

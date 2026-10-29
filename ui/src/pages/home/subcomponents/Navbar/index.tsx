@@ -2,7 +2,8 @@ import { Box, Button, Container, Stack } from '@mui/material'
 import { ArrowForward as ArrowForwardIcon } from '@mui/icons-material'
 import { Link as RouterLink } from 'react-router-dom'
 
-import { Logo, ThemeToggle } from '@components/index'
+import Logo from '@components/logo'
+import ThemeToggle from '@components/themeToggle'
 
 import { getHeaderStyles, loginButtonStyles, navContainerStyles } from './styles'
 import type { NavbarProps } from './types'

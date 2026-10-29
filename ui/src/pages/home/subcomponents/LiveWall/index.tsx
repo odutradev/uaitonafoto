@@ -1,7 +1,7 @@
 import { Box, Stack, Typography } from '@mui/material'
 import { QrCode2 as QrCodeIcon } from '@mui/icons-material'
 
-import { BrandSymbol } from '@components/index'
+import BrandSymbol from '@components/brandSymbol'
 
 import {
   getLiveWallBadgeStyles,

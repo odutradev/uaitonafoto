@@ -3,7 +3,7 @@ import { useTheme } from '@mui/material/styles'
 import { baseSvgStyles, getSymbolColors } from './styles'
 import type { BrandSymbolProps } from './types'
 
-export const BrandSymbol = ({
+const BrandSymbol = ({
   size = 40,
   variant = 'auto',
   style,
@@ -30,5 +30,4 @@ export const BrandSymbol = ({
   )
 }
 
-export type { BrandSymbolProps } from './types'
 export default BrandSymbol

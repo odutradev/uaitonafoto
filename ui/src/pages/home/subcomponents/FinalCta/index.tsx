@@ -2,7 +2,7 @@ import { Box, Button, Container, Typography } from '@mui/material'
 import { ArrowForward as ArrowForwardIcon } from '@mui/icons-material'
 import { Link as RouterLink } from 'react-router-dom'
 
-import { Logo } from '@components/index'
+import Logo from '@components/logo'
 
 import {
   ctaButtonStyles,
