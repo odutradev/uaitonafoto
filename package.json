@@ -1,8 +1,8 @@
 {
-  "name": "monorepo",
-  "version": "3.1.1",
+  "name": "uaitonafoto",
+  "version": "1.0.0",
   "private": true,
-  "description": "",
+  "description": "Plataforma em tempo real para compartilhamento e exibição de fotos em eventos — uai to na foto",
   "scripts": {
     "dev": "concurrently -n \"API,UI\" -c \"blue,magenta\" \"npm run dev:api\" \"npm run dev:ui\"",
     "dev:api": "npm --prefix api run dev",

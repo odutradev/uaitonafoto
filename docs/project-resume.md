@@ -1,6 +1,6 @@
-# Visão Geral e Especificação Unificada — Live Event Photo Micro-SaaS
+# Visão Geral e Especificação Unificada — uai to na foto
 
-Documento mestre contendo todas as decisões de produto, modelo comercial, pagamentos e arquitetura técnica definidas para o projeto.
+Documento mestre contendo todas as decisões de produto, modelo comercial, pagamentos e arquitetura técnica definidas para o **uai to na foto** (`uaitonafoto`).
 
 ---
 
