@@ -34,7 +34,7 @@ export const ResetPasswordForm = ({
         <Paper elevation={0} sx={cardStyles}>
           <Stack component="form" onSubmit={onSubmit} spacing={2.5} alignItems="center">
             <RouterLink to="/" style={{ textDecoration: 'none' }}>
-              <Logo size="medium" sx={{ mb: 1 }} />
+              <Logo size="medium" animation="eye" sx={{ mb: 1 }} />
             </RouterLink>
 
             <Typography variant="h5" component="h1" sx={titleStyles}>
@@ -74,6 +74,7 @@ export const ResetPasswordForm = ({
               disabled={submitting}
               fullWidth
               size="large"
+              startIcon={submitting ? <Logo display="symbol" loading="l3" size={20} /> : undefined}
               sx={submitButtonStyles}
             >
               {token ? 'Salvar nova senha' : 'Enviar link de recuperação'}

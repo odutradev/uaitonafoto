@@ -50,7 +50,7 @@ export const AuthPage = ({ initialMode }: AuthPageProps) => {
             sx={logoWrapperStyles}
             style={{ textDecoration: 'none', color: 'inherit' }}
           >
-            <Logo size="medium" />
+            <Logo size="medium" animation="eye" />
           </Box>
 
           <Typography variant="body2" color="text.secondary" textAlign="center">
@@ -131,6 +131,7 @@ export const AuthPage = ({ initialMode }: AuthPageProps) => {
             disabled={submitting}
             fullWidth
             size="large"
+            startIcon={submitting ? <Logo display="symbol" loading="l3" size={20} /> : undefined}
             sx={submitButtonStyles}
           >
             {submitting
