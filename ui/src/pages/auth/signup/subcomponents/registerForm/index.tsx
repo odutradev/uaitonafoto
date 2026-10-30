@@ -122,7 +122,7 @@ export const RegisterForm = ({
               Já tem uma conta?{' '}
               <Link
                 component={RouterLink}
-                to="/login"
+                to="/signin"
                 fontWeight={700}
                 color="primary.dark"
                 underline="hover"

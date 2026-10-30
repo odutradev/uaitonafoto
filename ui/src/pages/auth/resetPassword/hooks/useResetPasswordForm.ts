@@ -30,7 +30,7 @@ export const useResetPasswordForm = (): UseResetPasswordFormReturn => {
     try {
       if (token) {
         await confirmPasswordReset({ token, password })
-        navigate('/login')
+        navigate('/signin')
         return
       }
 

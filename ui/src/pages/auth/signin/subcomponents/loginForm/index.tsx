@@ -110,7 +110,7 @@ export const LoginForm = ({
               Não tem uma conta?{' '}
               <Link
                 component={RouterLink}
-                to="/register"
+                to="/signup"
                 fontWeight={700}
                 color="primary.dark"
                 underline="hover"

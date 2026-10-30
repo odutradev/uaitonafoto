@@ -81,7 +81,7 @@ export const ResetPasswordForm = ({
 
             <Button
               component={RouterLink}
-              to="/login"
+              to="/signin"
               variant="text"
               size="small"
               sx={backButtonStyles}
