@@ -9,8 +9,6 @@ import type {
   ResetPasswordPayload
 } from './types'
 
-export { firebaseAuth, isFirebaseConfigured } from './firebase'
-
 export const syncAuthUser = async ({ firebaseToken, ...payload }: SyncServicePayload): Promise<SyncResponse> => {
   const response = await api.post<SyncResponse>('/auth/sync', payload, {
     headers: {

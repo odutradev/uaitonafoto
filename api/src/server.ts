@@ -1,8 +1,8 @@
 import 'dotenv/config'
 
 import { validateEnv } from '@config/env'
-import { connectEmail, isEmailConfigured } from '@email'
-import database from '@database'
+import { connectEmail, isEmailConfigured } from '@email/connect'
+import database from '@database/database'
 import createLogger from '@utils/logger'
 import buildApp from '@/app'
 

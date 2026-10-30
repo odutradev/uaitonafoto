@@ -1,4 +1,4 @@
-import { firebaseDb } from '@database'
+import { firebaseDb } from '@database/connection'
 import { removeUndefined } from '@utils/object'
 import createLogger from '@utils/logger'
 

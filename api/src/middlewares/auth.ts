@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken'
 
 import { getJwtSecret } from '@config/env'
-import { firebaseAuth } from '@database'
+import { firebaseAuth } from '@database/connection'
 import sendError from '@error'
 
 import type { NextFunction, Response, Request } from 'express'
