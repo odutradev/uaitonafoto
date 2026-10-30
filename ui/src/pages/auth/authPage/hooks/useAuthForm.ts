@@ -167,3 +167,4 @@ export const useAuthForm = (options?: UseAuthFormOptions): UseAuthFormReturn => 
 }
 
 export default useAuthForm
+

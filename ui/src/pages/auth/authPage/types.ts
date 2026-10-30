@@ -29,3 +29,4 @@ export interface UseAuthFormReturn {
   handleSubmit: (event: FormEvent<HTMLFormElement>) => Promise<void>
   handleGoogleLogin: () => Promise<void>
 }
+

@@ -189,3 +189,4 @@ export const AuthPage = ({ initialMode }: AuthPageProps) => {
 }
 
 export default AuthPage
+
