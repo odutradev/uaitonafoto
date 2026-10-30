@@ -22,3 +22,4 @@ const AuthRoute = ({ access }: AuthRouteProps) => {
 }
 
 export default AuthRoute
+

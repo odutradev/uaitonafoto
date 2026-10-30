@@ -16,3 +16,4 @@ export const homeContentStyles: SxProps<Theme> = {
   px: { xs: 2, sm: 3 },
   py: { xs: 3, sm: 5 }
 }
+

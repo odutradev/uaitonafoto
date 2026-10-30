@@ -31,3 +31,4 @@ const Welcome = ({ firstName, onCreateEvent }: WelcomeProps) => {
 }
 
 export default Welcome
+

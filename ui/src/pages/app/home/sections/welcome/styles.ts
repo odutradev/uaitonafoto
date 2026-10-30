@@ -24,3 +24,4 @@ export const createEventButtonStyles: SxProps<Theme> = {
   flexShrink: 0,
   whiteSpace: 'nowrap'
 }
+

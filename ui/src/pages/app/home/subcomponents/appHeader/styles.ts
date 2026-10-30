@@ -53,3 +53,4 @@ export const menuTextEllipsisStyles: SxProps<Theme> = {
 export const logoutItemStyles: SxProps<Theme> = {
   minHeight: 48
 }
+

@@ -40,3 +40,4 @@ export const emptyButtonStyles: SxProps<Theme> = {
   width: { xs: '100%', sm: 'auto' },
   minHeight: 48
 }
+

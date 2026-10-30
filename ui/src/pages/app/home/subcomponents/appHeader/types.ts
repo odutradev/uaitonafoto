@@ -5,3 +5,4 @@ export interface AppHeaderProps {
   isDark: boolean
   onLogout: () => void
 }
+

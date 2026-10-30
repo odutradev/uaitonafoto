@@ -38,3 +38,4 @@ const Events = ({ onCreateEvent }: EventsProps) => {
 }
 
 export default Events
+

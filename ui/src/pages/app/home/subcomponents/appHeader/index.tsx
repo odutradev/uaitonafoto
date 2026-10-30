@@ -97,3 +97,4 @@ export const AppHeader = ({ user, isDark, onLogout }: AppHeaderProps) => {
 }
 
 export default AppHeader
+
