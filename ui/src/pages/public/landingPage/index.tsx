@@ -10,16 +10,14 @@ import {
   howItWorksData,
   liveWallData
 } from './data'
-import {
-  FinalCta,
-  Hero,
-  HowItWorks,
-  InteractiveDemo
-} from './sections'
+import FinalCta from './sections/finalCta'
+import Hero from './sections/hero'
+import HowItWorks from './sections/howItWorks'
+import InteractiveDemo from './sections/interactiveDemo'
 import { Footer } from './subcomponents/footer'
 import { Navbar } from './subcomponents/navbar'
 
-const LadingPage = () => {
+const LandingPage = () => {
   const theme = useTheme()
   const isDark = theme.palette.mode === 'dark'
 
@@ -48,4 +46,4 @@ const LadingPage = () => {
   )
 }
 
-export default LadingPage
+export default LandingPage
