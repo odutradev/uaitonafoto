@@ -1,5 +1,5 @@
 import { useResetPasswordForm } from './hooks/useResetPasswordForm'
-import { ResetPasswordForm } from './subcomponents'
+import { ResetPasswordForm } from './subcomponents/resetPasswordForm'
 
 const ResetPassword = () => {
   const {

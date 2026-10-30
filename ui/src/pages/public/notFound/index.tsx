@@ -1,4 +1,4 @@
-import { NotFoundContent } from './subcomponents'
+import { NotFoundContent } from './subcomponents/notFoundContent'
 
 const NotFound = () => {
   return <NotFoundContent />

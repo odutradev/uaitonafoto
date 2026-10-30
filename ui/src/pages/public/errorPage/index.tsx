@@ -1,6 +1,6 @@
 import { isRouteErrorResponse, useRouteError } from 'react-router-dom'
 
-import { ErrorContent } from './subcomponents'
+import { ErrorContent } from './subcomponents/errorContent'
 
 const ErrorPage = () => {
   const error = useRouteError()
