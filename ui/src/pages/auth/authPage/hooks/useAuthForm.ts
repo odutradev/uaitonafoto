@@ -108,7 +108,7 @@ export const useAuthForm = (options?: UseAuthFormOptions): UseAuthFormReturn => 
       setSubmitting(true)
       try {
         await registerWithEmail({ name: name.trim(), email: email.trim(), password })
-        navigate('/')
+        navigate('/app')
       } catch (err) {
         setErrorMessage(getFirebaseErrorMessage(err, 'signup'))
       } finally {
@@ -123,7 +123,7 @@ export const useAuthForm = (options?: UseAuthFormOptions): UseAuthFormReturn => 
       setSubmitting(true)
       try {
         await loginWithEmail({ email: email.trim(), password })
-        navigate('/')
+        navigate('/app')
       } catch (err) {
         setErrorMessage(getFirebaseErrorMessage(err, 'signin'))
       } finally {
@@ -137,7 +137,7 @@ export const useAuthForm = (options?: UseAuthFormOptions): UseAuthFormReturn => 
     setSubmitting(true)
     try {
       await loginWithGoogle()
-      navigate('/')
+      navigate('/app')
     } catch (err) {
       setErrorMessage(getFirebaseErrorMessage(err, mode))
     } finally {
