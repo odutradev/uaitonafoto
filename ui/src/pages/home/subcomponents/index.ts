@@ -1,7 +1,4 @@
 export { Navbar } from './navbar'
-export { Hero } from './hero'
-export { HowItWorks } from './howItWorks'
 export { LiveWall } from './liveWall'
 export { GuestFeed } from './guestFeed'
-export { FinalCta } from './finalCta'
 export { Footer } from './footer'
