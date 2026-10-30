@@ -81,7 +81,7 @@ export const landingPageData: LandingPageData = {
       'A experiência definitiva para casamentos, festas e eventos corporativos. Zero fricção: o convidado escaneia o QR Code, tira a foto e ela vai pro telão na hora. Sem aplicativo e sem cadastro.',
     primaryCta: {
       text: 'Criar meu evento',
-      href: '/login'
+      href: '/register'
     },
     secondaryCta: {
       text: 'Acessar plataforma',
@@ -134,7 +134,7 @@ export const landingPageData: LandingPageData = {
     },
     cta: {
       text: 'Experimentar agora',
-      href: '/login'
+      href: '/register'
     }
   },
   finalCta: {
@@ -142,8 +142,8 @@ export const landingPageData: LandingPageData = {
     description:
       'Casamentos, formaturas, aniversários ou eventos corporativos com a melhor experiência de live wall do Brasil.',
     button: {
-      text: 'Ir para o Login',
-      href: '/login'
+      text: 'Criar meu evento agora',
+      href: '/register'
     }
   },
   footer: {
@@ -162,4 +162,3 @@ export const {
 } = landingPageData
 
 export default landingPageData
-
