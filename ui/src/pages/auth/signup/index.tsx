@@ -1,7 +1,7 @@
 import { useRegisterForm } from './hooks/useRegisterForm'
 import { RegisterForm } from './subcomponents'
 
-const Register = () => {
+const SignUp = () => {
   const {
     name,
     setName,
@@ -35,5 +35,5 @@ const Register = () => {
   )
 }
 
-export default Register
+export default SignUp
 

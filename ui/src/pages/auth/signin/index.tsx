@@ -1,7 +1,7 @@
 import { useLoginForm } from './hooks/useLoginForm'
 import { LoginForm } from './subcomponents'
 
-const Login = () => {
+const SignIn = () => {
   const {
     email,
     setEmail,
@@ -27,4 +27,4 @@ const Login = () => {
   )
 }
 
-export default Login
+export default SignIn

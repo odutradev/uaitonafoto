@@ -21,7 +21,7 @@ import {
   Navbar
 } from './subcomponents'
 
-const Home = () => {
+const LadingPage = () => {
   const theme = useTheme()
   const isDark = theme.palette.mode === 'dark'
 
@@ -50,4 +50,4 @@ const Home = () => {
   )
 }
 
-export default Home
+export default LadingPage

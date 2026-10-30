@@ -25,7 +25,7 @@
       "@config/*": ["./src/config/*"],
       "@hooks/*": ["./src/hooks/*"],
       "@interceptor": ["./src/api/interceptor"],
-      "@pages": ["./src/pages"],
+      "@pages": ["./src/pages/*"],
       "@stores/*": ["./src/stores/*"],
       "@theme": ["./src/theme"]
     }
