@@ -16,10 +16,8 @@ import {
   HowItWorks,
   InteractiveDemo
 } from './sections'
-import {
-  Footer,
-  Navbar
-} from './subcomponents'
+import { Footer } from './subcomponents/footer'
+import { Navbar } from './subcomponents/navbar'
 
 const LadingPage = () => {
   const theme = useTheme()

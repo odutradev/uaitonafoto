@@ -1,7 +1,8 @@
 import { Box, Container } from '@mui/material'
 import { brandColors } from '@theme'
 
-import { GuestFeed, LiveWall } from '../../subcomponents'
+import { GuestFeed } from '../../subcomponents/guestFeed'
+import { LiveWall } from '../../subcomponents/liveWall'
 import { demoContainerStyles, demoGridStyles } from './styles'
 import type { InteractiveDemoProps } from './types'
 
