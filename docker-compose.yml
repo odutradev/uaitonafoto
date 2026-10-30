@@ -4,22 +4,20 @@ services:
       context: .
       dockerfile: ./api/Dockerfile
     restart: unless-stopped
-    volumes:
-      - ./package.json:/app/root-package.json:ro
     expose:
       - "80"
     environment:
-      - PORT=80
+      - PORT=${PORT:-80}
       - NODE_ENV=${NODE_ENV:-${ENV:-production}}
       - ENV=${ENV:-${NODE_ENV:-production}}
       - FRONTEND_URL=${FRONTEND_URL:-https://uaitonafoto.odutra.com}
       - CORS_ORIGIN=${CORS_ORIGIN:-${CORS_ALLOWED_ORIGINS:-*}}
       - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS:-${CORS_ORIGIN:-*}}
       - JWT_SECRET=${JWT_SECRET:-9fa82cb34981e7d23a4b5c6d7e8f0123}
-      - FIREBASE_PROJECT_ID=${FIREBASE_PROJECT_ID}
+      - FIREBASE_PROJECT_ID=${FIREBASE_PROJECT_ID:-uaitonafoto}
       - FIREBASE_CLIENT_EMAIL=${FIREBASE_CLIENT_EMAIL}
       - FIREBASE_PRIVATE_KEY=${FIREBASE_PRIVATE_KEY}
-      - FIREBASE_STORAGE_BUCKET=${FIREBASE_STORAGE_BUCKET}
+      - FIREBASE_STORAGE_BUCKET=${FIREBASE_STORAGE_BUCKET:-uaitonafoto.firebasestorage.app}
       - EMAIL_HOST=${EMAIL_HOST}
       - EMAIL_PORT=${EMAIL_PORT:-587}
       - EMAIL_USER=${EMAIL_USER}
@@ -28,7 +26,7 @@ services:
       - ABACATEPAY_API_KEY=${ABACATEPAY_API_KEY:-}
       - ABACATEPAY_WEBHOOK_SECRET=${ABACATEPAY_WEBHOOK_SECRET:-}
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:80/ping > /dev/null || curl -fs http://127.0.0.1:80/ping > /dev/null || exit 1"]
+      test: ["CMD", "node", "healthcheck.js"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -43,21 +41,20 @@ services:
     build:
       context: .
       dockerfile: ./ui/Dockerfile
-      args:
-        - VITE_BASE_URL=${VITE_BASE_URL:-${VITE_API_URL:-https://api.uaitonafoto.odutra.com}}
-        - VITE_FIREBASE_API_KEY=${VITE_FIREBASE_API_KEY}
-        - VITE_FIREBASE_AUTH_DOMAIN=${VITE_FIREBASE_AUTH_DOMAIN}
-        - VITE_FIREBASE_PROJECT_ID=${VITE_FIREBASE_PROJECT_ID}
-        - VITE_FIREBASE_STORAGE_BUCKET=${VITE_FIREBASE_STORAGE_BUCKET}
-        - VITE_FIREBASE_MESSAGING_SENDER_ID=${VITE_FIREBASE_MESSAGING_SENDER_ID}
-        - VITE_FIREBASE_APP_ID=${VITE_FIREBASE_APP_ID}
-        - VITE_FIREBASE_MEASUREMENT_ID=${VITE_FIREBASE_MEASUREMENT_ID}
+    args:
+      - VITE_BASE_URL=${VITE_BASE_URL:-${VITE_API_URL:-https://api.uaitonafoto.odutra.com}}
+      - VITE_FIREBASE_API_KEY=${VITE_FIREBASE_API_KEY}
+      - VITE_FIREBASE_AUTH_DOMAIN=${VITE_FIREBASE_AUTH_DOMAIN}
+      - VITE_FIREBASE_PROJECT_ID=${VITE_FIREBASE_PROJECT_ID}
+      - VITE_FIREBASE_STORAGE_BUCKET=${VITE_FIREBASE_STORAGE_BUCKET}
+      - VITE_FIREBASE_MESSAGING_SENDER_ID=${VITE_FIREBASE_MESSAGING_SENDER_ID}
+      - VITE_FIREBASE_APP_ID=${VITE_FIREBASE_APP_ID}
+      - VITE_FIREBASE_MEASUREMENT_ID=${VITE_FIREBASE_MEASUREMENT_ID}
     restart: unless-stopped
     expose:
       - "80"
     depends_on:
-      api:
-        condition: service_healthy
+      - api
     networks:
       - uaitonafoto-network
 
