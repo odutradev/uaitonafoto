@@ -1,6 +1,0 @@
-export { default as ResetPassword } from './auth/resetPassword'
-export { default as ErrorPage } from './errorPage'
-export { default as NotFound } from './notFound'
-export { default as Register } from './auth/signup'
-export { default as Login } from './auth/signin'
-export { default as Home } from './home'
