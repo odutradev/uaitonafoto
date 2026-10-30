@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>uaiToNaFoto — identidade visual animada</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --yellow: #FFCF1F;
+      --ink: #17140F;
+      --paper: #FBF8F1;
+      --sand: #EFE9DA;
+      --border: #E7E1D2;
+      --text-2: #5E584C;
+      --card: #FFFFFF;
+
+      --ease-pop: cubic-bezier(.34, 1.56, .64, 1);
+      --ease-out: cubic-bezier(.16, 1, .3, 1);
+      --ease-in-out: cubic-bezier(.65, 0, .35, 1);
+      --dur-fast: 150ms;
+      --dur-base: 300ms;
+      --dur-slow: 600ms;
+    }
+
+    body.dark {
+      --paper: #12100C;
+      --sand: #28231B;
+      --border: #383227;
+      --text-2: #ABA392;
+      --card: #1E1A14;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', system-ui, sans-serif;
+      background: var(--paper);
+      color: var(--ink);
+      transition: background .3s, color .3s;
+      overflow-x: hidden;
+    }
+    body.dark { color: #FBF8F1; }
+
+    h1, h2, h3, .brand-text { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; letter-spacing: -0.04em; }
+
+    header {
+      position: sticky; top: 0; z-index: 10;
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+      padding: 16px clamp(16px, 4vw, 48px);
+      background: color-mix(in srgb, var(--paper) 85%, transparent);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+    }
+    header .logo { display: flex; align-items: center; gap: 10px; font-size: 22px; }
+    .actions { display: flex; gap: 8px; }
+
+    button.pill {
+      font: 700 14px 'Bricolage Grotesque', sans-serif;
+      border: 1.5px solid currentColor; background: transparent; color: inherit;
+      border-radius: 999px; padding: 10px 18px; min-height: 44px; cursor: pointer;
+    }
+    button.pill.primary { background: var(--yellow); color: var(--ink); border-color: var(--yellow); }
+
+    main { padding: clamp(24px, 5vw, 64px) clamp(16px, 4vw, 48px); max-width: 1280px; margin: 0 auto; }
+
+    .intro { max-width: 720px; margin-bottom: 48px; }
+    .intro h1 { font-size: clamp(36px, 7vw, 72px); line-height: 1; margin-bottom: 16px; }
+    .intro h1 em { font-style: normal; background: var(--yellow); color: var(--ink); padding: 0 .15em; border-radius: 12px; }
+    .intro p { color: var(--text-2); font-size: 18px; line-height: 1.5; }
+
+    section { margin-bottom: 72px; }
+    section > h2 { font-size: clamp(26px, 4vw, 40px); margin-bottom: 8px; }
+    section > p.lead { color: var(--text-2); margin-bottom: 28px; max-width: 720px; line-height: 1.5; }
+
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); gap: 20px; }
+
+    .card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 24px;
+      overflow: hidden; display: flex; flex-direction: column;
+    }
+    .stage {
+      height: 220px; display: grid; place-items: center; position: relative;
+      background: var(--sand); cursor: pointer; overflow: hidden;
+    }
+    .stage .hint {
+      position: absolute; bottom: 10px; right: 12px; font-size: 11px; font-weight: 700;
+      letter-spacing: .06em; text-transform: uppercase; color: var(--text-2); opacity: .7;
+    }
+    .info { padding: 18px 20px 22px; display: flex; flex-direction: column; gap: 8px; }
+    .info h3 { font-size: 20px; display: flex; align-items: center; gap: 8px; }
+    .info p { color: var(--text-2); font-size: 14px; line-height: 1.5; }
+    .tag {
+      align-self: flex-start; font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
+      background: var(--yellow); color: var(--ink); padding: 4px 10px; border-radius: 999px;
+    }
+    .num { font-size: 13px; color: var(--text-2); font-family: 'DM Sans'; font-weight: 700; }
+
+    /* símbolo base */
+    .sym { width: 96px; height: 96px; overflow: visible; }
+    .sym .frame { fill: var(--ink); }
+    .sym .dot { fill: var(--yellow); }
+    body.dark .sym .frame { fill: var(--yellow); }
+    body.dark .sym .dot { fill: var(--ink); }
+    .sym * { transform-box: fill-box; transform-origin: center; }
+
+    /* ============ IDENTIDADE ============ */
+
+    /* 1. Entrou na foto */
+    .play .a-enter .frame { animation: enterFrame var(--dur-slow) var(--ease-pop) both; }
+    .play .a-enter .dot { animation: enterDot 700ms var(--ease-pop) 250ms both; }
+    @keyframes enterFrame { from { transform: scale(.4) rotate(-12deg); opacity: 0; } to { transform: none; opacity: 1; } }
+    @keyframes enterDot { from { transform: translate(160%, -160%) scale(.6); opacity: 0; } to { transform: none; opacity: 1; } }
+
+    /* 2. Flash */
+    .a-flash .dot { animation: flashDot 2.8s var(--ease-out) infinite; }
+    .a-flash .burst { fill: #fff; opacity: 0; animation: flashBurst 2.8s var(--ease-out) infinite; }
+    @keyframes flashDot { 0%, 70%, 100% { transform: scale(1); } 75% { transform: scale(1.35); } 85% { transform: scale(.95); } }
+    @keyframes flashBurst { 0%, 70%, 100% { opacity: 0; transform: scale(.4); } 74% { opacity: .95; transform: scale(1.4); } 90% { opacity: 0; transform: scale(2.2); } }
+
+    /* 3. Clique do obturador */
+    .play .a-shutter .frame { animation: shutterFrame 500ms var(--ease-pop); }
+    .play .a-shutter .dot { animation: shutterDot 500ms var(--ease-in-out); }
+    @keyframes shutterFrame { 0% { transform: none; } 30% { transform: scale(.88, .82); } 100% { transform: none; } }
+    @keyframes shutterDot { 0% { transform: none; } 30% { transform: scale(.25); } 60% { transform: scale(1.2); } 100% { transform: none; } }
+
+    /* 4. Logo reveal (palavras do camelCase) */
+    .logo-reveal { display: flex; align-items: center; gap: 12px; }
+    .logo-reveal .sym { width: 56px; height: 56px; }
+    .logo-reveal .brand-text { font-size: 34px; display: flex; overflow: hidden; padding-bottom: 4px; }
+    .logo-reveal .w { display: inline-block; }
+    .play .logo-reveal .sym { animation: enterFrame 500ms var(--ease-pop) both; }
+    .play .logo-reveal .w { animation: wordUp 500ms var(--ease-out) both, capHighlight 900ms ease both; }
+    .play .logo-reveal .w:nth-child(1) { animation-delay: 300ms, 300ms; }
+    .play .logo-reveal .w:nth-child(2) { animation-delay: 420ms, 420ms; }
+    .play .logo-reveal .w:nth-child(3) { animation-delay: 540ms, 540ms; }
+    .play .logo-reveal .w:nth-child(4) { animation-delay: 660ms, 660ms; }
+    @keyframes wordUp { from { transform: translateY(110%); opacity: 0; } to { transform: none; opacity: 1; } }
+    @keyframes capHighlight { 0%, 40% { color: var(--yellow); } 100% { color: inherit; } }
+
+    /* 5. Olho curioso (segue o cursor) — via JS */
+    .a-eye .dot { transition: transform 200ms var(--ease-out); }
+
+    /* 6. Revelação polaroid */
+    .play .a-develop .frame { animation: developFrame 2.2s ease both; }
+    .play .a-develop .dot { animation: developDot 2.2s ease both; }
+    @keyframes developFrame { from { fill: #8a8478; filter: blur(4px); } to { filter: none; } }
+    @keyframes developDot { from { fill: #c9c2b2; filter: blur(6px); transform: scale(.7); } to { filter: none; transform: none; } }
+
+    /* 7. Ao vivo (pulso) */
+    .a-live .ring { fill: none; stroke: var(--yellow); stroke-width: 4; animation: liveRing 1.6s var(--ease-out) infinite; }
+    body.dark .a-live .ring { stroke: var(--ink); }
+    @keyframes liveRing { from { transform: scale(1); opacity: .9; } to { transform: scale(2.2); opacity: 0; } }
+
+    /* 8. Respiração (idle) */
+    .a-breathe { animation: breathe 3.2s var(--ease-in-out) infinite; }
+    .a-breathe .dot { animation: dotFloat 3.2s var(--ease-in-out) infinite; }
+    @keyframes breathe { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+    @keyframes dotFloat { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(-6%, 6%); } }
+
+    /* ============ LOADING ============ */
+
+    /* L1. Órbita */
+    .l-orbit .orbit { transform-box: view-box; transform-origin: 50px 50px; animation: spin 1.1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* L2. Flash piscando */
+    .l-blink .dot { animation: blink 1s var(--ease-in-out) infinite; }
+    @keyframes blink { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(.45); opacity: .35; } }
+
+    /* L3. Três pontos */
+    .dots { display: flex; gap: 10px; }
+    .dots span { width: 18px; height: 18px; border-radius: 50%; background: var(--yellow); animation: hop 900ms var(--ease-in-out) infinite; }
+    .dots span:nth-child(2) { animation-delay: 120ms; }
+    .dots span:nth-child(3) { animation-delay: 240ms; }
+    @keyframes hop { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-16px); } }
+
+    /* L4. Moldura desenhando */
+    .l-draw .outline { fill: none; stroke: var(--ink); stroke-width: 6; stroke-linecap: round; stroke-dasharray: 100; animation: draw 1.8s var(--ease-in-out) infinite; }
+    body.dark .l-draw .outline { stroke: var(--yellow); }
+    .l-draw .dot { fill: var(--yellow); animation: drawDot 1.8s var(--ease-pop) infinite; }
+    @keyframes draw { 0% { stroke-dashoffset: 100; } 50% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: -100; } }
+    @keyframes drawDot { 0%, 35% { transform: scale(0); } 50%, 75% { transform: scale(1); } 100% { transform: scale(0); } }
+
+    /* L5. Revelando foto */
+    .polaroid { width: 130px; background: #fff; padding: 10px 10px 30px; border-radius: 10px; box-shadow: 0 10px 30px rgba(23, 20, 15, .15); transform: rotate(-4deg); position: relative; }
+    .polaroid .img { height: 110px; border-radius: 6px; background: linear-gradient(135deg, var(--yellow), #ff8a3d 55%, #17140F); animation: reveal 2.4s ease-in-out infinite; }
+    .polaroid small { position: absolute; bottom: 8px; left: 0; right: 0; text-align: center; font: 700 12px 'Bricolage Grotesque'; color: var(--ink); }
+    @keyframes reveal { 0% { filter: grayscale(1) brightness(.25) blur(8px); } 70%, 100% { filter: none; } }
+
+    /* L6. Upload */
+    .upload { width: min(220px, 80%); display: flex; flex-direction: column; gap: 12px; }
+    .upload .label { display: flex; justify-content: space-between; font: 700 14px 'Bricolage Grotesque'; }
+    .upload .bar { height: 12px; border-radius: 999px; background: var(--border); position: relative; }
+    .upload .fill { position: absolute; inset: 0 auto 0 0; width: 0; border-radius: inherit; background: var(--ink); }
+    body.dark .upload .fill { background: var(--yellow); }
+    .upload .thumb { position: absolute; top: 50%; width: 22px; height: 22px; border-radius: 50%; background: var(--yellow); border: 3px solid var(--card); transform: translate(-50%, -50%); }
+
+    /* L7. Pilha de fotos */
+    .stack { position: relative; width: 110px; height: 110px; }
+    .stack span { position: absolute; inset: 0; border-radius: 16px; border: 6px solid #fff; box-shadow: 0 6px 18px rgba(23, 20, 15, .15); animation: shuffle 2.4s var(--ease-in-out) infinite; }
+    .stack span:nth-child(1) { background: var(--yellow); }
+    .stack span:nth-child(2) { background: var(--ink); animation-delay: -.8s; }
+    .stack span:nth-child(3) { background: #ff8a3d; animation-delay: -1.6s; }
+    @keyframes shuffle {
+      0% { transform: rotate(-8deg); z-index: 3; }
+      30% { transform: translateX(80px) rotate(14deg); z-index: 3; }
+      33% { z-index: 1; }
+      60% { transform: rotate(6deg); z-index: 1; }
+      100% { transform: rotate(-8deg); z-index: 2; }
+    }
+
+    /* L8. Skeleton do feed */
+    .skeleton { width: min(240px, 85%); display: flex; flex-direction: column; gap: 10px; }
+    .skeleton .row { display: flex; align-items: center; gap: 10px; }
+    .sk { border-radius: 10px; background: linear-gradient(90deg, var(--border) 25%, color-mix(in srgb, var(--yellow) 35%, var(--border)) 50%, var(--border) 75%); background-size: 300% 100%; animation: shimmer 1.4s linear infinite; }
+    .sk.avatar { width: 36px; height: 36px; border-radius: 50%; }
+    .sk.line { height: 12px; flex: 1; }
+    .sk.photo { height: 110px; border-radius: 16px; }
+    @keyframes shimmer { from { background-position: 100% 0; } to { background-position: -50% 0; } }
+
+    /* L9. Morph quadrado ⇄ círculo */
+    .l-morph { animation: spin 2.4s var(--ease-in-out) infinite; }
+    .l-morph .frame { animation: morph 2.4s var(--ease-in-out) infinite; }
+    .l-morph .dot { transform-box: view-box; transform-origin: 50px 50px; animation: spin 2.4s var(--ease-in-out) infinite reverse; }
+    @keyframes morph { 0%, 100% { rx: 28px; } 50% { rx: 46px; } }
+
+    /* L10. Anel ao redor do símbolo */
+    .ring-wrap { position: relative; width: 120px; height: 120px; display: grid; place-items: center; }
+    .ring-wrap .sym { width: 72px; height: 72px; }
+    .ring-wrap .arc { position: absolute; inset: 0; border-radius: 50%; border: 5px solid var(--border); border-top-color: var(--yellow); animation: spin 900ms linear infinite; }
+
+    /* tabela de tokens */
+    table { width: 100%; border-collapse: collapse; background: var(--card); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; }
+    th, td { text-align: left; padding: 14px 18px; border-bottom: 1px solid var(--border); font-size: 14px; vertical-align: top; }
+    th { font-family: 'Bricolage Grotesque'; font-size: 15px; }
+    td code { background: var(--sand); padding: 2px 8px; border-radius: 6px; font-size: 13px; white-space: nowrap; }
+    .table-wrap { overflow-x: auto; border-radius: 20px; }
+
+    footer { text-align: center; color: var(--text-2); padding: 32px 16px 48px; font-size: 14px; }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 1ms !important; animation-iteration-count: 1 !important; transition-duration: 1ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo brand-text">
+      <svg class="sym a-breathe" style="width: 36px; height: 36px" viewBox="0 0 100 100">
+        <rect class="frame" x="4" y="4" width="92" height="92" rx="28" />
+        <circle class="dot" cx="59" cy="42" r="18" />
+      </svg>
+      uaiToNaFoto
+    </div>
+    <div class="actions">
+      <button class="pill" id="replayAll">Repetir tudo</button>
+      <button class="pill primary" id="toggleTheme">Tema escuro</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="intro">
+      <h1>Identidade visual <em>em movimento</em></h1>
+      <p>
+        O símbolo é uma moldura (a foto) com um ponto fora do centro (o convidado entrando nela).
+        As animações abaixo partem dessa ideia: o ponto entra, dispara um flash, revela e acompanha.
+        Clique nos cards marcados com <strong>↻</strong> para repetir.
+      </p>
+    </div>
+
+    <!-- ================= IDENTIDADE ================= -->
+    <section>
+      <h2>Ideias de animação da marca</h2>
+      <p class="lead">Animações de assinatura para splash, landing, telão e microinterações. Curtas, com mola leve e sempre partindo do ponto amarelo.</p>
+
+      <div class="grid">
+        <article class="card">
+          <div class="stage replay play">
+            <svg class="sym a-enter" viewBox="0 0 100 100">
+              <rect class="frame" x="4" y="4" width="92" height="92" rx="28" />
+              <circle class="dot" cx="59" cy="42" r="18" />
+            </svg>
+            <span class="hint">↻ clique</span>
+          </div>
+          <div class="info">
+            <span class="num">01</span>
+            <h3>Entrou na foto</h3>
+            <p>A moldura surge girando e o ponto "pula" de fora para dentro dela. É a história da marca em 1 segundo.</p>
+            <span class="tag">Splash · abertura do app</span>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="stage">
+            <svg class="sym a-flash" viewBox="0 0 100 100">
+              <rect class="frame" x="4" y="4" width="92" height="92" rx="28" />
+              <circle class="burst" cx="59" cy="42" r="18" />
+              <circle class="dot" cx="59" cy="42" r="18" />
+            </svg>
+          </div>
+          <div class="info">
+            <span class="num">02</span>
+            <h3>Flash</h3>
+            <p>O ponto vira o flash da câmera: cresce e solta um clarão branco. Bom para confirmar ações.</p>
+            <span class="tag">Foto enviada · telão nova foto</span>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="stage replay">
+            <svg class="sym a-shutter" viewBox="0 0 100 100">
+              <rect class="frame" x="4" y="4" width="92" height="92" rx="28" />
+              <circle class="dot" cx="59" cy="42" r="18" />
+            </svg>
+            <span class="hint">↻ clique</span>
+          </div>
+          <div class="info">
+            <span class="num">03</span>
+            <h3>Clique do obturador</h3>
+            <p>A moldura é "apertada" e o ponto fecha como uma íris, depois volta com mola. Feedback tátil do botão de câmera.</p>
+            <span class="tag">Botão tirar foto</span>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="stage replay play">
+            <div class="logo-reveal">
+              <svg class="sym" viewBox="0 0 100 100">
+                <rect class="frame" x="4" y="4" width="92" height="92" rx="28" />
+                <circle class="dot" cx="59" cy="42" r="18" />
+              </svg>
+              <span class="brand-text"><span class="w">uai</span><span class="w">To</span><span class="w">Na</span><span class="w">Foto</span></span>
+            </div>
+            <span class="hint">↻ clique</span>
+          </div>
+          <div class="info">
+            <span class="num">04</span>
+            <h3>Reveal do logo</h3>
+            <p>Cada palavra do camelCase sobe em sequência (uai → To → Na → Foto) e acende em amarelo. Reforça a leitura do nome junto.</p>
+            <span class="tag">Landing · vídeos · telão</span>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="stage" id="eyeStage">
+            <svg class="sym a-eye" viewBox="0 0 100 100">
+              <rect class="frame" x="4" y="4" width="92" height="92" rx="28" />
+              <circle class="dot" cx="50" cy="50" r="18" />
+            </svg>
+            <span class="hint">mova o mouse</span>
+          </div>
+          <div class="info">
+            <span class="num">05</span>
+            <h3>Olho curioso</h3>
+            <p>O ponto segue o cursor ou o dedo, como se o símbolo estivesse olhando. Dá personalidade sem atrapalhar.</p>
+            <span class="tag">Hero da landing · tela vazia</span>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="stage replay play">
+            <svg class="sym a-develop" viewBox="0 0 100 100">
+              <rect class="frame" x="4" y="4" width="92" height="92" rx="28" />
+              <circle class="dot" cx="59" cy="42" r="18" />
+            </svg>
+            <span class="hint">↻ clique</span>
+          </div>
+          <div class="info">
+            <span class="num">06</span>
+            <h3>Revelação polaroid</h3>
+            <p>O símbolo começa desbotado e borrado e "revela" as cores, como uma foto instantânea.</p>
+            <span class="tag">Galeria · Cápsula do Tempo</span>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="stage">
+            <svg class="sym a-live" viewBox="0 0 100 100">
+              <rect class="frame" x="4" y="4" width="92" height="92" rx="28" />
+              <circle class="ring" cx="59" cy="42" r="18" />
+              <circle class="dot" cx="59" cy="42" r="18" />
+            </svg>
+          </div>
+          <div class="info">
+            <span class="num">07</span>
+            <h3>Ao vivo</h3>
+            <p>Ondas saem do ponto, sinalizando que o evento está acontecendo agora e as fotos chegam em tempo real.</p>
+            <span class="tag">Selo "ao vivo" · telão</span>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="stage">
+            <svg class="sym a-breathe" viewBox="0 0 100 100">
+              <rect class="frame" x="4" y="4" width="92" height="92" rx="28" />
+              <circle class="dot" cx="59" cy="42" r="18" />
+            </svg>
+          </div>
+          <div class="info">
+            <span class="num">08</span>
+            <h3>Respiração</h3>
+            <p>Flutuação sutil e contínua, com o ponto se mexendo um pouco dentro da moldura. Para estados ociosos.</p>
+            <span class="tag">Telão aguardando fotos</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ================= LOADING ================= -->
+    <section>
+      <h2>Exemplos de loading</h2>
+      <p class="lead">Indicadores de carregamento com a cara da marca. Use os curtos (L1–L3, L10) em botões e trocas de tela, e os contextuais (L5–L8) quando der para mostrar o que está acontecendo.</p>
+
+      <div class="grid">
+        <article class="card">
+          <div class="stage">
+            <svg class="sym l-orbit" viewBox="0 0 100 100">
+              <rect class="frame" x="4" y="4" width="92" height="92" rx="28" />
+              <g class="orbit"><circle class="dot" cx="50" cy="27" r="13" /></g>
+            </svg>
+          </div>
+          <div class="info">
+            <span class="num">L1</span>
+            <h3>Órbita</h3>
+            <p>O ponto gira dentro da moldura. É o loader padrão, neutro e reconhecível.</p>
+            <span class="tag">Carregamento geral</span>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="stage">
+            <svg class="sym l-blink" viewBox="0 0 100 100">
+              <rect class="frame" x="4" y="4" width="92" height="92" rx="28" />
+              <circle class="dot" cx="59" cy="42" r="18" />
+            </svg>
+          </div>
+          <div class="info">
+            <span class="num">L2</span>
+            <h3>Flash carregando</h3>
+            <p>O ponto pulsa como o flash carregando antes do disparo. Minimalista, ótimo em tamanhos pequenos.</p>
+            <span class="tag">Splash · troca de rota</span>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="stage">
+            <div class="dots"><span></span><span></span><span></span></div>
+          </div>
+          <div class="info">
+            <span class="num">L3</span>
+            <h3>Três pontos</h3>
+            <p>Três pontos amarelos pulando em onda. Cabe dentro de botões ("Entrando...").</p>
+            <span class="tag">Botões · inline</span>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="stage">
+            <svg class="sym l-draw" viewBox="0 0 100 100">
+              <rect class="outline" x="6" y="6" width="88" height="88" rx="27" pathLength="100" />
+              <circle class="dot" cx="59" cy="42" r="16" />
+            </svg>
+          </div>
+          <div class="info">
+            <span class="num">L4</span>
+            <h3>Moldura desenhando</h3>
+            <p>O contorno vai sendo desenhado e o ponto aparece quando a moldura fecha. Elegante para telas cheias.</p>
+            <span class="tag">Primeiro carregamento</span>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="stage">
+            <div class="polaroid"><div class="img"></div><small>revelando...</small></div>
+          </div>
+          <div class="info">
+            <span class="num">L5</span>
+            <h3>Revelando foto</h3>
+            <p>Uma polaroid sai do escuro até ficar colorida. Use enquanto a imagem carrega no feed ou na galeria.</p>
+            <span class="tag">Imagens do feed</span>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="stage">
+            <div class="upload">
+              <div class="label"><span>enviando sua foto</span><span id="uploadPct">0%</span></div>
+              <div class="bar"><div class="fill" id="uploadFill"></div><div class="thumb" id="uploadThumb"></div></div>
+            </div>
+          </div>
+          <div class="info">
+            <span class="num">L6</span>
+            <h3>Upload com progresso</h3>
+            <p>Barra com o ponto amarelo como indicador. Mostra progresso real do envio ao R2, ideal para 4G instável.</p>
+            <span class="tag">Envio de foto do convidado</span>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="stage">
+            <div class="stack"><span></span><span></span><span></span></div>
+          </div>
+          <div class="info">
+            <span class="num">L7</span>
+            <h3>Pilha de fotos</h3>
+            <p>Fotos sendo embaralhadas como em uma mesa de festa. Divertido para processos mais longos.</p>
+            <span class="tag">Gerando .zip · galeria</span>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="stage">
+            <div class="skeleton">
+              <div class="row"><div class="sk avatar"></div><div class="sk line"></div></div>
+              <div class="sk photo"></div>
+              <div class="sk line" style="width: 60%; flex: none"></div>
+            </div>
+          </div>
+          <div class="info">
+            <span class="num">L8</span>
+            <h3>Skeleton do feed</h3>
+            <p>Esqueleto do post com brilho amarelado. Mantém o layout estável enquanto o feed carrega.</p>
+            <span class="tag">Feed · lista de eventos</span>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="stage">
+            <svg class="sym l-morph" viewBox="0 0 100 100">
+              <rect class="frame" x="4" y="4" width="92" height="92" rx="28" />
+              <circle class="dot" cx="59" cy="42" r="18" />
+            </svg>
+          </div>
+          <div class="info">
+            <span class="num">L9</span>
+            <h3>Morph</h3>
+            <p>A moldura gira e arredonda até quase virar círculo, enquanto o ponto gira ao contrário. Mais expressivo.</p>
+            <span class="tag">Processando pagamento</span>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="stage">
+            <div class="ring-wrap">
+              <div class="arc"></div>
+              <svg class="sym" viewBox="0 0 100 100">
+                <rect class="frame" x="4" y="4" width="92" height="92" rx="28" />
+                <circle class="dot" cx="59" cy="42" r="18" />
+              </svg>
+            </div>
+          </div>
+          <div class="info">
+            <span class="num">L10</span>
+            <h3>Anel com símbolo</h3>
+            <p>Spinner clássico em volta do símbolo parado. Familiar para o usuário e fácil de implementar com MUI.</p>
+            <span class="tag">Autenticação · sync</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ================= TOKENS ================= -->
+    <section>
+      <h2>Diretrizes de movimento</h2>
+      <p class="lead">Tokens para manter as animações consistentes no app (MUI / CSS).</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Token</th><th>Valor</th><th>Quando usar</th></tr></thead>
+          <tbody>
+            <tr><td><code>--dur-fast</code></td><td>150ms</td><td>Hover, foco, toggles e microinterações</td></tr>
+            <tr><td><code>--dur-base</code></td><td>300ms</td><td>Abrir menus, modais e trocar estados</td></tr>
+            <tr><td><code>--dur-slow</code></td><td>600ms</td><td>Entradas de marca, splash e reveal do logo</td></tr>
+            <tr><td><code>--ease-pop</code></td><td><code>cubic-bezier(.34, 1.56, .64, 1)</code></td><td>Elementos que "entram na foto": mola leve com overshoot</td></tr>
+            <tr><td><code>--ease-out</code></td><td><code>cubic-bezier(.16, 1, .3, 1)</code></td><td>Saídas suaves, flash e ondas</td></tr>
+            <tr><td><code>--ease-in-out</code></td><td><code>cubic-bezier(.65, 0, .35, 1)</code></td><td>Loops contínuos (loading, respiração)</td></tr>
+            <tr><td>Acessibilidade</td><td><code>prefers-reduced-motion</code></td><td>Desligar loops e reduzir entradas a um fade para quem prefere menos movimento</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer>uaiToNaFoto · identidade visual animada</footer>
+
+  <script>
+    const restart = (stage) => {
+      stage.classList.remove('play')
+      void stage.offsetWidth
+      stage.classList.add('play')
+    }
+
+    document.querySelectorAll('.stage.replay').forEach((stage) => {
+      stage.addEventListener('click', () => restart(stage))
+    })
+
+    document.getElementById('replayAll').addEventListener('click', () => {
+      document.querySelectorAll('.stage.replay').forEach(restart)
+    })
+
+    const themeButton = document.getElementById('toggleTheme')
+    themeButton.addEventListener('click', () => {
+      const isDark = document.body.classList.toggle('dark')
+      themeButton.textContent = isDark ? 'Tema claro' : 'Tema escuro'
+    })
+
+    const eyeStage = document.getElementById('eyeStage')
+    const eyeDot = eyeStage.querySelector('.dot')
+    const MAX_EYE_OFFSET = 18
+
+    const lookAt = (clientX, clientY) => {
+      const rect = eyeStage.getBoundingClientRect()
+      const dx = clientX - (rect.left + rect.width / 2)
+      const dy = clientY - (rect.top + rect.height / 2)
+      const distance = Math.hypot(dx, dy) || 1
+      const strength = Math.min(distance / 120, 1) * MAX_EYE_OFFSET
+      eyeDot.style.transform = `translate(${(dx / distance) * strength}px, ${(dy / distance) * strength}px)`
+    }
+
+    window.addEventListener('pointermove', (event) => lookAt(event.clientX, event.clientY))
+
+    const uploadFill = document.getElementById('uploadFill')
+    const uploadThumb = document.getElementById('uploadThumb')
+    const uploadPct = document.getElementById('uploadPct')
+    let progress = 0
+
+    setInterval(() => {
+      progress = progress >= 100 ? 0 : Math.min(100, progress + Math.random() * 6 + 1)
+      const value = Math.round(progress)
+      uploadFill.style.width = `${value}%`
+      uploadThumb.style.left = `${value}%`
+      uploadPct.textContent = `${value}%`
+    }, 120)
+  </script>
+</body>
+</html>
