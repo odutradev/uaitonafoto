@@ -1,4 +1,4 @@
-## **Diretrizes Críticas e Fundamentais (Mobile-First & Nomenclatura)**
+## **Diretrizes Críticas e Fundamentais (Mobile-First, Nomenclatura & Zero Barrel)**
 
 > [!IMPORTANT]
 > ### 📱 **Prioridade Absoluta: Mobile-First e Responsividade Perfeita**
@@ -10,11 +10,17 @@
 > - **Botões e alvos de toque:** botões e CTAs devem ocupar largura total ou confortável no mobile (`width: { xs: '100%', sm: 'auto' }`), com alturas e áreas de toque acessíveis (mínimo 48px).
 
 > [!IMPORTANT]
+> ### 🚫 **Proibição Absoluta de Barrel Exports (Zero Barrel Files)**
+> É **estritamente proibido** criar ou manter arquivos de barril (barrel exports / `index.ts` que apenas centralizam ou reexportam módulos, componentes, páginas, tipos ou utilitários) em qualquer lugar deste projeto (`src/components/`, `src/pages/`, `src/pages/[pagina]/sections/`, `src/pages/[pagina]/subcomponents/`, `src/api/`, etc.).
+> - **Zero arquivos `index.ts` reexportadores:** não crie arquivos cujo único papel seja fazer `export * from` ou `export { X } from './X'`.
+> - **Importação direta obrigatória:** todo e qualquer consumo deve ser feito via import direto do arquivo ou pasta específica de destino (`import Hero from './sections/hero'`, `import { Navbar } from './subcomponents/navbar'`, `import Logo from '@components/logo'`).
+
+> [!IMPORTANT]
 > ### 📁 **Nomenclatura Obrigatória de Pastas: Sempre camelCase (Letra Minúscula Inicial)**
-> Todas as pastas de componentes — compartilhados em `src/components/`, seções em `src/pages/[pagina]/sections/` e subcomponentes em `src/pages/[pagina]/subcomponents/` — **DEVEM OBRIGATORIAMENTE começar com letra minúscula seguindo camelCase**.  
-> - **Correto:** `navbar/`, `hero/`, `howItWorks/`, `interactiveDemo/`, `liveWall/`, `guestFeed/`, `finalCta/`, `footer/`, `loginForm/`, `brandSymbol/`, `logo/`, `themeToggle/`  
-> - **Proibido:** `Navbar/`, `Hero/`, `LoginForm/` (PascalCase em pastas é proibido)  
-> *Nota: Os componentes React (funções) e tipos continuam utilizando PascalCase no código (`Navbar`, `HeroProps`), apenas as pastas seguem camelCase.*
+> Todas as pastas de componentes — compartilhados em `src/components/`, páginas em `src/pages/`, seções em `src/pages/[pagina]/sections/` e subcomponentes em `src/pages/[pagina]/subcomponents/` — **DEVEM OBRIGATORIAMENTE começar com letra minúscula seguindo camelCase**.  
+> - **Correto:** `landingPage/`, `authPage/`, `resetPassword/`, `errorPage/`, `notFound/`, `navbar/`, `hero/`, `howItWorks/`, `interactiveDemo/`, `liveWall/`, `guestFeed/`, `finalCta/`, `footer/`, `brandSymbol/`, `logo/`, `themeToggle/`  
+> - **Proibido:** `LandingPage/`, `Hero/`, `LoginForm/` (PascalCase em pastas é proibido)  
+> *Nota: Os componentes React (funções) e tipos continuam utilizando PascalCase no código (`LandingPage`, `HeroProps`), apenas as pastas seguem camelCase.*
 
 ---
 
@@ -41,10 +47,10 @@ A pasta `src/` organiza a aplicação de forma limpa, modular e desacoplada:
 * `src/stores/` (Gerenciamento de estado global com Zustand)
 * `src/api/` (Integração com API REST e autenticação)
   * `interceptor/` (Instância do Axios, types e interceptors para injeção de token e refresh automático)
-  * `actions/` (Ações de API segregadas por domínio, ex: `auth`, com seus respectivos `index.ts` e `types.ts`)
+  * `actions/` (Ações de API segregadas por domínio, ex: `auth`, com suas funções diretas)
 * `src/hooks/` (Hooks customizados reutilizáveis)
 * `src/components/` (Componentes compartilhados e globais — sem barrel file)
-* `src/pages/` (Páginas da aplicação, suas sections/ estruturais e subcomponents/ locais)
+* `src/pages/` (Páginas da aplicação, suas sections/ estruturais e subcomponents/ locais — sem barrel file)
 
 ---
 
@@ -52,7 +58,7 @@ A pasta `src/` organiza a aplicação de forma limpa, modular e desacoplada:
 
 Tanto os componentes compartilhados (`src/components/`) quanto as seções (`src/pages/[pagina]/sections/`) e os subcomponentes locais (`src/pages/[pagina]/subcomponents/`) devem **obrigatoriamente** ser organizados em pastas individuais (convenção camelCase) contendo a seguinte estrutura com 3 arquivos:
 
-1. `index.tsx`: O componente React com a estrutura do JSX. Deve conter **apenas** `export default NomeComponente`. **Não** deve reexportar tipos do arquivo `types.ts`.
+1. `index.tsx`: O componente React com a estrutura do JSX. Deve conter `export default NomeComponente`. **Não** deve reexportar tipos do arquivo `types.ts`.
 2. `styles.ts`: Objeto de estilos ou funções geradoras com tipagem `SxProps<Theme>` do Material-UI (`@mui/material`). Nenhum estilo inline complexo deve permanecer no JSX.
 3. `types.ts`: Definições de tipos, contratos e interfaces TypeScript exclusivas do componente.
 
@@ -78,40 +84,50 @@ src/components/
 
 #### **Estrutura de Exemplo para Páginas (`src/pages/`):**
 
-Nas páginas, organizamos os elementos em duas pastas principais:
+Nas páginas, organizamos os elementos de forma modular sem qualquer arquivo de barril:
 - **`sections/`:** Contém as seções verticais estruturais que compõem o fluxo/narrativa da página (ex: `hero/`, `howItWorks/`, `interactiveDemo/`, `finalCta/`).
-- **`subcomponents/`:** Contém os componentes gerais da página (ex: `navbar/`, `footer/`) e componentes dedicados utilizados dentro das seções (ex: `liveWall/`, `guestFeed/`).
+- **`subcomponents/`:** Contém os componentes dedicados da página (ex: `navbar/`, `footer/`, `liveWall/`, `guestFeed/`).
 
 ```
 src/pages/
-├── home/
+├── landingPage/
 │   ├── index.tsx
 │   ├── data.ts
 │   ├── sections/
 │   │   ├── hero/
-│   │   ├── howItWorks/
-│   │   ├── interactiveDemo/
-│   │   ├── finalCta/
-│   │   └── index.ts
-│   ├── subcomponents/
-│   │   ├── navbar/
 │   │   │   ├── index.tsx
 │   │   │   ├── styles.ts
 │   │   │   └── types.ts
-│   │   ├── footer/
-│   │   ├── liveWall/
-│   │   ├── guestFeed/
-│   │   └── index.ts
-├── login/
-│   ├── index.tsx
-│   ├── hooks/
+│   │   ├── howItWorks/
+│   │   ├── interactiveDemo/
+│   │   └── finalCta/
 │   └── subcomponents/
-│       ├── loginForm/
+│       ├── navbar/
 │       │   ├── index.tsx
 │       │   ├── styles.ts
 │       │   └── types.ts
-│       └── index.ts
-└── index.ts
+│       ├── footer/
+│       ├── liveWall/
+│       └── guestFeed/
+├── authPage/
+│   ├── index.tsx
+│   ├── styles.ts
+│   ├── types.ts
+│   └── hooks/
+│       └── useAuthForm.ts
+├── resetPassword/
+│   ├── index.tsx
+│   ├── hooks/
+│   └── subcomponents/
+│       └── resetPasswordForm/
+├── errorPage/
+│   ├── index.tsx
+│   └── subcomponents/
+│       └── errorContent/
+└── notFound/
+    ├── index.tsx
+    └── subcomponents/
+        └── notFoundContent/
 ```
 
 ---
@@ -152,7 +168,7 @@ export const getLogoContainerStyles = (isDark: boolean, gap: number | string): S
 ```
 
 #### **3. Componente (`index.tsx`)**
-Consome os estilos e os tipos criados nos arquivos adjacentes. Deve manter apenas o `export default`:
+Consome os estilos e os tipos criados nos arquivos adjacentes. Deve manter `export default`:
 
 ```tsx
 import { Box } from '@mui/material'
@@ -179,19 +195,22 @@ const Logo = ({ size = 'medium', sx, ...rest }: LogoProps) => {
 export default Logo
 ```
 
-#### **4. Padrão de Importação Direta (Sem Barrel File)**
-Importe componentes diretamente pela pasta correspondente utilizando default import:
+#### **4. Padrão de Importação Direta (Zero Barrel Files)**
+Importe componentes, seções e subcomponentes diretamente pela pasta ou arquivo correspondente:
 
 ```tsx
 // Correto:
 import Logo from '@components/logo'
 import ThemeToggle from '@components/themeToggle'
 import BrandSymbol from '@components/brandSymbol'
+import Hero from './sections/hero'
+import { Navbar } from './subcomponents/navbar'
 
 // Caso necessite tipagens externamente, importe diretamente de /types:
 import type { LogoProps } from '@components/logo/types'
 
-// Proibido:
-// import { Logo } from '@components/index'
+// Proibido (qualquer arquivo barrel / index.ts que reexporta):
 // import { Logo } from '@components'
+// import { Hero, HowItWorks } from './sections'
+// import { Navbar, Footer } from './subcomponents'
 ```

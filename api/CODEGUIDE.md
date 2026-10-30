@@ -8,6 +8,11 @@
 
 ## **Guia Estrutural e Arquitetural da API**
 
+> [!IMPORTANT]
+> ### 🚫 **Proibição Absoluta de Barrel Exports (Zero Barrel Files)**
+> É **estritamente proibido** criar ou manter arquivos de barril (barrel exports / `index.ts` que apenas centralizam/reexportam múltiplos módulos) no backend.
+> Todo e qualquer consumo deve ser feito via importação direta do arquivo específico (ex: `@database/connection`, `@database/database`, `@email/connect`, `@email/utils`).
+
 Este documento define os padrões para desenvolvimento na API. Toda a aplicação fica centralizada diretamente em `src/`, utilizando path aliases dedicados por módulo (`@actions`, `@config`, `@database`, `@docs`, `@email`, `@error`, `@factories`, `@middlewares`, `@repositories`, `@routes`, `@services`, `@appTypes`, `@utils`) além do alias base `@/*`.
 
 ### **Estrutura de Diretórios**
