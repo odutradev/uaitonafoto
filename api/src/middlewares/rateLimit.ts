@@ -6,7 +6,13 @@ export const globalRateLimiter = rateLimit({
   limit: 300,
   standardHeaders: 'draft-7',
   legacyHeaders: false,
-  skip: (req) => req.path.startsWith('/docs') || req.path.startsWith('/api/docs'),
+  skip: (req) =>
+    req.path === '/ping' ||
+    req.path === '/health' ||
+    req.path === '/api/ping' ||
+    req.path === '/api/health' ||
+    req.path.startsWith('/docs') ||
+    req.path.startsWith('/api/docs'),
   handler: (_req, res) => {
     sendError({
       res,
