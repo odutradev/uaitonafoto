@@ -1,44 +1,37 @@
-import { firebaseDb } from '@database/connection'
+import { firestore } from '@database/connection'
 import { removeUndefined } from '@utils/object'
 
 import type { UpdateUserPayload, UpsertUserPayload, UserEntity } from './types'
 
-const REF_PATH = 'users'
+const COLLECTION_NAME = 'users'
 
 const userRepository = {
   findById: async (id: string): Promise<UserEntity | null> => {
-    const snapshot = await firebaseDb.ref(`${REF_PATH}/${id}`).once('value')
-    const data = snapshot.val() as UserEntity | null
+    const doc = await firestore.collection(COLLECTION_NAME).doc(id).get()
 
-    if (!data) return null
+    if (!doc.exists) return null
 
-    return { ...data, id }
+    return { ...(doc.data() as UserEntity), id: doc.id }
   },
 
   findByEmail: async (email: string): Promise<UserEntity | null> => {
     const normalized = email.trim().toLowerCase()
-    const snapshot = await firebaseDb.ref(REF_PATH).orderByChild('email').equalTo(email.trim()).once('value')
-    const exactMatch = snapshot.val() as Record<string, UserEntity> | null
+    const snapshot = await firestore
+      .collection(COLLECTION_NAME)
+      .where('email', '==', normalized)
+      .limit(1)
+      .get()
 
-    if (exactMatch) {
-      const [id, user] = Object.entries(exactMatch)[0]
-      return { ...user, id }
-    }
+    if (snapshot.empty) return null
 
-    const allSnapshot = await firebaseDb.ref(REF_PATH).once('value')
-    const allUsers = allSnapshot.val() as Record<string, UserEntity> | null
-
-    if (!allUsers) return null
-
-    const found = Object.entries(allUsers).find(([, user]) => user.email?.trim().toLowerCase() === normalized)
-
-    return found ? { ...found[1], id: found[0] } : null
+    const doc = snapshot.docs[0]
+    return { ...(doc.data() as UserEntity), id: doc.id }
   },
 
   upsert: async (id: string, payload: UpsertUserPayload): Promise<UserEntity> => {
-    const ref = firebaseDb.ref(`${REF_PATH}/${id}`)
-    const snapshot = await ref.once('value')
-    const existing = snapshot.val() as UserEntity | null
+    const docRef = firestore.collection(COLLECTION_NAME).doc(id)
+    const doc = await docRef.get()
+    const existing = doc.exists ? (doc.data() as UserEntity) : null
     const now = new Date().toISOString()
 
     const user: UserEntity = {
@@ -54,18 +47,18 @@ const userRepository = {
       updatedAt: now
     }
 
-    await ref.set(removeUndefined(user))
+    await docRef.set(removeUndefined(user), { merge: true })
 
     return user
   },
 
   update: async (id: string, data: UpdateUserPayload): Promise<UserEntity | null> => {
-    const ref = firebaseDb.ref(`${REF_PATH}/${id}`)
-    const snapshot = await ref.once('value')
-    const existing = snapshot.val() as UserEntity | null
+    const docRef = firestore.collection(COLLECTION_NAME).doc(id)
+    const doc = await docRef.get()
 
-    if (!existing) return null
+    if (!doc.exists) return null
 
+    const existing = doc.data() as UserEntity
     const updated: UserEntity = {
       ...existing,
       ...removeUndefined(data),
@@ -73,11 +66,10 @@ const userRepository = {
       updatedAt: new Date().toISOString()
     }
 
-    await ref.set(removeUndefined(updated))
+    await docRef.set(removeUndefined(updated), { merge: true })
 
     return updated
   }
 }
 
 export default userRepository
-
