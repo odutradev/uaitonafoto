@@ -7,6 +7,7 @@ const Login = () => {
     setEmail,
     password,
     setPassword,
+    errorMessage,
     submitting,
     handleSubmit,
     handleGoogleLogin
@@ -18,6 +19,7 @@ const Login = () => {
       setEmail={setEmail}
       password={password}
       setPassword={setPassword}
+      errorMessage={errorMessage}
       submitting={submitting}
       onSubmit={handleSubmit}
       onGoogleLogin={handleGoogleLogin}
