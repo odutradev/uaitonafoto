@@ -1,7 +1,7 @@
 import { Box, Stack, Typography } from '@mui/material'
 import { QrCode2 as QrCodeIcon } from '@mui/icons-material'
 
-import BrandSymbol from '@components/brandSymbol'
+import Logo from '@components/logo'
 
 import {
   getLiveWallBadgeStyles,
@@ -25,7 +25,7 @@ export const LiveWall = ({ data, isDark, liveWallAccent, mosaicTiles }: LiveWall
       <Box sx={liveWallHeaderStyles}>
         <Box sx={liveWallBrandBoxStyles}>
           <Box sx={{ width: { xs: 26, sm: 32 }, height: { xs: 26, sm: 32 }, display: 'flex', alignItems: 'center' }}>
-            <BrandSymbol size="100%" variant="auto" />
+            <Logo display="symbol" size="100%" variant="auto" />
           </Box>
           <Typography sx={getLiveWallBrandTitleStyles(liveWallAccent)}>
             {data.brandName}
