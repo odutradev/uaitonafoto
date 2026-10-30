@@ -6,10 +6,10 @@ const logger = createLogger('database')
 const database = {
   connect: async (): Promise<{ clusterName: string }> => {
     try {
-      const projectId = process.env.FIREBASE_PROJECT_ID
+      const projectId = process.env.FIREBASE_PROJECT_ID || 'uaitonafoto'
 
-      if (!projectId) {
-        throw new Error('FIREBASE_PROJECT_ID is not defined')
+      if (!process.env.FIREBASE_PROJECT_ID) {
+        logger.warn('FIREBASE_PROJECT_ID is not defined, using default fallback')
       }
 
       logger.success(`Connected: Firebase App (${projectId})`)
@@ -17,11 +17,13 @@ const database = {
       return { clusterName: projectId }
     } catch (error) {
       logger.error('Connection error:', error)
-      process.exit(1)
+      throw error
     }
   },
   disconnect: async (): Promise<void> => {
-    await firebaseApp.delete()
+    if (firebaseApp) {
+      await firebaseApp.delete()
+    }
   },
   isValidUUID: (id: string): boolean => {
     if (!id || typeof id !== 'string') return false
