@@ -4,7 +4,6 @@ import {
   onAuthStateChanged,
   signInWithPopup,
   GoogleAuthProvider,
-  OAuthProvider,
   updateProfile,
   signOut
 } from 'firebase/auth'
@@ -89,15 +88,6 @@ const useAuth = (): UseAuthReturn => {
     await handleSync(user, 'google.com')
   }
 
-  const loginWithApple = async () => {
-    if (!firebaseAuth) {
-      throw new Error('Firebase não configurado. Adicione as credenciais no .env para autenticar.')
-    }
-    const provider = new OAuthProvider('apple.com')
-    const { user } = await signInWithPopup(firebaseAuth, provider)
-    await handleSync(user, 'apple.com')
-  }
-
   const logout = async () => {
     if (!firebaseAuth) {
       clearAuth()
@@ -111,7 +101,6 @@ const useAuth = (): UseAuthReturn => {
   return {
     registerWithEmail,
     loginWithGoogle,
-    loginWithApple,
     loginWithEmail,
     loading: auth.loading,
     user: auth.user,

@@ -21,7 +21,6 @@ export interface UseAuthReturn {
   registerWithEmail: (credentials: RegisterCredentials) => Promise<void>
   loginWithEmail: (credentials: LoginCredentials) => Promise<void>
   loginWithGoogle: () => Promise<void>
-  loginWithApple: () => Promise<void>
   logout: () => Promise<void>
   user: AuthUser | null
   loading: boolean
