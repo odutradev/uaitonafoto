@@ -1,9 +1,10 @@
 import { Box, Card, CardContent, Container, Stack, Typography } from '@mui/material'
 import {
   ConnectedTv as ConnectedTvIcon,
-  PhotoCamera as PhotoCameraIcon,
   QrCode2 as QrCodeIcon
 } from '@mui/icons-material'
+
+import Logo from '@components/logo'
 
 import {
   getSectionBoxStyles,
@@ -20,7 +21,7 @@ const renderStepIcon = (iconName: string) => {
   const iconSx = { fontSize: { xs: 26, sm: 32 } }
   switch (iconName) {
     case 'camera':
-      return <PhotoCameraIcon sx={iconSx} />
+      return <Logo display="symbol" size={{ xs: 26, sm: 32 }} animation="enter" />
     case 'tv':
       return <ConnectedTvIcon sx={iconSx} />
     case 'qr_code':

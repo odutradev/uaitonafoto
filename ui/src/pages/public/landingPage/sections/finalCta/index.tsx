@@ -16,7 +16,7 @@ export const FinalCta = ({ data, isDark }: FinalCtaProps) => {
   return (
     <Container maxWidth="lg" sx={{ pb: { xs: 6, sm: 8, md: 10 }, px: { xs: 2, sm: 3 } }}>
       <Box sx={getCtaBoxStyles(isDark)}>
-        <Logo size="large" variant="auto" />
+        <Logo size="large" variant="auto" animation="flash" />
 
         <Typography variant="h2" sx={ctaTitleStyles}>
           {data.title}

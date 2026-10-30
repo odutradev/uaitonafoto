@@ -9,7 +9,7 @@ export const Footer = ({ data }: FooterProps) => {
   return (
     <Box component="footer" sx={footerBoxStyles}>
       <Container maxWidth="lg" sx={footerContainerStyles}>
-        <Logo size="small" variant="auto" />
+        <Logo size="small" variant="auto" animation="breathe" />
 
         <Typography variant="body2" color="text.secondary">
           © {new Date().getFullYear()} {data.copyrightSuffix}
