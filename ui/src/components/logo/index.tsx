@@ -254,6 +254,14 @@ const Logo = ({
     <Box
       sx={[
         getLogoContainerStyles(isDark, showSymbol && showText ? dimensions.gap : 0),
+        effectiveDisplay === 'symbol' && {
+          width: dimensions.symbolSize,
+          height: dimensions.symbolSize,
+          maxWidth: '100%',
+          maxHeight: '100%',
+          justifyContent: 'center',
+          lineHeight: 0
+        },
         ...(Array.isArray(sx) ? sx : [sx])
       ]}
       {...rest}
@@ -265,8 +273,10 @@ const Logo = ({
       {showSymbol && (
         <Box
           sx={{
-            width: dimensions.symbolSize,
-            height: dimensions.symbolSize,
+            width: effectiveDisplay === 'symbol' ? '100%' : dimensions.symbolSize,
+            height: effectiveDisplay === 'symbol' ? '100%' : dimensions.symbolSize,
+            maxWidth: '100%',
+            maxHeight: '100%',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',

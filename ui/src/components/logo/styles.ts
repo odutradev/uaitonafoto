@@ -64,6 +64,14 @@ export const getLogoDimensions = (size: LogoSize): LogoDimensions => {
     return { symbolSize: size, fontSize: size * 0.85, gap: size * 0.25 }
   }
 
+  if (typeof size === 'object' && size !== null) {
+    return {
+      symbolSize: size,
+      fontSize: size,
+      gap: 1
+    }
+  }
+
   switch (size) {
     case 'small':
       return {
@@ -132,7 +140,11 @@ export const getLogoTextStyles = (
 
 export const baseSvgStyles: CSSProperties = {
   flexShrink: 0,
-  display: 'inline-block',
+  display: 'block',
+  width: '100%',
+  height: '100%',
+  maxWidth: '100%',
+  maxHeight: '100%',
   verticalAlign: 'middle',
   overflow: 'visible'
 }

@@ -1,6 +1,6 @@
 import type { BoxProps } from '@mui/material'
 
-export type LogoSize = 'small' | 'medium' | 'large' | number | string
+export type LogoSize = 'small' | 'medium' | 'large' | number | string | Record<string, number | string>
 export type LogoVariant = 'light' | 'dark' | 'auto'
 export type LogoDisplay = 'both' | 'symbol' | 'text' | 'wordmark'
 

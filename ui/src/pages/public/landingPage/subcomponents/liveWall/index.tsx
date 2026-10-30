@@ -24,9 +24,12 @@ export const LiveWall = ({ data, isDark, liveWallAccent, mosaicTiles }: LiveWall
     <Box sx={getLiveWallOuterBoxStyles(isDark)}>
       <Box sx={liveWallHeaderStyles}>
         <Box sx={liveWallBrandBoxStyles}>
-          <Box sx={{ width: { xs: 26, sm: 32 }, height: { xs: 26, sm: 32 }, display: 'flex', alignItems: 'center' }}>
-            <Logo display="symbol" size="100%" variant="auto" />
-          </Box>
+          <Logo
+            display="symbol"
+            size={{ xs: 26, sm: 32 }}
+            variant="auto"
+            animation="live"
+          />
           <Typography sx={getLiveWallBrandTitleStyles(liveWallAccent)}>
             {data.brandName}
           </Typography>
