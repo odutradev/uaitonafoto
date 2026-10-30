@@ -15,7 +15,7 @@ services:
       - FRONTEND_URL=${FRONTEND_URL:-https://uaitonafoto.odutra.com}
       - CORS_ORIGIN=${CORS_ORIGIN:-${CORS_ALLOWED_ORIGINS:-*}}
       - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS:-${CORS_ORIGIN:-*}}
-      - JWT_SECRET=${JWT_SECRET:-${JWT:-secret-key-change-in-production}}
+      - JWT_SECRET=${JWT_SECRET:-9fa82cb34981e7d23a4b5c6d7e8f0123}
       - FIREBASE_PROJECT_ID=${FIREBASE_PROJECT_ID}
       - FIREBASE_CLIENT_EMAIL=${FIREBASE_CLIENT_EMAIL}
       - FIREBASE_PRIVATE_KEY=${FIREBASE_PRIVATE_KEY}
@@ -28,11 +28,11 @@ services:
       - ABACATEPAY_API_KEY=${ABACATEPAY_API_KEY:-}
       - ABACATEPAY_WEBHOOK_SECRET=${ABACATEPAY_WEBHOOK_SECRET:-}
     healthcheck:
-      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:80/ping || exit 1"]
-      interval: 30s
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:80/ping > /dev/null || curl -fs http://127.0.0.1:80/ping > /dev/null || exit 1"]
+      interval: 10s
       timeout: 5s
-      retries: 3
-      start_period: 5s
+      retries: 5
+      start_period: 15s
     dns:
       - 8.8.8.8
       - 1.1.1.1

@@ -12,15 +12,23 @@ const startServer = async (): Promise<void> => {
   validateEnv()
 
   const app = buildApp()
-  const port = process.env.PORT ?? 3000
+  const port = Number(process.env.PORT) || 3000
 
-  app.listen(port, async () => {
+  app.listen(port, '0.0.0.0', async () => {
     logger.info(`uai to na foto API running on port ${port}`)
 
-    await database.connect()
+    try {
+      await database.connect()
+    } catch (err) {
+      logger.error('Failed to connect to database:', err)
+    }
 
     if (isEmailConfigured()) {
-      await connectEmail()
+      try {
+        await connectEmail()
+      } catch (err) {
+        logger.error('Failed to connect email service:', err)
+      }
     } else {
       logger.warn('Email service disabled: EMAIL_* variables are not configured')
     }
