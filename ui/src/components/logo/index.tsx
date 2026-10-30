@@ -24,7 +24,18 @@ const Logo = ({
       ]}
       {...rest}
     >
-      <BrandSymbol size={dimensions.symbolSize} variant={isDark ? 'dark' : 'light'} />
+      <Box
+        sx={{
+          width: dimensions.symbolSize,
+          height: dimensions.symbolSize,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexShrink: 0
+        }}
+      >
+        <BrandSymbol size="100%" variant={isDark ? 'dark' : 'light'} />
+      </Box>
       {!symbolOnly && (
         <Typography
           component="span"

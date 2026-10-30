@@ -4,9 +4,9 @@ export type LogoSize = 'small' | 'medium' | 'large' | number
 export type LogoVariant = 'light' | 'dark' | 'auto'
 
 export interface LogoDimensions {
-  symbolSize: number | string
-  fontSize: number | string
-  gap: number | string
+  symbolSize: number | string | Record<string, number | string>
+  fontSize: number | string | Record<string, number | string>
+  gap: number | string | Record<string, number | string>
 }
 
 export interface LogoProps extends BoxProps {

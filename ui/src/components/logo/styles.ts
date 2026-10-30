@@ -9,25 +9,43 @@ export const getLogoDimensions = (size: LogoSize): LogoDimensions => {
 
   switch (size) {
     case 'small':
-      return { symbolSize: 28, fontSize: '1.25rem', gap: 1 }
+      return {
+        symbolSize: { xs: 24, sm: 28 },
+        fontSize: { xs: '1.05rem', sm: '1.25rem' },
+        gap: { xs: 0.75, sm: 1 }
+      }
     case 'large':
-      return { symbolSize: 52, fontSize: '2.5rem', gap: 2 }
+      return {
+        symbolSize: { xs: 36, sm: 44, md: 52 },
+        fontSize: { xs: '1.625rem', sm: '2.1rem', md: '2.5rem' },
+        gap: { xs: 1.25, sm: 1.5, md: 2 }
+      }
     case 'medium':
     default:
-      return { symbolSize: 36, fontSize: '1.75rem', gap: 1.25 }
+      return {
+        symbolSize: { xs: 28, sm: 36 },
+        fontSize: { xs: '1.25rem', sm: '1.75rem' },
+        gap: { xs: 1, sm: 1.25 }
+      }
   }
 }
 
-export const getLogoContainerStyles = (isDark: boolean, gap: number | string): SxProps<Theme> => ({
+export const getLogoContainerStyles = (
+  isDark: boolean,
+  gap: number | string | Record<string, number | string>
+): SxProps<Theme> => ({
   display: 'inline-flex',
   alignItems: 'center',
   gap,
   userSelect: 'none',
   textDecoration: 'none',
-  color: isDark ? brandColors.flashYellow : brandColors.ink
+  color: isDark ? brandColors.flashYellow : brandColors.ink,
+  flexShrink: 0
 })
 
-export const getLogoTextStyles = (fontSize: number | string): SxProps<Theme> => ({
+export const getLogoTextStyles = (
+  fontSize: number | string | Record<string, number | string>
+): SxProps<Theme> => ({
   fontFamily: "'Bricolage Grotesque', 'Helvetica Neue', Arial, sans-serif",
   fontWeight: 800,
   fontSize,
