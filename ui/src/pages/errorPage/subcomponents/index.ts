@@ -1,2 +1,1 @@
-export { ErrorContent } from './ErrorContent'
-
+export { ErrorContent } from './errorContent'

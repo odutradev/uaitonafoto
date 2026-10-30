@@ -1,2 +1,1 @@
-export { NotFoundContent } from './NotFoundContent'
-
+export { NotFoundContent } from './notFoundContent'
