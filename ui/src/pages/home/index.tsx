@@ -30,18 +30,28 @@ const Home = () => {
     : [brandColors.sand, brandColors.sandDark, brandColors.lightBorder]
 
   return (
-    <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', bgcolor: 'background.default' }}>
+    <Box
+      sx={{
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        bgcolor: 'background.default',
+        overflowX: 'hidden',
+        width: '100%'
+      }}
+    >
       <Navbar data={headerData} isDark={isDark} />
       <Hero data={heroData} isDark={isDark} />
       <HowItWorks data={howItWorksData} isDark={isDark} />
 
-      <Container maxWidth="lg" sx={{ py: { xs: 8, md: 12 } }}>
+      <Container maxWidth="lg" sx={{ py: { xs: 6, sm: 8, md: 12 }, px: { xs: 2, sm: 3 } }}>
         <Box
           sx={{
             display: 'grid',
             gridTemplateColumns: { xs: '1fr', md: '1.35fr 1fr' },
-            gap: 4,
-            alignItems: 'center'
+            gap: { xs: 3, md: 4 },
+            alignItems: 'stretch',
+            width: '100%'
           }}
         >
           <LiveWall

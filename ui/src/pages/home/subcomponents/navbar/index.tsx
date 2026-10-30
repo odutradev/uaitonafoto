@@ -12,11 +12,11 @@ export const Navbar = ({ data, isDark }: NavbarProps) => {
   return (
     <Box component="header" sx={getHeaderStyles(isDark)}>
       <Container maxWidth="lg" sx={navContainerStyles}>
-        <RouterLink to="/" style={{ textDecoration: 'none' }}>
+        <RouterLink to="/" style={{ textDecoration: 'none', display: 'inline-flex' }}>
           <Logo size="medium" variant="auto" />
         </RouterLink>
 
-        <Stack direction="row" spacing={1.5} alignItems="center">
+        <Stack direction="row" spacing={{ xs: 1, sm: 1.5 }} alignItems="center" sx={{ flexShrink: 0 }}>
           <ThemeToggle />
 
           <Button
@@ -37,4 +37,3 @@ export const Navbar = ({ data, isDark }: NavbarProps) => {
 }
 
 export default Navbar
-

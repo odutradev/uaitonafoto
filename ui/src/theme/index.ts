@@ -108,12 +108,26 @@ export const getAppTheme = (mode: 'light' | 'dark'): Theme => {
         styleOverrides: {
           html: {
             scrollbarWidth: 'thin',
-            scrollbarColor: 'rgba(255, 207, 31, 0.45) transparent'
+            scrollbarColor: 'rgba(255, 207, 31, 0.45) transparent',
+            overflowX: 'hidden',
+            width: '100%',
+            maxWidth: '100%'
           },
           body: {
             backgroundColor: isLight ? brandColors.paper : brandColors.darkBg,
             color: isLight ? brandColors.ink : brandColors.darkTextPrimary,
-            transition: 'background-color 0.3s ease, color 0.3s ease'
+            transition: 'background-color 0.3s ease, color 0.3s ease',
+            overflowX: 'hidden',
+            width: '100%',
+            maxWidth: '100%'
+          },
+          '#root': {
+            overflowX: 'hidden',
+            width: '100%',
+            maxWidth: '100%',
+            minHeight: '100vh',
+            display: 'flex',
+            flexDirection: 'column'
           },
           '*::-webkit-scrollbar': {
             width: '8px',

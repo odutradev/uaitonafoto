@@ -15,16 +15,16 @@ export const GuestFeed = ({ data, isDark }: GuestFeedProps) => {
   return (
     <Box sx={guestFeedContainerStyles}>
       <Chip label={data.badge} sx={getGuestFeedChipStyles(isDark)} />
-      <Typography variant="h3" sx={{ fontSize: { xs: '1.75rem', sm: '2.2rem' }, color: 'text.primary' }}>
+      <Typography variant="h3" sx={{ fontSize: { xs: '1.45rem', sm: '1.85rem', md: '2.2rem' }, color: 'text.primary', letterSpacing: '-0.035em' }}>
         {data.title}
       </Typography>
-      <Typography variant="body1" sx={{ lineHeight: 1.6, color: 'text.secondary' }}>
+      <Typography variant="body1" sx={{ fontSize: { xs: '0.875rem', sm: '1rem' }, lineHeight: 1.55, color: 'text.secondary' }}>
         {data.description}
       </Typography>
 
       <Box sx={getActivityBoxStyles(isDark)}>
-        <Stack spacing={0.5}>
-          <Typography variant="subtitle1" fontWeight={800} color="text.primary">
+        <Stack spacing={0.25}>
+          <Typography variant="subtitle1" fontWeight={800} color="text.primary" sx={{ fontSize: { xs: '0.875rem', sm: '1rem' } }}>
             {data.activityCard.action}
           </Typography>
           <Typography variant="caption" color="text.secondary">
@@ -32,7 +32,7 @@ export const GuestFeed = ({ data, isDark }: GuestFeedProps) => {
           </Typography>
         </Stack>
         <Box sx={heartIconBoxStyles}>
-          <FavoriteIcon sx={{ fontSize: 22 }} />
+          <FavoriteIcon sx={{ fontSize: { xs: 18, sm: 22 } }} />
         </Box>
       </Box>
 
@@ -52,4 +52,3 @@ export const GuestFeed = ({ data, isDark }: GuestFeedProps) => {
 }
 
 export default GuestFeed
-

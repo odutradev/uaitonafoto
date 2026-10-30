@@ -24,7 +24,9 @@ export const LiveWall = ({ data, isDark, liveWallAccent, mosaicTiles }: LiveWall
     <Box sx={getLiveWallOuterBoxStyles(isDark)}>
       <Box sx={liveWallHeaderStyles}>
         <Box sx={liveWallBrandBoxStyles}>
-          <BrandSymbol size={32} variant="auto" />
+          <Box sx={{ width: { xs: 26, sm: 32 }, height: { xs: 26, sm: 32 }, display: 'flex', alignItems: 'center' }}>
+            <BrandSymbol size="100%" variant="auto" />
+          </Box>
           <Typography sx={getLiveWallBrandTitleStyles(liveWallAccent)}>
             {data.brandName}
           </Typography>
@@ -56,7 +58,7 @@ export const LiveWall = ({ data, isDark, liveWallAccent, mosaicTiles }: LiveWall
         </Stack>
       </Box>
 
-      <Stack direction="row" spacing={1.5}>
+      <Stack direction="row" spacing={{ xs: 1, sm: 1.5 }}>
         <Box sx={getMosaicTileStyles(mosaicTiles[0])} />
         <Box sx={getMosaicTileStyles(mosaicTiles[1])} />
         <Box sx={getMosaicTileStyles(mosaicTiles[2])} />
@@ -67,4 +69,3 @@ export const LiveWall = ({ data, isDark, liveWallAccent, mosaicTiles }: LiveWall
 }
 
 export default LiveWall
-

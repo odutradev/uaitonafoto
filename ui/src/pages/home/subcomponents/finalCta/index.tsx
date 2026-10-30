@@ -14,7 +14,7 @@ import type { FinalCtaProps } from './types'
 
 export const FinalCta = ({ data, isDark }: FinalCtaProps) => {
   return (
-    <Container maxWidth="lg" sx={{ pb: { xs: 8, md: 10 } }}>
+    <Container maxWidth="lg" sx={{ pb: { xs: 6, sm: 8, md: 10 }, px: { xs: 2, sm: 3 } }}>
       <Box sx={getCtaBoxStyles(isDark)}>
         <Logo size="large" variant="auto" />
 
@@ -43,4 +43,3 @@ export const FinalCta = ({ data, isDark }: FinalCtaProps) => {
 }
 
 export default FinalCta
-

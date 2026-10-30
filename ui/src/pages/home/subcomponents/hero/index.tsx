@@ -17,7 +17,7 @@ import type { HeroProps } from './types'
 export const Hero = ({ data, isDark }: HeroProps) => {
   return (
     <Container maxWidth="lg" sx={heroContainerStyles}>
-      <Stack spacing={3.5} alignItems="center" textAlign="center" sx={heroStackStyles}>
+      <Stack spacing={{ xs: 2.5, sm: 3.5 }} alignItems="center" textAlign="center" sx={heroStackStyles}>
         <Chip
           icon={
             <Box
@@ -75,4 +75,3 @@ export const Hero = ({ data, isDark }: HeroProps) => {
 }
 
 export default Hero
-

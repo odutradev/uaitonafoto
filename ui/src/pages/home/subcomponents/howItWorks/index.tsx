@@ -17,22 +17,23 @@ import {
 import type { HowItWorksProps } from './types'
 
 const renderStepIcon = (iconName: string) => {
+  const iconSx = { fontSize: { xs: 26, sm: 32 } }
   switch (iconName) {
     case 'camera':
-      return <PhotoCameraIcon sx={{ fontSize: 32 }} />
+      return <PhotoCameraIcon sx={iconSx} />
     case 'tv':
-      return <ConnectedTvIcon sx={{ fontSize: 32 }} />
+      return <ConnectedTvIcon sx={iconSx} />
     case 'qr_code':
     default:
-      return <QrCodeIcon sx={{ fontSize: 32 }} />
+      return <QrCodeIcon sx={iconSx} />
   }
 }
 
 export const HowItWorks = ({ data, isDark }: HowItWorksProps) => {
   return (
     <Box sx={getSectionBoxStyles(isDark)}>
-      <Container maxWidth="lg">
-        <Stack spacing={2} sx={sectionHeaderStyles}>
+      <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3 } }}>
+        <Stack spacing={1.5} sx={sectionHeaderStyles}>
           <Typography variant="h2" sx={sectionTitleStyles}>
             {data.title}
           </Typography>
@@ -47,14 +48,14 @@ export const HowItWorks = ({ data, isDark }: HowItWorksProps) => {
 
             return (
               <Card key={step.id || step.title} elevation={0} sx={stepCardStyles}>
-                <CardContent sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 2 }}>
+                <CardContent sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: { xs: 1.5, sm: 2 }, p: { xs: 2, sm: 2.5 } }}>
                   <Box sx={getStepIconBoxStyles(isStep2, isDark)}>
                     {renderStepIcon(step.icon)}
                   </Box>
-                  <Typography variant="h4" sx={{ fontSize: '1.6rem', color: 'text.primary' }}>
+                  <Typography variant="h4" sx={{ fontSize: { xs: '1.35rem', sm: '1.6rem' }, color: 'text.primary' }}>
                     {step.title}
                   </Typography>
-                  <Typography variant="body1" sx={{ lineHeight: 1.6, color: 'text.secondary' }}>
+                  <Typography variant="body1" sx={{ fontSize: { xs: '0.9375rem', sm: '1rem' }, lineHeight: 1.6, color: 'text.secondary' }}>
                     {step.description}
                   </Typography>
                 </CardContent>
@@ -68,4 +69,3 @@ export const HowItWorks = ({ data, isDark }: HowItWorksProps) => {
 }
 
 export default HowItWorks
-
