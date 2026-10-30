@@ -11,8 +11,8 @@
 
 > [!IMPORTANT]
 > ### 📁 **Nomenclatura Obrigatória de Pastas: Sempre camelCase (Letra Minúscula Inicial)**
-> Todas as pastas de componentes — tanto os compartilhados em `src/components/` quanto os subcomponentes de páginas em `src/pages/[pagina]/subcomponents/` — **DEVEM OBRIGATORIAMENTE começar com letra minúscula seguindo camelCase**.  
-> - **Correto:** `navbar/`, `hero/`, `howItWorks/`, `liveWall/`, `guestFeed/`, `finalCta/`, `footer/`, `loginForm/`, `brandSymbol/`, `logo/`, `themeToggle/`  
+> Todas as pastas de componentes — compartilhados em `src/components/`, seções em `src/pages/[pagina]/sections/` e subcomponentes em `src/pages/[pagina]/subcomponents/` — **DEVEM OBRIGATORIAMENTE começar com letra minúscula seguindo camelCase**.  
+> - **Correto:** `navbar/`, `hero/`, `howItWorks/`, `interactiveDemo/`, `liveWall/`, `guestFeed/`, `finalCta/`, `footer/`, `loginForm/`, `brandSymbol/`, `logo/`, `themeToggle/`  
 > - **Proibido:** `Navbar/`, `Hero/`, `LoginForm/` (PascalCase em pastas é proibido)  
 > *Nota: Os componentes React (funções) e tipos continuam utilizando PascalCase no código (`Navbar`, `HeroProps`), apenas as pastas seguem camelCase.*
 
@@ -44,13 +44,13 @@ A pasta `src/` organiza a aplicação de forma limpa, modular e desacoplada:
   * `actions/` (Ações de API segregadas por domínio, ex: `auth`, com seus respectivos `index.ts` e `types.ts`)
 * `src/hooks/` (Hooks customizados reutilizáveis)
 * `src/components/` (Componentes compartilhados e globais — sem barrel file)
-* `src/pages/` (Páginas da aplicação e seus subcomponentes locais)
+* `src/pages/` (Páginas da aplicação, suas sections/ estruturais e subcomponents/ locais)
 
 ---
 
 ### **Padrão Obrigatório de Pastas: A Tríade (index, styles, types)**
 
-Tanto os componentes compartilhados (`src/components/`) quanto as páginas e seus subcomponentes (`src/pages/`) devem **obrigatoriamente** ser organizados em pastas individuais (convenção camelCase) contendo a seguinte estrutura com 3 arquivos:
+Tanto os componentes compartilhados (`src/components/`) quanto as seções (`src/pages/[pagina]/sections/`) e os subcomponentes locais (`src/pages/[pagina]/subcomponents/`) devem **obrigatoriamente** ser organizados em pastas individuais (convenção camelCase) contendo a seguinte estrutura com 3 arquivos:
 
 1. `index.tsx`: O componente React com a estrutura do JSX. Deve conter **apenas** `export default NomeComponente`. **Não** deve reexportar tipos do arquivo `types.ts`.
 2. `styles.ts`: Objeto de estilos ou funções geradoras com tipagem `SxProps<Theme>` do Material-UI (`@mui/material`). Nenhum estilo inline complexo deve permanecer no JSX.
@@ -78,20 +78,29 @@ src/components/
 
 #### **Estrutura de Exemplo para Páginas (`src/pages/`):**
 
+Nas páginas, organizamos os elementos em duas pastas principais:
+- **`sections/`:** Contém as seções verticais estruturais que compõem o fluxo/narrativa da página (ex: `hero/`, `howItWorks/`, `interactiveDemo/`, `finalCta/`).
+- **`subcomponents/`:** Contém os componentes gerais da página (ex: `navbar/`, `footer/`) e componentes dedicados utilizados dentro das seções (ex: `liveWall/`, `guestFeed/`).
+
 ```
 src/pages/
 ├── home/
 │   ├── index.tsx
 │   ├── data.ts
+│   ├── sections/
+│   │   ├── hero/
+│   │   ├── howItWorks/
+│   │   ├── interactiveDemo/
+│   │   ├── finalCta/
+│   │   └── index.ts
 │   ├── subcomponents/
 │   │   ├── navbar/
 │   │   │   ├── index.tsx
 │   │   │   ├── styles.ts
 │   │   │   └── types.ts
-│   │   ├── hero/
-│   │   │   ├── index.tsx
-│   │   │   ├── styles.ts
-│   │   │   └── types.ts
+│   │   ├── footer/
+│   │   ├── liveWall/
+│   │   ├── guestFeed/
 │   │   └── index.ts
 ├── login/
 │   ├── index.tsx
