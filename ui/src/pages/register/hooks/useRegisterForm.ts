@@ -118,3 +118,4 @@ export const useRegisterForm = (): UseRegisterFormReturn => {
 }
 
 export default useRegisterForm
+

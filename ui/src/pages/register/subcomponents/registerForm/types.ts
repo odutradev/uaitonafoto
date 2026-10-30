@@ -14,3 +14,4 @@ export interface RegisterFormProps {
   onSubmit: (event: FormEvent<HTMLFormElement>) => Promise<void>
   onGoogleLogin: () => Promise<void>
 }
+
