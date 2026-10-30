@@ -1,3 +1,23 @@
+## **Diretrizes Críticas e Fundamentais (Mobile-First & Nomenclatura)**
+
+> [!IMPORTANT]
+> ### 📱 **Prioridade Absoluta: Mobile-First e Responsividade Perfeita**
+> O maior volume de uso deste SaaS é e será em dispositivos móveis (smartphones dos convidados escaneando QR code em eventos, tirando fotos em tempo real, interagindo no feed e acompanhando o evento).  
+> **A Landing Page e todas as telas DEVEM funcionar perfeitamente no mobile:**
+> - **Nenhum elemento deve quebrar ou transbordar:** é expressamente proibido qualquer componente causar overflow horizontal (scroll lateral indesejado).
+> - **Ajuste de proporções e dimensões:** nenhum item pode ficar grande demais ou desajustado em telas pequenas (a partir de 360px de largura).
+> - **Escalabilidade responsiva:** tipografia, botões, espaçamentos (paddings/margins), logos e grids devem utilizar os breakpoints do Material-UI (`xs`, `sm`, `md`, `lg`) com abordagem Mobile-First.
+> - **Botões e alvos de toque:** botões e CTAs devem ocupar largura total ou confortável no mobile (`width: { xs: '100%', sm: 'auto' }`), com alturas e áreas de toque acessíveis (mínimo 48px).
+
+> [!IMPORTANT]
+> ### 📁 **Nomenclatura Obrigatória de Pastas: Sempre camelCase (Letra Minúscula Inicial)**
+> Todas as pastas de componentes — tanto os compartilhados em `src/components/` quanto os subcomponentes de páginas em `src/pages/[pagina]/subcomponents/` — **DEVEM OBRIGATORIAMENTE começar com letra minúscula seguindo camelCase**.  
+> - **Correto:** `navbar/`, `hero/`, `howItWorks/`, `liveWall/`, `guestFeed/`, `finalCta/`, `footer/`, `loginForm/`, `brandSymbol/`, `logo/`, `themeToggle/`  
+> - **Proibido:** `Navbar/`, `Hero/`, `LoginForm/` (PascalCase em pastas é proibido)  
+> *Nota: Os componentes React (funções) e tipos continuam utilizando PascalCase no código (`Navbar`, `HeroProps`), apenas as pastas seguem camelCase.*
+
+---
+
 ## **Comandos Disponíveis**
 
 * `npm run dev`: Inicia a aplicação em modo de desenvolvimento via Vite.
@@ -64,11 +84,11 @@ src/pages/
 │   ├── index.tsx
 │   ├── data.ts
 │   ├── subcomponents/
-│   │   ├── Navbar/
+│   │   ├── navbar/
 │   │   │   ├── index.tsx
 │   │   │   ├── styles.ts
 │   │   │   └── types.ts
-│   │   ├── Hero/
+│   │   ├── hero/
 │   │   │   ├── index.tsx
 │   │   │   ├── styles.ts
 │   │   │   └── types.ts
@@ -77,7 +97,7 @@ src/pages/
 │   ├── index.tsx
 │   ├── hooks/
 │   └── subcomponents/
-│       ├── LoginForm/
+│       ├── loginForm/
 │       │   ├── index.tsx
 │       │   ├── styles.ts
 │       │   └── types.ts
