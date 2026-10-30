@@ -5,15 +5,14 @@ import ResetPassword from '@pages/auth/resetPassword'
 import LadingPage from '@pages/public/ladingPage'
 import ErrorPage from '@pages/public/errorPage'
 import NotFound from '@pages/public/notFound'
-import SignIn from '@pages/auth/signin'
-import SignUp from '@pages/auth/signup'
+import AuthPage from '@pages/auth/authPage'
 
 const appRouter = createBrowserRouter([
   {
     errorElement: createElement(ErrorPage),
     children: [
-      { path: '/signin', element: createElement(SignIn) },
-      { path: '/signup', element: createElement(SignUp) },
+      { path: '/signin', element: createElement(AuthPage) },
+      { path: '/signup', element: createElement(AuthPage) },
       { path: '/reset-password', element: createElement(ResetPassword) },
       { path: '/', element: createElement(LadingPage) },
       { path: '*', element: createElement(NotFound) }
