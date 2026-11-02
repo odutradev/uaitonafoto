@@ -1,6 +1,7 @@
-import { Alert, Box, Button, Link, Paper, Stack, TextField, Typography } from '@mui/material'
+import { Alert, Box, Button, Divider, Link, Paper, Stack, TextField, Typography } from '@mui/material'
 import { Link as RouterLink } from 'react-router-dom'
 
+import GoogleIcon from '@components/googleIcon'
 import Logo from '@components/logo'
 import ThemeToggle from '@components/themeToggle'
 
@@ -9,6 +10,7 @@ import {
   authCardStyles,
   authWrapperStyles,
   backButtonStyles,
+  dividerStyles,
   forgotPasswordBoxStyles,
   googleButtonStyles,
   logoWrapperStyles,
@@ -143,6 +145,8 @@ export const AuthPage = ({ initialMode }: AuthPageProps) => {
                 : 'Entrar'}
           </Button>
 
+          <Divider sx={dividerStyles}>ou</Divider>
+
           <Button
             type="button"
             variant="outlined"
@@ -150,6 +154,7 @@ export const AuthPage = ({ initialMode }: AuthPageProps) => {
             disabled={submitting}
             fullWidth
             size="large"
+            startIcon={<GoogleIcon size={20} />}
             sx={googleButtonStyles}
           >
             Continuar com Google

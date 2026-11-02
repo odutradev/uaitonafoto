@@ -46,6 +46,17 @@ export const submitButtonStyles: SxProps<Theme> = {
   fontSize: '1rem'
 }
 
+export const dividerStyles: SxProps<Theme> = {
+  my: 0.5,
+  color: 'text.secondary',
+  fontSize: '0.8125rem',
+  fontWeight: 600,
+  letterSpacing: '0.02em',
+  '&::before, &::after': {
+    borderColor: 'divider'
+  }
+}
+
 export const googleButtonStyles: SxProps<Theme> = {
   height: 48,
   fontWeight: 700
