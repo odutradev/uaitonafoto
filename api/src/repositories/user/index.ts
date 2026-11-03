@@ -1,74 +1,78 @@
-import { firestore } from '@firestore'
 import { removeUndefined } from '@utils/object'
-
+import UserModel from './model'
 import type { UpdateUserPayload, UpsertUserPayload, UserEntity } from './types'
 
-const COLLECTION_NAME = 'users'
+const toUserEntity = (doc: any): UserEntity => ({
+  id: String(doc._id || doc.id),
+  role: doc.role,
+  name: doc.name,
+  email: doc.email,
+  fullName: doc.fullName,
+  phone: doc.phone,
+  photoUrl: doc.photoUrl ?? '',
+  authProviderId: doc.authProviderId,
+  createdAt: doc.createdAt,
+  updatedAt: doc.updatedAt
+})
 
 const userRepository = {
   findById: async (id: string): Promise<UserEntity | null> => {
-    const doc = await firestore.collection(COLLECTION_NAME).doc(id).get()
-
-    if (!doc.exists) return null
-
-    return { ...(doc.data() as UserEntity), id: doc.id }
+    const doc = await UserModel.findById(id).lean()
+    if (!doc) return null
+    return toUserEntity(doc)
   },
 
   findByEmail: async (email: string): Promise<UserEntity | null> => {
     const normalized = email.trim().toLowerCase()
-    const snapshot = await firestore
-      .collection(COLLECTION_NAME)
-      .where('email', '==', normalized)
-      .limit(1)
-      .get()
-
-    if (snapshot.empty) return null
-
-    const doc = snapshot.docs[0]
-    return { ...(doc.data() as UserEntity), id: doc.id }
+    const doc = await UserModel.findOne({ email: normalized }).lean()
+    if (!doc) return null
+    return toUserEntity(doc)
   },
 
   upsert: async (id: string, payload: UpsertUserPayload): Promise<UserEntity> => {
-    const docRef = firestore.collection(COLLECTION_NAME).doc(id)
-    const doc = await docRef.get()
-    const existing = doc.exists ? (doc.data() as UserEntity) : null
+    const existing = await UserModel.findById(id).lean()
     const now = new Date().toISOString()
+    const normalizedEmail = payload.email.trim().toLowerCase()
 
-    const user: UserEntity = {
-      id,
-      role: existing?.role ?? 'user',
+    const updateData = removeUndefined({
       name: existing?.name || payload.name,
-      email: payload.email.trim().toLowerCase(),
-      ...(existing?.fullName ? { fullName: existing.fullName } : {}),
-      ...(existing?.phone ? { phone: existing.phone } : {}),
+      email: normalizedEmail,
       photoUrl: existing?.photoUrl || payload.photoUrl || '',
       authProviderId: payload.authProviderId ?? existing?.authProviderId ?? 'google',
-      createdAt: existing?.createdAt ?? now,
       updatedAt: now
-    }
+    })
 
-    await docRef.set(removeUndefined(user), { merge: true })
+    const doc = await UserModel.findByIdAndUpdate(
+      id,
+      {
+        $set: updateData,
+        $setOnInsert: {
+          _id: id,
+          role: 'user',
+          createdAt: now
+        }
+      },
+      { new: true, upsert: true, lean: true }
+    )
 
-    return user
+    return toUserEntity(doc)
   },
 
   update: async (id: string, data: UpdateUserPayload): Promise<UserEntity | null> => {
-    const docRef = firestore.collection(COLLECTION_NAME).doc(id)
-    const doc = await docRef.get()
+    const now = new Date().toISOString()
+    const updateData = removeUndefined({
+      ...data,
+      updatedAt: now
+    })
 
-    if (!doc.exists) return null
-
-    const existing = doc.data() as UserEntity
-    const updated: UserEntity = {
-      ...existing,
-      ...removeUndefined(data),
+    const doc = await UserModel.findByIdAndUpdate(
       id,
-      updatedAt: new Date().toISOString()
-    }
+      { $set: updateData },
+      { new: true, lean: true }
+    )
 
-    await docRef.set(removeUndefined(updated), { merge: true })
-
-    return updated
+    if (!doc) return null
+    return toUserEntity(doc)
   }
 }
 
