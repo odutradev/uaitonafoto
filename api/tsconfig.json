@@ -30,8 +30,6 @@
       "@firebase/*": ["./src/firebase/*"],
       "@firebaseAuth": ["./src/firebase/firebaseAuth"],
       "@firebaseAuth/*": ["./src/firebase/firebaseAuth/*"],
-      "@firestore": ["./src/firebase/firestore"],
-      "@firestore/*": ["./src/firebase/firestore/*"],
       "@firebaseStorage": ["./src/firebase/storage"],
       "@firebaseStorage/*": ["./src/firebase/storage/*"],
       "@storage": ["./src/firebase/storage"],

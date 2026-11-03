@@ -1,7 +1,6 @@
 import * as admin from 'firebase-admin'
 
 import firebaseAuth from '@firebaseAuth'
-import firestore from '@firestore'
 import firebaseStorage, { getStorageBucket } from '@firebaseStorage'
 import { validateEnvVars } from '@utils/env'
 import createLogger from '@utils/logger'
@@ -31,7 +30,6 @@ export const isFirebaseConfigured = (): boolean => validateEnvVars(REQUIRED_ENV_
 const firebase: FirebaseModule = {
   app: null,
   auth: firebaseAuth,
-  firestore,
   storage: firebaseStorage,
   initializeFirebase: async (): Promise<FirebaseInstance> => {
     const { isValid, missing } = validateEnvVars(REQUIRED_ENV_VARS)
@@ -61,12 +59,11 @@ const firebase: FirebaseModule = {
         })
       }
 
-      logger.success(`Connected: Firebase services ready [Auth, Firestore, Storage] (${projectId} | ${storageBucket})`)
+      logger.success(`Connected: Firebase services ready [Auth, Storage] (${projectId} | ${storageBucket})`)
 
       return {
         app: firebase.app,
         auth: firebase.auth,
-        firestore: firebase.firestore,
         storage: firebase.storage,
         storageBucket,
         bucket: getStorageBucket(storageBucket),

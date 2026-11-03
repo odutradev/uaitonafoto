@@ -2,7 +2,6 @@ import firebase, { connect, connectFirebase, isFirebaseConfigured } from './conn
 
 export { connect, connectFirebase, isFirebaseConfigured, firebase }
 export { firebaseAuth, getFirebaseAuth } from '@firebaseAuth'
-export { firestore, getFirestore } from '@firestore'
 export { firebaseStorage, getFirebaseStorage, getStorageBucket, storageBucket } from '@firebaseStorage'
 export * from './types'
 
