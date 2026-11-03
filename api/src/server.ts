@@ -17,11 +17,7 @@ const startServer = async (): Promise<void> => {
   app.listen(port, '0.0.0.0', async () => {
     logger.info(`uai to na foto API running on port ${port}`)
 
-    try {
-      await database.connect()
-    } catch (err) {
-      logger.error('Failed to connect to database:', err)
-    }
+    await database.connect()
 
     if (isEmailConfigured()) {
       try {
