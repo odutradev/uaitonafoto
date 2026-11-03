@@ -55,6 +55,8 @@ export interface FinalCtaData {
 
 export interface FooterData {
   copyrightSuffix: string
+  companyName: string
+  cnpj: string
 }
 
 export interface LandingPageData {
@@ -147,7 +149,9 @@ export const landingPageData: LandingPageData = {
     }
   },
   footer: {
-    copyrightSuffix: 'uai to na foto. todos os direitos reservados.'
+    copyrightSuffix: 'uai to na foto. todos os direitos reservados.',
+    companyName: 'lite TECHNOLOGY LTDA - ME',
+    cnpj: '55.717.105/0001-58'
   }
 }
 

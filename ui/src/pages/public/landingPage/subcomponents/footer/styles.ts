@@ -18,3 +18,11 @@ export const footerContainerStyles: SxProps<Theme> = {
   px: { xs: 2, sm: 3 },
   textAlign: { xs: 'center', sm: 'left' }
 }
+
+export const footerInfoStyles: SxProps<Theme> = {
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: { xs: 'center', sm: 'flex-end' },
+  gap: 0.5,
+  textAlign: { xs: 'center', sm: 'right' }
+}
