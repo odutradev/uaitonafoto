@@ -7,26 +7,26 @@ services:
     expose:
       - "80"
     environment:
-      - PORT=${PORT:-80}
-      - NODE_ENV=${NODE_ENV:-${ENV:-production}}
-      - ENV=${ENV:-${NODE_ENV:-production}}
-      - FRONTEND_URL=${FRONTEND_URL:-https://uaitonafoto.odutra.com}
-      - CORS_ORIGIN=${CORS_ORIGIN:-${CORS_ALLOWED_ORIGINS:-*}}
-      - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS:-${CORS_ORIGIN:-*}}
+      - PORT=${PORT}
+      - NODE_ENV=${NODE_ENV}
+      - ENV=${ENV}
+      - FRONTEND_URL=${FRONTEND_URL}
+      - CORS_ORIGIN=${CORS_ORIGIN}
+      - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS}
       - JWT_SECRET=${JWT_SECRET}
       - MONGODB_URI=${MONGODB_URI}
-      - MONGODB_DB_NAME=${MONGODB_DB_NAME:-uaitonafoto}
-      - FIREBASE_PROJECT_ID=${FIREBASE_PROJECT_ID:-uaitonafoto}
+      - MONGODB_DB_NAME=${MONGODB_DB_NAME}
+      - FIREBASE_PROJECT_ID=${FIREBASE_PROJECT_ID}
       - FIREBASE_CLIENT_EMAIL=${FIREBASE_CLIENT_EMAIL}
       - FIREBASE_PRIVATE_KEY=${FIREBASE_PRIVATE_KEY}
-      - FIREBASE_STORAGE_BUCKET=${FIREBASE_STORAGE_BUCKET:-uaitonafoto.firebasestorage.app}
+      - FIREBASE_STORAGE_BUCKET=${FIREBASE_STORAGE_BUCKET}
       - EMAIL_HOST=${EMAIL_HOST}
-      - EMAIL_PORT=${EMAIL_PORT:-587}
+      - EMAIL_PORT=${EMAIL_PORT}
       - EMAIL_USER=${EMAIL_USER}
       - EMAIL_PASS=${EMAIL_PASS}
       - EMAIL_FROM=${EMAIL_FROM}
-      - ABACATEPAY_API_KEY=${ABACATEPAY_API_KEY:-}
-      - ABACATEPAY_WEBHOOK_SECRET=${ABACATEPAY_WEBHOOK_SECRET:-}
+      - ABACATEPAY_API_KEY=${ABACATEPAY_API_KEY}
+      - ABACATEPAY_WEBHOOK_SECRET=${ABACATEPAY_WEBHOOK_SECRET}
     healthcheck:
       test: ["CMD", "node", "healthcheck.js"]
       interval: 10s
@@ -44,7 +44,7 @@ services:
       context: .
       dockerfile: ./ui/Dockerfile
     args:
-      - VITE_BASE_URL=${VITE_BASE_URL:-${VITE_API_URL:-https://api.uaitonafoto.odutra.com}}
+      - VITE_BASE_URL=${VITE_BASE_URL}
       - VITE_FIREBASE_API_KEY=${VITE_FIREBASE_API_KEY}
       - VITE_FIREBASE_AUTH_DOMAIN=${VITE_FIREBASE_AUTH_DOMAIN}
       - VITE_FIREBASE_PROJECT_ID=${VITE_FIREBASE_PROJECT_ID}
