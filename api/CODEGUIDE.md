@@ -208,10 +208,13 @@ export default entidadeRepository
 
 #### **5. Centralizador do Domínio (`domains/<dominio>/index.ts`)**
 
-Cada domínio centraliza suas exportações públicas em um único `index.ts`:
+Cada domínio centraliza suas exportações públicas e deve exportar obrigatoriamente como `default` um objeto tipado `DomainDefinition` contendo o nome do domínio e suas ações:
 
 ```ts
 // domains/users/index.ts
+import * as actions from './actions'
+import type { DomainDefinition } from '../types'
+
 export * from './actions'
 export { default as userRepository, UserModel } from './repositories'
 export * from './repositories/types'
@@ -219,9 +222,40 @@ export { default as authMiddleware } from './middlewares/auth'
 export { default as adminMiddleware } from './middlewares/admin'
 export * from './middlewares/auth/types'
 export * from './middlewares/admin/types'
+
+export const usersDomain: DomainDefinition<typeof actions> = {
+  name: 'users',
+  actions
+}
+
+export default usersDomain
 ```
 
-#### **6. Rotas Modulares por Domínio (`routes/*.routes.ts` e `routes/api.ts`)**
+#### **6. Registrador de Domínios (`server.ts`)**
+
+O `server.ts` importa o default export de cada domínio cadastrado e executa o registrador na inicialização da API:
+
+```ts
+// server.ts
+import usersDomain from '@domains/users'
+import systemDomain from '@domains/system'
+import type { DomainDefinition } from '@domains/types'
+
+export const registeredDomains: Map<string, DomainDefinition> = new Map()
+
+export const registerDomain = (domain: DomainDefinition): void => {
+  registeredDomains.set(domain.name, domain)
+  const actionCount = Object.keys(domain.actions || {}).length
+  logger.info(`Domain registered: [${domain.name}] with ${actionCount} actions`)
+}
+
+export const registerDomains = (): void => {
+  registerDomain(usersDomain)
+  registerDomain(systemDomain)
+}
+```
+
+#### **7. Rotas Modulares por Domínio (`routes/*.routes.ts` e `routes/api.ts`)**
 
 As rotas são organizadas por domínio em arquivos dedicados (`routes/<dominio>.routes.ts`) consumindo diretamente do domínio e agregadas no `routes/api.ts`.
 
@@ -253,7 +287,7 @@ apiRouter.use('/auth', authRoutes)
 export default apiRouter
 ```
 
-#### **7. Utilitários e Helpers (`utils/<nome>/index.ts` e `types.ts`)**
+#### **8. Utilitários e Helpers (`utils/<nome>/index.ts` e `types.ts`)**
 
 Cada utilitário fica isolado em seu próprio subdiretório, contendo a lógica central em `index.ts` e contratos de tipos em `types.ts` quando necessário:
 
