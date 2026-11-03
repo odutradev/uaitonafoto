@@ -5,7 +5,7 @@ import { passwordResetTemplate } from '@email/templates/passwordReset'
 import { authRateLimiter } from '@middlewares/rateLimit'
 import { getJwtSecret } from '@config/env'
 import { firebaseAuth } from '@firebase/firebaseAuth'
-import userRepository from '@repositories/user'
+import userRepository from '../../repositories'
 import { logRepository } from '@domains/system'
 import defineAction from '@factories/defineAction'
 

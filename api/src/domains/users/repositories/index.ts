@@ -15,7 +15,7 @@ const toUserEntity = (doc: any): UserEntity => ({
   updatedAt: doc.updatedAt
 })
 
-const userRepository = {
+export const userRepository = {
   findById: async (id: string): Promise<UserEntity | null> => {
     const doc = await UserModel.findById(id).lean()
     if (!doc) return null
@@ -76,4 +76,6 @@ const userRepository = {
   }
 }
 
+export { UserModel }
+export * from './types'
 export default userRepository

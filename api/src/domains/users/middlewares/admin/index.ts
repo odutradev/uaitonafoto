@@ -1,9 +1,9 @@
-import userRepository from '@repositories/user'
 import sendError from '@error/index'
+import userRepository from '../../repositories'
 
 import type { NextFunction, Response, Request } from 'express'
 
-const adminMiddleware = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const adminMiddleware = async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
   const userId = res.locals?.userId
 
   if (!userId) {
@@ -25,4 +25,5 @@ const adminMiddleware = async (req: Request, res: Response, next: NextFunction):
   }
 }
 
+export * from './types'
 export default adminMiddleware

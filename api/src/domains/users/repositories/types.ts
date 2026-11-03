@@ -27,4 +27,3 @@ export interface UpdateUserPayload {
   photoUrl?: string
   role?: UserRole
 }
-
