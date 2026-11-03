@@ -16,8 +16,6 @@
       "@actions/*": ["./src/actions/*"],
       "@config": ["./src/config"],
       "@config/*": ["./src/config/*"],
-      "@database": ["./src/firebase"],
-      "@database/*": ["./src/firebase/*"],
       "@docs": ["./src/docs"],
       "@docs/*": ["./src/docs/*"],
       "@email": ["./src/email"],
