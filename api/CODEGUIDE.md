@@ -9,9 +9,10 @@
 ## **Guia Estrutural e Arquitetural da API**
 
 > [!IMPORTANT]
-> ### 🚫 **Proibição Absoluta de Barrel Exports (Zero Barrel Files)**
-> É **estritamente proibido** criar ou manter arquivos de barril (barrel exports / `index.ts` que apenas centralizam/reexportam múltiplos módulos) no backend.
-> Todo e qualquer consumo deve ser feito via importação direta do arquivo específico (ex: `@database/connection`, `@database/database`, `@email/connect`, `@email/utils`).
+> ### 🚫 **Proibição Absoluta de Barrel Exports e Arquivos Centralizadores (Zero Barrel Files)**
+> É **estritamente proibido** criar ou manter arquivos de barril ou qualquer arquivo que centralize/reexporte múltiplos módulos no backend (ex: `repositories/model.ts`, `models.ts`, `repositories/index.ts`, `services/index.ts`).
+> - **Zero arquivos centralizadores:** cada model, entidade, serviço ou repositório deve ficar isolado exclusivamente dentro de sua pasta de domínio (ex: `src/repositories/user/model.ts`, `src/repositories/log/model.ts`). É proibido criar arquivos com a finalidade de agrupar ou reexportar múltiplos models ou módulos de entidades diferentes.
+> - **Importação direta obrigatória:** todo e qualquer consumo deve ser feito via importação direta do arquivo específico do domínio (ex: `import UserModel from '@repositories/user/model'`, `import { connectDatabase } from '@database/connect'`).
 
 Este documento define os padrões para desenvolvimento na API. Toda a aplicação fica centralizada diretamente em `src/`, utilizando path aliases dedicados por módulo (`@actions`, `@config`, `@database`, `@docs`, `@email`, `@error`, `@factories`, `@middlewares`, `@repositories`, `@routes`, `@services`, `@appTypes`, `@utils`) além do alias base `@/*`.
 
@@ -26,12 +27,14 @@ A pasta `src/` organiza a aplicação de forma limpa e modular:
   * `entidade/index.ts` (Lógica e defineAction)
   * `entidade/schemas.ts` (Schemas Zod estendidos com OpenAPI)
   * `entidade/types.ts` (Tipagens inferidas dos schemas Zod)
-* `src/repositories/` (Camada de acesso a dados usando Firebase Realtime Database)
-  * `entidade/index.ts`
-  * `entidade/types.ts`
+* `src/repositories/` (Camada de acesso a dados usando MongoDB via Mongoose)
+  * `entidade/index.ts` (Métodos do repositório)
+  * `entidade/model.ts` (Schema e Model Mongoose individual da entidade)
+  * `entidade/types.ts` (Tipagens da entidade e payloads)
 * `src/services/` (Serviços e rotinas em background)
 * `src/middlewares/` (Middlewares de autenticação, admin, manageRequest, upload, etc.)
-* `src/database/` (Conexão e inicialização do Firebase)
+* `src/database/` (Conexão e inicialização do MongoDB via Mongoose)
+* `src/firebase/` (Serviços do Firebase: Auth e Storage)
 * `src/config/` (Configurações de ambiente, CORS, etc.)
 * `src/docs/` (Gerador e registro do OpenAPI/Swagger)
 * `src/factories/` (Factories utilitárias como `defineAction`, `pagination`, `filters`)
@@ -95,7 +98,7 @@ export const entidadeFiltersConfig: FilterConfig = {
 }
 
 export const entidadeSchema = z.object({  
-  id: z.string().openapi({ example: 'chave-unica-firebase' }),  
+  id: z.string().openapi({ example: 'chave-unica' }),  
   nome: z.string().min(1).openapi({ example: 'Nome Exemplo' })  
 }).openapi('EntidadeResponse')
 
@@ -128,50 +131,43 @@ export type EntidadeResponse = z.infer<typeof entidadeSchema>
 export type ListEntidadesResponse = z.infer<typeof listEntidadesResponseSchema>
 ```
 
-#### **4. Repositórios (repositories/entidade/index.ts)**
+#### **4. Repositórios e Models (repositories/entidade/index.ts e model.ts)**
 
-Centraliza as interações com o Firebase Realtime Database. Utiliza filtragem em memória para compensar limitações do RTDB em consultas complexas.
+Cada entidade possui seu próprio `model.ts` e seu repositório `index.ts` encapsulando as operações no MongoDB. Não existem arquivos de barril ou agregadores de models no nível `repositories/`.
 
 ```ts
-import { firebaseDb } from '@database'
-import { entidadeFiltersConfig } from '@actions/entidade/schemas'
-import { parseFilters, applyInMemoryFilters } from '@factories/filters/utils'
-import { getPaginationOptions, buildPaginatedResponse } from '@factories/pagination/utils'
+// repositories/entidade/model.ts
+import mongoose, { Schema } from 'mongoose'
+import type { EntidadeType } from './types'
 
-import type { FindAllEntidadeFilters, CreateEntidadePayload, EntidadeType } from './types'  
-import type { PaginatedResponse } from '@factories/pagination/types'
+const entidadeSchema = new Schema(
+  {
+    _id: { type: String, default: () => new mongoose.Types.ObjectId().toString() },
+    nome: { type: String, required: true },
+    createdAt: { type: String, default: () => new Date().toISOString() }
+  },
+  { versionKey: false }
+)
 
-const REF_PATH = 'entidades'
+export const EntidadeModel = mongoose.models.Entidade || mongoose.model('Entidade', entidadeSchema)
+export default EntidadeModel
+```
+
+```ts
+// repositories/entidade/index.ts
+import EntidadeModel from './model'
+import type { CreateEntidadePayload, EntidadeType } from './types'  
 
 const entidadeRepository = {  
-  findAll: async (filters?: FindAllEntidadeFilters): Promise<PaginatedResponse<EntidadeType>> => {  
-    const snapshot = await firebaseDb.ref(REF_PATH).once('value')
-    const data = snapshot.val() as Record<string, EntidadeType> | null
-
-    const parsedFilters = parseFilters(filters?.filters, entidadeFiltersConfig)
-    const options = getPaginationOptions(filters)
-
-    let rows: EntidadeType[] = []
-
-    if (data) {
-      const arrayData = Object.entries(data).map(([id, item]) => ({ ...item, id }))
-      rows = applyInMemoryFilters(arrayData, parsedFilters, entidadeFiltersConfig)
-    }
-
-    const count = rows.length
-    const paginatedRows = rows.slice(options.offset, options.offset + options.limit)
-
-    return buildPaginatedResponse({ rows: paginatedRows, count }, options.page, options.limit)
+  findById: async (id: string): Promise<EntidadeType | null> => {  
+    const doc = await EntidadeModel.findById(id).lean()
+    if (!doc) return null
+    return { ...doc, id: String(doc._id) }
   },  
   create: async (data: CreateEntidadePayload): Promise<EntidadeType> => {  
-    const ref = firebaseDb.ref(REF_PATH).push()
-    const id = ref.key as string
-
-    const payload = { ...data, id, createdAt: new Date().toISOString() }
-
-    await ref.set(payload)
-
-    return payload
+    const created = await EntidadeModel.create(data)
+    const doc = created.toObject ? created.toObject() : created
+    return { ...doc, id: String(doc._id) }
   }  
 }
 
@@ -206,4 +202,3 @@ apiRouter.use('/entidades', entidadeRoutes)
 
 export default apiRouter
 ```
-
