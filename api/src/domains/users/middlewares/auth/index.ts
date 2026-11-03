@@ -32,5 +32,5 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
   }
 }
 
-export * from './types'
+
 export default authMiddleware

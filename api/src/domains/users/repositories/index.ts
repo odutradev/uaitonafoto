@@ -76,6 +76,6 @@ export const userRepository = {
   }
 }
 
-export { UserModel }
-export * from './types'
+
+
 export default userRepository

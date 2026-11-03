@@ -64,5 +64,5 @@ const upload = {
   }
 }
 
-export * from './types'
+
 export default upload

@@ -37,5 +37,5 @@ export const createLogger = (prefix: string): Logger => ({
   }
 })
 
-export * from './types'
+
 export default createLogger

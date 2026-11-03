@@ -20,5 +20,5 @@ const requirePermissions = (permissions: RequiredPermissions) => {
   }
 }
 
-export * from './types'
+
 export default requirePermissions

@@ -25,5 +25,5 @@ export const adminMiddleware = async (_req: Request, res: Response, next: NextFu
   }
 }
 
-export * from './types'
+
 export default adminMiddleware

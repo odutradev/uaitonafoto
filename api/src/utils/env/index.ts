@@ -18,5 +18,5 @@ export const validateEnvVars = (
   return { isValid, missing }
 }
 
-export * from './types'
+
 export default validateEnvVars

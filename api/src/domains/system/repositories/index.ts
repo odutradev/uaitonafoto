@@ -41,6 +41,6 @@ export const logRepository = {
   }
 }
 
-export { LogModel }
-export * from './types'
+
+
 export default logRepository
