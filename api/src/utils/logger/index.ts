@@ -1,13 +1,5 @@
 import { formatTimestamp } from '@utils/date'
-
-export type Logger = {
-  success: (message: unknown, ...args: unknown[]) => void
-  error: (message: unknown, ...args: unknown[]) => void
-  debug: (message: unknown, ...args: unknown[]) => void
-  info: (message: unknown, ...args: unknown[]) => void
-  warn: (message: unknown, ...args: unknown[]) => void
-  clean: (message: unknown, ...args: unknown[]) => void
-}
+import type { Logger } from './types'
 
 const COLORS = {
   magenta: '\x1b[35m',
@@ -24,7 +16,7 @@ const buildLogPrefix = (prefix: string, level: string, color: string): string =>
   return `${COLORS.gray}[${formatTimestamp()}]${COLORS.reset} ${color}[${prefix}] [${level}]${COLORS.reset}`
 }
 
-const createLogger = (prefix: string): Logger => ({
+export const createLogger = (prefix: string): Logger => ({
   success: (message: unknown, ...args: unknown[]) => {
     console.log(`${buildLogPrefix(prefix, 'SUCCESS', COLORS.green)}`, message, ...args)
   },
@@ -45,4 +37,5 @@ const createLogger = (prefix: string): Logger => ({
   }
 })
 
+export * from './types'
 export default createLogger

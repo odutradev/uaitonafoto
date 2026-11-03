@@ -1,11 +1,7 @@
 import createLogger from '@utils/logger'
+import type { EnvValidationResult } from './types'
 
 const logger = createLogger('env')
-
-export interface EnvValidationResult {
-  isValid: boolean
-  missing: string[]
-}
 
 export const validateEnvVars = (
   variables: string[],
@@ -22,4 +18,5 @@ export const validateEnvVars = (
   return { isValid, missing }
 }
 
+export * from './types'
 export default validateEnvVars
