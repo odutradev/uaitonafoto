@@ -9,12 +9,23 @@
 ## **Guia Estrutural e Arquitetural da API**
 
 > [!IMPORTANT]
-> ### 🚫 **Proibição Absoluta de Barrel Exports e Arquivos Centralizadores (Zero Barrel Files)**
-> É **estritamente proibido** criar ou manter arquivos de barril ou qualquer arquivo que centralize/reexporte múltiplos módulos no backend (ex: `repositories/model.ts`, `models.ts`, `repositories/index.ts`, `services/index.ts`).
-> - **Zero arquivos centralizadores:** cada model, entidade, serviço ou repositório deve ficar isolado exclusivamente dentro de sua pasta de domínio (ex: `src/repositories/user/model.ts`, `src/repositories/log/model.ts`). É proibido criar arquivos com a finalidade de agrupar ou reexportar múltiplos models ou módulos de entidades diferentes.
-> - **Importação direta obrigatória:** todo e qualquer consumo deve ser feito via importação direta do arquivo específico do domínio (ex: `import UserModel from '@repositories/user/model'`, `import { connectDatabase } from '@database/connect'`).
+> ### 🏛️ **Arquitetura Orientada a Domínios (`src/domains/`)**
+> Toda lógica de negócio, repositórios de dados e controladores pertencem a domínios de negócio isolados em `src/domains/<dominio>/`.
+> - **Estrutura interna de cada domínio:**
+>   - `actions/`: Ações/controladores HTTP via `defineAction`, schemas Zod e DTOs tipados.
+>   - `repositories/`: Modelos Mongoose, contratos de tipos e repositório de acesso ao MongoDB.
+>   - `middlewares/` *(quando aplicável)*: Middlewares exclusivos do domínio, seguindo obrigatoriamente a convenção de pasta com `<nome>/index.ts` e `<nome>/types.ts`.
+>   - `index.ts`: Arquivo centralizador do domínio que expõe publicamente actions, repositories, middlewares e tipagens.
+> - **Consumo via Alias `@domains/*`:**
+>   O consumo de elementos de um domínio por rotas ou outros serviços pode ser feito via import direto do domínio (ex: `import { userRepository, authMiddleware } from '@domains/users'`).
 
-Este documento define os padrões para desenvolvimento na API. Toda a aplicação fica centralizada diretamente em `src/`, utilizando path aliases dedicados por módulo (`@actions/*`, `@config/*`, `@database/*`, `@docs/*`, `@email/*`, `@error/*`, `@factories/*`, `@firebase/*`, `@middlewares/*`, `@repositories/*`, `@routes/*`, `@utils/*`) além do alias base `@/*`.
+> [!NOTE]
+> ### ⚙️ **Padrão Obrigatório para Middlewares (`<nome>/index.ts` e `<nome>/types.ts`)**
+> Todos os middlewares (tanto globais em `src/middlewares/` quanto específicos de domínio em `src/domains/<dominio>/middlewares/`) devem seguir estritamente o padrão de diretório:
+> - `<middleware>/index.ts` (lógica de execução e exportação)
+> - `<middleware>/types.ts` (tipos, contratos e opções)
+
+Este documento define os padrões para desenvolvimento na API. Toda a aplicação fica centralizada diretamente em `src/`, utilizando path aliases dedicados por módulo (`@config/*`, `@database/*`, `@docs/*`, `@domains/*`, `@email/*`, `@error/*`, `@factories/*`, `@firebase/*`, `@middlewares/*`, `@routes/*`, `@utils/*`) além do alias base `@/*`.
 
 ### **Estrutura de Diretórios**
 
@@ -22,17 +33,22 @@ A pasta `src/` organiza a aplicação de forma limpa e modular:
 
 * `src/server.ts` (Inicialização do servidor HTTP, conexões e rotinas)
 * `src/app.ts` (Configuração da aplicação Express e middlewares globais)
-* `src/routes/` (Roteamento central da API: `index.ts` e `api.ts`)
-* `src/actions/` (Controladores lógicos e definição OpenAPI via `defineAction`)
-  * `entidade/index.ts` (Lógica e defineAction)
-  * `entidade/schemas.ts` (Schemas Zod estendidos com OpenAPI)
-  * `entidade/types.ts` (Tipagens inferidas dos schemas Zod)
-* `src/repositories/` (Camada de acesso a dados usando MongoDB via Mongoose)
-  * `entidade/index.ts` (Métodos do repositório)
-  * `entidade/model.ts` (Schema e Model Mongoose individual da entidade)
-  * `entidade/types.ts` (Tipagens da entidade e payloads)
-* `src/services/` (Serviços e rotinas em background)
-* `src/middlewares/` (Middlewares de autenticação, admin, manageRequest, upload, etc.)
+* `src/routes/` (Roteamento central da API: `index.ts`, `api.ts` e `<dominio>.routes.ts`)
+* `src/domains/` (Domínios de negócio isolados)
+  * `users/` (Domínio de usuários e autenticação)
+    * `actions/` (Ações de autenticação e perfil: `syncAuthUser`, `getMe`, `updateMe`, `forgotPassword`, `resetPassword`)
+    * `repositories/` (Model Mongoose `UserModel` e `userRepository`)
+    * `middlewares/` (Middlewares do domínio: `auth/` e `admin/`)
+    * `index.ts` (Centralizador público do domínio)
+  * `system/` (Domínio de infraestrutura e auditoria do sistema)
+    * `actions/` (Ações do sistema)
+    * `repositories/` (Model Mongoose `LogModel` e `logRepository`)
+    * `index.ts` (Centralizador público do domínio)
+* `src/middlewares/` (Middlewares globais padronizados com `index.ts` e `types.ts`)
+  * `manageRequest/` (Middleware centralizador de validação Zod e execução de ações)
+  * `rateLimit/` (Limitadores de taxa global e de rotas sensíveis)
+  * `upload/` (Tratamento de uploads de arquivos via Multer em memória)
+  * `permissions/` (Verificação de permissões do usuário)
 * `src/database/` (Conexão e inicialização do MongoDB via Mongoose)
 * `src/firebase/` (Serviços do Firebase: Auth e Storage)
 * `src/config/` (Configurações de ambiente, CORS, etc.)
@@ -41,14 +57,14 @@ A pasta `src/` organiza a aplicação de forma limpa e modular:
 
 ### **Regras de Implementação por Camada**
 
-#### **1. Ações / Controllers (actions/entidade/index.ts)**
+#### **1. Ações / Controllers (`domains/<dominio>/actions/entidade/index.ts`)**
 
 As ações **não usam** controllers tradicionais do Express. Elas usam a factory `defineAction` que integra rotas, validação Zod, OpenAPI e injeção de dependências (`ids`, `manageError`).
 
 ```ts
 import defineAction from '@factories/defineAction'
 import { schemaExemplo } from './schemas'  
-import repositorioEntidade from '@repositories/entidade'
+import { entidadeRepository } from '@domains/entidade'
 
 import type { ManageRequestResponse, ManageRequestBody } from '@middlewares/manageRequest/types'
 import type { ExemploRequest, ExemploResponse } from './types'
@@ -67,7 +83,7 @@ export const criarExemplo = defineAction(
   async ({ ids, data, manageError }: ManageRequestBody<ExemploRequest>): ManageRequestResponse<ExemploResponse> => {  
     if (!ids.userId) return manageError({ code: 'unauthorized' })
 
-    const entidade = await repositorioEntidade.create(data)
+    const entidade = await entidadeRepository.create(data)
 
     if (!entidade) return manageError({ code: 'conflict' })
 
@@ -77,7 +93,7 @@ export const criarExemplo = defineAction(
 )
 ```
 
-#### **2. Schemas Zod + OpenAPI (actions/entidade/schemas.ts)**
+#### **2. Schemas Zod + OpenAPI (`domains/<dominio>/actions/entidade/schemas.ts`)**
 
 Toda validação e documentação deve ser feita via Zod com o plugin `@asteasolutions/zod-to-openapi`.
 
@@ -113,7 +129,7 @@ export const listEntidadesQuerySchema = z.object({
 export const listEntidadesResponseSchema = createPaginatedSchema(entidadeSchema, 'ListEntidadesResponse')
 ```
 
-#### **3. Tipos DTOs (actions/entidade/types.ts)**
+#### **3. Tipos DTOs (`domains/<dominio>/actions/entidade/types.ts`)**
 
 Os tipos devem ser obrigatoriamente inferidos do Zod.
 
@@ -131,12 +147,12 @@ export type EntidadeResponse = z.infer<typeof entidadeSchema>
 export type ListEntidadesResponse = z.infer<typeof listEntidadesResponseSchema>
 ```
 
-#### **4. Repositórios e Models (repositories/entidade/index.ts e model.ts)**
+#### **4. Repositórios e Models (`domains/<dominio>/repositories/`)**
 
-Cada entidade possui seu próprio `model.ts` e seu repositório `index.ts` encapsulando as operações no MongoDB. Não existem arquivos de barril ou agregadores de models no nível `repositories/`.
+Cada domínio isola seu próprio `model.ts`, `types.ts` e repositório `index.ts` encapsulando as operações no MongoDB.
 
 ```ts
-// repositories/entidade/model.ts
+// domains/entidade/repositories/model.ts
 import mongoose, { Schema } from 'mongoose'
 import type { EntidadeType } from './types'
 
@@ -154,11 +170,11 @@ export default EntidadeModel
 ```
 
 ```ts
-// repositories/entidade/index.ts
+// domains/entidade/repositories/index.ts
 import EntidadeModel from './model'
 import type { CreateEntidadePayload, EntidadeType } from './types'  
 
-const entidadeRepository = {  
+export const entidadeRepository = {  
   findById: async (id: string): Promise<EntidadeType | null> => {  
     const doc = await EntidadeModel.findById(id).lean()
     if (!doc) return null
@@ -171,34 +187,54 @@ const entidadeRepository = {
   }  
 }
 
+export { EntidadeModel }
+export * from './types'
 export default entidadeRepository
 ```
 
-#### **5. Rotas Modulares por Domínio (routes/*.routes.ts e routes/api.ts)**
+#### **5. Centralizador do Domínio (`domains/<dominio>/index.ts`)**
 
-As rotas são organizadas por domínio em arquivos dedicados (`routes/<dominio>.routes.ts`) e agregadas no `routes/api.ts`.
+Cada domínio centraliza suas exportações públicas em um único `index.ts`:
 
 ```ts
-// routes/entidade.routes.ts
+// domains/users/index.ts
+export * from './actions'
+export { default as userRepository, UserModel } from './repositories'
+export * from './repositories/types'
+export { default as authMiddleware } from './middlewares/auth'
+export { default as adminMiddleware } from './middlewares/admin'
+export * from './middlewares/auth/types'
+export * from './middlewares/admin/types'
+```
+
+#### **6. Rotas Modulares por Domínio (`routes/*.routes.ts` e `routes/api.ts`)**
+
+As rotas são organizadas por domínio em arquivos dedicados (`routes/<dominio>.routes.ts`) consumindo diretamente do domínio e agregadas no `routes/api.ts`.
+
+```ts
+// routes/auth.routes.ts
 import { Router } from 'express'
-import { criarExemplo } from '@actions/entidade'
-import authMiddleware from '@middlewares/auth'
+import { syncAuthUser, getMe, updateMe, forgotPassword, resetPassword, authMiddleware } from '@domains/users'
 
-const entidadeRoutes = Router()
+const authRoutes = Router()
 
-entidadeRoutes.post('/create', authMiddleware, criarExemplo)
+authRoutes.post('/sync', syncAuthUser)
+authRoutes.post('/forgot-password', forgotPassword)
+authRoutes.post('/reset-password', resetPassword)
+authRoutes.get('/me', authMiddleware, getMe)
+authRoutes.patch('/me', authMiddleware, updateMe)
 
-export default entidadeRoutes
+export default authRoutes
 ```
 
 ```ts
 // routes/api.ts
 import { Router } from 'express'
-import entidadeRoutes from '@routes/entidade.routes'
+import authRoutes from '@routes/auth.routes'
 
 const apiRouter = Router()
 
-apiRouter.use('/entidades', entidadeRoutes)
+apiRouter.use('/auth', authRoutes)
 
 export default apiRouter
 ```

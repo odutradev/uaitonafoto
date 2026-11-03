@@ -12,7 +12,6 @@
     "baseUrl": "./",
     "paths": {
       "@/*": ["./src/*"],
-      "@actions/*": ["./src/actions/*"],
       "@config/*": ["./src/config/*"],
       "@database/*": ["./src/database/*"],
       "@docs/*": ["./src/docs/*"],
@@ -22,7 +21,6 @@
       "@factories/*": ["./src/factories/*"],
       "@firebase/*": ["./src/firebase/*"],
       "@middlewares/*": ["./src/middlewares/*"],
-      "@repositories/*": ["./src/repositories/*"],
       "@routes/*": ["./src/routes/*"],
       "@utils/*": ["./src/utils/*"]
     }
