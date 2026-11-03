@@ -1,7 +1,7 @@
 import { Router } from 'express'
 
-import { forgotPassword, resetPassword, syncAuthUser, updateMe, getMe, authMiddleware } from '@domains/users'
-
+import { forgotPassword, resetPassword, syncAuthUser, updateMe, getMe } from '@domains/users/actions/auth'
+import authMiddleware from '@domains/users/middlewares/auth'
 
 const authRoutes = Router()
 

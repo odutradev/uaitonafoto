@@ -6,7 +6,7 @@ import { authRateLimiter } from '@middlewares/rateLimit'
 import { getJwtSecret } from '@config/env'
 import { firebaseAuth } from '@firebase/firebaseAuth'
 import userRepository from '../../repositories'
-import { logRepository } from '@domains/system'
+import logRepository from '@domains/system/repositories'
 import defineAction from '@factories/defineAction'
 
 import type { ForgotPasswordRequest, ResetPasswordRequest, SyncUserResponse, UpdateUserRequest, SyncUserRequest, UserResponse } from './types'
