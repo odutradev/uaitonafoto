@@ -149,8 +149,8 @@ export const landingPageData: LandingPageData = {
     }
   },
   footer: {
-    copyrightSuffix: 'uai to na foto. todos os direitos reservados.',
-    companyName: 'lite TECHNOLOGY LTDA - ME',
+    copyrightSuffix: 'todos os direitos reservados.',
+    companyName: 'Lite Technology Ltda - Me',
     cnpj: '55.717.105/0001-58'
   }
 }
