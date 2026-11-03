@@ -1,7 +1,9 @@
 import { initializeApp, getApps } from 'firebase/app'
 import { getAuth } from 'firebase/auth'
+import { getStorage } from 'firebase/storage'
 
 import type { Auth } from 'firebase/auth'
+import type { FirebaseStorage } from 'firebase/storage'
 
 const firebaseConfig = {
   messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
@@ -21,11 +23,13 @@ export const isFirebaseConfigured = Boolean(
 )
 
 let authInstance: Auth | null = null
+let storageInstance: FirebaseStorage | null = null
 
 if (isFirebaseConfigured) {
   try {
     const app = getApps().length > 0 ? getApps()[0] : initializeApp(firebaseConfig)
     authInstance = getAuth(app)
+    storageInstance = getStorage(app)
   } catch (error) {
     console.warn('[Firebase] Falha ao inicializar com as credenciais:', error)
   }
@@ -34,3 +38,4 @@ if (isFirebaseConfigured) {
 }
 
 export const firebaseAuth = authInstance
+export const firebaseStorage = storageInstance
