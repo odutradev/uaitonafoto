@@ -1,4 +1,4 @@
-import { firestore } from '@database/connection'
+import { firestore } from '@database'
 import { removeUndefined } from '@utils/object'
 import createLogger from '@utils/logger'
 
