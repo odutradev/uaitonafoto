@@ -40,6 +40,10 @@ export const validateEnv = (): void => {
     logger.warn(`Firebase credentials missing (${missingCredentials.join(', ')}): Firebase features will fail until configured`)
   }
 
+  if (!process.env.MONGODB_URI) {
+    logger.warn('MONGODB_URI is unset: Database features will fail until configured')
+  }
+
   try {
     getJwtSecret()
   } catch (error) {

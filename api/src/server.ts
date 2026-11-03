@@ -1,6 +1,7 @@
 import 'dotenv/config'
 
 import { validateEnv } from '@config/env'
+import { connectDatabase, isDatabaseConfigured } from '@database'
 import { connectEmail, isEmailConfigured } from '@email/connect'
 import { connect as connectFirebase } from '@firebase'
 import createLogger from '@utils/logger'
@@ -16,6 +17,16 @@ const startServer = async (): Promise<void> => {
 
   app.listen(port, '0.0.0.0', async () => {
     logger.info(`uai to na foto API running on port ${port}`)
+
+    if (isDatabaseConfigured()) {
+      try {
+        await connectDatabase()
+      } catch (err) {
+        logger.error('Failed to connect MongoDB database:', err)
+      }
+    } else {
+      logger.warn('Database disabled: MONGODB_URI is not configured')
+    }
 
     await connectFirebase()
 

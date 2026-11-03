@@ -16,6 +16,8 @@
       "@actions/*": ["./src/actions/*"],
       "@config": ["./src/config"],
       "@config/*": ["./src/config/*"],
+      "@database": ["./src/database"],
+      "@database/*": ["./src/database/*"],
       "@docs": ["./src/docs"],
       "@docs/*": ["./src/docs/*"],
       "@email": ["./src/email"],
