@@ -2,6 +2,7 @@ import * as admin from 'firebase-admin'
 
 import firebaseAuth from '@firebaseAuth'
 import firestore from '@firestore'
+import firebaseStorage, { getStorageBucket } from '@firebaseStorage'
 import { validateEnvVars } from '@utils/env'
 import createLogger from '@utils/logger'
 
@@ -20,12 +21,18 @@ const formatPrivateKey = (key?: string): string => {
   return key.replace(/\\n/g, '\n').replace(/^["']|["']$/g, '').trim()
 }
 
+const formatStorageBucket = (bucket?: string, projectId?: string): string => {
+  const rawBucket = bucket?.trim() || (projectId ? `${projectId}.firebasestorage.app` : '')
+  return rawBucket.replace(/^gs:\/\//i, '').replace(/\/+$/, '').trim()
+}
+
 export const isFirebaseConfigured = (): boolean => validateEnvVars(REQUIRED_ENV_VARS).isValid
 
 const firebase: FirebaseModule = {
   app: null,
   auth: firebaseAuth,
   firestore,
+  storage: firebaseStorage,
   initializeFirebase: async (): Promise<FirebaseInstance> => {
     const { isValid, missing } = validateEnvVars(REQUIRED_ENV_VARS)
 
@@ -34,10 +41,12 @@ const firebase: FirebaseModule = {
     }
 
     try {
+      const projectId = process.env.FIREBASE_PROJECT_ID as string
+      const storageBucket = formatStorageBucket(process.env.FIREBASE_STORAGE_BUCKET, projectId)
+
       if (admin.apps.length > 0 && admin.apps[0]) {
         firebase.app = admin.apps[0]
       } else {
-        const projectId = process.env.FIREBASE_PROJECT_ID as string
         const clientEmail = process.env.FIREBASE_CLIENT_EMAIL as string
         const privateKey = formatPrivateKey(process.env.FIREBASE_PRIVATE_KEY)
 
@@ -47,18 +56,20 @@ const firebase: FirebaseModule = {
             clientEmail,
             privateKey
           }),
-          projectId
+          projectId,
+          storageBucket
         })
       }
 
-      const projectId = process.env.FIREBASE_PROJECT_ID as string
-
-      logger.success(`Connected: Firebase services ready [Auth, Firestore] (${projectId})`)
+      logger.success(`Connected: Firebase services ready [Auth, Firestore, Storage] (${projectId} | ${storageBucket})`)
 
       return {
         app: firebase.app,
         auth: firebase.auth,
         firestore: firebase.firestore,
+        storage: firebase.storage,
+        storageBucket,
+        bucket: getStorageBucket(storageBucket),
         projectId
       }
     } catch (error) {
