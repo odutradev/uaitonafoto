@@ -3,6 +3,12 @@ import createLogger from '@utils/logger'
 
 const logger = createLogger('firebase')
 
+const REQUIRED_ENV_VARS = [
+  'FIREBASE_PROJECT_ID',
+  'FIREBASE_CLIENT_EMAIL',
+  'FIREBASE_PRIVATE_KEY'
+] as const
+
 const formatPrivateKey = (key?: string): string => {
   if (!key) return ''
   return key.replace(/\\n/g, '\n').replace(/^["']|["']$/g, '').trim()
@@ -11,11 +17,11 @@ const formatPrivateKey = (key?: string): string => {
 const initializeFirebase = (): void => {
   if (admin.apps.length > 0) return
 
-  const projectId = process.env.FIREBASE_PROJECT_ID || 'uaitonafoto'
+  const projectId = process.env.FIREBASE_PROJECT_ID
   const clientEmail = process.env.FIREBASE_CLIENT_EMAIL
   const privateKey = formatPrivateKey(process.env.FIREBASE_PRIVATE_KEY)
 
-  if (clientEmail && privateKey) {
+  if (projectId && clientEmail && privateKey) {
     admin.initializeApp({
       credential: admin.credential.cert({
         projectId,
@@ -24,10 +30,7 @@ const initializeFirebase = (): void => {
       }),
       projectId
     })
-    return
   }
-
-  admin.initializeApp({ projectId })
 }
 
 let initError: Error | null = null
@@ -38,30 +41,35 @@ try {
   initError = error instanceof Error ? error : new Error(String(error))
 }
 
-export const auth = admin.apps.length ? admin.auth() : (null as unknown as admin.auth.Auth)
+export const firebaseAuth = admin.apps.length ? admin.auth() : (null as unknown as admin.auth.Auth)
 export const firestore = admin.apps.length ? admin.firestore() : (null as unknown as admin.firestore.Firestore)
-export const firebaseAuth = auth
 
 const firebase = {
   connect: async (): Promise<{ projectId: string }> => {
     try {
+      const missingVars = REQUIRED_ENV_VARS.filter((key) => !process.env[key]?.trim())
+
+      if (missingVars.length > 0) {
+        throw new Error(`Missing required environment variables: ${missingVars.join(', ')}`)
+      }
+
       if (initError) {
         throw initError
+      }
+
+      if (!admin.apps.length) {
+        initializeFirebase()
       }
 
       if (!admin.apps.length) {
         throw new Error('Firebase app is not initialized')
       }
 
-      if (!auth || !firestore) {
+      if (!firebaseAuth || !firestore) {
         throw new Error('Firebase services are not available')
       }
 
-      const projectId = process.env.FIREBASE_PROJECT_ID || 'uaitonafoto'
-
-      if (!process.env.FIREBASE_PROJECT_ID) {
-        logger.warn('FIREBASE_PROJECT_ID is not defined, using default fallback')
-      }
+      const projectId = process.env.FIREBASE_PROJECT_ID!
 
       logger.success(`Connected: Firebase services ready [Auth, Firestore] (${projectId})`)
 
