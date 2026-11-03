@@ -1,6 +1,6 @@
-import { firestore } from '@firebase'
-import { removeUndefined } from '@utils/object'
+import { firestore } from '@firestore'
 import createLogger from '@utils/logger'
+import { removeUndefined } from '@utils/object'
 
 import type { CreateLogPayload, LogEntity } from './types'
 

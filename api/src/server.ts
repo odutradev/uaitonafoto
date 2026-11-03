@@ -2,7 +2,7 @@ import 'dotenv/config'
 
 import { validateEnv } from '@config/env'
 import { connectEmail, isEmailConfigured } from '@email/connect'
-import firebase from '@firebase'
+import { connect as connectFirebase } from '@firebase'
 import createLogger from '@utils/logger'
 import buildApp from '@/app'
 
@@ -17,7 +17,7 @@ const startServer = async (): Promise<void> => {
   app.listen(port, '0.0.0.0', async () => {
     logger.info(`uai to na foto API running on port ${port}`)
 
-    await firebase.connect()
+    await connectFirebase()
 
     if (isEmailConfigured()) {
       try {

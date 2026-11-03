@@ -1,4 +1,4 @@
-import { firestore } from '@firebase'
+import { firestore } from '@firestore'
 import { removeUndefined } from '@utils/object'
 
 import type { UpdateUserPayload, UpsertUserPayload, UserEntity } from './types'
