@@ -1,7 +1,7 @@
 import * as admin from 'firebase-admin'
 import createLogger from '@utils/logger'
 
-const logger = createLogger('database')
+const logger = createLogger('firebase')
 
 const formatPrivateKey = (key?: string): string => {
   if (!key) return ''
@@ -38,11 +38,12 @@ try {
   initError = error instanceof Error ? error : new Error(String(error))
 }
 
+export const auth = admin.apps.length ? admin.auth() : (null as unknown as admin.auth.Auth)
 export const firestore = admin.apps.length ? admin.firestore() : (null as unknown as admin.firestore.Firestore)
-export const firebaseAuth = admin.apps.length ? admin.auth() : (null as unknown as admin.auth.Auth)
+export const firebaseAuth = auth
 
-const database = {
-  connect: async (): Promise<{ clusterName: string }> => {
+const firebase = {
+  connect: async (): Promise<{ projectId: string }> => {
     try {
       if (initError) {
         throw initError
@@ -52,21 +53,25 @@ const database = {
         throw new Error('Firebase app is not initialized')
       }
 
+      if (!auth || !firestore) {
+        throw new Error('Firebase services are not available')
+      }
+
       const projectId = process.env.FIREBASE_PROJECT_ID || 'uaitonafoto'
 
       if (!process.env.FIREBASE_PROJECT_ID) {
         logger.warn('FIREBASE_PROJECT_ID is not defined, using default fallback')
       }
 
-      logger.success(`Connected: Firebase App (${projectId})`)
+      logger.success(`Connected: Firebase services ready [Auth, Firestore] (${projectId})`)
 
-      return { clusterName: projectId }
+      return { projectId }
     } catch (error) {
-      logger.error('Connection error:', error)
+      logger.error('Firebase connection error:', error)
       process.exit(1)
     }
   }
 }
 
-export { database }
-export default database
+export { firebase }
+export default firebase
