@@ -6,6 +6,10 @@ const logger = createLogger('database')
 const database = {
   connect: async (): Promise<{ clusterName: string }> => {
     try {
+      if (!firebaseApp) {
+        throw new Error('Firebase app is not initialized')
+      }
+
       const projectId = process.env.FIREBASE_PROJECT_ID || 'uaitonafoto'
 
       if (!process.env.FIREBASE_PROJECT_ID) {
@@ -17,7 +21,7 @@ const database = {
       return { clusterName: projectId }
     } catch (error) {
       logger.error('Connection error:', error)
-      throw error
+      process.exit(1)
     }
   },
   disconnect: async (): Promise<void> => {

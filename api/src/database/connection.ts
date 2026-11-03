@@ -10,7 +10,6 @@ const getPrivateKey = (): string => {
     key = key.slice(1, -1)
   }
 
-  // Handle base64 encoded private keys (common in docker/ci environments)
   if (!key.includes('BEGIN PRIVATE KEY') && !key.includes('---')) {
     try {
       const decoded = Buffer.from(key, 'base64').toString('utf-8')
