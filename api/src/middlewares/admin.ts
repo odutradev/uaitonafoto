@@ -1,5 +1,5 @@
 import userRepository from '@repositories/user'
-import sendError from '@error'
+import sendError from '@error/index'
 
 import type { NextFunction, Response, Request } from 'express'
 

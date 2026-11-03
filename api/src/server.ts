@@ -1,9 +1,9 @@
 import 'dotenv/config'
 
 import { validateEnv } from '@config/env'
-import { connectDatabase, isDatabaseConfigured } from '@database'
+import { connectDatabase, isDatabaseConfigured } from '@database/connect'
 import { connectEmail, isEmailConfigured } from '@email/connect'
-import { connect as connectFirebase } from '@firebase'
+import { connect as connectFirebase } from '@firebase/connect'
 import createLogger from '@utils/logger'
 import buildApp from '@/app'
 

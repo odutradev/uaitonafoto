@@ -2,7 +2,7 @@ import express from 'express'
 import helmet from 'helmet'
 
 import { globalRateLimiter } from '@middlewares/rateLimit'
-import registerGlobalRoutes from '@routes'
+import registerGlobalRoutes from '@routes/index'
 import configureCors from '@config/cors'
 
 import type { Application } from 'express'

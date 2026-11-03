@@ -14,7 +14,7 @@
 > - **Zero arquivos centralizadores:** cada model, entidade, serviço ou repositório deve ficar isolado exclusivamente dentro de sua pasta de domínio (ex: `src/repositories/user/model.ts`, `src/repositories/log/model.ts`). É proibido criar arquivos com a finalidade de agrupar ou reexportar múltiplos models ou módulos de entidades diferentes.
 > - **Importação direta obrigatória:** todo e qualquer consumo deve ser feito via importação direta do arquivo específico do domínio (ex: `import UserModel from '@repositories/user/model'`, `import { connectDatabase } from '@database/connect'`).
 
-Este documento define os padrões para desenvolvimento na API. Toda a aplicação fica centralizada diretamente em `src/`, utilizando path aliases dedicados por módulo (`@actions`, `@config`, `@database`, `@docs`, `@email`, `@error`, `@factories`, `@middlewares`, `@repositories`, `@routes`, `@services`, `@appTypes`, `@utils`) além do alias base `@/*`.
+Este documento define os padrões para desenvolvimento na API. Toda a aplicação fica centralizada diretamente em `src/`, utilizando path aliases dedicados por módulo (`@actions/*`, `@config/*`, `@database/*`, `@docs/*`, `@email/*`, `@error/*`, `@factories/*`, `@firebase/*`, `@middlewares/*`, `@repositories/*`, `@routes/*`, `@utils/*`) além do alias base `@/*`.
 
 ### **Estrutura de Diretórios**
 

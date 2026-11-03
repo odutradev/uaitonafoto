@@ -4,7 +4,7 @@ import { forgotPasswordSchema, resetPasswordSchema, syncResponseSchema, updateUs
 import { passwordResetTemplate } from '@email/templates/passwordReset'
 import { authRateLimiter } from '@middlewares/rateLimit'
 import { getJwtSecret } from '@config/env'
-import { firebaseAuth } from '@firebase'
+import { firebaseAuth } from '@firebase/firebaseAuth'
 import userRepository from '@repositories/user'
 import logRepository from '@repositories/log'
 import defineAction from '@factories/defineAction'
