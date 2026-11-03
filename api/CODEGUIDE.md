@@ -9,15 +9,11 @@
 ## **Guia Estrutural e Arquitetural da API**
 
 > [!IMPORTANT]
-> ### 🏛️ **Arquitetura Orientada a Domínios (`src/domains/`)**
-> Toda lógica de negócio, repositórios de dados e controladores pertencem a domínios de negócio isolados em `src/domains/<dominio>/`.
-> - **Estrutura interna de cada domínio:**
->   - `actions/`: Ações/controladores HTTP via `defineAction`, schemas Zod e DTOs tipados.
->   - `repositories/`: Modelos Mongoose, contratos de tipos e repositório de acesso ao MongoDB.
->   - `middlewares/` *(quando aplicável)*: Middlewares exclusivos do domínio, seguindo obrigatoriamente a convenção de pasta com `<nome>/index.ts` e `<nome>/types.ts`.
->   - `index.ts`: Arquivo centralizador do domínio que expõe publicamente actions, repositories, middlewares e tipagens.
-> - **Consumo via Alias `@domains/*`:**
->   O consumo de elementos de um domínio por rotas ou outros serviços pode ser feito via import direto do domínio (ex: `import { userRepository, authMiddleware } from '@domains/users'`).
+> ### 🚫 **Proibição Absoluta de Barrel Files e Re-exports (Zero Barrel Files)**
+> É **estritamente proibido** criar ou manter barrel files ou arquivos que centralizem/reexportem múltiplos módulos no backend.
+> - **Zero arquivos centralizadores/reexportadores:** cada model, middleware, utilitário, schema ou repositório deve ser consumido via importação direta do arquivo que o define.
+> - **O papel do `index.ts` do domínio:** o `index.ts` de cada domínio **não é um barrel file**. Sua única finalidade é exportar como `default` a definição tipada `DomainDefinition` com `name` e `actions` para o registrador no `server.ts`. É proibido reexportar repositórios, middlewares ou types no `index.ts` do domínio.
+> - **Importação direta obrigatória:** todo e qualquer consumo deve ser feito via importação direta do arquivo específico (ex: `import { syncAuthUser } from '@domains/users/actions/auth'`, `import authMiddleware from '@domains/users/middlewares/auth'`, `import userRepository from '@domains/users/repositories'`).
 
 > [!NOTE]
 > ### ⚙️ **Padrão Obrigatório para Middlewares (`<nome>/index.ts` e `<nome>/types.ts`)**
@@ -78,7 +74,7 @@ As ações **não usam** controllers tradicionais do Express. Elas usam a factor
 ```ts
 import defineAction from '@factories/defineAction'
 import { schemaExemplo } from './schemas'  
-import { entidadeRepository } from '@domains/entidade'
+import entidadeRepository from '@domains/entidade/repositories'
 
 import type { ManageRequestResponse, ManageRequestBody } from '@middlewares/manageRequest/types'
 import type { ExemploRequest, ExemploResponse } from './types'
@@ -206,26 +202,18 @@ export * from './types'
 export default entidadeRepository
 ```
 
-#### **5. Centralizador do Domínio (`domains/<dominio>/index.ts`)**
+#### **5. Definição do Domínio para Registro (`domains/<dominio>/index.ts`)**
 
-Cada domínio centraliza suas exportações públicas e deve exportar obrigatoriamente como `default` um objeto tipado `DomainDefinition` contendo o nome do domínio e suas ações:
+O `index.ts` do domínio **não é um barrel file** (não reexporta repositories, middlewares ou models). Sua função exclusiva é exportar como `default` um objeto tipado `DomainDefinition` contendo o nome do domínio e suas ações para consumo do registrador:
 
 ```ts
 // domains/users/index.ts
-import * as actions from './actions'
+import * as authActions from './actions/auth'
 import type { DomainDefinition } from '../types'
 
-export * from './actions'
-export { default as userRepository, UserModel } from './repositories'
-export * from './repositories/types'
-export { default as authMiddleware } from './middlewares/auth'
-export { default as adminMiddleware } from './middlewares/admin'
-export * from './middlewares/auth/types'
-export * from './middlewares/admin/types'
-
-export const usersDomain: DomainDefinition<typeof actions> = {
+export const usersDomain: DomainDefinition<typeof authActions> = {
   name: 'users',
-  actions
+  actions: authActions
 }
 
 export default usersDomain
@@ -257,12 +245,13 @@ export const registerDomains = (): void => {
 
 #### **7. Rotas Modulares por Domínio (`routes/*.routes.ts` e `routes/api.ts`)**
 
-As rotas são organizadas por domínio em arquivos dedicados (`routes/<dominio>.routes.ts`) consumindo diretamente do domínio e agregadas no `routes/api.ts`.
+As rotas são organizadas por domínio em arquivos dedicados (`routes/<dominio>.routes.ts`), consumindo os recursos via **importação direta obrigatória**, e agregadas no `routes/api.ts`.
 
 ```ts
 // routes/auth.routes.ts
 import { Router } from 'express'
-import { syncAuthUser, getMe, updateMe, forgotPassword, resetPassword, authMiddleware } from '@domains/users'
+import { syncAuthUser, getMe, updateMe, forgotPassword, resetPassword } from '@domains/users/actions/auth'
+import authMiddleware from '@domains/users/middlewares/auth'
 
 const authRoutes = Router()
 
@@ -271,6 +260,7 @@ authRoutes.post('/forgot-password', forgotPassword)
 authRoutes.post('/reset-password', resetPassword)
 authRoutes.get('/me', authMiddleware, getMe)
 authRoutes.patch('/me', authMiddleware, updateMe)
+```
 
 export default authRoutes
 ```
