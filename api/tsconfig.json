@@ -16,6 +16,7 @@
       "@config/*": ["./src/config/*"],
       "@database/*": ["./src/database/*"],
       "@docs/*": ["./src/docs/*"],
+      "@domains/*": ["./src/domains/*"],
       "@email/*": ["./src/email/*"],
       "@error/*": ["./src/error/*"],
       "@factories/*": ["./src/factories/*"],

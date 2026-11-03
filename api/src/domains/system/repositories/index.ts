@@ -24,7 +24,7 @@ const toLogEntity = (doc: any): LogEntity => ({
   createdAt: doc.createdAt
 })
 
-const logRepository = {
+export const logRepository = {
   create: async (payload: CreateLogPayload): Promise<LogEntity | null> => {
     try {
       const entry = {
@@ -41,4 +41,6 @@ const logRepository = {
   }
 }
 
+export { LogModel }
+export * from './types'
 export default logRepository
