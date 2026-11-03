@@ -150,7 +150,7 @@ export const landingPageData: LandingPageData = {
   },
   footer: {
     copyrightSuffix: 'todos os direitos reservados.',
-    companyName: 'Lite Technology Ltda - Me',
+    companyName: 'Lite Technology LTDA',
     cnpj: '55.717.105/0001-58'
   }
 }
