@@ -1,0 +1,89 @@
+import * as admin from 'firebase-admin'
+
+import firebaseAuth from '@firebaseAuth'
+import firestore from '@firestore'
+import { validateEnvVars } from '@utils/env'
+import createLogger from '@utils/logger'
+
+import type { FirebaseInstance, FirebaseModule } from './types'
+
+const logger = createLogger('firebase')
+
+const REQUIRED_ENV_VARS = [
+  'FIREBASE_PROJECT_ID',
+  'FIREBASE_CLIENT_EMAIL',
+  'FIREBASE_PRIVATE_KEY'
+]
+
+const formatPrivateKey = (key?: string): string => {
+  if (!key) return ''
+  return key.replace(/\\n/g, '\n').replace(/^["']|["']$/g, '').trim()
+}
+
+export const isFirebaseConfigured = (): boolean => validateEnvVars(REQUIRED_ENV_VARS).isValid
+
+const firebase: FirebaseModule = {
+  app: null,
+  auth: firebaseAuth,
+  firestore,
+  initializeFirebase: async (): Promise<FirebaseInstance> => {
+    const { isValid, missing } = validateEnvVars(REQUIRED_ENV_VARS)
+
+    if (!isValid) {
+      throw new Error(`Missing firebase environment variables: ${missing.join(', ')}`)
+    }
+
+    try {
+      if (admin.apps.length > 0 && admin.apps[0]) {
+        firebase.app = admin.apps[0]
+      } else {
+        const projectId = process.env.FIREBASE_PROJECT_ID as string
+        const clientEmail = process.env.FIREBASE_CLIENT_EMAIL as string
+        const privateKey = formatPrivateKey(process.env.FIREBASE_PRIVATE_KEY)
+
+        firebase.app = admin.initializeApp({
+          credential: admin.credential.cert({
+            projectId,
+            clientEmail,
+            privateKey
+          }),
+          projectId
+        })
+      }
+
+      const projectId = process.env.FIREBASE_PROJECT_ID as string
+
+      logger.success(`Connected: Firebase services ready [Auth, Firestore] (${projectId})`)
+
+      return {
+        app: firebase.app,
+        auth: firebase.auth,
+        firestore: firebase.firestore,
+        projectId
+      }
+    } catch (error) {
+      logger.error('[initializeFirebase] Firebase initialization error')
+      logger.clean(error)
+      process.exit(1)
+    }
+  },
+  getInstance: async (): Promise<admin.app.App> => {
+    if (!firebase.app) {
+      logger.info('[getInstance] Firebase not initialized, initializing now')
+      await firebase.initializeFirebase()
+      if (!firebase.app) {
+        logger.error('[getInstance] Failed to initialize Firebase app')
+        throw new Error('Failed to initialize Firebase app')
+      }
+    }
+    return firebase.app
+  },
+  connect: async (): Promise<FirebaseInstance> => {
+    return firebase.initializeFirebase()
+  }
+}
+
+export const connect = firebase.initializeFirebase
+export const connectFirebase = firebase.initializeFirebase
+
+export default firebase
