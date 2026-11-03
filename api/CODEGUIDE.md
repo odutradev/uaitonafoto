@@ -25,6 +25,12 @@
 > - `<middleware>/index.ts` (lógica de execução e exportação)
 > - `<middleware>/types.ts` (tipos, contratos e opções)
 
+> [!NOTE]
+> ### 🛠️ **Padrão Obrigatório para Utilitários (`src/utils/<util>/index.ts` e `types.ts`)**
+> Cada utilitário ou módulo helper em `src/utils/` deve residir isolado em sua própria pasta, contendo:
+> - `<util>/index.ts`: Lógica da utilidade e exportações principais.
+> - `<util>/types.ts`: Tipagens e contratos TypeScript (quando necessário).
+
 Este documento define os padrões para desenvolvimento na API. Toda a aplicação fica centralizada diretamente em `src/`, utilizando path aliases dedicados por módulo (`@config/*`, `@database/*`, `@docs/*`, `@domains/*`, `@email/*`, `@error/*`, `@factories/*`, `@firebase/*`, `@middlewares/*`, `@routes/*`, `@utils/*`) além do alias base `@/*`.
 
 ### **Estrutura de Diretórios**
@@ -51,7 +57,15 @@ A pasta `src/` organiza a aplicação de forma limpa e modular:
   * `permissions/` (Verificação de permissões do usuário)
 * `src/database/` (Conexão e inicialização do MongoDB via Mongoose)
 * `src/firebase/` (Serviços do Firebase: Auth e Storage)
-* `src/config/` (Configurações de ambiente, CORS, etc.)
+* `src/config/` (Configurações de ambiente, CORS e aplicação em uso ativo)
+  * `app.ts` (Configuração global da aplicação e resolução de versão)
+  * `cors.ts` (Configuração de origens CORS para o Express)
+  * `env.ts` (Validação de credenciais de ambiente e obtenção segura do segredo JWT)
+* `src/utils/` (Utilitários reutilizáveis com padrão `<util>/index.ts` e `types.ts`)
+  * `date/` (Formatação e cálculos de datas: `formatTimestamp`, `formatDateBR`, `addDays`, `isPast`)
+  * `env/` (Validação de variáveis de ambiente: `validateEnvVars` e `EnvValidationResult`)
+  * `logger/` (Instância de log estilizado e prefixado: `createLogger` e tipo `Logger`)
+  * `object/` (Manipulação de objetos e limpeza de campos: `filterObject`, `removeUndefined`)
 * `src/docs/` (Gerador e registro do OpenAPI/Swagger)
 * `src/factories/` (Factories utilitárias como `defineAction`, `pagination`, `filters`)
 
@@ -238,3 +252,27 @@ apiRouter.use('/auth', authRoutes)
 
 export default apiRouter
 ```
+
+#### **7. Utilitários e Helpers (`utils/<nome>/index.ts` e `types.ts`)**
+
+Cada utilitário fica isolado em seu próprio subdiretório, contendo a lógica central em `index.ts` e contratos de tipos em `types.ts` quando necessário:
+
+```ts
+// utils/env/types.ts
+export interface EnvValidationResult {
+  isValid: boolean
+  missing: string[]
+}
+
+// utils/env/index.ts
+import createLogger from '@utils/logger'
+import type { EnvValidationResult } from './types'
+
+export const validateEnvVars = (variables: string[], exitOnError = false): EnvValidationResult => {
+  // ...
+}
+
+export * from './types'
+export default validateEnvVars
+```
+
