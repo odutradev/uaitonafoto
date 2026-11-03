@@ -7,13 +7,6 @@ export interface EnvValidationResult {
   missing: string[]
 }
 
-/**
- * Validates if required environment variables are present and non-empty.
- *
- * @param variables Array of environment variable names to check.
- * @param exitOnError If true, logs an error and terminates the process when validation fails.
- * @returns Result object containing `isValid` and list of `missing` variable keys.
- */
 export const validateEnvVars = (
   variables: string[],
   exitOnError = false
