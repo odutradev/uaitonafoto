@@ -1,4 +1,4 @@
-import { firebaseApp } from '@database/connection'
+import { firebaseApp } from './connection'
 import createLogger from '@utils/logger'
 
 const logger = createLogger('database')
@@ -36,4 +36,5 @@ const database = {
   }
 }
 
+export { database }
 export default database
