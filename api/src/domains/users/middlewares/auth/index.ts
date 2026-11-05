@@ -5,6 +5,7 @@ import sendError from '@error/index'
 import { firebaseAuth } from '@firebase/services/auth'
 
 import type { NextFunction, Response, Request } from 'express'
+import type { ResponseConfig } from '@factories/defineAction/types'
 
 export const authMiddleware = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const authHeader = req.headers.authorization
@@ -32,5 +33,13 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
   }
 }
 
+export const authMiddlewareResponses: Record<string, ResponseConfig> = {
+  401: { description: 'Token de autenticação não fornecido ou inválido' }
+}
+
+Object.assign(authMiddleware, {
+  authenticate: true,
+  responses: authMiddlewareResponses
+})
 
 export default authMiddleware

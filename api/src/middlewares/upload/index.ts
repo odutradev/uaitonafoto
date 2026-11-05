@@ -2,6 +2,7 @@ import multer, { MulterError } from 'multer'
 import sendError from '@error/index'
 import { ALLOWED_MIME_TYPES, type AllowedMimeType } from './types'
 import type { Request, Response, NextFunction } from 'express'
+import type { ResponseConfig } from '@factories/defineAction/types'
 
 export const MAX_FILE_SIZE = 10 * 1024 * 1024
 
@@ -10,6 +11,10 @@ export const MIME_EXTENSION_MAP: Record<string, string> = {
   'image/jpg': 'jpg',
   'image/png': 'png',
   'image/webp': 'webp'
+}
+
+export const uploadResponses: Record<string, ResponseConfig> = {
+  400: { description: 'Erro no envio do arquivo: tamanho excede 10MB ou formato inválido' }
 }
 
 const multerInstance = multer({
@@ -28,7 +33,7 @@ const multerInstance = multer({
 
 const upload = {
   single: (fieldName: string) => {
-    return (req: Request, res: Response, next: NextFunction): void => {
+    const handler = (req: Request, res: Response, next: NextFunction): void => {
       const uploadHandler = multerInstance.single(fieldName)
 
       uploadHandler(req, res, (err) => {
@@ -61,8 +66,11 @@ const upload = {
         next()
       })
     }
+
+    return Object.assign(handler, {
+      responses: uploadResponses
+    })
   }
 }
-
 
 export default upload
