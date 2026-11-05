@@ -25,3 +25,4 @@ As regras de busca (exata ou busca parcial/iLike) dependem da configuração esp
 
 export const info = metadata
 export default metadata
+
