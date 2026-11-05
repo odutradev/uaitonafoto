@@ -15,7 +15,11 @@ export const generateDocs = () => {
 
   return generator.generateDocument({
     openapi: '3.0.0',
-    info: metadata
+    info: metadata,
+    servers: [
+      { url: '/api', description: 'API Gateway (/api)' },
+      { url: '/', description: 'Direto (/)' }
+    ]
   })
 }
 
