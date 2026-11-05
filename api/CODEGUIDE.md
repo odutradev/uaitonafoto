@@ -84,7 +84,7 @@ A pasta `src/` organiza a aplicação de forma limpa e modular:
 * `src/payment/` (Gateway de pagamento: inicialização e cliente)
 * `src/config/` (Configurações modulares com padrão `<modulo>/index.ts` e `types.ts`)
   * `cors/` (Configuração de origens CORS para o Express)
-  * `docs/` (Gerador e registro do OpenAPI/Swagger: `index.ts` e `registry.ts`)
+  * `docs/` (Gerador e registro do OpenAPI/Swagger: `index.ts` e `metadata.ts`)
   * `domain/` (Definição, registro de domínios e mapeamento automático de endpoints)
   * `env/` (Validação centralizada estrita de variáveis de ambiente com schema Zod e exportação tipada)
 * `src/utils/` (Utilitários reutilizáveis com padrão `<util>/index.ts` e `types.ts`)
