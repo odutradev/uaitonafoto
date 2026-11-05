@@ -40,6 +40,8 @@
 > Todos os middlewares (tanto globais em `src/middlewares/` quanto específicos de domínio em `src/domains/<dominio>/middlewares/`) devem seguir estritamente o padrão de diretório:
 > - `<middleware>/index.ts` (lógica de execução e exportação)
 > - `<middleware>/types.ts` (tipos, contratos e opções)
+> - **Mapeamento de Respostas para Documentação OpenAPI:** Todo middleware deve anexar, via `Object.assign`, um objeto `responses` (tipo `Record<string | number, ResponseConfig>`) mapeando os códigos HTTP de erro disparados (ex: 400, 401, 403, 429) com `description` e `schema: errorResponseSchema` (importado de `@factories/errors/schemas`).
+> - Caso o middleware requeira autenticação, deve anexar `authenticate: true` para que a factory registre o esquema de segurança `bearerAuth` no OpenAPI automaticamente.
 
 > [!NOTE]
 > ### ⚡ **Padrão Obrigatório para Ações de Domínio (`domains/<dominio>/actions/<acao>/`)**
@@ -78,7 +80,6 @@ A pasta `src/` organiza a aplicação de forma limpa e modular:
   * `manageRequest/` (Middleware centralizador de validação Zod e execução de ações)
   * `rateLimit/` (Limitadores de taxa global e de rotas sensíveis)
   * `upload/` (Tratamento de uploads de arquivos via Multer em memória)
-  * `permissions/` (Verificação de permissões do usuário)
 * `src/database/` (Conexão e inicialização do MongoDB via Mongoose)
 * `src/firebase/` (Serviços do Firebase: Auth e Storage)
 * `src/payment/` (Gateway de pagamento: inicialização e cliente)
@@ -99,7 +100,7 @@ A pasta `src/` organiza a aplicação de forma limpa e modular:
 
 #### **1. Ações / Controllers (`domains/<dominio>/actions/entidade/index.ts`)**
 
-As ações **não usam** controllers tradicionais do Express. Elas usam a factory `defineAction` que integra metadados da rota (`method`, `path`), validação Zod, OpenAPI, middlewares automáticos (autenticação via `authenticate: true` e permissões) e injeção de dependências (`ids`, `manageError`). A ação resultante é um `ActionHandler` executável diretamente pelo Express com seus metadados anexados para registro automático.
+As ações **não usam** controllers tradicionais do Express. Elas usam a factory `defineAction` que integra metadados da rota (`method`, `path`), validação Zod, OpenAPI, middlewares automáticos (autenticação via `authenticate: true` e limitadores de taxa via `rateLimit`) e injeção de dependências (`ids`, `manageError`). A ação resultante é um `ActionHandler` executável diretamente pelo Express com seus metadados anexados para registro automático.
 
 > [!IMPORTANT]
 > **Regra estrita do `index.ts` da ação:**
@@ -410,4 +411,50 @@ export const env = validateServerEnv()
 export const { PORT, NODE_ENV, ... } = env
 export default env
 ```
+
+#### **11. Middlewares Documentados e Mapeamento Automático no OpenAPI**
+
+Para garantir que a documentação OpenAPI gerada pela factory `defineAction` reflita todas as respostas possíveis da API de forma fidedigna e sem repetição manual, todos os middlewares do sistema (globais ou de domínio) devem seguir o contrato de `DocumentedMiddleware`.
+
+Cada middleware anexa ao seu handler, via `Object.assign`, as respostas que pode emitir (`responses`), associando a descrição e o schema padrão `errorResponseSchema` de `@factories/errors/schemas`. Se o middleware exigir token JWT/Firebase, deve anexar `authenticate: true` para que o OpenAPI configure automaticamente a segurança `bearerAuth`.
+
+```ts
+// Exemplo: src/middlewares/upload/index.ts
+import multer, { MulterError } from 'multer'
+import sendError from '@error/index'
+import { errorResponseSchema } from '@factories/errors/schemas'
+import type { Request, Response, NextFunction } from 'express'
+import type { DocumentedMiddleware, ResponseConfig } from '@factories/defineAction/types'
+
+export const uploadResponses: Record<string, ResponseConfig> = {
+  400: {
+    description: 'Erro de validação no upload do arquivo ou arquivo ausente',
+    schema: errorResponseSchema
+  }
+}
+
+const upload = {
+  single: (fieldName: string): DocumentedMiddleware => {
+    const handler = (req: Request, res: Response, next: NextFunction): void => {
+      // Execução e tratamento com sendError...
+      next()
+    }
+
+    const uploadMiddlewareWithDocs: DocumentedMiddleware = Object.assign(handler, {
+      responses: uploadResponses
+    })
+
+    return uploadMiddlewareWithDocs
+  }
+}
+
+export default upload
+```
+
+A factory `defineAction` analisa todos os middlewares configurados (tanto os automáticos, como autenticação e rate limiting, quanto os declarados no array `metadata.middlewares`), extrai suas respostas mapeadas e combina com as respostas da ação em prioridade:
+
+1. Respostas declaradas na própria ação (`metadata.responses`)
+2. Respostas documentadas nos middlewares (`middlewareResponses`)
+3. Respostas padrão da factory (`defaultResponses`: 200, 400, 422, 500 com `errorResponseSchema`)
+
 
