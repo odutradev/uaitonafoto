@@ -1,7 +1,6 @@
 import swaggerUi from 'swagger-ui-express'
 
 import { generateDocs } from '@docs/generator'
-import { appConfig } from '@config/app'
 import env from '@config/env'
 import createApiRouter from '@routes/api'
 import { checkDatabaseHealth } from '@database'
@@ -41,8 +40,8 @@ const registerGlobalRoutes = (app: Application): void => {
 
     res.status(isHealthy ? 200 : 503).json({
       status: isHealthy ? 'ok' : 'degraded',
-      mode: appConfig.mode,
-      version: appConfig.version,
+      mode: env.NODE_ENV,
+      version: '1.0.0',
       services
     })
   })

@@ -1,7 +1,6 @@
 import { OpenApiGeneratorV3 } from '@asteasolutions/zod-to-openapi'
 
 import { registry } from '@docs/registry'
-import { appConfig } from '@config/app'
 
 const API_DESCRIPTION = `
 Documentação automática das rotas do sistema.
@@ -30,8 +29,8 @@ export const generateDocs = () => {
   return generator.generateDocument({
     openapi: '3.0.0',
     info: {
-      title: appConfig.title,
-      version: appConfig.version,
+      title: 'uai to na foto API Documentation',
+      version: '1.0.0',
       description: API_DESCRIPTION
     }
   })
