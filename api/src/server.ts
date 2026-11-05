@@ -2,7 +2,7 @@ import 'dotenv/config'
 
 import env from '@config/env'
 import { registerDomains, registerDomain, registeredDomains } from '@config/domain'
-import { connectDatabase } from '@database/connect'
+import { connectDatabase } from '@database'
 import { connectEmail } from '@email/connect'
 import { connect as connectFirebase } from '@firebase/connect'
 import createLogger from '@utils/logger'
