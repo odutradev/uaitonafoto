@@ -38,7 +38,9 @@ export const {
   EMAIL_USER,
   EMAIL_PASS,
   EMAIL_FROM,
-  SWAGGER_ENABLED
+  SWAGGER_ENABLED,
+  ABACATEPAY_API_KEY,
+  ABACATEPAY_WEBHOOK_SECRET
 } = env
 
 export const getJwtSecret = (): string => env.JWT_SECRET
