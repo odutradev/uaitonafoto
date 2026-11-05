@@ -1,5 +1,6 @@
 import rateLimit from 'express-rate-limit'
 import sendError from '@error/index'
+import { errorResponseSchema } from '@factories/errors/schemas'
 import type { RateLimitConfig, DocumentedMiddleware } from './types'
 
 export const createRateLimiter = (config: RateLimitConfig = {}): DocumentedMiddleware => {
@@ -26,7 +27,8 @@ export const createRateLimiter = (config: RateLimitConfig = {}): DocumentedMiddl
   return Object.assign(limiter, {
     responses: {
       429: {
-        description: 'Muitas requisições. Limite de taxa excedido'
+        description: 'Muitas requisições. Limite de taxa excedido',
+        schema: errorResponseSchema
       }
     }
   })
@@ -54,7 +56,8 @@ export const globalRateLimiter: DocumentedMiddleware = Object.assign(
   {
     responses: {
       429: {
-        description: 'Muitas requisições. Limite geral de taxa excedido'
+        description: 'Muitas requisições. Limite geral de taxa excedido',
+        schema: errorResponseSchema
       }
     }
   }
@@ -77,7 +80,8 @@ export const authRateLimiter: DocumentedMiddleware = Object.assign(
   {
     responses: {
       429: {
-        description: 'Muitas tentativas de autenticação. Limite de taxa excedido'
+        description: 'Muitas tentativas de autenticação. Limite de taxa excedido',
+        schema: errorResponseSchema
       }
     }
   }
