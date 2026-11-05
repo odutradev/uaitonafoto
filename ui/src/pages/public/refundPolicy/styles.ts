@@ -106,3 +106,4 @@ export const footerBoxStyles: SxProps<Theme> = {
   mt: 'auto',
   width: '100%'
 }
+

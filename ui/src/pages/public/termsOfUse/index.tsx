@@ -193,3 +193,4 @@ export const TermsOfUse = ({ lastUpdated = '04 de novembro de 2026' }: TermsOfUs
 }
 
 export default TermsOfUse
+

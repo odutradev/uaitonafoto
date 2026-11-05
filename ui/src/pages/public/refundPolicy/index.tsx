@@ -183,3 +183,4 @@ export const RefundPolicy = ({ lastUpdated = '04 de novembro de 2026' }: RefundP
 }
 
 export default RefundPolicy
+
