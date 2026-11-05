@@ -71,7 +71,7 @@ A pasta `src/` organiza a aplicação de forma limpa e modular:
     * `middlewares/` (Middlewares do domínio: `auth/` e `admin/`)
     * `index.ts` (Centralizador público do domínio)
   * `system/` (Domínio de infraestrutura e auditoria do sistema)
-    * `actions/` (Ações do sistema)
+    * `actions/` (Ações do sistema: `health/` com separação em `index.ts`, `schemas.ts` e `types.ts`)
     * `repositories/` (Model Mongoose `LogModel` e `logRepository`)
     * `index.ts` (Centralizador público do domínio)
 * `src/middlewares/` (Middlewares globais padronizados com `index.ts` e `types.ts`)
