@@ -1,9 +1,8 @@
 import cors from 'cors'
 import env from '@config/env'
+import type { CorsMiddleware } from './types'
 
-import type { RequestHandler } from 'express'
-
-const configureCors = (): RequestHandler => {
+export const configureCors = (): CorsMiddleware => {
   const allowedOrigins = env.CORS_ORIGIN
     .split(',')
     .map((origin) => origin.trim().replace(/\/+$/, ''))
@@ -31,5 +30,5 @@ const configureCors = (): RequestHandler => {
   })
 }
 
+export * from './types'
 export default configureCors
-
