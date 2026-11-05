@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken'
 
 import { forgotPasswordSchema, resetPasswordSchema, syncResponseSchema, updateUserSchema, syncUserSchema, userSchema } from './schemas'
-import { resolveFrontendBaseUrl } from './utils/resolveFrontendBaseUrl'
+import { resolveFrontendBaseUrl } from '../../utils/resolveFrontendBaseUrl'
 import { passwordResetTemplate } from '@email/templates/passwordReset'
 import { authRateLimiter } from '@middlewares/rateLimit'
 import { getJwtSecret } from '@config/env'
