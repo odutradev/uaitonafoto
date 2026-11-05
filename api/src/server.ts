@@ -4,6 +4,7 @@ import suppressPunycodeWarning from '@utils/warning'
 suppressPunycodeWarning()
 
 import env from '@config/env'
+import { resolveAppVersion } from '@config/version'
 import { registerDomains } from '@config/domain'
 import usersDomain from '@domains/users'
 import systemDomain from '@domains/system'
@@ -63,13 +64,14 @@ const setupGracefulShutdown = (server: Server): void => {
 }
 
 const startServer = async (): Promise<void> => {
+  const version = resolveAppVersion()
   registerDomains([usersDomain, systemDomain])
 
   const app = buildApp()
   const port = env.PORT
 
   const server = app.listen(port, '0.0.0.0', async () => {
-    logger.info(`API running on port ${port}`)
+    logger.info(`API v${version} running on port ${port}`)
 
     await Promise.all([
       connectDatabase(),

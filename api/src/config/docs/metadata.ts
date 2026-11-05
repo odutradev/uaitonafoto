@@ -1,34 +1,10 @@
-import path from 'path'
-import fs from 'fs'
-
-export const resolveAppVersion = (): string => {
-  const candidates = [
-    path.resolve(process.cwd(), 'uaitonafoto-package.json'),
-    path.resolve(process.cwd(), '../uaitonafoto-package.json'),
-    path.resolve(process.cwd(), '../package.json'),
-    path.resolve(process.cwd(), 'package.json')
-  ]
-
-  for (const candidate of candidates) {
-    try {
-      if (fs.existsSync(candidate)) {
-        const parsed = JSON.parse(fs.readFileSync(candidate, 'utf-8')) as { name?: string; version?: string }
-        if (parsed.name === 'uaitonafoto' && parsed.version) {
-          return parsed.version
-        }
-        if (parsed.version && !parsed.name?.includes('api') && !parsed.name?.includes('ui')) {
-          return parsed.version
-        }
-      }
-    } catch {}
-  }
-
-  return '1.0.0'
-}
+import { getAppVersion } from '@config/version'
 
 export const metadata = {
   title: 'uai to na foto API Documentation',
-  version: resolveAppVersion(),
+  get version() {
+    return getAppVersion()
+  },
   description: `
 Documentação automática das rotas do sistema.
 
