@@ -7,3 +7,5 @@ registry.registerComponent('securitySchemes', 'bearerAuth', {
   scheme: 'bearer',
   bearerFormat: 'JWT'
 })
+
+export default registry
