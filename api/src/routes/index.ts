@@ -3,7 +3,7 @@ import swaggerUi from 'swagger-ui-express'
 import { generateDocs } from '@docs/generator'
 import { appConfig } from '@config/app'
 import env from '@config/env'
-import apiRouter from '@routes/api'
+import createApiRouter from '@routes/api'
 
 import type { Application, Response, Request, NextFunction } from 'express'
 
@@ -36,6 +36,8 @@ const registerGlobalRoutes = (app: Application): void => {
   app.get(['/ping', '/api/ping'], (_req: Request, res: Response) => {
     res.status(200).send('pong')
   })
+
+  const apiRouter = createApiRouter()
 
   app.use('/', apiRouter)
   app.use('/api', apiRouter)

@@ -1,8 +1,10 @@
 import { Router } from 'express'
 import { registerDomainEndpoints } from '@config/domain'
 
-const apiRouter = Router()
+export const createApiRouter = (): Router => {
+  const apiRouter = Router()
+  registerDomainEndpoints(apiRouter)
+  return apiRouter
+}
 
-registerDomainEndpoints(apiRouter)
-
-export default apiRouter
+export default createApiRouter
