@@ -12,7 +12,6 @@ export type ActionMetadata = {
   method: 'get' | 'post' | 'put' | 'delete' | 'patch'
   rateLimit?: boolean | RateLimitConfig
   authenticate?: boolean
-  permissions?: string[]
   path: string
   summary: string
   tags: string[]

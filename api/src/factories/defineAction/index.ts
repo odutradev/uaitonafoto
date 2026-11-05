@@ -1,7 +1,6 @@
 import { createRateLimiter } from '@middlewares/rateLimit'
 import manageRequest from '@middlewares/manageRequest'
 import authMiddleware from '@domains/users/middlewares/auth'
-import requirePermissions from '@middlewares/permissions'
 import { registerOpenApiAction } from './openapi'
 
 import type { ManageRequestSchema, ServiceFunction, RouteSchema } from '@middlewares/manageRequest/types'
@@ -27,10 +26,6 @@ const defineAction = <T extends ManageRequestSchema = ManageRequestSchema>(
 
   if (metadata.authenticate && (!metadata.middlewares || !metadata.middlewares.includes(authMiddleware))) {
     actionMiddlewares.push(authMiddleware)
-  }
-
-  if (metadata.permissions?.length) {
-    actionMiddlewares.push(requirePermissions(metadata.permissions))
   }
 
   if (metadata.middlewares) {
