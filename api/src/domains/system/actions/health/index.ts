@@ -3,6 +3,7 @@ import { checkFirebaseHealth } from '@firebase'
 import { checkEmailHealth } from '@email'
 import { checkPaymentHealth } from '@payment'
 import env from '@config/env'
+import metadata from '@config/docs/metadata'
 import defineAction from '@factories/defineAction'
 import { healthCheckResponseSchema } from './schemas'
 
@@ -35,7 +36,7 @@ export const healthCheck = defineAction(
     const payload: HealthCheckResponse = {
       status,
       mode: env.NODE_ENV,
-      version: '1.0.0',
+      version: metadata.version,
       services
     }
 
