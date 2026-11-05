@@ -326,8 +326,7 @@ export const createApiRouter = (): Router => {
 export default createApiRouter
 ```
 
-Ao executar, `registerDomainEndpoints` percorre as ações de cada domínio no registro e associa os endpoints ao roteador Express automaticamente, garantindo rastreabilidade com logs dedicados:
-`[INFO] Endpoint registered: [POST] /auth/sync (users.syncAuthUser)`
+Ao executar, `registerDomainEndpoints` percorre as ações de cada domínio no registro e associa os endpoints ao roteador Express automaticamente.
 
 #### **9. Utilitários e Helpers Globais (`utils/<nome>/index.ts` e `types.ts`)**
 

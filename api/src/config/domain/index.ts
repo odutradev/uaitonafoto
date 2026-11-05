@@ -85,7 +85,6 @@ export const registerDomainEndpoints = (
         const handlers = action.middlewares?.length ? action.middlewares : [action]
         router[httpMethod](normalizedPath, ...handlers)
         registeredEndpoints.add(endpointKey)
-        logger.info(`Endpoint registered: [${httpMethod.toUpperCase()}] ${normalizedPath} (${domain.name}.${name})`)
       } else {
         logger.warn(`Unsupported HTTP method: ${method} for action ${domain.name}.${name}`)
       }
