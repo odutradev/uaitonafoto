@@ -1,7 +1,7 @@
 import * as admin from 'firebase-admin'
 
-import firebaseAuth from '@firebase/firebaseAuth'
-import firebaseStorage, { getStorageBucket } from '@firebase/storage'
+import firebaseAuth from '@firebase/services/auth'
+import firebaseStorage, { getStorageBucket } from '@firebase/services/storage'
 import env from '@config/env'
 import createLogger from '@utils/logger'
 

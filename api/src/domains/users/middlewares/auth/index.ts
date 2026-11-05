@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken'
 
 import { getJwtSecret } from '@config/env'
 import sendError from '@error/index'
-import { firebaseAuth } from '@firebase/firebaseAuth'
+import { firebaseAuth } from '@firebase/services/auth'
 
 import type { NextFunction, Response, Request } from 'express'
 
