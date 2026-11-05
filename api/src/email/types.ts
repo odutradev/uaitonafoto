@@ -20,7 +20,7 @@ export type EmailInstance = {
 
 export type EmailModule = {
   transporter: EmailTransporter | null
-  initializeEmail: () => Promise<EmailInstance>
+  initializeEmail: () => Promise<EmailInstance | null>
   getInstance: () => Promise<EmailTransporter>
 }
 

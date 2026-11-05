@@ -4,7 +4,7 @@ import createLogger from '@utils/logger'
 
 const logger = createLogger('database')
 
-export const connectDatabase = async (): Promise<typeof mongoose> => {
+export const connectDatabase = async (): Promise<typeof mongoose | undefined> => {
   try {
     const instance = await mongoose.connect(env.MONGODB_URI, {
       dbName: env.MONGODB_DB_NAME
@@ -14,7 +14,7 @@ export const connectDatabase = async (): Promise<typeof mongoose> => {
     return instance
   } catch (error) {
     logger.error('[connectDatabase] MongoDB connection error:', error)
-    throw error
+    process.exit(1)
   }
 }
 

@@ -10,9 +10,10 @@ const logger = createLogger('email')
 
 const email: EmailModule = {
   transporter: null,
-  initializeEmail: async (): Promise<EmailInstance> => {
+  initializeEmail: async (): Promise<EmailInstance | null> => {
     if (!env.EMAIL_HOST || !env.EMAIL_PORT || !env.EMAIL_USER || !env.EMAIL_PASS) {
-      throw new Error('Missing email environment variables')
+      logger.warn('Email service disabled: EMAIL_* variables are not configured')
+      return null
     }
 
     try {
