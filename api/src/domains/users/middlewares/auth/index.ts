@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken'
 
 import { getJwtSecret } from '@config/env'
 import sendError from '@error/index'
-import { firebaseAuth } from '@firebase/services/auth'
+import { verifyIdToken } from '@firebase/services/auth'
 import { errorResponseSchema } from '@factories/errors/schemas'
 
 import type { NextFunction, Response, Request } from 'express'
@@ -25,7 +25,7 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
     next()
   } catch {
     try {
-      const decodedToken = await firebaseAuth.verifyIdToken(token)
+      const decodedToken = await verifyIdToken(token)
       res.locals.userId = decodedToken.uid
       next()
     } catch (error) {

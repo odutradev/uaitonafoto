@@ -5,7 +5,7 @@ import { resolveFrontendBaseUrl } from '../../utils/resolveFrontendBaseUrl'
 import { passwordResetTemplate } from '@email/templates/passwordReset'
 import { authRateLimiter } from '@middlewares/rateLimit'
 import { getJwtSecret } from '@config/env'
-import { firebaseAuth } from '@firebase/services/auth'
+import { getUserByEmail, updateUser, verifyIdToken } from '@firebase/services/auth'
 import userRepository from '../../repositories'
 import logRepository from '@domains/system/repositories'
 import defineAction from '@factories/defineAction'
@@ -44,7 +44,7 @@ export const syncAuthUser = defineAction(
     let decodedToken
 
     try {
-      decodedToken = await firebaseAuth.verifyIdToken(token)
+      decodedToken = await verifyIdToken(token)
     } catch (error) {
       return manageError({ code: 'token_is_not_valid', error })
     }
@@ -171,12 +171,7 @@ export const forgotPassword = defineAction(
         dbUser = await userRepository.findByEmail(data.email.trim())
       }
 
-      let firebaseUserRecord = null
-      try {
-        firebaseUserRecord = await firebaseAuth.getUserByEmail(normalizedEmail)
-      } catch {
-        firebaseUserRecord = null
-      }
+      const firebaseUserRecord = await getUserByEmail(normalizedEmail)
 
       const targetUid = firebaseUserRecord?.uid || dbUser?.id
       const targetEmail = firebaseUserRecord?.email || dbUser?.email
@@ -277,7 +272,7 @@ export const resetPassword = defineAction(
         })
       }
 
-      await firebaseAuth.updateUser(decoded.sub, {
+      await updateUser(decoded.sub, {
         password: data.password
       })
 
