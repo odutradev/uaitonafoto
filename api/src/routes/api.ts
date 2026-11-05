@@ -1,9 +1,8 @@
 import { Router } from 'express'
-
-import authRoutes from '@routes/auth.routes'
+import { registerDomainEndpoints } from '@config/domain'
 
 const apiRouter = Router()
 
-apiRouter.use('/auth', authRoutes)
+registerDomainEndpoints(apiRouter)
 
 export default apiRouter
