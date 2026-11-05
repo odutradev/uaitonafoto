@@ -19,3 +19,8 @@ export type ActionMetadata = {
   middlewares?: RequestHandler[]
   requestBody?: ZodRequestBody
 }
+
+export type ActionHandler = RequestHandler & {
+  metadata: ActionMetadata
+  middlewares: RequestHandler[]
+}

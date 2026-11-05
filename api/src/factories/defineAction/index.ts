@@ -1,16 +1,18 @@
 import manageRequest from '@middlewares/manageRequest'
 import { registry } from '@docs/registry'
+import authMiddleware from '@domains/users/middlewares/auth'
+import requirePermissions from '@middlewares/permissions'
 
 import type { ManageRequestSchema, ServiceFunction, RouteSchema } from '@middlewares/manageRequest/types'
 import type { RouteConfig } from '@asteasolutions/zod-to-openapi'
-import type { ActionMetadata, ResponseConfig } from './types'
+import type { ActionMetadata, ActionHandler, ResponseConfig } from './types'
 import type { RequestHandler } from 'express'
 
 const defineAction = <T extends ManageRequestSchema = ManageRequestSchema>(
   metadata: ActionMetadata,
   service: ServiceFunction<T>,
   schema?: RouteSchema
-): RequestHandler | RequestHandler[] => {
+): ActionHandler => {
   const defaultResponses: Record<string, ResponseConfig> = {
     200: { description: 'Sucesso' },
     400: { description: 'Requisição inválida' },
@@ -54,11 +56,38 @@ const defineAction = <T extends ManageRequestSchema = ManageRequestSchema>(
   const handler = manageRequest(service, schema)
   const middlewares: RequestHandler[] = []
 
-  if (metadata.middlewares) middlewares.push(...metadata.middlewares)
+  if (metadata.authenticate && (!metadata.middlewares || !metadata.middlewares.includes(authMiddleware))) {
+    middlewares.push(authMiddleware)
+  }
+
+  if (metadata.permissions?.length) {
+    middlewares.push(requirePermissions(metadata.permissions))
+  }
+
+  if (metadata.middlewares) {
+    middlewares.push(...metadata.middlewares)
+  }
 
   middlewares.push(handler)
 
-  return middlewares.length === 1 ? middlewares[0] : middlewares
+  const compositeHandler: RequestHandler = (req, res, next) => {
+    let index = 0
+    const nextMiddleware = (err?: unknown) => {
+      if (err) return next(err)
+      const current = middlewares[index++]
+      if (!current) return
+      current(req, res, nextMiddleware)
+    }
+    nextMiddleware()
+  }
+
+  const action = Object.assign(compositeHandler, {
+    metadata,
+    middlewares
+  })
+
+  return action as ActionHandler
 }
 
+export * from './types'
 export default defineAction
