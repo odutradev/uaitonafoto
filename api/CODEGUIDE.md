@@ -269,22 +269,22 @@ export default usersDomain
 
 #### **7. Registrador de Domínios (`src/config/domain/index.ts` e `server.ts`)**
 
-O registro dos domínios fica centralizado em `src/config/domain/index.ts`. O `server.ts` inicializa o registro na inicialização da API:
+O registro dos domínios fica centralizado em `src/config/domain/index.ts`. O `server.ts` importa os domínios e inicializa o registro na inicialização da API:
 
 ```ts
 // server.ts
 import { registerDomains } from '@config/domain'
+import usersDomain from '@domains/users'
+import systemDomain from '@domains/system'
 
 const startServer = async (): Promise<void> => {
-  registerDomains()
+  registerDomains([usersDomain, systemDomain])
   // inicialização do app e serviços...
 }
 ```
 
 ```ts
 // config/domain/index.ts
-import usersDomain from '@domains/users'
-import systemDomain from '@domains/system'
 import type { DomainDefinition, DomainRegistry } from './types'
 
 export const registeredDomains: DomainRegistry = new Map()
@@ -299,9 +299,8 @@ export const registerDomain = (domain: DomainDefinition): void => {
   }
 }
 
-export const registerDomains = (domains?: DomainDefinition[]): void => {
-  const targetDomains = domains ?? [usersDomain, systemDomain]
-  for (const domain of targetDomains) {
+export const registerDomains = (domains: DomainDefinition[]): void => {
+  for (const domain of domains) {
     registerDomain(domain)
   }
 }
@@ -316,12 +315,14 @@ Os endpoints da API são registrados **dinamicamente a partir dos domínios cada
 import { Router } from 'express'
 import { registerDomainEndpoints } from '@config/domain'
 
-const apiRouter = Router()
+export const createApiRouter = (): Router => {
+  const apiRouter = Router()
+  // Registra todos os endpoints automaticamente a partir das ações dos domínios
+  registerDomainEndpoints(apiRouter)
+  return apiRouter
+}
 
-// Registra todos os endpoints automaticamente a partir das ações dos domínios
-registerDomainEndpoints(apiRouter)
-
-export default apiRouter
+export default createApiRouter
 ```
 
 Ao executar, `registerDomainEndpoints` percorre as ações de cada domínio no registro e associa os endpoints ao roteador Express automaticamente, garantindo rastreabilidade com logs dedicados:

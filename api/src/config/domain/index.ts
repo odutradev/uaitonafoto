@@ -1,6 +1,4 @@
 import { Router } from 'express'
-import usersDomain from '@domains/users'
-import systemDomain from '@domains/system'
 import createLogger from '@utils/logger'
 import type { DomainDefinition, DomainRegistry, ActionHandler } from './types'
 
@@ -47,9 +45,8 @@ export const registerDomain = (domain: DomainDefinition): void => {
   }
 }
 
-export const registerDomains = (domains?: DomainDefinition[]): void => {
-  const targetDomains = domains ?? [usersDomain, systemDomain]
-  for (const domain of targetDomains) {
+export const registerDomains = (domains: DomainDefinition[]): void => {
+  for (const domain of domains) {
     registerDomain(domain)
   }
 }
@@ -66,10 +63,6 @@ export const registerDomainEndpoints = (
   router: Router,
   domains?: DomainDefinition[]
 ): Router => {
-  if (registeredDomains.size === 0) {
-    registerDomains()
-  }
-
   const targetDomains = domains ?? Array.from(registeredDomains.values())
   const registeredEndpoints = new Set<string>()
 

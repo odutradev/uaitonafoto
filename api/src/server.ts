@@ -2,6 +2,8 @@ import 'dotenv/config'
 
 import env from '@config/env'
 import { registerDomains } from '@config/domain'
+import usersDomain from '@domains/users'
+import systemDomain from '@domains/system'
 import { connectDatabase } from '@database'
 import { connectEmail } from '@email'
 import { connect as connectFirebase } from '@firebase'
@@ -11,7 +13,7 @@ import buildApp from '@/app'
 const logger = createLogger('server')
 
 const startServer = async (): Promise<void> => {
-  registerDomains()
+  registerDomains([usersDomain, systemDomain])
 
   const app = buildApp()
   const port = env.PORT
