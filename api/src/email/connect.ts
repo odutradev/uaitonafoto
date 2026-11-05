@@ -1,36 +1,30 @@
 import nodemailer from 'nodemailer'
 
 import { markdownPlugin } from '@email/markdownPlugin'
-import { validateEnvVars } from '@utils/env'
+import env from '@config/env'
 import createLogger from '@utils/logger'
 
 import type { EmailTransporter, EmailInstance, EmailModule, EmailConfig } from '@email/types'
 
 const logger = createLogger('email')
 
-const REQUIRED_ENV_VARS = ['EMAIL_HOST', 'EMAIL_PORT', 'EMAIL_USER', 'EMAIL_PASS']
-
-export const isEmailConfigured = (): boolean => validateEnvVars(REQUIRED_ENV_VARS).isValid
-
 const email: EmailModule = {
   transporter: null,
   initializeEmail: async (): Promise<EmailInstance> => {
-    const { isValid, missing } = validateEnvVars(REQUIRED_ENV_VARS)
-
-    if (!isValid) {
-      throw new Error(`Missing email environment variables: ${missing.join(', ')}`)
+    if (!env.EMAIL_HOST || !env.EMAIL_PORT || !env.EMAIL_USER || !env.EMAIL_PASS) {
+      throw new Error('Missing email environment variables')
     }
 
     try {
-      const port = Number(process.env.EMAIL_PORT)
+      const port = env.EMAIL_PORT
 
       const config: EmailConfig = {
-        host: process.env.EMAIL_HOST as string,
+        host: env.EMAIL_HOST,
         port,
         secure: port === 465,
         auth: {
-          user: process.env.EMAIL_USER as string,
-          pass: process.env.EMAIL_PASS as string
+          user: env.EMAIL_USER,
+          pass: env.EMAIL_PASS
         }
       }
 

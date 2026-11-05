@@ -1,8 +1,8 @@
 import 'dotenv/config'
 
-import { validateEnv } from '@config/env'
-import { connectDatabase, isDatabaseConfigured } from '@database/connect'
-import { connectEmail, isEmailConfigured } from '@email/connect'
+import env from '@config/env'
+import { connectDatabase } from '@database/connect'
+import { connectEmail } from '@email/connect'
 import { connect as connectFirebase } from '@firebase/connect'
 import usersDomain from '@domains/users'
 import systemDomain from '@domains/system'
@@ -27,28 +27,23 @@ export const registerDomains = (): void => {
 }
 
 const startServer = async (): Promise<void> => {
-  validateEnv()
   registerDomains()
 
   const app = buildApp()
-  const port = Number(process.env.PORT) || 3000
+  const port = env.PORT
 
   app.listen(port, '0.0.0.0', async () => {
     logger.info(`uai to na foto API running on port ${port}`)
 
-    if (isDatabaseConfigured()) {
-      try {
-        await connectDatabase()
-      } catch (err) {
-        logger.error('Failed to connect MongoDB database:', err)
-      }
-    } else {
-      logger.warn('Database disabled: MONGODB_URI is not configured')
+    try {
+      await connectDatabase()
+    } catch (err) {
+      logger.error('Failed to connect MongoDB database:', err)
     }
 
     await connectFirebase()
 
-    if (isEmailConfigured()) {
+    if (env.EMAIL_HOST && env.EMAIL_PORT && env.EMAIL_USER && env.EMAIL_PASS) {
       try {
         await connectEmail()
       } catch (err) {

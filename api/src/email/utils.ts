@@ -1,4 +1,5 @@
 import email from '@email/connect'
+import env from '@config/env'
 
 import type {
   ProcessTemplateResult,
@@ -26,7 +27,7 @@ export const sendEmail = async ({ to, subject, template, variables, from }: Send
     const { processed } = processTemplate({ template, variables })
 
     const mailOptions = {
-      from: from ?? process.env.EMAIL_FROM,
+      from: from ?? env.EMAIL_FROM,
       to: Array.isArray(to) ? to.join(', ') : to,
       subject: processedSubject,
       markdown: processed

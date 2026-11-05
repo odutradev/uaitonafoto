@@ -1,26 +1,16 @@
 import mongoose from 'mongoose'
+import env from '@config/env'
 import createLogger from '@utils/logger'
 
 const logger = createLogger('database')
 
-export const isDatabaseConfigured = (): boolean => {
-  return Boolean(process.env.MONGODB_URI?.trim())
-}
-
 export const connectDatabase = async (): Promise<typeof mongoose> => {
-  const uri = process.env.MONGODB_URI
-  const dbName = process.env.MONGODB_DB_NAME || 'uaitonafoto'
-
-  if (!uri) {
-    throw new Error('Missing MONGODB_URI environment variable')
-  }
-
   try {
-    const instance = await mongoose.connect(uri, {
-      dbName
+    const instance = await mongoose.connect(env.MONGODB_URI, {
+      dbName: env.MONGODB_DB_NAME
     })
 
-    logger.success(`Connected: MongoDB database ready (${dbName})`)
+    logger.success(`Connected: MongoDB database ready (${env.MONGODB_DB_NAME})`)
     return instance
   } catch (error) {
     logger.error('[connectDatabase] MongoDB connection error:', error)
