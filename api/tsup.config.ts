@@ -10,5 +10,5 @@ export default defineConfig((options) => ({
   minify: !options.watch,
   clean: true,
   noExternal: ['marked', /(^@abacatepay\/)/],
-  onSuccess: options.watch ? 'node dist/server.js' : undefined
+  onSuccess: options.watch ? 'node --disable-warning=DEP0040 dist/server.js' : undefined
 }))
