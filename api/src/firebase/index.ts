@@ -71,4 +71,8 @@ const firebase: FirebaseModule = {
 export const connect = firebase.initializeFirebase
 export const connectFirebase = firebase.initializeFirebase
 
+export const checkFirebaseHealth = (): 'ok' | 'error' => {
+  return admin.apps.length > 0 && !!admin.apps[0] ? 'ok' : 'error'
+}
+
 export default firebase

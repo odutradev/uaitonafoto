@@ -56,4 +56,11 @@ const email: EmailModule = {
 
 export const connectEmail = email.initializeEmail
 
+export const checkEmailHealth = (): 'ok' | 'disabled' | 'error' => {
+  if (!env.EMAIL_HOST || !env.EMAIL_PORT || !env.EMAIL_USER || !env.EMAIL_PASS) {
+    return 'disabled'
+  }
+  return email.transporter ? 'ok' : 'error'
+}
+
 export default email

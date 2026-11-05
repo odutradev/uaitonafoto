@@ -46,5 +46,9 @@ export const connectPayment = payment.initializePayment
 export const connectAbacatePay = payment.initializePayment
 export const getPaymentClient = payment.getInstance
 
+export const checkPaymentHealth = (): 'ok' | 'error' => {
+  return payment.client ? 'ok' : 'error'
+}
+
 export * from './types'
 export default payment

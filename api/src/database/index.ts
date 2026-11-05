@@ -27,4 +27,8 @@ export const disconnectDatabase = async (): Promise<void> => {
   }
 }
 
+export const checkDatabaseHealth = (): 'ok' | 'error' => {
+  return mongoose.connection.readyState === 1 ? 'ok' : 'error'
+}
+
 export default connectDatabase
