@@ -1,4 +1,7 @@
 import 'dotenv/config'
+import suppressPunycodeWarning from '@utils/warning'
+
+suppressPunycodeWarning()
 
 import env from '@config/env'
 import { registerDomains } from '@config/domain'

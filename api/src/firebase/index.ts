@@ -1,5 +1,6 @@
 import * as admin from 'firebase-admin'
 
+import suppressPunycodeWarning from '@utils/warning'
 import firebaseAuth from '@firebase/services/auth'
 import firebaseStorage, { getStorageBucket } from '@firebase/services/storage'
 import { formatPrivateKey, formatStorageBucket } from './utils'
@@ -7,6 +8,8 @@ import env from '@config/env'
 import createLogger from '@utils/logger'
 
 import type { FirebaseInstance, FirebaseModule } from './types'
+
+suppressPunycodeWarning()
 
 const logger = createLogger('firebase')
 
