@@ -22,6 +22,14 @@
 > - `<middleware>/types.ts` (tipos, contratos e opções)
 
 > [!NOTE]
+> ### ⚡ **Padrão Obrigatório para Ações de Domínio (`domains/<dominio>/actions/<acao>/`)**
+> Toda pasta de ação deve manter a separação estrita de responsabilidades:
+> - `<acao>/index.ts`: Exclusivamente definições e exportações de ações via `defineAction`. É proibido declarar funções utilitárias ou tipagens diretamente no `index.ts`.
+> - `<acao>/types.ts`: Tipagens DTOs inferidas do Zod e interfaces/tipos auxiliares da ação (ex: payloads de token, contratos internos).
+> - `<acao>/schemas.ts`: Schemas Zod e documentação OpenAPI.
+> - `<acao>/utils/`: Pasta separada para funções utilitárias e helpers específicos da ação (ex: `utils/<helper>.ts`), consumidos via importação direta.
+
+> [!NOTE]
 > ### 🛠️ **Padrão Obrigatório para Utilitários (`src/utils/<util>/index.ts` e `types.ts`)**
 > Cada utilitário ou módulo helper em `src/utils/` deve residir isolado em sua própria pasta, contendo:
 > - `<util>/index.ts`: Lógica da utilidade e exportações principais.
@@ -38,7 +46,7 @@ A pasta `src/` organiza a aplicação de forma limpa e modular:
 * `src/routes/` (Roteamento central da API: `index.ts`, `api.ts` e `<dominio>.routes.ts`)
 * `src/domains/` (Domínios de negócio isolados)
   * `users/` (Domínio de usuários e autenticação)
-    * `actions/` (Ações de autenticação e perfil: `syncAuthUser`, `getMe`, `updateMe`, `forgotPassword`, `resetPassword`)
+    * `actions/` (Ações de autenticação e perfil com separação em `index.ts`, `schemas.ts`, `types.ts` e `utils/`)
     * `repositories/` (Model Mongoose `UserModel` e `userRepository`)
     * `middlewares/` (Middlewares do domínio: `auth/` e `admin/`)
     * `index.ts` (Centralizador público do domínio)
@@ -70,6 +78,13 @@ A pasta `src/` organiza a aplicação de forma limpa e modular:
 #### **1. Ações / Controllers (`domains/<dominio>/actions/entidade/index.ts`)**
 
 As ações **não usam** controllers tradicionais do Express. Elas usam a factory `defineAction` que integra rotas, validação Zod, OpenAPI e injeção de dependências (`ids`, `manageError`).
+
+> [!IMPORTANT]
+> **Regra estrita do `index.ts` da ação:**
+> O arquivo `index.ts` destina-se **exclusivamente** à definição e exportação de ações com `defineAction`.
+> - **Proibido no `index.ts`:** Nenhuma interface/tipo (`type`, `interface`) e nenhuma função utilitária/helper deve ser declarada no `index.ts`.
+> - **Tipagens:** Devem residir no arquivo `types.ts` da ação.
+> - **Funções utilitárias/helpers:** Devem residir em uma pasta `utils/` dedicada dentro do diretório da ação (ex: `utils/resolveFrontendBaseUrl.ts`) e consumidas via importação direta.
 
 ```ts
 import defineAction from '@factories/defineAction'
@@ -139,9 +154,9 @@ export const listEntidadesQuerySchema = z.object({
 export const listEntidadesResponseSchema = createPaginatedSchema(entidadeSchema, 'ListEntidadesResponse')
 ```
 
-#### **3. Tipos DTOs (`domains/<dominio>/actions/entidade/types.ts`)**
+#### **3. Tipos DTOs e Tipagens da Ação (`domains/<dominio>/actions/entidade/types.ts`)**
 
-Os tipos devem ser obrigatoriamente inferidos do Zod.
+Os tipos DTOs de request e response devem ser obrigatoriamente inferidos do Zod. Além disso, quaisquer tipos ou interfaces auxiliares da ação (como payloads de tokens JWT, contratos internos ou opções) devem residir no `types.ts`, nunca no `index.ts`.
 
 ```ts
 import { listEntidadesQuerySchema, listEntidadesResponseSchema, criarEntidadeSchema, entidadeSchema } from './schemas'
@@ -155,9 +170,29 @@ export type ListEntidadesRequest = { query: z.infer<typeof listEntidadesQuerySch
 export type EntidadeResponse = z.infer<typeof entidadeSchema>
 
 export type ListEntidadesResponse = z.infer<typeof listEntidadesResponseSchema>
+
+// Tipagens e interfaces auxiliares específicas da ação
+export interface ExemploTokenPayload {
+  purpose: 'exemplo'
+  userId: string
+}
 ```
 
-#### **4. Repositórios e Models (`domains/<dominio>/repositories/`)**
+#### **4. Funções Utilitárias da Ação (`domains/<dominio>/actions/entidade/utils/`)**
+
+Funções utilitárias ou helpers específicos de uma ação **não devem** ser declarados no `index.ts`. Devem residir em uma pasta `utils/` dedicada dentro do diretório da ação, consumidos via importação direta:
+
+```ts
+// domains/users/actions/auth/utils/resolveFrontendBaseUrl.ts
+export const resolveFrontendBaseUrl = (redirectUrl?: string, requestOrigin?: string): string => {
+  // Lógica utilitária isolada
+  return origin
+}
+
+export default resolveFrontendBaseUrl
+```
+
+#### **5. Repositórios e Models (`domains/<dominio>/repositories/`)**
 
 Cada domínio isola seu próprio `model.ts`, `types.ts` e repositório `index.ts` encapsulando as operações no MongoDB.
 
@@ -202,7 +237,7 @@ export * from './types'
 export default entidadeRepository
 ```
 
-#### **5. Definição do Domínio para Registro (`domains/<dominio>/index.ts`)**
+#### **6. Definição do Domínio para Registro (`domains/<dominio>/index.ts`)**
 
 O `index.ts` do domínio **não é um barrel file** (não reexporta repositories, middlewares ou models). Sua função exclusiva é exportar como `default` um objeto tipado `DomainDefinition` contendo o nome do domínio e suas ações para consumo do registrador:
 
@@ -219,7 +254,7 @@ export const usersDomain: DomainDefinition<typeof authActions> = {
 export default usersDomain
 ```
 
-#### **6. Registrador de Domínios (`server.ts`)**
+#### **7. Registrador de Domínios (`server.ts`)**
 
 O `server.ts` importa o default export de cada domínio cadastrado e executa o registrador na inicialização da API:
 
@@ -243,7 +278,7 @@ export const registerDomains = (): void => {
 }
 ```
 
-#### **7. Rotas Modulares por Domínio (`routes/*.routes.ts` e `routes/api.ts`)**
+#### **8. Rotas Modulares por Domínio (`routes/*.routes.ts` e `routes/api.ts`)**
 
 As rotas são organizadas por domínio em arquivos dedicados (`routes/<dominio>.routes.ts`), consumindo os recursos via **importação direta obrigatória**, e agregadas no `routes/api.ts`.
 
@@ -260,7 +295,6 @@ authRoutes.post('/forgot-password', forgotPassword)
 authRoutes.post('/reset-password', resetPassword)
 authRoutes.get('/me', authMiddleware, getMe)
 authRoutes.patch('/me', authMiddleware, updateMe)
-```
 
 export default authRoutes
 ```
@@ -277,7 +311,7 @@ apiRouter.use('/auth', authRoutes)
 export default apiRouter
 ```
 
-#### **8. Utilitários e Helpers (`utils/<nome>/index.ts` e `types.ts`)**
+#### **9. Utilitários e Helpers (`utils/<nome>/index.ts` e `types.ts`)**
 
 Cada utilitário fica isolado em seu próprio subdiretório, contendo a lógica central em `index.ts` e contratos de tipos em `types.ts` quando necessário:
 
