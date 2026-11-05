@@ -1,4 +1,4 @@
-import type { DomainDefinition } from '../types'
+import type { DomainDefinition } from '@config/domain'
 
 export const systemDomain: DomainDefinition<Record<string, never>> = {
   name: 'system',
