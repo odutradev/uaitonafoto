@@ -8,6 +8,11 @@ export type ResponseConfig = {
   schema?: unknown
 }
 
+export type DocumentedMiddleware = RequestHandler & {
+  authenticate?: boolean
+  responses?: Record<string | number, ResponseConfig>
+}
+
 export type ActionMetadata = {
   method: 'get' | 'post' | 'put' | 'delete' | 'patch'
   rateLimit?: boolean | RateLimitConfig
@@ -16,8 +21,8 @@ export type ActionMetadata = {
   summary: string
   tags: string[]
   security?: Array<Record<string, string[]>>
-  responses?: Record<string, ResponseConfig>
-  middlewares?: RequestHandler[]
+  responses?: Record<string | number, ResponseConfig>
+  middlewares?: (RequestHandler | DocumentedMiddleware)[]
   requestBody?: ZodRequestBody
   requestFormat?: 'json' | 'multipart'
   uploadFieldName?: string

@@ -4,7 +4,7 @@ import authMiddleware from '@domains/users/middlewares/auth'
 import { registerOpenApiAction } from './openapi'
 
 import type { ManageRequestSchema, ServiceFunction, RouteSchema } from '@middlewares/manageRequest/types'
-import type { ActionMetadata, ActionDefinition } from './types'
+import type { ActionMetadata, ActionDefinition, DocumentedMiddleware } from './types'
 import type { RequestHandler } from 'express'
 
 const defineAction = <T extends ManageRequestSchema = ManageRequestSchema>(
@@ -13,7 +13,7 @@ const defineAction = <T extends ManageRequestSchema = ManageRequestSchema>(
   schema?: RouteSchema
 ): ActionDefinition => {
   const mergedSchema = metadata.schema ?? schema
-  const actionMiddlewares: RequestHandler[] = []
+  const actionMiddlewares: (RequestHandler | DocumentedMiddleware)[] = []
 
   if (metadata.rateLimit) {
     const rateLimitOptions = typeof metadata.rateLimit === 'object' ? metadata.rateLimit : {}

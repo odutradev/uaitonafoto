@@ -5,7 +5,7 @@ import { errorResponseSchema } from '@factories/errors/schemas'
 import registry from '@factories/docs/registry'
 
 import type { RouteConfig } from '@asteasolutions/zod-to-openapi'
-import type { ActionMetadata, ResponseConfig } from './types'
+import type { ActionMetadata, DocumentedMiddleware, ResponseConfig } from './types'
 import type { ZodTypeAny } from 'zod'
 
 extendZodWithOpenApi(z)
@@ -13,9 +13,9 @@ extendZodWithOpenApi(z)
 export const registerOpenApiAction = (metadata: ActionMetadata): void => {
   const defaultResponses: Record<string, ResponseConfig> = {
     200: { description: 'Sucesso' },
-    400: { description: 'Requisição inválida' },
+    400: { description: 'Requisição inválida', schema: errorResponseSchema },
     422: { description: 'Erro de validação dos dados', schema: errorResponseSchema },
-    500: { description: 'Erro interno' }
+    500: { description: 'Erro interno', schema: errorResponseSchema }
   }
 
   const middlewareResponses: Record<string, ResponseConfig> = {}
@@ -23,10 +23,7 @@ export const registerOpenApiAction = (metadata: ActionMetadata): void => {
 
   if (metadata.middlewares) {
     metadata.middlewares.forEach((mw) => {
-      const documentedMw = mw as {
-        authenticate?: boolean
-        responses?: Record<string, ResponseConfig>
-      }
+      const documentedMw = mw as DocumentedMiddleware
 
       if (documentedMw.authenticate) {
         middlewareAuthenticate = true
