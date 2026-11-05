@@ -16,3 +16,4 @@ export interface GetUserOptions {
 export interface DeleteUserOptions {
   ignoreNotFound?: boolean
 }
+

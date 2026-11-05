@@ -244,3 +244,4 @@ export const storageUtils = {
   makeFilePrivate,
   listFiles
 }
+
