@@ -16,11 +16,17 @@
 > - **Importação direta obrigatória:** todo e qualquer consumo deve ser feito via importação direta do arquivo específico (ex: `import { syncAuthUser } from '@domains/users/actions/auth'`, `import authMiddleware from '@domains/users/middlewares/auth'`, `import userRepository from '@domains/users/repositories'`).
 
 > [!IMPORTANT]
-> ### 🔒 **Validação Centralizada e Estrita de Variáveis de Ambiente (`src/config/env.ts`)**
-> Toda e qualquer variável de ambiente utilizada no backend deve ser validada de forma estrita e centralizada em `src/config/env.ts` com schema Zod:
+> ### 🔒 **Validação Centralizada e Estrita de Variáveis de Ambiente (`src/config/env/`)**
+> Toda e qualquer variável de ambiente utilizada no backend deve ser validada de forma estrita e centralizada em `src/config/env/` com schema Zod:
 > - **Validação de Conteúdo com Zod:** Todas as variáveis devem ter seus formatos e conteúdos validados (URLs válidas, portas numéricas, prefixos específicos, tamanhos mínimos de chaves, enums de ambiente).
 > - **Sem Fallbacks:** É **estritamente proibido** o uso de fallbacks ou valores padrão (`|| fallback`, `.default(...)`) nas variáveis de ambiente. Se qualquer variável estiver ausente ou com conteúdo inválido, a aplicação aborta imediatamente (`process.exit(1)`) impedindo o servidor de iniciar.
 > - **Zero Validações em Serviços:** É proibido validar variáveis de ambiente de forma dispersa dentro de serviços (ex: banco de dados, Firebase, e-mail). Todos os serviços devem importar e consumir diretamente os valores já validados de `@config/env`.
+
+> [!NOTE]
+> ### 📁 **Padrão Obrigatório para Módulos de Configuração (`src/config/<modulo>/index.ts` e `types.ts`)**
+> Cada configuração em `src/config/` deve residir em sua própria pasta isolada:
+> - `<modulo>/index.ts`: Lógica de configuração e exportações principais.
+> - `<modulo>/types.ts`: Tipagens, schemas e contratos TypeScript (quando necessário).
 
 > [!NOTE]
 > ### ⚙️ **Padrão Obrigatório para Middlewares (`<nome>/index.ts` e `<nome>/types.ts`)**
@@ -50,7 +56,7 @@ A pasta `src/` organiza a aplicação de forma limpa e modular:
 
 * `src/server.ts` (Inicialização do servidor HTTP, conexões e rotinas)
 * `src/app.ts` (Configuração da aplicação Express e middlewares globais)
-* `src/routes/` (Roteamento central da API: `index.ts`, `api.ts` e `<dominio>.routes.ts`)
+* `src/routes/` (Roteamento central da API: `index.ts` e `api.ts`)
 * `src/domains/` (Domínios de negócio isolados)
   * `users/` (Domínio de usuários e autenticação)
     * `actions/` (Ações de autenticação e perfil com separação em `index.ts`, `schemas.ts`, `types.ts` e `utils/`)
@@ -68,10 +74,11 @@ A pasta `src/` organiza a aplicação de forma limpa e modular:
   * `permissions/` (Verificação de permissões do usuário)
 * `src/database/` (Conexão e inicialização do MongoDB via Mongoose)
 * `src/firebase/` (Serviços do Firebase: Auth e Storage)
-* `src/config/` (Configurações de ambiente, CORS e aplicação em uso ativo)
-  * `app.ts` (Configuração global da aplicação e resolução de versão)
-  * `cors.ts` (Configuração de origens CORS para o Express)
-  * `env.ts` (Validação centralizada estrita de variáveis de ambiente com schema Zod e exportação tipada)
+* `src/config/` (Configurações modulares com padrão `<modulo>/index.ts` e `types.ts`)
+  * `app/` (Configuração global da aplicação e resolução de versão)
+  * `cors/` (Configuração de origens CORS para o Express)
+  * `domain/` (Definição, registro de domínios e mapeamento automático de endpoints)
+  * `env/` (Validação centralizada estrita de variáveis de ambiente com schema Zod e exportação tipada)
 * `src/utils/` (Utilitários reutilizáveis com padrão `<util>/index.ts` e `types.ts`)
   * `date/` (Formatação e cálculos de datas: `formatTimestamp`, `formatDateBR`, `addDays`, `isPast`)
   * `logger/` (Instância de log estilizado e prefixado: `createLogger` e tipo `Logger`)
@@ -83,7 +90,7 @@ A pasta `src/` organiza a aplicação de forma limpa e modular:
 
 #### **1. Ações / Controllers (`domains/<dominio>/actions/entidade/index.ts`)**
 
-As ações **não usam** controllers tradicionais do Express. Elas usam a factory `defineAction` que integra rotas, validação Zod, OpenAPI e injeção de dependências (`ids`, `manageError`).
+As ações **não usam** controllers tradicionais do Express. Elas usam a factory `defineAction` que integra metadados da rota (`method`, `path`), validação Zod, OpenAPI, middlewares automáticos (autenticação via `authenticate: true` e permissões) e injeção de dependências (`ids`, `manageError`). A ação resultante é um `ActionHandler` executável diretamente pelo Express com seus metadados anexados para registro automático.
 
 > [!IMPORTANT]
 > **Regra estrita do `index.ts` da ação:**
@@ -260,62 +267,65 @@ export const usersDomain: DomainDefinition<typeof authActions> = {
 export default usersDomain
 ```
 
-#### **7. Registrador de Domínios (`server.ts`)**
+#### **7. Registrador de Domínios (`src/config/domain/index.ts` e `server.ts`)**
 
-O `server.ts` importa o default export de cada domínio cadastrado e executa o registrador na inicialização da API:
+O registro dos domínios fica centralizado em `src/config/domain/index.ts`. O `server.ts` inicializa o registro na inicialização da API:
 
 ```ts
 // server.ts
-import usersDomain from '@domains/users'
-import systemDomain from '@domains/system'
-import type { DomainDefinition } from '@domains/types'
+import { registerDomains } from '@config/domain'
 
-export const registeredDomains: Map<string, DomainDefinition> = new Map()
-
-export const registerDomain = (domain: DomainDefinition): void => {
-  registeredDomains.set(domain.name, domain)
-  const actionCount = Object.keys(domain.actions || {}).length
-  logger.info(`Domain registered: [${domain.name}] with ${actionCount} actions`)
-}
-
-export const registerDomains = (): void => {
-  registerDomain(usersDomain)
-  registerDomain(systemDomain)
+const startServer = async (): Promise<void> => {
+  registerDomains()
+  // inicialização do app e serviços...
 }
 ```
-
-#### **8. Rotas Modulares por Domínio (`routes/*.routes.ts` e `routes/api.ts`)**
-
-As rotas são organizadas por domínio em arquivos dedicados (`routes/<dominio>.routes.ts`), consumindo os recursos via **importação direta obrigatória**, e agregadas no `routes/api.ts`.
 
 ```ts
-// routes/auth.routes.ts
-import { Router } from 'express'
-import { syncAuthUser, getMe, updateMe, forgotPassword, resetPassword } from '@domains/users/actions/auth'
-import authMiddleware from '@domains/users/middlewares/auth'
+// config/domain/index.ts
+import usersDomain from '@domains/users'
+import systemDomain from '@domains/system'
+import type { DomainDefinition, DomainRegistry } from './types'
 
-const authRoutes = Router()
+export const registeredDomains: DomainRegistry = new Map()
 
-authRoutes.post('/sync', syncAuthUser)
-authRoutes.post('/forgot-password', forgotPassword)
-authRoutes.post('/reset-password', resetPassword)
-authRoutes.get('/me', authMiddleware, getMe)
-authRoutes.patch('/me', authMiddleware, updateMe)
+export const registerDomain = (domain: DomainDefinition): void => {
+  const isAlreadyRegistered = registeredDomains.has(domain.name)
+  registeredDomains.set(domain.name, domain)
 
-export default authRoutes
+  if (!isAlreadyRegistered) {
+    const actionCount = Object.keys(domain.actions || {}).length
+    logger.info(`Domain registered: [${domain.name}] with ${actionCount} actions`)
+  }
+}
+
+export const registerDomains = (domains?: DomainDefinition[]): void => {
+  const targetDomains = domains ?? [usersDomain, systemDomain]
+  for (const domain of targetDomains) {
+    registerDomain(domain)
+  }
+}
 ```
+
+#### **8. Registro Dinâmico de Endpoints por Domínio (`routes/api.ts` e `config/domain`)**
+
+Os endpoints da API são registrados **dinamicamente a partir dos domínios cadastrados**, eliminando arquivos manuais e repetitivos de rotas (`routes/<dominio>.routes.ts`). Cada ação criada via `defineAction` já carrega seu método HTTP, path e cadeia de middlewares necessários:
 
 ```ts
 // routes/api.ts
 import { Router } from 'express'
-import authRoutes from '@routes/auth.routes'
+import { registerDomainEndpoints } from '@config/domain'
 
 const apiRouter = Router()
 
-apiRouter.use('/auth', authRoutes)
+// Registra todos os endpoints automaticamente a partir das ações dos domínios
+registerDomainEndpoints(apiRouter)
 
 export default apiRouter
 ```
+
+Ao executar, `registerDomainEndpoints` percorre as ações de cada domínio no registro e associa os endpoints ao roteador Express automaticamente, garantindo rastreabilidade com logs dedicados:
+`[INFO] Endpoint registered: [POST] /auth/sync (users.syncAuthUser)`
 
 #### **9. Utilitários e Helpers Globais (`utils/<nome>/index.ts` e `types.ts`)**
 
@@ -343,13 +353,12 @@ export const createLogger = (prefix: string): Logger => {
 export default createLogger
 ```
 
-#### **10. Configuração e Validação de Ambiente (`src/config/env.ts`)**
+#### **10. Configuração e Validação de Ambiente (`src/config/env/index.ts` e `types.ts`)**
 
-Todas as variáveis de ambiente devem ser declaradas e validadas exclusivamente no schema Zod centralizado. Fallbacks são terminantemente proibidos e qualquer inconsistência aborta o processo imediatamente:
+Todas as variáveis de ambiente devem ser declaradas no schema Zod em `types.ts` e validadas em `index.ts`. Fallbacks são terminantemente proibidos e qualquer inconsistência aborta o processo imediatamente:
 
 ```ts
-// config/env.ts
-import 'dotenv/config'
+// config/env/types.ts
 import { z } from 'zod'
 
 export const serverEnvSchema = z.object({
@@ -366,14 +375,29 @@ export const serverEnvSchema = z.object({
   FIREBASE_STORAGE_BUCKET: z.string().min(1)
 })
 
-const result = serverEnvSchema.safeParse(process.env)
+export type ServerEnv = z.infer<typeof serverEnvSchema>
+```
 
-if (!result.success) {
-  logger.error('Configuração inválida de variáveis de ambiente (.env)')
-  process.exit(1)
+```ts
+// config/env/index.ts
+import 'dotenv/config'
+import createLogger from '@utils/logger'
+import { serverEnvSchema, type ServerEnv } from './types'
+
+const logger = createLogger('env')
+
+const validateServerEnv = (): ServerEnv => {
+  const result = serverEnvSchema.safeParse(process.env)
+
+  if (!result.success) {
+    logger.error('Configuração inválida de variáveis de ambiente (.env)')
+    process.exit(1)
+  }
+
+  return result.data
 }
 
-export const env = result.data
+export const env = validateServerEnv()
 export const { PORT, NODE_ENV, ... } = env
 export default env
 ```
