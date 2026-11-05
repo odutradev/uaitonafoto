@@ -87,6 +87,7 @@ A pasta `src/` organiza a aplicação de forma limpa e modular:
   * `docs/` (Gerador e registro do OpenAPI/Swagger: `index.ts` e `metadata.ts`)
   * `domain/` (Definição, registro de domínios e mapeamento automático de endpoints)
   * `env/` (Validação centralizada estrita de variáveis de ambiente com schema Zod e exportação tipada)
+  * `version/` (Resolução dinâmica da versão da aplicação a partir de `uaitonafoto-package.json` ou `../package.json`)
 * `src/utils/` (Utilitários reutilizáveis com padrão `<util>/index.ts` e `types.ts`)
   * `date/` (Formatação e cálculos de datas: `formatTimestamp`, `formatDateBR`, `addDays`, `isPast`)
   * `logger/` (Instância de log estilizado e prefixado: `createLogger` e tipo `Logger`)
