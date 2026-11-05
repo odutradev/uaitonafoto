@@ -1,14 +1,12 @@
 import 'dotenv/config'
 
 import env from '@config/env'
-import { registerDomains, registerDomain, registeredDomains } from '@config/domain'
+import { registerDomains } from '@config/domain'
 import { connectDatabase } from '@database'
 import { connectEmail } from '@email'
 import { connect as connectFirebase } from '@firebase'
 import createLogger from '@utils/logger'
 import buildApp from '@/app'
-
-export { registerDomains, registerDomain, registeredDomains }
 
 const logger = createLogger('server')
 
