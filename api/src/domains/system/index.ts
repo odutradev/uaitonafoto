@@ -1,8 +1,12 @@
+import { healthCheck } from './actions/health'
+
 import type { DomainDefinition } from '@config/domain'
 
-export const systemDomain: DomainDefinition<Record<string, never>> = {
+export const systemDomain: DomainDefinition = {
   name: 'system',
-  actions: {}
+  actions: {
+    healthCheck
+  }
 }
 
 export default systemDomain
