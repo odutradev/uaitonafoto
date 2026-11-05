@@ -1,5 +1,8 @@
 import * as admin from 'firebase-admin'
 
+export * from './types'
+export * from './utils'
+
 export const getFirebaseAuth = (): admin.auth.Auth => {
   if (!admin.apps.length) {
     throw new Error('Firebase application is not initialized. Please call connect() first.')
