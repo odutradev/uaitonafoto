@@ -1,10 +1,10 @@
 import cors from 'cors'
+import env from '@config/env'
 
 import type { RequestHandler } from 'express'
 
 const configureCors = (): RequestHandler => {
-  const rawOrigins = process.env.CORS_ORIGIN || process.env.CORS_ALLOWED_ORIGINS || '*'
-  const allowedOrigins = rawOrigins
+  const allowedOrigins = env.CORS_ORIGIN
     .split(',')
     .map((origin) => origin.trim().replace(/\/+$/, ''))
     .filter(Boolean)

@@ -1,6 +1,7 @@
+import env from '@config/env'
+
 export const resolveFrontendBaseUrl = (redirectUrl?: string, requestOrigin?: string): string => {
-  const allowedConfig = process.env.CORS_ORIGIN || process.env.CORS_ALLOWED_ORIGINS || ''
-  const allowedOrigins = allowedConfig
+  const allowedOrigins = env.CORS_ORIGIN
     .split(',')
     .map((o) => o.trim().replace(/\/+$/, ''))
     .filter((o) => o && o !== '*')
@@ -26,7 +27,7 @@ export const resolveFrontendBaseUrl = (redirectUrl?: string, requestOrigin?: str
     return allowedOrigins[0]
   }
 
-  return (process.env.FRONTEND_URL || 'http://localhost:1000').replace(/\/+$/, '')
+  return env.FRONTEND_URL.replace(/\/+$/, '')
 }
 
 export default resolveFrontendBaseUrl

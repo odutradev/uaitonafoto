@@ -1,5 +1,6 @@
 import path from 'path'
 import fs from 'fs'
+import env from '@config/env'
 
 export interface AppConfig {
   name: string
@@ -30,7 +31,7 @@ const resolvePackageVersion = (): string => {
 export const appConfig: AppConfig = {
   name: 'uaitonafoto',
   title: 'uai to na foto API Documentation',
-  mode: process.env.NODE_ENV || process.env.ENV || 'development',
+  mode: env.NODE_ENV,
   version: resolvePackageVersion()
 }
 

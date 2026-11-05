@@ -2,6 +2,7 @@ import swaggerUi from 'swagger-ui-express'
 
 import { generateDocs } from '@docs/generator'
 import { appConfig } from '@config/app'
+import env from '@config/env'
 import apiRouter from '@routes/api'
 
 import type { Application, Response, Request, NextFunction } from 'express'
@@ -39,7 +40,7 @@ const registerGlobalRoutes = (app: Application): void => {
   app.use('/', apiRouter)
   app.use('/api', apiRouter)
 
-  const isSwaggerEnabled = appConfig.mode !== 'production' || process.env.SWAGGER_ENABLED === 'true'
+  const isSwaggerEnabled = appConfig.mode !== 'production' || env.SWAGGER_ENABLED === 'true'
 
   if (isSwaggerEnabled) {
     const spec = generateDocs()
