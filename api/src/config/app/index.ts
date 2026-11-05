@@ -1,13 +1,7 @@
 import path from 'path'
 import fs from 'fs'
 import env from '@config/env'
-
-export interface AppConfig {
-  name: string
-  title: string
-  mode: string
-  version: string
-}
+import type { AppConfig } from './types'
 
 const resolvePackageVersion = (): string => {
   const candidates = [
@@ -35,3 +29,5 @@ export const appConfig: AppConfig = {
   version: resolvePackageVersion()
 }
 
+export * from './types'
+export default appConfig
