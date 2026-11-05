@@ -66,7 +66,7 @@ const startServer = async (): Promise<void> => {
   const port = env.PORT
 
   const server = app.listen(port, '0.0.0.0', async () => {
-    logger.info(`uai to na foto API running on port ${port}`)
+    logger.info(`API running on port ${port}`)
 
     await Promise.all([
       connectDatabase(),
