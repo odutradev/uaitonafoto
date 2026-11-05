@@ -42,7 +42,7 @@ const registerGlobalRoutes = (app: Application): void => {
   app.use('/', apiRouter)
   app.use('/api', apiRouter)
 
-  const isSwaggerEnabled = appConfig.mode !== 'production' || env.SWAGGER_ENABLED === 'true'
+  const isSwaggerEnabled = env.SWAGGER_ENABLED !== 'false'
 
   if (isSwaggerEnabled) {
     const spec = generateDocs()
