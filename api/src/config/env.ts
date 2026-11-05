@@ -1,52 +1,112 @@
+import 'dotenv/config'
+import { z } from 'zod'
 import createLogger from '@utils/logger'
 
 const logger = createLogger('env')
 
-const INSECURE_DEFAULTS = new Set([
-  'secret-key-change-in-production',
-  'super-secret-key-change-in-production',
-  'dev-secret-key-change-in-production'
-])
+export const serverEnvSchema = z.object({
+  NODE_ENV: z.enum(['development', 'production', 'test'], {
+    errorMap: () => ({ message: "NODE_ENV deve ser 'development', 'production' ou 'test'" })
+  }),
+  PORT: z.coerce
+    .number({ invalid_type_error: 'PORT deve ser um número válido' })
+    .int('PORT deve ser um número inteiro')
+    .min(1, 'PORT deve ser maior que 0')
+    .max(65535, 'PORT deve ser menor ou igual a 65535'),
+  FRONTEND_URL: z
+    .string()
+    .url('FRONTEND_URL deve ser uma URL válida (ex: http://localhost:1000)'),
+  CORS_ORIGIN: z
+    .string()
+    .min(1, 'CORS_ORIGIN não pode ser vazio'),
+  JWT_SECRET: z
+    .string()
+    .min(16, 'JWT_SECRET deve ter no mínimo 16 caracteres para segurança'),
+  MONGODB_URI: z
+    .string()
+    .regex(/^mongodb(\+srv)?:\/\//, 'MONGODB_URI deve ser uma string de conexão MongoDB válida (mongodb:// ou mongodb+srv://)'),
+  MONGODB_DB_NAME: z
+    .string()
+    .min(1, 'MONGODB_DB_NAME não pode ser vazio'),
+  FIREBASE_PROJECT_ID: z
+    .string()
+    .min(1, 'FIREBASE_PROJECT_ID não pode ser vazio'),
+  FIREBASE_CLIENT_EMAIL: z
+    .string()
+    .email('FIREBASE_CLIENT_EMAIL deve ser um e-mail válido da conta de serviço Firebase'),
+  FIREBASE_PRIVATE_KEY: z
+    .string()
+    .min(1, 'FIREBASE_PRIVATE_KEY não pode ser vazio'),
+  FIREBASE_STORAGE_BUCKET: z
+    .string()
+    .min(1, 'FIREBASE_STORAGE_BUCKET não pode ser vazio'),
+  EMAIL_HOST: z
+    .string()
+    .min(1, 'EMAIL_HOST não pode ser vazio')
+    .optional(),
+  EMAIL_PORT: z.coerce
+    .number()
+    .int()
+    .positive()
+    .optional(),
+  EMAIL_USER: z
+    .string()
+    .min(1, 'EMAIL_USER não pode ser vazio')
+    .optional(),
+  EMAIL_PASS: z
+    .string()
+    .min(1, 'EMAIL_PASS não pode ser vazio')
+    .optional(),
+  EMAIL_FROM: z
+    .string()
+    .min(1, 'EMAIL_FROM não pode ser vazio')
+    .optional(),
+  SWAGGER_ENABLED: z
+    .enum(['true', 'false'])
+    .optional()
+})
 
-export const getJwtSecret = (): string => {
-  const secret = process.env.JWT_SECRET || process.env.JWT
-  const isProduction = (process.env.NODE_ENV || process.env.ENV) === 'production'
+export type ServerEnv = z.infer<typeof serverEnvSchema>
 
-  if (!secret || (isProduction && INSECURE_DEFAULTS.has(secret))) {
-    if (isProduction) {
-      logger.warn('JWT_SECRET is unset or using an insecure default value! Please define a strong secret in your environment.')
-      return secret || '9fa82cb34981e7d23a4b5c6d7e8f0123'
-    }
-    return secret || 'dev-secret-key-change-in-production'
+const validateServerEnv = (): ServerEnv => {
+  const result = serverEnvSchema.safeParse(process.env)
+
+  if (!result.success) {
+    const issues = result.error.issues
+      .map((issue) => `  - ${issue.path.join('.')}: ${issue.message}`)
+      .join('\n')
+
+    logger.error(`Configuração inválida de variáveis de ambiente (.env):\n${issues}`)
+    process.exit(1)
   }
 
-  return secret
+  return result.data
 }
 
-export const validateEnv = (): void => {
-  const isProduction = (process.env.NODE_ENV || process.env.ENV) === 'production'
-  const missing = ['FIREBASE_PROJECT_ID'].filter((key) => !process.env[key])
+export const env = validateServerEnv()
 
-  if (missing.length > 0) {
-    logger.warn(`Missing recommended environment variables: ${missing.join(', ')} (using fallback)`)
-    if (!process.env.FIREBASE_PROJECT_ID) {
-      process.env.FIREBASE_PROJECT_ID = 'uaitonafoto'
-    }
-  }
+export const {
+  NODE_ENV,
+  PORT,
+  FRONTEND_URL,
+  CORS_ORIGIN,
+  JWT_SECRET,
+  MONGODB_URI,
+  MONGODB_DB_NAME,
+  FIREBASE_PROJECT_ID,
+  FIREBASE_CLIENT_EMAIL,
+  FIREBASE_PRIVATE_KEY,
+  FIREBASE_STORAGE_BUCKET,
+  EMAIL_HOST,
+  EMAIL_PORT,
+  EMAIL_USER,
+  EMAIL_PASS,
+  EMAIL_FROM,
+  SWAGGER_ENABLED
+} = env
 
-  const missingCredentials = ['FIREBASE_CLIENT_EMAIL', 'FIREBASE_PRIVATE_KEY'].filter((key) => !process.env[key])
+export const getJwtSecret = (): string => env.JWT_SECRET
 
-  if (isProduction && missingCredentials.length > 0) {
-    logger.warn(`Firebase credentials missing (${missingCredentials.join(', ')}): Firebase features will fail until configured`)
-  }
+export const validateEnv = (): ServerEnv => env
 
-  if (!process.env.MONGODB_URI) {
-    logger.warn('MONGODB_URI is unset: Database features will fail until configured')
-  }
-
-  try {
-    getJwtSecret()
-  } catch (error) {
-    logger.warn(error instanceof Error ? error.message : 'Invalid JWT configuration')
-  }
-}
+export default env
