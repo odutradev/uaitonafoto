@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken'
 
 import { forgotPasswordSchema, resetPasswordSchema, syncResponseSchema, updateUserSchema, syncUserSchema, userSchema } from './schemas'
+import { resolveFrontendBaseUrl } from './utils/resolveFrontendBaseUrl'
 import { passwordResetTemplate } from '@email/templates/passwordReset'
 import { authRateLimiter } from '@middlewares/rateLimit'
 import { getJwtSecret } from '@config/env'
@@ -9,46 +10,8 @@ import userRepository from '../../repositories'
 import logRepository from '@domains/system/repositories'
 import defineAction from '@factories/defineAction'
 
-import type { ForgotPasswordRequest, ResetPasswordRequest, SyncUserResponse, UpdateUserRequest, SyncUserRequest, UserResponse } from './types'
+import type { ForgotPasswordRequest, ResetPasswordRequest, SyncUserResponse, UpdateUserRequest, SyncUserRequest, UserResponse, PasswordResetTokenPayload } from './types'
 import type { ManageRequestResponse, ManageRequestBody } from '@middlewares/manageRequest/types'
-
-interface PasswordResetTokenPayload {
-  purpose: 'password-reset'
-  email: string
-  updatedAt?: string
-  sub?: string
-}
-
-const resolveFrontendBaseUrl = (redirectUrl?: string, requestOrigin?: string): string => {
-  const allowedConfig = process.env.CORS_ORIGIN || process.env.CORS_ALLOWED_ORIGINS || ''
-  const allowedOrigins = allowedConfig
-    .split(',')
-    .map((o) => o.trim().replace(/\/+$/, ''))
-    .filter((o) => o && o !== '*')
-
-  if (redirectUrl) {
-    try {
-      const parsed = new URL(redirectUrl)
-      const origin = parsed.origin.replace(/\/+$/, '')
-      if (allowedOrigins.length === 0 || allowedOrigins.includes(origin)) {
-        return origin
-      }
-    } catch {}
-  }
-
-  if (requestOrigin) {
-    const cleanOrigin = requestOrigin.replace(/\/+$/, '')
-    if (allowedOrigins.length === 0 || allowedOrigins.includes(cleanOrigin)) {
-      return cleanOrigin
-    }
-  }
-
-  if (allowedOrigins.length > 0) {
-    return allowedOrigins[0]
-  }
-
-  return (process.env.FRONTEND_URL || 'http://localhost:1000').replace(/\/+$/, '')
-}
 
 export const syncAuthUser = defineAction(
   {

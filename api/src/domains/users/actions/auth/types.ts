@@ -13,3 +13,10 @@ export type UserResponse = z.infer<typeof userSchema>
 export type ForgotPasswordRequest = { body: z.infer<typeof forgotPasswordSchema> }
 
 export type ResetPasswordRequest = { body: z.infer<typeof resetPasswordSchema> }
+
+export interface PasswordResetTokenPayload {
+  purpose: 'password-reset'
+  email: string
+  updatedAt?: string
+  sub?: string
+}
