@@ -1,10 +1,10 @@
 FROM node:22-alpine AS builder
 WORKDIR /app
 COPY ui/package*.json ./
-COPY package.json ./root-package.json
+COPY package.json ./uaitonafoto-package.json
 RUN npm install --force
 COPY ui/ ./
-COPY package.json ./root-package.json
+COPY package.json ./uaitonafoto-package.json
 
 ARG VITE_BASE_URL
 ARG VITE_API_URL
