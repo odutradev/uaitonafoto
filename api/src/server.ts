@@ -1,30 +1,16 @@
 import 'dotenv/config'
 
 import env from '@config/env'
+import { registerDomains, registerDomain, registeredDomains } from '@config/domain'
 import { connectDatabase } from '@database/connect'
 import { connectEmail } from '@email/connect'
 import { connect as connectFirebase } from '@firebase/connect'
-import usersDomain from '@domains/users'
-import systemDomain from '@domains/system'
 import createLogger from '@utils/logger'
 import buildApp from '@/app'
 
-import type { DomainDefinition } from '@domains/types'
+export { registerDomains, registerDomain, registeredDomains }
 
 const logger = createLogger('server')
-
-export const registeredDomains: Map<string, DomainDefinition> = new Map()
-
-export const registerDomain = (domain: DomainDefinition): void => {
-  registeredDomains.set(domain.name, domain)
-  const actionCount = Object.keys(domain.actions || {}).length
-  logger.info(`Domain registered: [${domain.name}] with ${actionCount} actions`)
-}
-
-export const registerDomains = (): void => {
-  registerDomain(usersDomain)
-  registerDomain(systemDomain)
-}
 
 const startServer = async (): Promise<void> => {
   registerDomains()
