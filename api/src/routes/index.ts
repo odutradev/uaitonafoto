@@ -1,6 +1,6 @@
 import swaggerUi from 'swagger-ui-express'
 
-import { generateDocs } from '@docs/generator'
+import { generateDocs } from '@config/docs'
 import env from '@config/env'
 import createApiRouter from '@routes/api'
 import { checkDatabaseHealth } from '@database'

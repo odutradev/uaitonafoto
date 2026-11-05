@@ -15,7 +15,6 @@
       "@config/*": ["./src/config/*"],
       "@database": ["./src/database/index.ts"],
       "@database/*": ["./src/database/*"],
-      "@docs/*": ["./src/docs/*"],
       "@domains/*": ["./src/domains/*"],
       "@email": ["./src/email/index.ts"],
       "@email/*": ["./src/email/*"],

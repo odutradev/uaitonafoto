@@ -1,6 +1,6 @@
 import { OpenApiGeneratorV3 } from '@asteasolutions/zod-to-openapi'
 
-import { registry } from '@docs/registry'
+import { registry } from './registry'
 
 const API_DESCRIPTION = `
 Documentação automática das rotas do sistema.
