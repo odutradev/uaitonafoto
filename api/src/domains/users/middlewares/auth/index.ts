@@ -3,9 +3,10 @@ import jwt from 'jsonwebtoken'
 import { getJwtSecret } from '@config/env'
 import sendError from '@error/index'
 import { firebaseAuth } from '@firebase/services/auth'
+import { errorResponseSchema } from '@factories/errors/schemas'
 
 import type { NextFunction, Response, Request } from 'express'
-import type { ResponseConfig } from '@factories/defineAction/types'
+import type { DocumentedMiddleware, ResponseConfig } from '@factories/defineAction/types'
 
 export const authMiddleware = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const authHeader = req.headers.authorization
@@ -34,12 +35,15 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
 }
 
 export const authMiddlewareResponses: Record<string, ResponseConfig> = {
-  401: { description: 'Token de autenticação não fornecido ou inválido' }
+  401: {
+    description: 'Token de autenticação não fornecido ou inválido',
+    schema: errorResponseSchema
+  }
 }
 
-Object.assign(authMiddleware, {
+export const authMiddlewareWithDocs: DocumentedMiddleware = Object.assign(authMiddleware, {
   authenticate: true,
   responses: authMiddlewareResponses
 })
 
-export default authMiddleware
+export default authMiddlewareWithDocs

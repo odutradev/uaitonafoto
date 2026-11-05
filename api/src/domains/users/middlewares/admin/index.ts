@@ -1,8 +1,9 @@
 import sendError from '@error/index'
+import { errorResponseSchema } from '@factories/errors/schemas'
 import userRepository from '../../repositories'
 
 import type { NextFunction, Response, Request } from 'express'
-import type { ResponseConfig } from '@factories/defineAction/types'
+import type { DocumentedMiddleware, ResponseConfig } from '@factories/defineAction/types'
 
 export const adminMiddleware = async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
   const userId = res.locals?.userId
@@ -27,13 +28,19 @@ export const adminMiddleware = async (_req: Request, res: Response, next: NextFu
 }
 
 export const adminMiddlewareResponses: Record<string, ResponseConfig> = {
-  401: { description: 'Token de autenticação não fornecido ou inválido' },
-  403: { description: 'Acesso negado: requer perfil administrador' }
+  401: {
+    description: 'Token de autenticação não fornecido ou inválido',
+    schema: errorResponseSchema
+  },
+  403: {
+    description: 'Acesso negado: requer perfil administrador',
+    schema: errorResponseSchema
+  }
 }
 
-Object.assign(adminMiddleware, {
+export const adminMiddlewareWithDocs: DocumentedMiddleware = Object.assign(adminMiddleware, {
   authenticate: true,
   responses: adminMiddlewareResponses
 })
 
-export default adminMiddleware
+export default adminMiddlewareWithDocs

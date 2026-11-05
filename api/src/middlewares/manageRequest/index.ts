@@ -1,11 +1,24 @@
 import createLogger from '@utils/logger'
 import sendError from '@error/index'
+import { errorResponseSchema } from '@factories/errors/schemas'
 
 import type { ManageRequestBody, ManageErrorParams, ServiceFunction, RouteSchema, ManageRequestSchema, FileData } from '@middlewares/manageRequest/types'
-import type { RequestHandler, Response, Request } from 'express'
+import type { Response, Request } from 'express'
+import type { DocumentedMiddleware, ResponseConfig } from '@factories/defineAction/types'
 import type { z } from 'zod'
 
 const logger = createLogger('manage-request')
+
+export const manageRequestResponses: Record<string, ResponseConfig> = {
+  422: {
+    description: 'Erro de validação dos dados',
+    schema: errorResponseSchema
+  },
+  500: {
+    description: 'Erro interno do servidor',
+    schema: errorResponseSchema
+  }
+}
 
 const formatZodError = (error: z.ZodError) => {
   return error.issues.map((issue) => ({
@@ -17,8 +30,8 @@ const formatZodError = (error: z.ZodError) => {
 const manageRequest = <T extends ManageRequestSchema = ManageRequestSchema>(
   service: ServiceFunction<T>,
   schema?: RouteSchema
-): RequestHandler => {
-  return async (req: Request, res: Response): Promise<void> => {
+): DocumentedMiddleware => {
+  const handler = async (req: Request, res: Response): Promise<void> => {
     try {
       const manageError = ({ code, error, details }: ManageErrorParams): void => {
         sendError({ res, code, error, details, local: service.name })
@@ -82,6 +95,10 @@ const manageRequest = <T extends ManageRequestSchema = ManageRequestSchema>(
       sendError({ code: 'internal_error', res })
     }
   }
+
+  return Object.assign(handler, {
+    responses: manageRequestResponses
+  })
 }
 
 export default manageRequest
