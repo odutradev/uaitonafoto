@@ -7,6 +7,7 @@ import systemDomain from '@domains/system'
 import { connectDatabase } from '@database'
 import { connectEmail } from '@email'
 import { connectFirebase } from '@firebase'
+import { connectPayment } from '@payment'
 import createLogger from '@utils/logger'
 import buildApp from '@/app'
 
@@ -24,7 +25,8 @@ const startServer = async (): Promise<void> => {
     await Promise.all([
       connectDatabase(),
       connectFirebase(),
-      connectEmail()
+      connectEmail(),
+      connectPayment()
     ])
   })
 }

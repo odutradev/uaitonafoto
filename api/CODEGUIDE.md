@@ -48,7 +48,7 @@
 > - `<util>/index.ts`: Lógica da utilidade e exportações principais.
 > - `<util>/types.ts`: Tipagens e contratos TypeScript (quando necessário).
 
-Este documento define os padrões para desenvolvimento na API. Toda a aplicação fica centralizada diretamente em `src/`, utilizando path aliases dedicados por módulo (`@config/*`, `@database/*`, `@docs/*`, `@domains/*`, `@email/*`, `@error/*`, `@factories/*`, `@firebase/*`, `@middlewares/*`, `@routes/*`, `@utils/*`) além do alias base `@/*`.
+Este documento define os padrões para desenvolvimento na API. Toda a aplicação fica centralizada diretamente em `src/`, utilizando path aliases dedicados por módulo (`@config/*`, `@database/*`, `@docs/*`, `@domains/*`, `@email/*`, `@error/*`, `@factories/*`, `@firebase/*`, `@middlewares/*`, `@payment/*`, `@routes/*`, `@utils/*`) além do alias base `@/*`.
 
 ### **Estrutura de Diretórios**
 
@@ -74,6 +74,7 @@ A pasta `src/` organiza a aplicação de forma limpa e modular:
   * `permissions/` (Verificação de permissões do usuário)
 * `src/database/` (Conexão e inicialização do MongoDB via Mongoose)
 * `src/firebase/` (Serviços do Firebase: Auth e Storage)
+* `src/payment/` (Gateway de pagamento AbacatePay: inicialização e cliente)
 * `src/config/` (Configurações modulares com padrão `<modulo>/index.ts` e `types.ts`)
   * `app/` (Configuração global da aplicação e resolução de versão)
   * `cors/` (Configuração de origens CORS para o Express)

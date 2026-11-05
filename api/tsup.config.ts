@@ -9,6 +9,6 @@ export default defineConfig((options) => ({
   keepNames: true,
   minify: !options.watch,
   clean: true,
-  noExternal: ['marked'],
+  noExternal: ['marked', /(^@abacatepay\/)/],
   onSuccess: options.watch ? 'node dist/server.js' : undefined
 }))
