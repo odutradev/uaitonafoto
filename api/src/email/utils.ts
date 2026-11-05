@@ -1,4 +1,4 @@
-import email from '@email/connect'
+import email from '@email'
 import env from '@config/env'
 
 import type {
