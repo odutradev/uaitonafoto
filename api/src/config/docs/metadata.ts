@@ -1,7 +1,7 @@
 import { getAppVersion } from '@config/version'
 
 export const metadata = {
-  title: 'uai to na foto API Documentation',
+  title: 'uaiToNaFoto API',
   get version() {
     return getAppVersion()
   },
