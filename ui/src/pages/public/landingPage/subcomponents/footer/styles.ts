@@ -11,7 +11,7 @@ export const footerBoxStyles: SxProps<Theme> = {
 
 export const footerContainerStyles: SxProps<Theme> = {
   display: 'flex',
-  flexDirection: { xs: 'column', sm: 'row' },
+  flexDirection: { xs: 'column', md: 'row' },
   alignItems: 'center',
   justifyContent: 'space-between',
   gap: { xs: 1.5, sm: 2 },
@@ -19,11 +19,29 @@ export const footerContainerStyles: SxProps<Theme> = {
 }
 
 export const footerCopyrightStyles: SxProps<Theme> = {
-  textAlign: { xs: 'center', sm: 'left' },
-  whiteSpace: { sm: 'nowrap' }
+  textAlign: { xs: 'center', md: 'left' },
+  whiteSpace: { md: 'nowrap' }
+}
+
+export const footerLinksStyles: SxProps<Theme> = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  flexWrap: 'wrap',
+  gap: { xs: 1, sm: 1.5 }
+}
+
+export const footerLinkItemStyles: SxProps<Theme> = {
+  textDecoration: 'none',
+  fontSize: '0.875rem',
+  transition: 'color 0.2s ease',
+  '&:hover': {
+    color: 'primary.main',
+    textDecoration: 'underline'
+  }
 }
 
 export const footerCompanyStyles: SxProps<Theme> = {
-  textAlign: { xs: 'center', sm: 'right' },
-  whiteSpace: { sm: 'nowrap' }
+  textAlign: { xs: 'center', md: 'right' },
+  whiteSpace: { md: 'nowrap' }
 }

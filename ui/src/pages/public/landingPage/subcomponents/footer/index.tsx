@@ -1,6 +1,14 @@
-import { Box, Container, Typography } from '@mui/material'
+import { Box, Container, Link, Stack, Typography } from '@mui/material'
+import { Link as RouterLink } from 'react-router-dom'
 
-import { footerBoxStyles, footerCompanyStyles, footerContainerStyles, footerCopyrightStyles } from './styles'
+import {
+  footerBoxStyles,
+  footerCompanyStyles,
+  footerContainerStyles,
+  footerCopyrightStyles,
+  footerLinkItemStyles,
+  footerLinksStyles
+} from './styles'
 import type { FooterProps } from './types'
 
 const formatCompanyName = (name: string): string => {
@@ -33,6 +41,18 @@ export const Footer = ({ data }: FooterProps) => {
         <Typography variant="body2" color="text.secondary" sx={footerCopyrightStyles}>
           {copyrightText}
         </Typography>
+
+        <Stack direction="row" spacing={1.5} sx={footerLinksStyles}>
+          <Link component={RouterLink} to="/termos-de-uso" color="text.secondary" sx={footerLinkItemStyles}>
+            Termos de Uso
+          </Link>
+          <Typography variant="body2" color="text.secondary">
+            •
+          </Typography>
+          <Link component={RouterLink} to="/politica-de-cancelamento" color="text.secondary" sx={footerLinkItemStyles}>
+            Cancelamento e Reembolso
+          </Link>
+        </Stack>
 
         {companyInfo && (
           <Typography variant="body2" color="text.secondary" sx={footerCompanyStyles}>

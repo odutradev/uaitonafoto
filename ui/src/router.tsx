@@ -3,6 +3,8 @@ import { createElement } from 'react'
 
 import ResetPassword from '@pages/auth/resetPassword'
 import LandingPage from '@pages/public/landingPage'
+import TermsOfUse from '@pages/public/termsOfUse'
+import RefundPolicy from '@pages/public/refundPolicy'
 import ErrorPage from '@pages/public/errorPage'
 import NotFound from '@pages/public/notFound'
 import AuthPage from '@pages/auth/authPage'
@@ -25,6 +27,11 @@ const appRouter = createBrowserRouter([
         children: [{ path: '/app', element: createElement(Home) }]
       },
       { path: '/reset-password', element: createElement(ResetPassword) },
+      { path: '/termos-de-uso', element: createElement(TermsOfUse) },
+      { path: '/termos', element: createElement(TermsOfUse) },
+      { path: '/politica-de-cancelamento', element: createElement(RefundPolicy) },
+      { path: '/cancelamento-e-reembolso', element: createElement(RefundPolicy) },
+      { path: '/politica-de-reembolso', element: createElement(RefundPolicy) },
       { path: '/', element: createElement(LandingPage) },
       { path: '*', element: createElement(NotFound) }
     ]
