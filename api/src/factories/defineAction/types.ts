@@ -1,14 +1,16 @@
+import type { RateLimitConfig } from '@middlewares/rateLimit/types'
+import type { RouteSchema } from '@middlewares/manageRequest/types'
 import type { ZodRequestBody } from '@asteasolutions/zod-to-openapi'
 import type { RequestHandler } from 'express'
-import type { z } from 'zod'
 
 export type ResponseConfig = {
   description: string
-  schema?: z.ZodTypeAny
+  schema?: unknown
 }
 
 export type ActionMetadata = {
   method: 'get' | 'post' | 'put' | 'delete' | 'patch'
+  rateLimit?: boolean | RateLimitConfig
   authenticate?: boolean
   permissions?: string[]
   path: string
@@ -18,9 +20,16 @@ export type ActionMetadata = {
   responses?: Record<string, ResponseConfig>
   middlewares?: RequestHandler[]
   requestBody?: ZodRequestBody
+  requestFormat?: 'json' | 'multipart'
+  uploadFieldName?: string
+  schema?: RouteSchema
 }
 
-export type ActionHandler = RequestHandler & {
-  metadata: ActionMetadata
-  middlewares: RequestHandler[]
+export type ActionDefinition = {
+  method: ActionMetadata['method']
+  path: string
+  handlers: RequestHandler[]
+  metadata?: ActionMetadata
 }
+
+export type ActionHandler = ActionDefinition

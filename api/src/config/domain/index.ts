@@ -1,31 +1,35 @@
 import { Router } from 'express'
 import createLogger from '@utils/logger'
-import type { DomainDefinition, DomainRegistry, ActionHandler } from './types'
+import type { DomainDefinition, DomainRegistry, ActionDefinition, ActionHandler } from './types'
 
 const logger = createLogger('domain')
 
 export const registeredDomains: DomainRegistry = new Map()
 
-export const isActionHandler = (action: unknown): action is ActionHandler => {
+export const isActionDefinition = (action: unknown): action is ActionDefinition => {
   return (
-    typeof action === 'function' &&
-    'metadata' in action &&
-    typeof (action as ActionHandler).metadata === 'object' &&
-    (action as ActionHandler).metadata !== null &&
-    typeof (action as ActionHandler).metadata.method === 'string' &&
-    typeof (action as ActionHandler).metadata.path === 'string'
+    typeof action === 'object' &&
+    action !== null &&
+    'method' in action &&
+    'path' in action &&
+    'handlers' in action &&
+    Array.isArray((action as ActionDefinition).handlers)
   )
+}
+
+export const isActionHandler = (action: unknown): action is ActionHandler => {
+  return isActionDefinition(action)
 }
 
 const extractActionHandlers = (
   obj: Record<string, unknown>,
   prefix = ''
-): Array<{ name: string; action: ActionHandler }> => {
-  const result: Array<{ name: string; action: ActionHandler }> = []
+): Array<{ name: string; action: ActionDefinition }> => {
+  const result: Array<{ name: string; action: ActionDefinition }> = []
 
   for (const [key, value] of Object.entries(obj)) {
     const fullName = prefix ? `${prefix}.${key}` : key
-    if (isActionHandler(value)) {
+    if (isActionDefinition(value)) {
       result.push({ name: fullName, action: value })
     } else if (value && typeof value === 'object' && !Array.isArray(value)) {
       result.push(...extractActionHandlers(value as Record<string, unknown>, fullName))
@@ -71,7 +75,7 @@ export const registerDomainEndpoints = (
     const actionEntries = extractActionHandlers(actions)
 
     for (const { name, action } of actionEntries) {
-      const { method, path } = action.metadata
+      const { method, path, handlers } = action
       const normalizedPath = path.startsWith('/') ? path : `/${path}`
       const httpMethod = method.toLowerCase() as 'get' | 'post' | 'put' | 'delete' | 'patch'
       const endpointKey = `${httpMethod.toUpperCase()} ${normalizedPath}`
@@ -82,7 +86,6 @@ export const registerDomainEndpoints = (
       }
 
       if (typeof router[httpMethod] === 'function') {
-        const handlers = action.middlewares?.length ? action.middlewares : [action]
         router[httpMethod](normalizedPath, ...handlers)
         registeredEndpoints.add(endpointKey)
       } else {
@@ -100,4 +103,3 @@ export const createDomainRouter = (domains?: DomainDefinition[]): Router => {
 }
 
 export * from './types'
-export default registerDomains
