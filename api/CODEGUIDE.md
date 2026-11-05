@@ -15,6 +15,13 @@
 > - **O papel do `index.ts` do domínio:** o `index.ts` de cada domínio **não é um barrel file**. Sua única finalidade é exportar como `default` a definição tipada `DomainDefinition` com `name` e `actions` para o registrador no `server.ts`. É proibido reexportar repositórios, middlewares ou types no `index.ts` do domínio.
 > - **Importação direta obrigatória:** todo e qualquer consumo deve ser feito via importação direta do arquivo específico (ex: `import { syncAuthUser } from '@domains/users/actions/auth'`, `import authMiddleware from '@domains/users/middlewares/auth'`, `import userRepository from '@domains/users/repositories'`).
 
+> [!IMPORTANT]
+> ### 🔒 **Validação Centralizada e Estrita de Variáveis de Ambiente (`src/config/env.ts`)**
+> Toda e qualquer variável de ambiente utilizada no backend deve ser validada de forma estrita e centralizada em `src/config/env.ts` com schema Zod:
+> - **Validação de Conteúdo com Zod:** Todas as variáveis devem ter seus formatos e conteúdos validados (URLs válidas, portas numéricas, prefixos específicos, tamanhos mínimos de chaves, enums de ambiente).
+> - **Sem Fallbacks:** É **estritamente proibido** o uso de fallbacks ou valores padrão (`|| fallback`, `.default(...)`) nas variáveis de ambiente. Se qualquer variável estiver ausente ou com conteúdo inválido, a aplicação aborta imediatamente (`process.exit(1)`) impedindo o servidor de iniciar.
+> - **Zero Validações em Serviços:** É proibido validar variáveis de ambiente de forma dispersa dentro de serviços (ex: banco de dados, Firebase, e-mail). Todos os serviços devem importar e consumir diretamente os valores já validados de `@config/env`.
+
 > [!NOTE]
 > ### ⚙️ **Padrão Obrigatório para Middlewares (`<nome>/index.ts` e `<nome>/types.ts`)**
 > Todos os middlewares (tanto globais em `src/middlewares/` quanto específicos de domínio em `src/domains/<dominio>/middlewares/`) devem seguir estritamente o padrão de diretório:
@@ -64,10 +71,9 @@ A pasta `src/` organiza a aplicação de forma limpa e modular:
 * `src/config/` (Configurações de ambiente, CORS e aplicação em uso ativo)
   * `app.ts` (Configuração global da aplicação e resolução de versão)
   * `cors.ts` (Configuração de origens CORS para o Express)
-  * `env.ts` (Validação de credenciais de ambiente e obtenção segura do segredo JWT)
+  * `env.ts` (Validação centralizada estrita de variáveis de ambiente com schema Zod e exportação tipada)
 * `src/utils/` (Utilitários reutilizáveis com padrão `<util>/index.ts` e `types.ts`)
   * `date/` (Formatação e cálculos de datas: `formatTimestamp`, `formatDateBR`, `addDays`, `isPast`)
-  * `env/` (Validação de variáveis de ambiente: `validateEnvVars` e `EnvValidationResult`)
   * `logger/` (Instância de log estilizado e prefixado: `createLogger` e tipo `Logger`)
   * `object/` (Manipulação de objetos e limpeza de campos: `filterObject`, `removeUndefined`)
 * `src/docs/` (Gerador e registro do OpenAPI/Swagger)
@@ -311,26 +317,64 @@ apiRouter.use('/auth', authRoutes)
 export default apiRouter
 ```
 
-#### **9. Utilitários e Helpers (`utils/<nome>/index.ts` e `types.ts`)**
+#### **9. Utilitários e Helpers Globais (`utils/<nome>/index.ts` e `types.ts`)**
 
 Cada utilitário fica isolado em seu próprio subdiretório, contendo a lógica central em `index.ts` e contratos de tipos em `types.ts` quando necessário:
 
 ```ts
-// utils/env/types.ts
-export interface EnvValidationResult {
-  isValid: boolean
-  missing: string[]
+// utils/logger/types.ts
+export type LogLevel = 'info' | 'warn' | 'error' | 'success'
+
+export interface Logger {
+  info: (...args: unknown[]) => void
+  warn: (...args: unknown[]) => void
+  error: (...args: unknown[]) => void
+  success: (...args: unknown[]) => void
 }
 
-// utils/env/index.ts
-import createLogger from '@utils/logger'
-import type { EnvValidationResult } from './types'
+// utils/logger/index.ts
+import type { Logger } from './types'
 
-export const validateEnvVars = (variables: string[], exitOnError = false): EnvValidationResult => {
-  // ...
+export const createLogger = (prefix: string): Logger => {
+  // Lógica de log estilizado
+  return logger
 }
 
-export * from './types'
-export default validateEnvVars
+export default createLogger
+```
+
+#### **10. Configuração e Validação de Ambiente (`src/config/env.ts`)**
+
+Todas as variáveis de ambiente devem ser declaradas e validadas exclusivamente no schema Zod centralizado. Fallbacks são terminantemente proibidos e qualquer inconsistência aborta o processo imediatamente:
+
+```ts
+// config/env.ts
+import 'dotenv/config'
+import { z } from 'zod'
+
+export const serverEnvSchema = z.object({
+  NODE_ENV: z.enum(['development', 'production', 'test']),
+  PORT: z.coerce.number().int().min(1).max(65535),
+  FRONTEND_URL: z.string().url(),
+  CORS_ORIGIN: z.string().min(1),
+  JWT_SECRET: z.string().min(16),
+  MONGODB_URI: z.string().regex(/^mongodb(\+srv)?:\/\//),
+  MONGODB_DB_NAME: z.string().min(1),
+  FIREBASE_PROJECT_ID: z.string().min(1),
+  FIREBASE_CLIENT_EMAIL: z.string().email(),
+  FIREBASE_PRIVATE_KEY: z.string().min(1),
+  FIREBASE_STORAGE_BUCKET: z.string().min(1)
+})
+
+const result = serverEnvSchema.safeParse(process.env)
+
+if (!result.success) {
+  logger.error('Configuração inválida de variáveis de ambiente (.env)')
+  process.exit(1)
+}
+
+export const env = result.data
+export const { PORT, NODE_ENV, ... } = env
+export default env
 ```
 
