@@ -4,6 +4,10 @@ import { generateDocs } from '@docs/generator'
 import { appConfig } from '@config/app'
 import env from '@config/env'
 import createApiRouter from '@routes/api'
+import { checkDatabaseHealth } from '@database'
+import { checkFirebaseHealth } from '@firebase'
+import { checkEmailHealth } from '@email'
+import { checkPaymentHealth } from '@payment'
 
 import type { Application, Response, Request, NextFunction } from 'express'
 
@@ -26,10 +30,20 @@ const ensureTrailingSlash = (req: Request, res: Response, next: NextFunction): v
 
 const registerGlobalRoutes = (app: Application): void => {
   app.get(['/health', '/api/health'], (_req: Request, res: Response) => {
-    res.status(200).json({
-      status: 'ok',
+    const services = {
+      database: checkDatabaseHealth(),
+      firebase: checkFirebaseHealth(),
+      email: checkEmailHealth(),
+      payment: checkPaymentHealth()
+    }
+
+    const isHealthy = services.database === 'ok' && services.firebase === 'ok'
+
+    res.status(isHealthy ? 200 : 503).json({
+      status: isHealthy ? 'ok' : 'degraded',
       mode: appConfig.mode,
-      version: appConfig.version
+      version: appConfig.version,
+      services
     })
   })
 
