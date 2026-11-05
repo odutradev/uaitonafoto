@@ -39,9 +39,7 @@ export const globalRateLimiter: DocumentedMiddleware = Object.assign(
     standardHeaders: 'draft-7',
     legacyHeaders: false,
     skip: (req) =>
-      req.path === '/ping' ||
       req.path === '/health' ||
-      req.path === '/api/ping' ||
       req.path === '/api/health' ||
       req.path.startsWith('/docs') ||
       req.path.startsWith('/api/docs'),

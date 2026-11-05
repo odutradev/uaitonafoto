@@ -3,10 +3,6 @@ import swaggerUi from 'swagger-ui-express'
 import { generateDocs } from '@config/docs'
 import env from '@config/env'
 import createApiRouter from '@routes/api'
-import { checkDatabaseHealth } from '@database'
-import { checkFirebaseHealth } from '@firebase'
-import { checkEmailHealth } from '@email'
-import { checkPaymentHealth } from '@payment'
 
 import type { Application, Response, Request, NextFunction } from 'express'
 
@@ -28,28 +24,6 @@ const ensureTrailingSlash = (req: Request, res: Response, next: NextFunction): v
 }
 
 const registerGlobalRoutes = (app: Application): void => {
-  app.get(['/health', '/api/health'], (_req: Request, res: Response) => {
-    const services = {
-      database: checkDatabaseHealth(),
-      firebase: checkFirebaseHealth(),
-      email: checkEmailHealth(),
-      payment: checkPaymentHealth()
-    }
-
-    const isHealthy = services.database === 'ok' && services.firebase === 'ok'
-
-    res.status(isHealthy ? 200 : 503).json({
-      status: isHealthy ? 'ok' : 'degraded',
-      mode: env.NODE_ENV,
-      version: '1.0.0',
-      services
-    })
-  })
-
-  app.get(['/ping', '/api/ping'], (_req: Request, res: Response) => {
-    res.status(200).send('pong')
-  })
-
   const apiRouter = createApiRouter()
 
   app.use('/', apiRouter)
