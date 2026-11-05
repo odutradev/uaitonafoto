@@ -45,3 +45,6 @@ package-lock.json
 # cache files
 cache/*
 *-merged.txt
+
+# Generated metadata
+uaitonafoto-package.json

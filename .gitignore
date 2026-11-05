@@ -58,3 +58,7 @@ ehthumbs.db
 # Merged files
 *-merged.txt
 merged-output.txt
+
+# Generated metadata
+uaitonafoto-package.json
+*/uaitonafoto-package.json

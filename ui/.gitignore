@@ -49,3 +49,6 @@ ehthumbs.db
 *.sln
 *.sw?
 
+# Generated metadata
+uaitonafoto-package.json
+
