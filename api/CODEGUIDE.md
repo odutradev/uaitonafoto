@@ -16,6 +16,13 @@
 > - **Importação direta obrigatória:** todo e qualquer consumo deve ser feito via importação direta do arquivo específico (ex: `import { syncAuthUser } from '@domains/users/actions/auth'`, `import authMiddleware from '@domains/users/middlewares/auth'`, `import userRepository from '@domains/users/repositories'`).
 
 > [!IMPORTANT]
+> ### 🚫 **Proibição Absoluta de Path Aliases Duplicados ou Redundantes (`tsconfig.json`)**
+> Cada módulo ou diretório em `src/` deve possuir **exclusivamente um único path alias canônico** no `tsconfig.json`:
+> - **Zero aliases duplicados ou redundantes:** É estritamente proibido criar aliases alternativos, variantes sinônimas ou apelidos de vendors que apontem para o mesmo destino (ex: é proibido ter `@abacatepay` ou `@abacatepay/*` apontando para `src/payment/` quando já existe `@payment`).
+> - **Identidade canônica do módulo:** Utilize sempre o nome do conceito funcional ou do diretório da aplicação (`@payment`, `@database`, `@email`), nunca o nome da biblioteca de terceiros ou vendor externo.
+> - **Mapeamento 1:1:** Cada diretório raiz em `src/` possui exatamente um mapeamento canônico no `paths` do `tsconfig.json`.
+
+> [!IMPORTANT]
 > ### 🔒 **Validação Centralizada e Estrita de Variáveis de Ambiente (`src/config/env/`)**
 > Toda e qualquer variável de ambiente utilizada no backend deve ser validada de forma estrita e centralizada em `src/config/env/` com schema Zod:
 > - **Validação de Conteúdo com Zod:** Todas as variáveis devem ter seus formatos e conteúdos validados (URLs válidas, portas numéricas, prefixos específicos, tamanhos mínimos de chaves, enums de ambiente).
@@ -48,7 +55,7 @@
 > - `<util>/index.ts`: Lógica da utilidade e exportações principais.
 > - `<util>/types.ts`: Tipagens e contratos TypeScript (quando necessário).
 
-Este documento define os padrões para desenvolvimento na API. Toda a aplicação fica centralizada diretamente em `src/`, utilizando path aliases dedicados por módulo (`@config/*`, `@database/*`, `@docs/*`, `@domains/*`, `@email/*`, `@error/*`, `@factories/*`, `@firebase/*`, `@middlewares/*`, `@payment/*`, `@routes/*`, `@utils/*`) além do alias base `@/*`.
+Este documento define os padrões para desenvolvimento na API. Toda a aplicação fica centralizada diretamente em `src/`, utilizando path aliases dedicados por módulo (`@config/*`, `@database/*`, `@domains/*`, `@email/*`, `@error/*`, `@factories/*`, `@firebase/*`, `@middlewares/*`, `@payment/*`, `@routes/*`, `@utils/*`) além do alias base `@/*`.
 
 ### **Estrutura de Diretórios**
 
@@ -74,17 +81,17 @@ A pasta `src/` organiza a aplicação de forma limpa e modular:
   * `permissions/` (Verificação de permissões do usuário)
 * `src/database/` (Conexão e inicialização do MongoDB via Mongoose)
 * `src/firebase/` (Serviços do Firebase: Auth e Storage)
-* `src/payment/` (Gateway de pagamento AbacatePay: inicialização e cliente)
+* `src/payment/` (Gateway de pagamento: inicialização e cliente)
 * `src/config/` (Configurações modulares com padrão `<modulo>/index.ts` e `types.ts`)
-  * `app/` (Configuração global da aplicação e resolução de versão)
   * `cors/` (Configuração de origens CORS para o Express)
+  * `docs/` (Gerador e registro do OpenAPI/Swagger: `generator.ts` e `registry.ts`)
   * `domain/` (Definição, registro de domínios e mapeamento automático de endpoints)
   * `env/` (Validação centralizada estrita de variáveis de ambiente com schema Zod e exportação tipada)
 * `src/utils/` (Utilitários reutilizáveis com padrão `<util>/index.ts` e `types.ts`)
   * `date/` (Formatação e cálculos de datas: `formatTimestamp`, `formatDateBR`, `addDays`, `isPast`)
   * `logger/` (Instância de log estilizado e prefixado: `createLogger` e tipo `Logger`)
   * `object/` (Manipulação de objetos e limpeza de campos: `filterObject`, `removeUndefined`)
-* `src/docs/` (Gerador e registro do OpenAPI/Swagger)
+  * `warning/` (Supressão controlada de deprecation warnings do runtime Node.js)
 * `src/factories/` (Factories utilitárias como `defineAction`, `pagination`, `filters`)
 
 ### **Regras de Implementação por Camada**
