@@ -25,8 +25,6 @@
       "@middlewares/*": ["./src/middlewares/*"],
       "@payment": ["./src/payment/index.ts"],
       "@payment/*": ["./src/payment/*"],
-      "@abacatepay": ["./src/payment/index.ts"],
-      "@abacatepay/*": ["./src/payment/*"],
       "@routes/*": ["./src/routes/*"],
       "@utils/*": ["./src/utils/*"]
     }
