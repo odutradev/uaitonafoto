@@ -1,7 +1,8 @@
 import * as admin from 'firebase-admin'
 import type { Bucket } from '@google-cloud/storage'
 
-export type StorageBucket = Bucket
+export * from './types'
+export * from './utils'
 
 export const getFirebaseStorage = (): admin.storage.Storage => {
   if (!admin.apps.length) {
