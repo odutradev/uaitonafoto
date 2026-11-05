@@ -21,6 +21,7 @@
       "@email/*": ["./src/email/*"],
       "@error/*": ["./src/error/*"],
       "@factories/*": ["./src/factories/*"],
+      "@firebase": ["./src/firebase/index.ts"],
       "@firebase/*": ["./src/firebase/*"],
       "@middlewares/*": ["./src/middlewares/*"],
       "@routes/*": ["./src/routes/*"],
