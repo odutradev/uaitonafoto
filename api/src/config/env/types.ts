@@ -62,8 +62,7 @@ export const serverEnvSchema = z.object({
     .min(1, 'ABACATEPAY_API_KEY não pode ser vazio'),
   ABACATEPAY_WEBHOOK_SECRET: z
     .string()
-    .min(1, 'ABACATEPAY_WEBHOOK_SECRET não pode ser vazio')
-    .optional(),
+    .min(1, 'ABACATEPAY_WEBHOOK_SECRET não pode ser vazio'),
   SWAGGER_ENABLED: z
     .enum(['true', 'false'])
     .optional()
