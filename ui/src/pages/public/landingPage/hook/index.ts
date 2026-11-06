@@ -28,9 +28,7 @@ export const useLandingPage = (): UseLandingPageReturn => {
           setUpsell(mergeUpsellWithApi(landingPageData.plans.upsell, items))
         }
       })
-      .catch(() => {
-        // Fallback já garantido pelos dados declarativos em data
-      })
+      .catch(() => {})
       .finally(() => {
         if (isMounted) {
           setIsLoadingPlans(false)
