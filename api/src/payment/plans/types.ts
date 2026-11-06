@@ -1,19 +1,30 @@
 export type PlanType = 'ONE_TIME' | 'SUBSCRIPTION' | 'UPSELL' | 'FREE'
 
 export interface PlanConfig {
+  id: string
   abacateProductId: string
   type: PlanType
   credits: number
   extraStorageDays?: number
+  name: string
+  title?: string
+  description: string
+  price: number
+  currency: string
+  features: string[]
+  tag?: string
+  badge?: string
+  subBadge?: string
+  costPerEvent?: string
+  period?: string
+  ctaText?: string
+  ctaHref: string
+  highlighted?: boolean
 }
 
 export interface CachedPlan extends PlanConfig {
   productId?: string
-  name: string
-  description: string
-  price: number
   imageUrl: string | null
-  currency: string
   devMode?: boolean
 }
 
