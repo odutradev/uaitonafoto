@@ -55,8 +55,8 @@ export const createCheckout = defineAction(
       userAgent: req.headers['user-agent']
     })
 
-    const returnUrl = `${baseUrl}/app?checkout=cancelled&plan=${plan.id}`
-    const completionUrl = `${baseUrl}/app?checkout=success&transaction=${transaction.id}`
+    const returnUrl = `${baseUrl}/app?payment=cancelled&plan=${plan.id}`
+    const completionUrl = `${baseUrl}/app?payment=success&transaction=${transaction.id}`
 
     try {
       const { customerId, checkout } = await createGatewayCheckout({
