@@ -1,7 +1,7 @@
 import { AbacatePay } from '@abacatepay/sdk'
 import env from '@config/env'
 import createLogger from '@utils/logger'
-import { syncPlansCache } from './plansConfig'
+import { syncPlansCache } from './plans'
 import type { PaymentInstance, PaymentModule, AbacatePayClient } from './types'
 
 const logger = createLogger('payment')
@@ -54,5 +54,5 @@ export const checkPaymentHealth = (): 'ok' | 'error' => {
 }
 
 export * from './types'
-export * from './plansConfig'
+export * from './plans'
 export default payment
