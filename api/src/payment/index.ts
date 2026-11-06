@@ -1,6 +1,7 @@
 import { AbacatePay } from '@abacatepay/sdk'
 import env from '@config/env'
 import createLogger from '@utils/logger'
+import { syncPlansCache } from './plansConfig'
 import type { PaymentInstance, PaymentModule, AbacatePayClient } from './types'
 
 const logger = createLogger('payment')
@@ -18,6 +19,8 @@ const payment: PaymentModule = {
       payment.client = AbacatePay({ secret: apiKey })
 
       logger.success('Connected: AbacatePay payment gateway ready')
+
+      await syncPlansCache(payment.client)
 
       return { client: payment.client }
     } catch (error) {
@@ -51,4 +54,5 @@ export const checkPaymentHealth = (): 'ok' | 'error' => {
 }
 
 export * from './types'
+export * from './plansConfig'
 export default payment
