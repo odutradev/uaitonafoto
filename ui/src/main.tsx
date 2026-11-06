@@ -6,6 +6,7 @@ import { createRoot } from 'react-dom/client'
 import { StrictMode, useMemo } from 'react'
 
 import { getToastContainerConfig } from '@config/toastConfig'
+import { initClarity } from '@config/clarity'
 import useSystemStore from '@stores/system'
 import { getAppTheme } from '@theme'
 import appRouter from '@/router'
@@ -24,6 +25,8 @@ const App = () => {
     </ThemeProvider>
   )
 }
+
+initClarity()
 
 const rootElement = document.getElementById('root')
 
