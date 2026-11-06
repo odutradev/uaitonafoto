@@ -21,3 +21,4 @@ const runSeeds = async (): Promise<void> => {
 }
 
 runSeeds()
+

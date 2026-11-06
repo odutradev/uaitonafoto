@@ -1,9 +1,10 @@
-export type PlanType = 'ONE_TIME' | 'SUBSCRIPTION'
+export type PlanType = 'ONE_TIME' | 'SUBSCRIPTION' | 'UPSELL'
 
 export interface PlanConfig {
   abacateProductId: string
   type: PlanType
   credits: number
+  extraStorageDays?: number
 }
 
 export interface CachedPlan extends PlanConfig {

@@ -3,9 +3,9 @@ import { z } from 'zod'
 
 extendZodWithOpenApi(z)
 
-export const planTypeSchema = z.enum(['ONE_TIME', 'SUBSCRIPTION']).openapi({
-  description: 'Tipo de recorrência ou cobrança do plano',
-  example: 'SUBSCRIPTION'
+export const planTypeSchema = z.enum(['ONE_TIME', 'SUBSCRIPTION', 'UPSELL']).openapi({
+  description: 'Tipo de recorrência, cobrança ou adicional do produto',
+  example: 'UPSELL'
 })
 
 export const planSchema = z
@@ -14,6 +14,7 @@ export const planSchema = z
     productId: z.string().optional().openapi({ example: 'prod_GesxhTHw1GkDDHHH5MmSyUSX' }),
     type: planTypeSchema,
     credits: z.number().openapi({ example: 4 }),
+    extraStorageDays: z.number().optional().openapi({ example: 365 }),
     name: z.string().openapi({ example: 'Plano Agência Essencial' }),
     description: z.string().openapi({ example: 'Franquia de 4 eventos por mês...' }),
     price: z.number().openapi({ example: 24700 }),

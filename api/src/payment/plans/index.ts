@@ -12,8 +12,9 @@ export const plansConfig: PlanConfig[] = [
   },
   {
     abacateProductId: 'prod_b2c_upsell_year',
-    type: 'ONE_TIME',
-    credits: 0
+    type: 'UPSELL',
+    credits: 0,
+    extraStorageDays: 365
   },
   {
     abacateProductId: 'prod_agency_essential',
@@ -40,6 +41,14 @@ export const getCachedPlans = (): CachedPlan[] => {
 
 export const getPlanByProductId = (productId: string): CachedPlan | undefined => {
   return cachedPlans.find((plan) => plan.abacateProductId === productId || plan.productId === productId)
+}
+
+export const getUpsellPlans = (): CachedPlan[] => {
+  return cachedPlans.filter((plan) => plan.type === 'UPSELL')
+}
+
+export const getGalleryStorageUpsell = (): CachedPlan | undefined => {
+  return cachedPlans.find((plan) => plan.abacateProductId === 'prod_b2c_upsell_year')
 }
 
 export const syncPlansCache = async (client: AbacatePayClient): Promise<CachedPlan[]> => {
@@ -71,6 +80,7 @@ export const syncPlansCache = async (client: AbacatePayClient): Promise<CachedPl
             productId: product.id,
             type: plan.type,
             credits: plan.credits,
+            extraStorageDays: plan.extraStorageDays,
             name: product.name,
             description: product.description,
             price: product.price,

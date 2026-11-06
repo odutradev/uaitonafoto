@@ -7,3 +7,4 @@ export const paymentsDomain: DomainDefinition<typeof plansActions> = {
 }
 
 export default paymentsDomain
+
