@@ -6,5 +6,10 @@ export const getPlans = async (): Promise<PlanApiItem[]> => {
   return response.data
 }
 
+export const getPlanById = async (id: string): Promise<PlanApiItem> => {
+  const response = await api.get<PlanApiItem>(`/plans/${id}`)
+  return response.data
+}
+
 export * from './types'
 
