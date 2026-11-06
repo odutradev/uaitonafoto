@@ -5,7 +5,9 @@ import { toast } from 'react-toastify'
 import useAuth from '@hooks/useAuth'
 
 import Events from './sections/events'
+import Plans from './sections/plans'
 import Welcome from './sections/welcome'
+import useCheckout from './hooks/useCheckout'
 import { AppHeader } from './subcomponents/appHeader'
 import { homeContentStyles, homeWrapperStyles } from './styles'
 
@@ -13,6 +15,7 @@ const Home = () => {
   const theme = useTheme()
   const isDark = theme.palette.mode === 'dark'
   const { user, logout } = useAuth()
+  const { plans, isLoadingPlans, checkoutPlanId, startCheckout } = useCheckout()
 
   if (!user) return null
 
@@ -29,6 +32,14 @@ const Home = () => {
       <Container component="main" maxWidth="lg" sx={homeContentStyles}>
         <Welcome firstName={firstName} onCreateEvent={handleCreateEvent} />
         <Events onCreateEvent={handleCreateEvent} />
+        <Plans
+          plans={plans}
+          isLoading={isLoadingPlans}
+          checkoutPlanId={checkoutPlanId}
+          freeCredits={user.freeCredits}
+          paidCredits={user.paidCredits}
+          onSelectPlan={startCheckout}
+        />
       </Container>
     </Box>
   )
