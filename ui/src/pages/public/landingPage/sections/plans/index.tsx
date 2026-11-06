@@ -55,6 +55,8 @@ export const Plans = ({ data, isDark }: PlansSectionProps) => {
   }, [])
 
   const resolvePrice = (planId: string, defaultPrice: string): string => {
+    if (planId === 'free_trial' || !planId) return defaultPrice
+
     const live = livePlans.find(
       (p) => p.abacateProductId === planId || p.productId === planId
     )
@@ -71,7 +73,7 @@ export const Plans = ({ data, isDark }: PlansSectionProps) => {
 
   return (
     <Box id="planos" component="section" sx={getSectionBoxStyles(isDark)}>
-      <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3 } }}>
+      <Container maxWidth="xl" sx={{ px: { xs: 2, sm: 3 } }}>
         <Stack spacing={1.75} sx={sectionHeaderStyles}>
           <Box sx={tagBadgeStyles}>
             <BoltIcon sx={{ fontSize: 16, color: 'primary.main' }} />

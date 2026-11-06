@@ -51,8 +51,8 @@ export const sectionSubtitleStyles: SxProps<Theme> = {
 
 export const plansGridStyles: SxProps<Theme> = {
   display: 'grid',
-  gridTemplateColumns: { xs: '1fr', md: 'repeat(3, 1fr)' },
-  gap: { xs: 3, md: 3.5 },
+  gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', lg: 'repeat(4, 1fr)' },
+  gap: { xs: 2.5, md: 3 },
   alignItems: 'stretch',
   width: '100%',
   mb: { xs: 5, sm: 6, md: 8 }
@@ -60,7 +60,7 @@ export const plansGridStyles: SxProps<Theme> = {
 
 export const getPlanCardStyles = (highlighted: boolean, isDark: boolean): SxProps<Theme> => ({
   borderRadius: { xs: '24px', sm: '28px' },
-  p: { xs: 3, sm: 3.5 },
+  p: { xs: 2.5, sm: 3 },
   display: 'flex',
   flexDirection: 'column',
   position: 'relative',
@@ -124,7 +124,7 @@ export const priceContainerStyles: SxProps<Theme> = {
 }
 
 export const priceTextStyles: SxProps<Theme> = {
-  fontSize: { xs: '2.25rem', sm: '2.75rem' },
+  fontSize: { xs: '2rem', sm: '2.25rem', lg: '2.4rem' },
   fontFamily: "'Bricolage Grotesque', sans-serif",
   fontWeight: 800,
   letterSpacing: '-0.04em',

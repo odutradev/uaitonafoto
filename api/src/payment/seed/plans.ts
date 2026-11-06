@@ -90,3 +90,4 @@ export const seedPlans = async (client: AbacatePayClient): Promise<void> => {
 
   logger.success('[seedPlans] Plans seed completed.')
 }
+

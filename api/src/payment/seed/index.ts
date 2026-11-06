@@ -28,3 +28,4 @@ if (process.argv[1]?.includes('payment/seed') || process.argv[1]?.includes('paym
 
 export * from './plans'
 export default runPaymentSeeds
+

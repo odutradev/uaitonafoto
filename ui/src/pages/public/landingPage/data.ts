@@ -173,8 +173,29 @@ export const landingPageData: LandingPageData = {
   plans: {
     tag: 'Preços transparentes via Pix e Cartão',
     title: 'planos simples para anfitriões e agências',
-    subtitle: 'Sem taxas escondidas. Crie desde um evento único até uma operação completa de cerimonial.',
+    subtitle: 'Sem taxas escondidas. Crie desde um evento de teste gratuito até uma operação completa de cerimonial.',
     plans: [
+      {
+        id: 'free_trial',
+        abacateProductId: 'free_trial',
+        tag: 'Degustação',
+        title: 'Modo Degustação',
+        price: 'Grátis',
+        period: 'sem cartão',
+        description: 'Experimente a dinâmica do telão e do app no seu evento sem nenhum compromisso financeiro.',
+        features: [
+          'Até 25 fotos compartilhadas no feed',
+          'Modo Telão (Live Wall) com marca d\'água',
+          'QR Code pronto para exibir aos convidados',
+          'Feed mobile com curtidas em tempo real',
+          'Galeria ativa por 7 dias'
+        ],
+        cta: {
+          text: 'Começar grátis',
+          href: '/signup'
+        },
+        highlighted: false
+      },
       {
         id: 'b2c_event_pass',
         abacateProductId: 'prod_b2c_event_pass',
