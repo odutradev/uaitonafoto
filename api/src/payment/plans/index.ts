@@ -33,13 +33,26 @@ export const plansConfig: PlanConfig[] = [
   }
 ]
 
+export const freeTrialPlan: CachedPlan = {
+  abacateProductId: 'free_trial',
+  type: 'FREE',
+  credits: 1,
+  name: 'Modo Degustação',
+  description: 'Até 25 fotos compartilhadas no mural, Modo Telão ao vivo com marca d\'água e galeria ativa por 7 dias.',
+  price: 0,
+  imageUrl: null,
+  currency: 'BRL',
+  devMode: false
+}
+
 let cachedPlans: CachedPlan[] = []
 
 export const getCachedPlans = (): CachedPlan[] => {
-  return cachedPlans
+  return [freeTrialPlan, ...cachedPlans]
 }
 
 export const getPlanByProductId = (productId: string): CachedPlan | undefined => {
+  if (productId === 'free_trial') return freeTrialPlan
   return cachedPlans.find((plan) => plan.abacateProductId === productId || plan.productId === productId)
 }
 

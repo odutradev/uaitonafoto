@@ -1,4 +1,4 @@
-export type PlanType = 'ONE_TIME' | 'SUBSCRIPTION' | 'UPSELL'
+export type PlanType = 'ONE_TIME' | 'SUBSCRIPTION' | 'UPSELL' | 'FREE'
 
 export interface PlanApiItem {
   abacateProductId: string

@@ -35,20 +35,149 @@ import {
 } from './styles'
 import type { PlansSectionProps } from './types'
 
+interface FormattedPlanCard {
+  id: string
+  badge?: string
+  tag: string
+  title: string
+  price: string
+  period: string
+  subBadge?: string
+  costPerEvent?: string
+  description: string
+  features: string[]
+  ctaText: string
+  ctaHref: string
+  highlighted: boolean
+}
+
+const formatPlanCard = (plan: PlanApiItem): FormattedPlanCard => {
+  const isFree = plan.type === 'FREE' || plan.price === 0
+  const isSubscription = plan.type === 'SUBSCRIPTION'
+  const isPro = plan.abacateProductId === 'prod_agency_pro'
+  const isEssential = plan.abacateProductId === 'prod_agency_essential'
+  const isPass = plan.abacateProductId === 'prod_b2c_event_pass'
+  const isFreeTrial = plan.abacateProductId === 'free_trial' || isFree
+
+  const priceDisplay = isFree
+    ? 'Grátis'
+    : (plan.price / 100).toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL',
+        maximumFractionDigits: 0
+      })
+
+  const periodDisplay = isFree
+    ? 'sem cartão'
+    : isSubscription
+      ? '/mês'
+      : 'pagamento único'
+
+  const tagDisplay = isFreeTrial
+    ? 'Degustação'
+    : isPass
+      ? 'Evento Único'
+      : isEssential
+        ? 'Cerimonialistas'
+        : isPro
+          ? 'Alta Demanda'
+          : isSubscription
+            ? 'Assinatura'
+            : 'Avulso'
+
+  const costPerEvent = isEssential
+    ? 'R$ 61,75 por evento (58% de economia)'
+    : isPro
+      ? 'R$ 44,70 por evento (70% de economia)'
+      : undefined
+
+  const subBadge = isFreeTrial
+    ? 'Até 25 fotos para testar'
+    : isPass
+      ? 'Fotos e convidados ilimitados'
+      : undefined
+
+  const features = isFreeTrial
+    ? [
+        'Até 25 fotos compartilhadas no mural',
+        'Modo Telão ao vivo com marca d\'água',
+        'Código QR pronto para os convidados',
+        'Mural no celular com curtidas em tempo real',
+        'Galeria ativa por 7 dias'
+      ]
+    : isPass
+      ? [
+          '1 evento completo com fotos ilimitadas',
+          'Convidados ilimitados sem precisar baixar aplicativo',
+          'Modo Telão ao vivo sem marcas d\'água',
+          'Moderação de fotos com senha de segurança',
+          'Baixe todas as fotos em alta resolução (.zip)',
+          'Galeria ativa por 90 dias'
+        ]
+      : isEssential
+        ? [
+            '4 eventos inclusos por mês',
+            'Sua própria marca no telão e no aplicativo',
+            'Link para seu WhatsApp ou Instagram no telão',
+            'Créditos acumulativos por 60 dias (contra baixa temporada)',
+            'Acesso de moderação com senha para sua equipe',
+            'Crédito extra avulso por R$ 69,00'
+          ]
+        : isPro
+          ? [
+              '10 eventos inclusos por mês',
+              'Sua marca em destaque para atrair novos clientes',
+              'Botão direto para seu WhatsApp no mural de fotos',
+              'Créditos acumulativos por 60 dias (até 20 eventos)',
+              'Painel de moderação para recepcionistas na festa',
+              'Crédito extra avulso por apenas R$ 49,00',
+              'Suporte prioritário via WhatsApp'
+            ]
+          : [`${plan.credits} eventos inclusos`, plan.description]
+
+  const ctaText = isFreeTrial
+    ? 'Começar grátis'
+    : isPass
+      ? 'Criar meu evento'
+      : isEssential
+        ? 'Assinar Essencial'
+        : isPro
+          ? 'Assinar Agência Pro'
+          : 'Escolher plano'
+
+  return {
+    id: plan.abacateProductId || plan.productId || plan.name,
+    badge: isPro ? 'Mais Escolhido' : undefined,
+    tag: tagDisplay,
+    title: plan.name,
+    price: priceDisplay,
+    period: periodDisplay,
+    subBadge,
+    costPerEvent,
+    description: plan.description,
+    features,
+    ctaText,
+    ctaHref: '/signup',
+    highlighted: isPro
+  }
+}
+
 export const Plans = ({ data, isDark }: PlansSectionProps) => {
-  const [livePlans, setLivePlans] = useState<PlanApiItem[]>([])
+  const [plans, setPlans] = useState<PlanApiItem[] | null>(null)
 
   useEffect(() => {
     let isMounted = true
 
     getPlans()
-      .then((plans) => {
-        if (isMounted && Array.isArray(plans)) {
-          setLivePlans(plans)
+      .then((items) => {
+        if (isMounted && Array.isArray(items)) {
+          setPlans(items)
         }
       })
       .catch(() => {
-        // Usa os dados estáticos definidos em data.ts caso a API esteja indisponível
+        if (isMounted) {
+          setPlans([])
+        }
       })
 
     return () => {
@@ -56,21 +185,19 @@ export const Plans = ({ data, isDark }: PlansSectionProps) => {
     }
   }, [])
 
-  const resolvePrice = (planId: string, defaultPrice: string): string => {
-    if (planId === 'free_trial' || !planId) return defaultPrice
+  if (!plans || plans.length === 0) {
+    return null
+  }
 
-    const live = livePlans.find(
-      (p) => p.abacateProductId === planId || p.productId === planId
-    )
-    if (live?.price) {
-      const formatted = (live.price / 100).toLocaleString('pt-BR', {
-        style: 'currency',
-        currency: 'BRL',
-        maximumFractionDigits: 0
-      })
-      return formatted
-    }
-    return defaultPrice
+  const upsell = plans.find(
+    (p) => p.type === 'UPSELL' || p.abacateProductId === 'prod_b2c_upsell_year'
+  )
+  const displayPlans = plans.filter(
+    (p) => p.type !== 'UPSELL' && p.abacateProductId !== 'prod_agency_extra_credit'
+  )
+
+  if (displayPlans.length === 0) {
+    return null
   }
 
   return (
@@ -90,15 +217,14 @@ export const Plans = ({ data, isDark }: PlansSectionProps) => {
         </Stack>
 
         <Box sx={plansGridStyles}>
-          {data.plans.map((plan) => {
-            const isHighlighted = !!plan.highlighted
-            const priceDisplay = resolvePrice(plan.abacateProductId, plan.price)
+          {displayPlans.map((planItem) => {
+            const plan = formatPlanCard(planItem)
 
             return (
               <Card
                 key={plan.id}
                 elevation={0}
-                sx={getPlanCardStyles(isHighlighted, isDark)}
+                sx={getPlanCardStyles(plan.highlighted, isDark)}
               >
                 {plan.badge && <Box sx={popularBadgeStyles}>{plan.badge}</Box>}
 
@@ -109,7 +235,7 @@ export const Plans = ({ data, isDark }: PlansSectionProps) => {
 
                 <Box sx={priceContainerStyles}>
                   <Typography component="span" sx={priceTextStyles}>
-                    {priceDisplay}
+                    {plan.price}
                   </Typography>
                   <Typography component="span" sx={periodTextStyles}>
                     {plan.period}
@@ -141,9 +267,9 @@ export const Plans = ({ data, isDark }: PlansSectionProps) => {
 
                 <Button
                   component={RouterLink}
-                  to={plan.cta.href}
-                  variant={isHighlighted ? 'contained' : 'outlined'}
-                  color={isHighlighted ? 'primary' : 'inherit'}
+                  to={plan.ctaHref}
+                  variant={plan.highlighted ? 'contained' : 'outlined'}
+                  color={plan.highlighted ? 'primary' : 'inherit'}
                   fullWidth
                   size="large"
                   endIcon={<ArrowForwardIcon />}
@@ -153,14 +279,14 @@ export const Plans = ({ data, isDark }: PlansSectionProps) => {
                     fontWeight: 700
                   }}
                 >
-                  {plan.cta.text}
+                  {plan.ctaText}
                 </Button>
               </Card>
             )
           })}
         </Box>
 
-        {data.upsell && (
+        {upsell && (
           <Box sx={upsellCardStyles(isDark)}>
             <Stack direction="row" spacing={2} alignItems="center">
               <Box
@@ -189,17 +315,17 @@ export const Plans = ({ data, isDark }: PlansSectionProps) => {
                       color: 'primary.main'
                     }}
                   >
-                    {data.upsell.badge}
+                    Complemento Exclusivo
                   </Typography>
                   <Typography variant="body2" sx={{ fontWeight: 800, color: 'text.primary' }}>
-                    • {data.upsell.price}
+                    • + {(upsell.price / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                   </Typography>
                 </Stack>
                 <Typography variant="h6" sx={{ fontSize: '1.05rem', color: 'text.primary' }}>
-                  {data.upsell.title}
+                  {upsell.name}
                 </Typography>
                 <Typography variant="body2" sx={{ color: 'text.secondary', maxWidth: 700 }}>
-                  {data.upsell.description}
+                  {upsell.description}
                 </Typography>
               </Box>
             </Stack>
@@ -228,4 +354,3 @@ export const Plans = ({ data, isDark }: PlansSectionProps) => {
 }
 
 export default Plans
-

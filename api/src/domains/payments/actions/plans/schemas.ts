@@ -3,7 +3,7 @@ import { z } from 'zod'
 
 extendZodWithOpenApi(z)
 
-export const planTypeSchema = z.enum(['ONE_TIME', 'SUBSCRIPTION', 'UPSELL']).openapi({
+export const planTypeSchema = z.enum(['ONE_TIME', 'SUBSCRIPTION', 'UPSELL', 'FREE']).openapi({
   description: 'Tipo de recorrência, cobrança ou adicional do produto',
   example: 'UPSELL'
 })
