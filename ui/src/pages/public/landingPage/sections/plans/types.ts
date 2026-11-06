@@ -33,7 +33,7 @@ export interface PlansSectionProps {
     subtitle: string
   }
   plans: PlanCardData[]
-  upsell?: UpsellBannerData
+  upsell?: UpsellBannerData | null
   isDark: boolean
   isLoading?: boolean
   onSelectPlan?: (plan: PlanCardData) => void

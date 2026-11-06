@@ -113,7 +113,7 @@ export const Plans = ({
 
               <Button
                 component={RouterLink}
-                to={plan.ctaHref}
+                to={`/signin?planId=${encodeURIComponent(plan.ctaHref)}`}
                 onClick={() => onSelectPlan?.(plan)}
                 variant={plan.highlighted ? 'contained' : 'outlined'}
                 color={plan.highlighted ? 'primary' : 'inherit'}
@@ -183,7 +183,7 @@ export const Plans = ({
 
             <Button
               component={RouterLink}
-              to={upsell.ctaHref}
+              to={`/signin?planId=${encodeURIComponent(upsell.ctaHref)}`}
               onClick={() => onSelectUpsell?.(upsell)}
               variant="outlined"
               size="medium"

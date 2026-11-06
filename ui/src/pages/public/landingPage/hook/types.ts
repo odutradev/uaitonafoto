@@ -4,7 +4,7 @@ import type { PlanCardData, UpsellBannerData } from '../sections/plans/types'
 export interface UseLandingPageReturn {
   isDark: boolean
   plans: PlanCardData[]
-  upsell: UpsellBannerData
+  upsell: UpsellBannerData | null
   isLoadingPlans: boolean
   data: LandingPageData
   onSelectPlan: (plan: PlanCardData) => void

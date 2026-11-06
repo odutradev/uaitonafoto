@@ -6,7 +6,7 @@ import { trackEvent } from '@actions/auth/firebase'
 import type { PlanApiItem } from '@actions/payments/types'
 
 import landingPageData from '../data'
-import { mergePlansWithApi, mergeUpsellWithApi } from '../sections/plans/utils'
+import { formatPlanCard, formatUpsellBanner } from '../sections/plans/utils'
 import type { PlanCardData, UpsellBannerData } from '../sections/plans/types'
 import type { UseLandingPageReturn } from './types'
 
@@ -15,8 +15,8 @@ export const useLandingPage = (): UseLandingPageReturn => {
   const isDark = theme.palette.mode === 'dark'
 
   const [isLoadingPlans, setIsLoadingPlans] = useState(true)
-  const [plans, setPlans] = useState<PlanCardData[]>(landingPageData.plans.plans)
-  const [upsell, setUpsell] = useState<UpsellBannerData>(landingPageData.plans.upsell)
+  const [plans, setPlans] = useState<PlanCardData[]>([])
+  const [upsell, setUpsell] = useState<UpsellBannerData | null>(null)
 
   useEffect(() => {
     let isMounted = true
@@ -25,11 +25,24 @@ export const useLandingPage = (): UseLandingPageReturn => {
       .then((items: PlanApiItem[]) => {
         if (!isMounted) return
         if (Array.isArray(items) && items.length > 0) {
-          setPlans(mergePlansWithApi(landingPageData.plans.plans, items))
-          setUpsell(mergeUpsellWithApi(landingPageData.plans.upsell, items))
+          const displayPlans = items
+            .filter((p) => p.type !== 'UPSELL' && p.abacateProductId !== 'prod_agency_extra_credit')
+            .map(formatPlanCard)
+
+          const upsellItem = items.find(
+            (p) => p.type === 'UPSELL' || p.abacateProductId === 'prod_b2c_upsell_year'
+          )
+
+          setPlans(displayPlans)
+          setUpsell(upsellItem ? formatUpsellBanner(upsellItem) : null)
         }
       })
-      .catch(() => {})
+      .catch(() => {
+        if (isMounted) {
+          setPlans([])
+          setUpsell(null)
+        }
+      })
       .finally(() => {
         if (isMounted) {
           setIsLoadingPlans(false)

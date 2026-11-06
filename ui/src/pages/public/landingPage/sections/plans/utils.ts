@@ -10,47 +10,40 @@ export const formatPriceInBrl = (priceInCents: number): string => {
   })
 }
 
-export const mergePlansWithApi = (
-  staticPlans: PlanCardData[],
-  apiPlans: PlanApiItem[]
-): PlanCardData[] => {
-  if (!apiPlans || apiPlans.length === 0) return staticPlans
-
-  return staticPlans.map((plan) => {
-    const apiMatch = apiPlans.find(
-      (apiItem) =>
-        apiItem.abacateProductId === plan.abacateProductId ||
-        apiItem.productId === plan.abacateProductId ||
-        apiItem.name.toLowerCase() === plan.title.toLowerCase()
-    )
-
-    if (!apiMatch) return plan
-
-    return {
-      ...plan,
-      title: apiMatch.name || plan.title,
-      price: formatPriceInBrl(apiMatch.price)
-    }
-  })
-}
-
-export const mergeUpsellWithApi = (
-  staticUpsell: UpsellBannerData,
-  apiPlans: PlanApiItem[]
-): UpsellBannerData => {
-  if (!apiPlans || apiPlans.length === 0) return staticUpsell
-
-  const apiMatch = apiPlans.find(
-    (apiItem) =>
-      apiItem.type === 'UPSELL' ||
-      apiItem.abacateProductId === staticUpsell.abacateProductId
-  )
-
-  if (!apiMatch) return staticUpsell
+export const formatPlanCard = (item: PlanApiItem): PlanCardData => {
+  const period =
+    item.period ||
+    (item.type === 'SUBSCRIPTION'
+      ? '/mês'
+      : item.type === 'FREE'
+        ? 'sem cartão'
+        : 'pagamento único')
 
   return {
-    ...staticUpsell,
-    title: apiMatch.name || staticUpsell.title,
-    price: `+ ${(apiMatch.price / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`
+    id: item.id || item.abacateProductId,
+    abacateProductId: item.abacateProductId,
+    tag: item.tag || '',
+    badge: item.badge,
+    title: item.title || item.name,
+    price: formatPriceInBrl(item.price),
+    period,
+    subBadge: item.subBadge,
+    costPerEvent: item.costPerEvent,
+    description: item.description,
+    features: item.features || [],
+    ctaText: item.ctaText || 'Escolher Plano',
+    ctaHref: item.ctaHref || item.id || item.abacateProductId,
+    highlighted: Boolean(item.highlighted)
   }
 }
+
+export const formatUpsellBanner = (item: PlanApiItem): UpsellBannerData => ({
+  id: item.id || item.abacateProductId,
+  abacateProductId: item.abacateProductId,
+  badge: item.badge || 'Complemento Exclusivo',
+  title: item.title || item.name,
+  price: `+ ${(item.price / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`,
+  description: item.description,
+  ctaText: item.ctaText || 'Adicionar ao pedido',
+  ctaHref: item.ctaHref || item.id || item.abacateProductId
+})
