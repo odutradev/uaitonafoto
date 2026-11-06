@@ -1,16 +1,6 @@
 import { Box } from '@mui/material'
-import { useTheme } from '@mui/material/styles'
 
-import {
-  finalCtaData,
-  footerData,
-  guestFeedData,
-  headerData,
-  heroData,
-  howItWorksData,
-  liveWallData,
-  plansData
-} from './data'
+import useLandingPage from './hook'
 import FinalCta from './sections/finalCta'
 import Hero from './sections/hero'
 import HowItWorks from './sections/howItWorks'
@@ -20,8 +10,7 @@ import { Footer } from './subcomponents/footer'
 import { Navbar } from './subcomponents/navbar'
 
 const LandingPage = () => {
-  const theme = useTheme()
-  const isDark = theme.palette.mode === 'dark'
+  const { isDark, plans, upsell, isLoadingPlans, data } = useLandingPage()
 
   return (
     <Box
@@ -34,17 +23,23 @@ const LandingPage = () => {
         width: '100%'
       }}
     >
-      <Navbar data={headerData} isDark={isDark} />
-      <Hero data={heroData} isDark={isDark} />
-      <HowItWorks data={howItWorksData} isDark={isDark} />
+      <Navbar data={data.header} isDark={isDark} />
+      <Hero data={data.hero} isDark={isDark} />
+      <HowItWorks data={data.howItWorks} isDark={isDark} />
       <InteractiveDemo
-        liveWallData={liveWallData}
-        guestFeedData={guestFeedData}
+        liveWallData={data.liveWall}
+        guestFeedData={data.guestFeed}
         isDark={isDark}
       />
-      <Plans data={plansData} isDark={isDark} />
-      <FinalCta data={finalCtaData} isDark={isDark} />
-      <Footer data={footerData} />
+      <Plans
+        data={data.plans}
+        plans={plans}
+        upsell={upsell}
+        isDark={isDark}
+        isLoading={isLoadingPlans}
+      />
+      <FinalCta data={data.finalCta} isDark={isDark} />
+      <Footer data={data.footer} />
     </Box>
   )
 }

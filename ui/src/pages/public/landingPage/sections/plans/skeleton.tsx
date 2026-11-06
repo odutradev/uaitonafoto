@@ -13,9 +13,16 @@ import {
   tagBadgeStyles,
   upsellCardStyles
 } from './styles'
-import type { PlansSectionProps } from './types'
+export interface PlansSkeletonProps {
+  data: {
+    tag: string
+    title: string
+    subtitle: string
+  }
+  isDark: boolean
+}
 
-export const PlansSkeleton = ({ data, isDark }: PlansSectionProps) => {
+export const PlansSkeleton = ({ data, isDark }: PlansSkeletonProps) => {
   return (
     <Box id="planos" component="section" sx={getSectionBoxStyles(isDark)}>
       <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3 } }}>
