@@ -11,6 +11,11 @@ export const plansConfig: PlanConfig[] = [
     credits: 1
   },
   {
+    abacateProductId: 'prod_b2c_upsell_year',
+    type: 'ONE_TIME',
+    credits: 0
+  },
+  {
     abacateProductId: 'prod_agency_essential',
     type: 'SUBSCRIPTION',
     credits: 4
@@ -46,7 +51,11 @@ export const syncPlansCache = async (client: AbacatePayClient): Promise<CachedPl
             ? { id: plan.abacateProductId }
             : { externalId: plan.abacateProductId }
 
-          const response = await client.products.get(query)
+          let response = await client.products.get(query)
+
+          if ((response.error || !response.data) && plan.abacateProductId.startsWith('prod_')) {
+            response = await client.products.get({ externalId: plan.abacateProductId })
+          }
 
           if (response.error || !response.data) {
             logger.warn(
