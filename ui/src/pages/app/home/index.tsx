@@ -1,8 +1,11 @@
 import { Box, Container } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
+import { useEffect } from 'react'
 import { toast } from 'react-toastify'
 
+import { getMeData } from '@actions/auth'
 import useAuth from '@hooks/useAuth'
+import useAuthStore from '@stores/auth'
 
 import Events from './sections/events'
 import Plans from './sections/plans'
@@ -15,7 +18,12 @@ const Home = () => {
   const theme = useTheme()
   const isDark = theme.palette.mode === 'dark'
   const { user, logout } = useAuth()
+  const updateUser = useAuthStore((state) => state.updateUser)
   const { plans, isLoadingPlans, checkoutPlanId, startCheckout } = useCheckout()
+
+  useEffect(() => {
+    getMeData().then(updateUser).catch(() => undefined)
+  }, [updateUser])
 
   if (!user) return null
 
