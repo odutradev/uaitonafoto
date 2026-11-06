@@ -202,7 +202,7 @@ export const Plans = ({ data, isDark }: PlansSectionProps) => {
 
   return (
     <Box id="planos" component="section" sx={getSectionBoxStyles(isDark)}>
-      <Container maxWidth="xl" sx={{ px: { xs: 2, sm: 3 } }}>
+      <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3 } }}>
         <Stack spacing={1.75} sx={sectionHeaderStyles}>
           <Box sx={tagBadgeStyles}>
             <BoltIcon sx={{ fontSize: 16, color: 'primary.main' }} />
@@ -288,7 +288,12 @@ export const Plans = ({ data, isDark }: PlansSectionProps) => {
 
         {upsell && (
           <Box sx={upsellCardStyles(isDark)}>
-            <Stack direction="row" spacing={2} alignItems="center">
+            <Stack
+              direction={{ xs: 'column', sm: 'row' }}
+              spacing={2}
+              alignItems={{ xs: 'flex-start', sm: 'center' }}
+              sx={{ minWidth: 0, flex: 1 }}
+            >
               <Box
                 sx={{
                   width: 48,
@@ -304,8 +309,8 @@ export const Plans = ({ data, isDark }: PlansSectionProps) => {
               >
                 <AutoAwesomeIcon />
               </Box>
-              <Box>
-                <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 0.5 }}>
+              <Box sx={{ minWidth: 0, flex: 1 }}>
+                <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap" sx={{ mb: 0.5 }}>
                   <Typography
                     variant="caption"
                     sx={{

@@ -56,7 +56,7 @@ export const plansGridStyles: SxProps<Theme> = {
     sm: 'repeat(2, 1fr)',
     lg: 'repeat(4, 1fr)'
   },
-  gap: { xs: 3.5, sm: 3, lg: 2.5 },
+  gap: { xs: 3, sm: 2.5, lg: 2 },
   alignItems: 'stretch',
   width: '100%',
   pt: { xs: 3, sm: 3.5 },
