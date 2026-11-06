@@ -7,6 +7,8 @@ export interface AuthUser {
   name: string
   role: string
   id: string
+  freeCredits: number
+  paidCredits: number
 }
 
 export interface AuthStoreData {

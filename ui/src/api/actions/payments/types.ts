@@ -25,3 +25,9 @@ export interface PlanApiItem {
   devMode?: boolean
 }
 
+
+export interface CheckoutResponse {
+  transactionId: string
+  checkoutId: string
+  checkoutUrl: string
+}
