@@ -7,6 +7,7 @@ export interface PlanConfig {
 }
 
 export interface CachedPlan extends PlanConfig {
+  productId?: string
   name: string
   description: string
   price: number

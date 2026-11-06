@@ -39,7 +39,7 @@ export const getCachedPlans = (): CachedPlan[] => {
 }
 
 export const getPlanByProductId = (productId: string): CachedPlan | undefined => {
-  return cachedPlans.find((plan) => plan.abacateProductId === productId)
+  return cachedPlans.find((plan) => plan.abacateProductId === productId || plan.productId === productId)
 }
 
 export const syncPlansCache = async (client: AbacatePayClient): Promise<CachedPlan[]> => {
@@ -68,6 +68,7 @@ export const syncPlansCache = async (client: AbacatePayClient): Promise<CachedPl
 
           return {
             abacateProductId: plan.abacateProductId,
+            productId: product.id,
             type: plan.type,
             credits: plan.credits,
             name: product.name,

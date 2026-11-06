@@ -8,6 +8,7 @@ import { resolveAppVersion } from '@config/version'
 import { registerDomains } from '@config/domain'
 import usersDomain from '@domains/users'
 import systemDomain from '@domains/system'
+import paymentsDomain from '@domains/payments'
 import { connectDatabase, disconnectDatabase } from '@database'
 import { connectEmail } from '@email'
 import { connectFirebase } from '@firebase'
@@ -65,7 +66,7 @@ const setupGracefulShutdown = (server: Server): void => {
 
 const startServer = async (): Promise<void> => {
   const version = resolveAppVersion()
-  registerDomains([usersDomain, systemDomain])
+  registerDomains([usersDomain, systemDomain, paymentsDomain])
 
   const app = buildApp()
   const port = env.PORT
