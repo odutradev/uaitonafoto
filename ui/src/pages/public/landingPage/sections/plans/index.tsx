@@ -37,7 +37,9 @@ export const Plans = ({
   plans,
   upsell,
   isDark,
-  isLoading = false
+  isLoading = false,
+  onSelectPlan,
+  onSelectUpsell
 }: PlansSectionProps) => {
   if (isLoading) {
     return <PlansSkeleton data={data} isDark={isDark} />
@@ -112,6 +114,7 @@ export const Plans = ({
               <Button
                 component={RouterLink}
                 to={plan.ctaHref}
+                onClick={() => onSelectPlan?.(plan)}
                 variant={plan.highlighted ? 'contained' : 'outlined'}
                 color={plan.highlighted ? 'primary' : 'inherit'}
                 fullWidth
@@ -181,6 +184,7 @@ export const Plans = ({
             <Button
               component={RouterLink}
               to={upsell.ctaHref}
+              onClick={() => onSelectUpsell?.(upsell)}
               variant="outlined"
               size="medium"
               sx={{

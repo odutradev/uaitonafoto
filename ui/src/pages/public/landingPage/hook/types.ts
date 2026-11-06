@@ -7,4 +7,6 @@ export interface UseLandingPageReturn {
   upsell: UpsellBannerData
   isLoadingPlans: boolean
   data: LandingPageData
+  onSelectPlan: (plan: PlanCardData) => void
+  onSelectUpsell: (upsell: UpsellBannerData) => void
 }

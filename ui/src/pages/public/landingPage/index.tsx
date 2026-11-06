@@ -10,7 +10,15 @@ import { Footer } from './subcomponents/footer'
 import { Navbar } from './subcomponents/navbar'
 
 const LandingPage = () => {
-  const { isDark, plans, upsell, isLoadingPlans, data } = useLandingPage()
+  const {
+    isDark,
+    plans,
+    upsell,
+    isLoadingPlans,
+    data,
+    onSelectPlan,
+    onSelectUpsell
+  } = useLandingPage()
 
   return (
     <Box
@@ -37,6 +45,8 @@ const LandingPage = () => {
         upsell={upsell}
         isDark={isDark}
         isLoading={isLoadingPlans}
+        onSelectPlan={onSelectPlan}
+        onSelectUpsell={onSelectUpsell}
       />
       <FinalCta data={data.finalCta} isDark={isDark} />
       <Footer data={data.footer} />

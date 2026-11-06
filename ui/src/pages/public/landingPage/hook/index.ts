@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useTheme } from '@mui/material/styles'
 
 import { getPlans } from '@actions/payments'
+import { trackEvent } from '@actions/auth/firebase'
 import type { PlanApiItem } from '@actions/payments/types'
 
 import landingPageData from '../data'
@@ -40,12 +41,45 @@ export const useLandingPage = (): UseLandingPageReturn => {
     }
   }, [])
 
+  useEffect(() => {
+    if (!isLoadingPlans && plans.length > 0) {
+      trackEvent('view_item_list', {
+        item_list_name: 'landing_plans',
+        items: plans.map((p) => ({
+          item_id: p.abacateProductId || p.id,
+          item_name: p.title,
+          price: p.price
+        }))
+      })
+    }
+  }, [isLoadingPlans, plans])
+
+  const onSelectPlan = (plan: PlanCardData) => {
+    trackEvent('select_item', {
+      item_list_name: 'landing_plans',
+      item_id: plan.abacateProductId || plan.id,
+      item_name: plan.title,
+      price: plan.price
+    })
+  }
+
+  const onSelectUpsell = (upsellItem: UpsellBannerData) => {
+    trackEvent('select_item', {
+      item_list_name: 'landing_plans_upsell',
+      item_id: upsellItem.abacateProductId || upsellItem.id,
+      item_name: upsellItem.title,
+      price: upsellItem.price
+    })
+  }
+
   return {
     isDark,
     plans,
     upsell,
     isLoadingPlans,
-    data: landingPageData
+    data: landingPageData,
+    onSelectPlan,
+    onSelectUpsell
   }
 }
 

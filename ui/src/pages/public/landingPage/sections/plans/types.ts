@@ -36,4 +36,6 @@ export interface PlansSectionProps {
   upsell?: UpsellBannerData
   isDark: boolean
   isLoading?: boolean
+  onSelectPlan?: (plan: PlanCardData) => void
+  onSelectUpsell?: (upsell: UpsellBannerData) => void
 }

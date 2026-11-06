@@ -1,9 +1,11 @@
 import { initializeApp, getApps } from 'firebase/app'
 import { getAuth } from 'firebase/auth'
 import { getStorage } from 'firebase/storage'
+import { getAnalytics, isSupported, logEvent } from 'firebase/analytics'
 
 import type { Auth } from 'firebase/auth'
 import type { FirebaseStorage } from 'firebase/storage'
+import type { Analytics } from 'firebase/analytics'
 
 const firebaseConfig = {
   messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
@@ -24,12 +26,21 @@ export const isFirebaseConfigured = Boolean(
 
 let authInstance: Auth | null = null
 let storageInstance: FirebaseStorage | null = null
+let analyticsInstance: Analytics | null = null
 
 if (isFirebaseConfigured) {
   try {
     const app = getApps().length > 0 ? getApps()[0] : initializeApp(firebaseConfig)
     authInstance = getAuth(app)
     storageInstance = getStorage(app)
+
+    if (typeof window !== 'undefined' && firebaseConfig.measurementId) {
+      isSupported().then((supported) => {
+        if (supported) {
+          analyticsInstance = getAnalytics(app)
+        }
+      }).catch(() => {})
+    }
   } catch (error) {
     console.warn('[Firebase] Falha ao inicializar com as credenciais:', error)
   }
@@ -39,3 +50,14 @@ if (isFirebaseConfigured) {
 
 export const firebaseAuth = authInstance
 export const firebaseStorage = storageInstance
+export const firebaseAnalytics = analyticsInstance
+
+export const trackEvent = (eventName: string, params?: Record<string, unknown>) => {
+  if (analyticsInstance) {
+    try {
+      logEvent(analyticsInstance, eventName, params)
+    } catch {
+      // Ignora bloqueadores de tracking
+    }
+  }
+}
