@@ -11,6 +11,7 @@ import { Link as RouterLink } from 'react-router-dom'
 import { getPlans } from '@actions/payments'
 import type { PlanApiItem } from '@actions/payments/types'
 
+import PlansSkeleton from './skeleton'
 import {
   checkIconStyles,
   costPerEventBadgeStyles,
@@ -185,7 +186,11 @@ export const Plans = ({ data, isDark }: PlansSectionProps) => {
     }
   }, [])
 
-  if (!plans || plans.length === 0) {
+  if (plans === null) {
+    return <PlansSkeleton data={data} isDark={isDark} />
+  }
+
+  if (plans.length === 0) {
     return null
   }
 
