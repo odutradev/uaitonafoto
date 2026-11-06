@@ -1,3 +1,5 @@
+import { isProduction } from './default'
+
 declare global {
   interface Window {
     clarity?: (...args: unknown[]) => void
@@ -5,6 +7,8 @@ declare global {
 }
 
 export const initClarity = (): void => {
+  if (!isProduction) return
+
   const clarityId = import.meta.env.VITE_CLARITY_PROJECT_ID
   if (!clarityId || typeof window === 'undefined') return
 

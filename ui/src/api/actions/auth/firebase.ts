@@ -3,6 +3,8 @@ import { getAuth } from 'firebase/auth'
 import { getStorage } from 'firebase/storage'
 import { getAnalytics, isSupported, logEvent } from 'firebase/analytics'
 
+import { isProduction } from '@config/default'
+
 import type { Auth } from 'firebase/auth'
 import type { FirebaseStorage } from 'firebase/storage'
 import type { Analytics } from 'firebase/analytics'
@@ -34,7 +36,7 @@ if (isFirebaseConfigured) {
     authInstance = getAuth(app)
     storageInstance = getStorage(app)
 
-    if (typeof window !== 'undefined' && firebaseConfig.measurementId) {
+    if (isProduction && typeof window !== 'undefined' && firebaseConfig.measurementId) {
       isSupported().then((supported) => {
         if (supported) {
           analyticsInstance = getAnalytics(app)
@@ -53,7 +55,7 @@ export const firebaseStorage = storageInstance
 export const firebaseAnalytics = analyticsInstance
 
 export const trackEvent = (eventName: string, params?: Record<string, unknown>) => {
-  if (analyticsInstance) {
+  if (isProduction && analyticsInstance) {
     try {
       logEvent(analyticsInstance, eventName, params)
     } catch {
