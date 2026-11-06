@@ -2,7 +2,7 @@ import { ProductCycle } from '@abacatepay/types/v2'
 import type { AbacatePayClient } from '@payment'
 import createLogger from '@utils/logger'
 
-const logger = createLogger('seed:plans')
+const logger = createLogger('payment:seed:plans')
 
 export interface SeedProduct {
   externalId: string
@@ -90,4 +90,3 @@ export const seedPlans = async (client: AbacatePayClient): Promise<void> => {
 
   logger.success('[seedPlans] Plans seed completed.')
 }
-

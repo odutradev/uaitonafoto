@@ -4,3 +4,4 @@ export interface PlansSectionProps {
   data: PlansSectionData
   isDark: boolean
 }
+

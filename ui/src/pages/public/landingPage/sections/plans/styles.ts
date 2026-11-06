@@ -185,3 +185,4 @@ export const upsellCardStyles = (isDark: boolean): SxProps<Theme> => ({
   justifyContent: 'space-between',
   gap: 2.5
 })
+

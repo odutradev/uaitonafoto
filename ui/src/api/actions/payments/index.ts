@@ -7,3 +7,4 @@ export const getPlans = async (): Promise<PlanApiItem[]> => {
 }
 
 export * from './types'
+

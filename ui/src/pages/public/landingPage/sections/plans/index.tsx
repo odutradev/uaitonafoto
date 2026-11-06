@@ -213,3 +213,4 @@ export const Plans = ({ data, isDark }: PlansSectionProps) => {
 }
 
 export default Plans
+
