@@ -12,6 +12,8 @@ export const userSchema = z.object({
   phone: z.string().optional().openapi({ example: '31999999999' }),
   photoUrl: z.string().optional().openapi({ example: 'https://uaitonafoto.odutra.com/photo.webp' }),
   authProviderId: z.string().optional().openapi({ example: 'google.com' }),
+  freeCredits: z.number().openapi({ example: 1 }),
+  paidCredits: z.number().openapi({ example: 4 }),
   createdAt: z.string().openapi({ example: '2026-01-01T00:00:00.000Z' }),
   updatedAt: z.string().openapi({ example: '2026-01-01T00:00:00.000Z' })
 }).openapi('UserResponse')

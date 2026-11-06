@@ -1,6 +1,6 @@
 import { removeUndefined } from '@utils/object'
 import UserModel from './model'
-import type { UpdateUserPayload, UpsertUserPayload, UserEntity } from './types'
+import type { CreditType, UpdateUserPayload, UpsertUserPayload, UserEntity } from './types'
 
 const toUserEntity = (doc: any): UserEntity => ({
   id: String(doc._id || doc.id),
@@ -11,6 +11,8 @@ const toUserEntity = (doc: any): UserEntity => ({
   phone: doc.phone,
   photoUrl: doc.photoUrl ?? '',
   authProviderId: doc.authProviderId,
+  freeCredits: doc.freeCredits ?? 0,
+  paidCredits: doc.paidCredits ?? 0,
   createdAt: doc.createdAt,
   updatedAt: doc.updatedAt
 })
@@ -68,6 +70,19 @@ export const userRepository = {
     const doc = await UserModel.findByIdAndUpdate(
       id,
       { $set: updateData },
+      { new: true, lean: true }
+    )
+
+    if (!doc) return null
+    return toUserEntity(doc)
+  },
+
+  addCredits: async (id: string, type: CreditType, amount: number): Promise<UserEntity | null> => {
+    const field = type === 'free' ? 'freeCredits' : 'paidCredits'
+
+    const doc = await UserModel.findByIdAndUpdate(
+      id,
+      { $inc: { [field]: amount }, $set: { updatedAt: new Date().toISOString() } },
       { new: true, lean: true }
     )
 

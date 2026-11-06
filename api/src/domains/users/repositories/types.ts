@@ -9,9 +9,13 @@ export interface UserEntity {
   phone?: string
   photoUrl?: string
   authProviderId?: string
+  freeCredits: number
+  paidCredits: number
   createdAt: string
   updatedAt: string
 }
+
+export type CreditType = 'free' | 'paid'
 
 export interface UpsertUserPayload {
   name: string

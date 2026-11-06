@@ -10,6 +10,8 @@ export interface UserDocument {
   phone?: string
   photoUrl?: string
   authProviderId?: string
+  freeCredits: number
+  paidCredits: number
   createdAt: string
   updatedAt: string
 }
@@ -24,6 +26,8 @@ const userSchema = new Schema<UserDocument>(
     phone: { type: String },
     photoUrl: { type: String, default: '' },
     authProviderId: { type: String, default: 'google' },
+    freeCredits: { type: Number, default: 0, min: 0 },
+    paidCredits: { type: Number, default: 0, min: 0 },
     createdAt: { type: String, default: () => new Date().toISOString() },
     updatedAt: { type: String, default: () => new Date().toISOString() }
   },
