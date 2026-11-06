@@ -238,6 +238,19 @@ export const getAppTheme = (mode: 'light' | 'dark'): Theme => {
             }
           }
         }
+      },
+      MuiSkeleton: {
+        styleOverrides: {
+          root: {
+            backgroundColor: isLight ? 'rgba(255, 207, 31, 0.22)' : 'rgba(255, 207, 31, 0.14)',
+            borderRadius: 8,
+            '&::after': {
+              background: isLight
+                ? 'linear-gradient(90deg, transparent, rgba(255, 207, 31, 0.45), transparent)'
+                : 'linear-gradient(90deg, transparent, rgba(255, 207, 31, 0.3), transparent)'
+            }
+          }
+        }
       }
     }
   })

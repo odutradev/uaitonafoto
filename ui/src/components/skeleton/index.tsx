@@ -7,6 +7,7 @@ import type { SkeletonProps } from './types'
 export const Skeleton = ({
   variant = 'rounded',
   animation = 'wave',
+  color = 'primary',
   borderRadius,
   sx,
   ...rest
@@ -19,7 +20,7 @@ export const Skeleton = ({
       variant={variant}
       animation={animation}
       sx={[
-        getSkeletonStyles(isDark, borderRadius),
+        getSkeletonStyles(isDark, borderRadius, color),
         ...(Array.isArray(sx) ? sx : [sx])
       ]}
       {...rest}
@@ -29,3 +30,4 @@ export const Skeleton = ({
 
 export default Skeleton
 export * from './types'
+
