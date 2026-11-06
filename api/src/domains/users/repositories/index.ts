@@ -48,6 +48,7 @@ export const userRepository = {
       id,
       {
         $set: updateData,
+        $max: { freeCredits: 0, paidCredits: 0 },
         $setOnInsert: {
           _id: id,
           role: 'user',
