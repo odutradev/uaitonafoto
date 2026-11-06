@@ -8,12 +8,14 @@ import {
   headerData,
   heroData,
   howItWorksData,
-  liveWallData
+  liveWallData,
+  plansData
 } from './data'
 import FinalCta from './sections/finalCta'
 import Hero from './sections/hero'
 import HowItWorks from './sections/howItWorks'
 import InteractiveDemo from './sections/interactiveDemo'
+import Plans from './sections/plans'
 import { Footer } from './subcomponents/footer'
 import { Navbar } from './subcomponents/navbar'
 
@@ -40,6 +42,7 @@ const LandingPage = () => {
         guestFeedData={guestFeedData}
         isDark={isDark}
       />
+      <Plans data={plansData} isDark={isDark} />
       <FinalCta data={finalCtaData} isDark={isDark} />
       <Footer data={footerData} />
     </Box>
