@@ -1,11 +1,23 @@
+import dns from 'node:dns'
 import mongoose from 'mongoose'
 import env from '@config/env'
 import createLogger from '@utils/logger'
 
 const logger = createLogger('database')
 
+const configureDnsServers = (): void => {
+  const servers = dns.getServers()
+  const isLoopbackOnly = servers.length === 0 || servers.every((server) => server === '127.0.0.1' || server === '::1')
+
+  if (isLoopbackOnly) {
+    dns.setServers(['8.8.8.8', '1.1.1.1'])
+  }
+}
+
 export const connectDatabase = async (): Promise<typeof mongoose | undefined> => {
   try {
+    configureDnsServers()
+
     const instance = await mongoose.connect(env.MONGODB_URI, {
       dbName: env.MONGODB_DB_NAME
     })
