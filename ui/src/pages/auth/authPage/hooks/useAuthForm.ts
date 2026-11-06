@@ -64,6 +64,15 @@ export const useAuthForm = (options?: UseAuthFormOptions): UseAuthFormReturn => 
     setConfirmPassword('')
   }, [resolveModeFromPath])
 
+  const resolvePostAuthDestination = useCallback((): string => {
+    const searchParams = new URLSearchParams(location.search)
+    const planId = searchParams.get('planId') || searchParams.get('productId')
+    if (planId) {
+      return `/app?checkout=${encodeURIComponent(planId)}`
+    }
+    return '/app'
+  }, [location.search])
+
   const setMode = useCallback((newMode: AuthMode) => {
     setModeState(newMode)
     setErrorMessage('')
@@ -71,9 +80,9 @@ export const useAuthForm = (options?: UseAuthFormOptions): UseAuthFormReturn => 
     setConfirmPassword('')
     const targetPath = newMode === 'signup' ? '/signup' : '/signin'
     if (location.pathname !== targetPath) {
-      navigate(targetPath)
+      navigate(`${targetPath}${location.search}`)
     }
-  }, [location.pathname, navigate])
+  }, [location.pathname, location.search, navigate])
 
   const toggleMode = useCallback(() => {
     const next = mode === 'signin' ? 'signup' : 'signin'
@@ -108,7 +117,7 @@ export const useAuthForm = (options?: UseAuthFormOptions): UseAuthFormReturn => 
       setSubmitting(true)
       try {
         await registerWithEmail({ name: name.trim(), email: email.trim(), password })
-        navigate('/app')
+        navigate(resolvePostAuthDestination())
       } catch (err) {
         setErrorMessage(getFirebaseErrorMessage(err, 'signup'))
       } finally {
@@ -123,7 +132,7 @@ export const useAuthForm = (options?: UseAuthFormOptions): UseAuthFormReturn => 
       setSubmitting(true)
       try {
         await loginWithEmail({ email: email.trim(), password })
-        navigate('/app')
+        navigate(resolvePostAuthDestination())
       } catch (err) {
         setErrorMessage(getFirebaseErrorMessage(err, 'signin'))
       } finally {
@@ -137,7 +146,7 @@ export const useAuthForm = (options?: UseAuthFormOptions): UseAuthFormReturn => 
     setSubmitting(true)
     try {
       await loginWithGoogle()
-      navigate('/app')
+      navigate(resolvePostAuthDestination())
     } catch (err) {
       setErrorMessage(getFirebaseErrorMessage(err, mode))
     } finally {

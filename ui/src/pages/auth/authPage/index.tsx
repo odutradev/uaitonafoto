@@ -1,5 +1,5 @@
 import { Alert, Box, Button, Divider, Link, Paper, Stack, TextField, Typography } from '@mui/material'
-import { Link as RouterLink } from 'react-router-dom'
+import { Link as RouterLink, useLocation } from 'react-router-dom'
 
 import GoogleIcon from '@components/googleIcon'
 import Logo from '@components/logo'
@@ -21,6 +21,7 @@ import {
 import type { AuthPageProps } from './types'
 
 export const AuthPage = ({ initialMode }: AuthPageProps) => {
+  const location = useLocation()
   const {
     isSignUp,
     toggleMode,
@@ -165,7 +166,7 @@ export const AuthPage = ({ initialMode }: AuthPageProps) => {
               {isSignUp ? 'Já tem uma conta? ' : 'Não tem uma conta? '}
               <Link
                 component={RouterLink}
-                to={isSignUp ? '/signin' : '/signup'}
+                to={isSignUp ? `/signin${location.search}` : `/signup${location.search}`}
                 onClick={(e) => {
                   e.preventDefault()
                   toggleMode()
