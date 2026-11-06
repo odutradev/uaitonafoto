@@ -28,6 +28,8 @@ import {
   sectionHeaderStyles,
   sectionSubtitleStyles,
   sectionTitleStyles,
+  subBadgeContainerStyles,
+  subBadgeNeutralStyles,
   tagBadgeStyles,
   upsellCardStyles
 } from './styles'
@@ -114,9 +116,13 @@ export const Plans = ({ data, isDark }: PlansSectionProps) => {
                   </Typography>
                 </Box>
 
-                {plan.costPerEvent && (
-                  <Box sx={costPerEventBadgeStyles}>{plan.costPerEvent}</Box>
-                )}
+                <Box sx={subBadgeContainerStyles}>
+                  {plan.costPerEvent ? (
+                    <Box sx={costPerEventBadgeStyles}>{plan.costPerEvent}</Box>
+                  ) : plan.subBadge ? (
+                    <Box sx={subBadgeNeutralStyles}>{plan.subBadge}</Box>
+                  ) : null}
+                </Box>
 
                 <Typography sx={planDescriptionStyles}>
                   {plan.description}
@@ -203,9 +209,16 @@ export const Plans = ({ data, isDark }: PlansSectionProps) => {
               to="/signup"
               variant="outlined"
               size="medium"
-              sx={{ flexShrink: 0, px: 3, fontWeight: 700 }}
+              sx={{
+                flexShrink: 0,
+                px: 3.5,
+                py: 1.25,
+                fontWeight: 700,
+                whiteSpace: 'nowrap',
+                alignSelf: { xs: 'stretch', md: 'center' }
+              }}
             >
-              Adicionar no checkout
+              Adicionar ao pedido
             </Button>
           </Box>
         )}

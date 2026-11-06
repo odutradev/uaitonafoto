@@ -55,6 +55,7 @@ export interface PlanCardData {
   title: string
   price: string
   period: string
+  subBadge?: string
   costPerEvent?: string
   description: string
   features: string[]
@@ -144,7 +145,7 @@ export const landingPageData: LandingPageData = {
         icon: 'tv',
         title: '3. sobe pro telão',
         description:
-          'A foto ganha destaque instantâneo no telão da festa, integra o mosaico dinâmico e fica disponível para todos curtirem no feed mobile.'
+          'A foto ganha destaque instantâneo no telão da festa, integra o mosaico dinâmico e fica disponível para todos curtirem no celular.'
       }
     ]
   },
@@ -157,10 +158,10 @@ export const landingPageData: LandingPageData = {
     qrInstruction: 'escaneie e entre no telão'
   },
   guestFeed: {
-    badge: 'Feed Mobile do Convidado',
+    badge: 'Interação dos Convidados',
     title: 'interação na palma da mão',
     description:
-      'Os convidados curtem fotos em tempo real com o botão de coração, adicionam legendas divertidas e baixam recordações direto pelo celular.',
+      'Os convidados curtem fotos em tempo real com o botão de coração, adicionam legendas divertidas e guardam recordações direto pelo celular.',
     activityCard: {
       action: 'marina adicionou uma foto',
       timeAgo: 'há 2 minutos'
@@ -182,12 +183,13 @@ export const landingPageData: LandingPageData = {
         title: 'Modo Degustação',
         price: 'Grátis',
         period: 'sem cartão',
-        description: 'Experimente a dinâmica do telão e do app no seu evento sem nenhum compromisso financeiro.',
+        subBadge: 'Até 25 fotos para testar',
+        description: 'Experimente a dinâmica do telão e do aplicativo na sua festa sem nenhum compromisso financeiro.',
         features: [
-          'Até 25 fotos compartilhadas no feed',
-          'Modo Telão (Live Wall) com marca d\'água',
-          'QR Code pronto para exibir aos convidados',
-          'Feed mobile com curtidas em tempo real',
+          'Até 25 fotos compartilhadas no mural',
+          'Modo Telão ao vivo com marca d\'água',
+          'Código QR pronto para os convidados',
+          'Mural no celular com curtidas em tempo real',
           'Galeria ativa por 7 dias'
         ],
         cta: {
@@ -203,13 +205,14 @@ export const landingPageData: LandingPageData = {
         title: 'Passe do Evento',
         price: 'R$ 147',
         period: 'pagamento único',
+        subBadge: 'Fotos e convidados ilimitados',
         description: 'Perfeito para noivos, aniversariantes e formaturas contratando para uma data especial.',
         features: [
           '1 evento completo com fotos ilimitadas',
-          'Convidados ilimitados sem precisar de aplicativo',
+          'Convidados ilimitados sem precisar baixar aplicativo',
           'Modo Telão ao vivo sem marcas d\'água',
-          'Moderação de fotos por PIN de segurança',
-          'Download de todas as fotos em alta resolução (.zip)',
+          'Moderação de fotos com senha de segurança',
+          'Baixe todas as fotos em alta resolução (.zip)',
           'Galeria ativa por 90 dias'
         ],
         cta: {
@@ -225,14 +228,14 @@ export const landingPageData: LandingPageData = {
         title: 'Agência Essencial',
         price: 'R$ 247',
         period: '/mês',
-        costPerEvent: 'R$ 61,75 por evento (58% OFF)',
+        costPerEvent: 'R$ 61,75 por evento (58% de economia)',
         description: 'Para assessores e cerimonialistas que realizam eventos com frequência regular.',
         features: [
           '4 eventos inclusos por mês',
-          'Selo White-Label: sua marca no telão e no app mobile',
-          'Link para seu WhatsApp/Instagram no telão',
-          'Rollover de 60 dias (créditos acumulam contra sazonalidade)',
-          'Acesso de moderação por PIN para equipe na festa',
+          'Sua própria marca no telão e no aplicativo',
+          'Link para seu WhatsApp ou Instagram no telão',
+          'Créditos acumulativos por 60 dias (contra baixa temporada)',
+          'Acesso de moderação com senha para sua equipe',
           'Crédito extra avulso por R$ 69,00'
         ],
         cta: {
@@ -249,13 +252,13 @@ export const landingPageData: LandingPageData = {
         title: 'Agência Pro',
         price: 'R$ 447',
         period: '/mês',
-        costPerEvent: 'R$ 44,70 por evento (70% OFF)',
+        costPerEvent: 'R$ 44,70 por evento (70% de economia)',
         description: 'O melhor custo-benefício para agências consolidadas com múltiplos eventos por semana.',
         features: [
           '10 eventos inclusos por mês',
-          'Selo White-Label exclusivo gerador de leads',
+          'Sua marca em destaque para atrair novos clientes',
           'Botão direto para seu WhatsApp no mural de fotos',
-          'Rollover de 60 dias com teto de até 20 créditos acumulados',
+          'Créditos acumulativos por 60 dias (até 20 eventos)',
           'Painel de moderação para recepcionistas na festa',
           'Crédito extra avulso por apenas R$ 49,00',
           'Suporte prioritário via WhatsApp'
@@ -268,16 +271,16 @@ export const landingPageData: LandingPageData = {
       }
     ],
     upsell: {
-      badge: 'Order Bump / Adicional Opcional',
-      title: 'Extensão Galeria 1 Ano + Cápsula do Tempo',
+      badge: 'Complemento Exclusivo',
+      title: 'Extensão de Galeria por 1 Ano + Cápsula do Tempo',
       price: '+ R$ 39,00',
-      description: 'Mantenha a galeria de recordações online por 1 ano completo e libere o Modo Cápsula do Tempo para revelar fotos apenas no dia seguinte.'
+      description: 'Mantenha a galeria de recordações disponível por 1 ano completo e libere o Modo Cápsula do Tempo para revelar fotos apenas no dia seguinte.'
     }
   },
   finalCta: {
     title: 'pronto para transformar as fotos do seu próximo evento?',
     description:
-      'Casamentos, formaturas, aniversários ou eventos corporativos com a melhor experiência de live wall do Brasil.',
+      'Casamentos, formaturas, aniversários ou eventos corporativos com a melhor experiência de telão ao vivo do Brasil.',
     button: {
       text: 'Criar meu evento agora',
       href: '/signup'
