@@ -20,7 +20,7 @@ export const getCtaBoxStyles = (isDark: boolean): SxProps<Theme> => ({
 
 export const ctaTitleStyles: SxProps<Theme> = {
   color: 'text.primary',
-  fontSize: { xs: '1.75rem', sm: '2.75rem', md: '3.75rem' },
+  fontSize: { xs: '1.75rem', sm: '2.5rem', md: '3.25rem' },
   letterSpacing: { xs: '-0.035em', md: '-0.045em' },
   maxWidth: '780px',
   wordBreak: 'break-word'

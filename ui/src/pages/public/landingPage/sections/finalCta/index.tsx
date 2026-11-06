@@ -14,31 +14,33 @@ import type { FinalCtaProps } from './types'
 
 export const FinalCta = ({ data, isDark }: FinalCtaProps) => {
   return (
-    <Container maxWidth="lg" sx={{ pb: { xs: 6, sm: 8, md: 10 }, px: { xs: 2, sm: 3 } }}>
-      <Box sx={getCtaBoxStyles(isDark)}>
-        <Logo size="large" variant="auto" animation="flash" />
+    <Box component="section" sx={{ width: '100%', py: { xs: 6, sm: 8, md: 10 } }}>
+      <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3 } }}>
+        <Box sx={getCtaBoxStyles(isDark)}>
+          <Logo size="large" variant="auto" animation="flash" />
 
-        <Typography variant="h2" sx={ctaTitleStyles}>
-          {data.title}
-        </Typography>
+          <Typography variant="h2" sx={ctaTitleStyles}>
+            {data.title}
+          </Typography>
 
-        <Typography variant="body1" sx={ctaDescriptionStyles}>
-          {data.description}
-        </Typography>
+          <Typography variant="body1" sx={ctaDescriptionStyles}>
+            {data.description}
+          </Typography>
 
-        <Button
-          component={RouterLink}
-          to={data.button.href}
-          variant="contained"
-          color="primary"
-          size="large"
-          endIcon={<ArrowForwardIcon />}
-          sx={ctaButtonStyles}
-        >
-          {data.button.text}
-        </Button>
-      </Box>
-    </Container>
+          <Button
+            component={RouterLink}
+            to={data.button.href}
+            variant="contained"
+            color="primary"
+            size="large"
+            endIcon={<ArrowForwardIcon />}
+            sx={ctaButtonStyles}
+          >
+            {data.button.text}
+          </Button>
+        </Box>
+      </Container>
+    </Box>
   )
 }
 
