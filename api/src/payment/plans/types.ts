@@ -14,3 +14,4 @@ export interface CachedPlan extends PlanConfig {
   currency: string
   devMode?: boolean
 }
+
