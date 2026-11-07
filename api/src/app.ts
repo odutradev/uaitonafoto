@@ -2,6 +2,7 @@ import express from 'express'
 import helmet from 'helmet'
 
 import { globalRateLimiter } from '@middlewares/rateLimit'
+import captureRawBody from '@middlewares/rawBody'
 import registerGlobalRoutes from '@routes/index'
 import configureCors from '@config/cors'
 
@@ -22,7 +23,7 @@ const buildApp = (): Application => {
   )
   app.use(globalRateLimiter)
   app.use(configureCors())
-  app.use(express.json())
+  app.use(express.json({ verify: captureRawBody }))
   app.use(express.urlencoded({ extended: true }))
 
   registerGlobalRoutes(app)
