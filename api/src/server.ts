@@ -9,6 +9,10 @@ import { registerDomains } from '@config/domain'
 import usersDomain from '@domains/users'
 import systemDomain from '@domains/system'
 import paymentsDomain from '@domains/payments'
+import {
+  startSubscriptionReconciliationRoutine,
+  stopSubscriptionReconciliationRoutine
+} from '@domains/payments/routines/reconcileSubscriptions'
 import { connectDatabase, disconnectDatabase } from '@database'
 import { connectEmail } from '@email'
 import { connectFirebase } from '@firebase'
@@ -28,6 +32,7 @@ const setupGracefulShutdown = (server: Server): void => {
     isShuttingDown = true
 
     logger.info(`Received ${signal}. Starting graceful shutdown...`)
+    stopSubscriptionReconciliationRoutine()
 
     const forceExitTimer = setTimeout(() => {
       logger.error('Graceful shutdown timed out. Forcing exit...')
@@ -80,6 +85,8 @@ const startServer = async (): Promise<void> => {
       connectEmail(),
       connectPayment()
     ])
+
+    startSubscriptionReconciliationRoutine()
   })
 
   setupGracefulShutdown(server)
