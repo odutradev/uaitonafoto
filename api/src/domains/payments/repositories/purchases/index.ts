@@ -1,3 +1,4 @@
+import { removeUndefined } from '@utils/object'
 import PurchaseModel from './model'
 import type { CreatePurchasePayload, PurchaseEntity } from './types'
 
@@ -8,13 +9,17 @@ const toPurchaseEntity = (doc: any): PurchaseEntity => {
 
 export const purchaseRepository = {
   create: async (payload: CreatePurchasePayload): Promise<PurchaseEntity> => {
-    const created = await PurchaseModel.create(payload)
+    const created = await PurchaseModel.create(removeUndefined(payload))
     return toPurchaseEntity(created.toObject())
   },
 
   findByTransactionId: async (transactionId: string): Promise<PurchaseEntity | null> => {
     const doc = await PurchaseModel.findOne({ transactionId }).lean()
     return doc ? toPurchaseEntity(doc) : null
+  },
+
+  attachSubscriptionId: async (transactionId: string, subscriptionId: string): Promise<void> => {
+    await PurchaseModel.updateOne({ transactionId }, { $set: { subscriptionId } })
   },
 
   listByUser: async (userId: string): Promise<PurchaseEntity[]> => {

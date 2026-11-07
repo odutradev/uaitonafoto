@@ -1,6 +1,13 @@
 import { removeUndefined } from '@utils/object'
 import TransactionModel from './model'
-import type { CreateTransactionPayload, TransactionEntity, TransactionStatus, TransactionWebhookEvent, UpdateTransactionPayload } from './types'
+import type {
+  CreatePaidTransactionPayload,
+  CreateTransactionPayload,
+  TransactionEntity,
+  TransactionStatus,
+  TransactionWebhookEvent,
+  UpdateTransactionPayload
+} from './types'
 
 const toTransactionEntity = (doc: any): TransactionEntity => {
   const { _id, ...rest } = doc
@@ -13,6 +20,11 @@ export const transactionRepository = {
     return toTransactionEntity(created.toObject())
   },
 
+  createPaid: async (payload: CreatePaidTransactionPayload): Promise<TransactionEntity> => {
+    const created = await TransactionModel.create(removeUndefined({ ...payload, status: 'PAID' as const }))
+    return toTransactionEntity(created.toObject())
+  },
+
   findById: async (id: string): Promise<TransactionEntity | null> => {
     const doc = await TransactionModel.findById(id).lean()
     return doc ? toTransactionEntity(doc) : null
@@ -21,6 +33,27 @@ export const transactionRepository = {
   findByCheckoutId: async (checkoutId: string): Promise<TransactionEntity | null> => {
     const doc = await TransactionModel.findOne({ checkoutId }).lean()
     return doc ? toTransactionEntity(doc) : null
+  },
+
+  findBySubscriptionId: async (subscriptionId: string): Promise<TransactionEntity | null> => {
+    const doc = await TransactionModel.findOne({ subscriptionId }).sort({ createdAt: 1 }).lean()
+    return doc ? toTransactionEntity(doc) : null
+  },
+
+  findByExternalPaymentId: async (externalPaymentId: string): Promise<TransactionEntity | null> => {
+    const doc = await TransactionModel.findOne({ externalPaymentId }).lean()
+    return doc ? toTransactionEntity(doc) : null
+  },
+
+  listSubscriptionTransactionsToSync: async (): Promise<TransactionEntity[]> => {
+    const docs = await TransactionModel.find({
+      planType: 'SUBSCRIPTION',
+      $or: [
+        { status: 'PAID', subscriptionId: { $exists: false } },
+        { status: 'PENDING' }
+      ]
+    }).lean()
+    return docs.map(toTransactionEntity)
   },
 
   listByUser: async (userId: string): Promise<TransactionEntity[]> => {

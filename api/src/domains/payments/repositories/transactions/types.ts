@@ -25,6 +25,8 @@ export interface TransactionEntity {
   checkoutId?: string
   checkoutUrl?: string
   customerId?: string
+  subscriptionId?: string
+  externalPaymentId?: string
   methods: string[]
   paymentMethod?: string
   paidAmount?: number
@@ -44,5 +46,7 @@ export interface TransactionEntity {
 }
 
 export type CreateTransactionPayload = Omit<TransactionEntity, 'id' | 'status' | 'webhookEvents' | 'createdAt' | 'updatedAt'>
+
+export type CreatePaidTransactionPayload = Omit<TransactionEntity, 'id' | 'status' | 'createdAt' | 'updatedAt'>
 
 export type UpdateTransactionPayload = Partial<Omit<TransactionEntity, 'id' | 'webhookEvents' | 'createdAt' | 'updatedAt'>>

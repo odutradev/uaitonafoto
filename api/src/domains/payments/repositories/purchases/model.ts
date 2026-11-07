@@ -8,6 +8,7 @@ const purchaseSchema = new Schema<PurchaseDocument>(
     _id: { type: String, default: () => new mongoose.Types.ObjectId().toString() },
     userId: { type: String, required: true, index: true },
     transactionId: { type: String, required: true, unique: true },
+    subscriptionId: { type: String, index: true },
     planId: { type: String, required: true },
     planType: { type: String, required: true },
     planName: { type: String, required: true },

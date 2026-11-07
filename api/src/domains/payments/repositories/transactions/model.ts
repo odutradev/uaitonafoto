@@ -37,6 +37,8 @@ const transactionSchema = new Schema<TransactionDocument>(
     checkoutId: { type: String, index: true },
     checkoutUrl: { type: String },
     customerId: { type: String },
+    subscriptionId: { type: String, index: true },
+    externalPaymentId: { type: String, unique: true, sparse: true },
     methods: { type: [String], default: [] },
     paymentMethod: { type: String },
     paidAmount: { type: Number },

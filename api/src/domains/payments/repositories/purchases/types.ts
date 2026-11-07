@@ -4,6 +4,7 @@ export interface PurchaseEntity {
   id: string
   userId: string
   transactionId: string
+  subscriptionId?: string
   planId: string
   planType: string
   planName: string
