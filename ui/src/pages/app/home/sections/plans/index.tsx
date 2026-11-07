@@ -22,7 +22,15 @@ import type { PlansProps } from './types'
 
 const SKELETON_CARDS = [0, 1, 2]
 
-const Plans = ({ plans, isLoading, checkoutPlanId, freeCredits, paidCredits, onSelectPlan }: PlansProps) => {
+const Plans = ({
+  plans,
+  isLoading,
+  checkoutPlanId,
+  activeSubscriptionPlanIds = [],
+  freeCredits,
+  paidCredits,
+  onSelectPlan
+}: PlansProps) => {
   const isCheckoutRunning = checkoutPlanId !== null
 
   return (
@@ -47,6 +55,7 @@ const Plans = ({ plans, isLoading, checkoutPlanId, freeCredits, paidCredits, onS
         {!isLoading &&
           plans.map((plan) => {
             const isCheckingOut = checkoutPlanId === plan.ctaHref
+            const isAlreadySubscribed = activeSubscriptionPlanIds.includes(plan.id)
 
             return (
               <Card key={plan.id} elevation={0} sx={getPlanCardStyles(plan.highlighted)}>
@@ -81,12 +90,16 @@ const Plans = ({ plans, isLoading, checkoutPlanId, freeCredits, paidCredits, onS
                 <Button
                   variant={plan.highlighted ? 'contained' : 'outlined'}
                   size="large"
-                  disabled={isCheckoutRunning}
+                  disabled={isCheckoutRunning || isAlreadySubscribed}
                   onClick={() => onSelectPlan(plan.ctaHref)}
                   startIcon={isCheckingOut ? <CircularProgress size={18} color="inherit" /> : undefined}
                   sx={buyButtonStyles}
                 >
-                  {isCheckingOut ? 'Abrindo pagamento...' : plan.ctaText}
+                  {isCheckingOut
+                    ? 'Abrindo pagamento...'
+                    : isAlreadySubscribed
+                      ? 'Assinatura ativa'
+                      : plan.ctaText}
                 </Button>
               </Card>
             )

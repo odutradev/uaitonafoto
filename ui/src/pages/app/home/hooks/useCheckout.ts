@@ -2,12 +2,18 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 
-import { createCheckout, getPlans } from '@actions/payments'
+import {
+  cancelSubscription,
+  createCheckout,
+  getMySubscriptions,
+  getPlans
+} from '@actions/payments'
 import { getMeData } from '@actions/auth'
 import useQueryParams from '@hooks/useQueryParams'
 import useAuthStore from '@stores/auth'
 import { formatPlanCard } from '@pages/public/landingPage/sections/plans/utils'
 
+import type { SubscriptionItem } from '@actions/payments/types'
 import type { PlanCardData } from '@pages/public/landingPage/sections/plans/types'
 import type { CheckoutQueryParams, UseCheckoutReturn } from './types'
 
@@ -25,8 +31,19 @@ export const useCheckout = (): UseCheckoutReturn => {
   const handledParamsRef = useRef('')
 
   const [plans, setPlans] = useState<PlanCardData[]>([])
+  const [subscriptions, setSubscriptions] = useState<SubscriptionItem[]>([])
   const [isLoadingPlans, setIsLoadingPlans] = useState(true)
   const [checkoutPlanId, setCheckoutPlanId] = useState<string | null>(null)
+  const [cancellingSubscriptionId, setCancellingSubscriptionId] = useState<string | null>(null)
+
+  const loadSubscriptions = useCallback(async () => {
+    try {
+      const items = await getMySubscriptions()
+      setSubscriptions(items)
+    } catch {
+      setSubscriptions([])
+    }
+  }, [])
 
   useEffect(() => {
     let isMounted = true
@@ -42,10 +59,12 @@ export const useCheckout = (): UseCheckoutReturn => {
         if (isMounted) setIsLoadingPlans(false)
       })
 
+    loadSubscriptions()
+
     return () => {
       isMounted = false
     }
-  }, [])
+  }, [loadSubscriptions])
 
   const startCheckout = useCallback(async (planId: string) => {
     setCheckoutPlanId(planId)
@@ -59,13 +78,33 @@ export const useCheckout = (): UseCheckoutReturn => {
     }
   }, [])
 
+  const handleCancelSubscription = useCallback(async (subscriptionId: string): Promise<boolean> => {
+    setCancellingSubscriptionId(subscriptionId)
+
+    try {
+      const updated = await cancelSubscription(subscriptionId)
+      setSubscriptions((prev) => prev.map((sub) => (sub.id === updated.id ? updated : sub)))
+      toast.success('Assinatura cancelada com sucesso.')
+      return true
+    } catch {
+      toast.error('Não foi possível cancelar a assinatura. Tente novamente.')
+      return false
+    } finally {
+      setCancellingSubscriptionId(null)
+    }
+  }, [])
+
   const refreshCredits = useCallback(async (initialPaidCredits: number) => {
     for (let attempt = 0; attempt < CREDITS_REFRESH_ATTEMPTS; attempt++) {
       await wait(CREDITS_REFRESH_INTERVAL_MS)
 
       try {
-        const freshUser = await getMeData()
+        const [freshUser, freshSubscriptions] = await Promise.all([
+          getMeData(),
+          getMySubscriptions()
+        ])
         updateUser(freshUser)
+        setSubscriptions(freshSubscriptions)
         if (freshUser.paidCredits > initialPaidCredits) return
       } catch {
         return
@@ -81,7 +120,6 @@ export const useCheckout = (): UseCheckoutReturn => {
     }
 
     if (handledParamsRef.current === paramsKey) return
-
 
     handledParamsRef.current = paramsKey
     navigate('/app', { replace: true })
@@ -102,7 +140,15 @@ export const useCheckout = (): UseCheckoutReturn => {
     }
   }, [checkout, payment, navigate, startCheckout, refreshCredits, user?.paidCredits])
 
-  return { plans, isLoadingPlans, checkoutPlanId, startCheckout }
+  return {
+    plans,
+    subscriptions,
+    isLoadingPlans,
+    checkoutPlanId,
+    cancellingSubscriptionId,
+    startCheckout,
+    handleCancelSubscription
+  }
 }
 
 export default useCheckout
