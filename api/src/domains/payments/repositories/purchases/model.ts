@@ -17,6 +17,10 @@ const purchaseSchema = new Schema<PurchaseDocument>(
     amount: { type: Number, required: true },
     currency: { type: String, required: true },
     credits: { type: Number, required: true, default: 0 },
+    remainingCredits: { type: Number, required: true, default: 0, min: 0 },
+    expiredCredits: { type: Number, required: true, default: 0, min: 0 },
+    creditsExpiresAt: { type: String, index: true },
+    creditsExpiredAt: { type: String },
     creditType: { type: String, enum: ['free', 'paid'], required: true, default: 'paid' },
     extraStorageDays: { type: Number, required: true, default: 0 },
     createdAt: { type: String, default: () => new Date().toISOString() }

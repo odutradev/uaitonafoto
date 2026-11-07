@@ -4,12 +4,20 @@ import type { CreatePurchasePayload, PurchaseEntity } from './types'
 
 const toPurchaseEntity = (doc: any): PurchaseEntity => {
   const { _id, ...rest } = doc
-  return { ...rest, id: String(_id) }
+  const credits = rest.credits ?? 0
+  return {
+    ...rest,
+    id: String(_id),
+    credits,
+    remainingCredits: rest.remainingCredits ?? credits,
+    expiredCredits: rest.expiredCredits ?? 0
+  }
 }
 
 export const purchaseRepository = {
   create: async (payload: CreatePurchasePayload): Promise<PurchaseEntity> => {
-    const created = await PurchaseModel.create(removeUndefined(payload))
+    const remainingCredits = payload.remainingCredits ?? payload.credits
+    const created = await PurchaseModel.create(removeUndefined({ ...payload, remainingCredits }))
     return toPurchaseEntity(created.toObject())
   },
 
@@ -25,6 +33,50 @@ export const purchaseRepository = {
   listByUser: async (userId: string): Promise<PurchaseEntity[]> => {
     const docs = await PurchaseModel.find({ userId }).sort({ createdAt: -1 }).lean()
     return docs.map(toPurchaseEntity)
+  },
+
+  listActiveBySubscription: async (subscriptionId: string): Promise<PurchaseEntity[]> => {
+    const docs = await PurchaseModel.find({
+      subscriptionId,
+      planType: 'SUBSCRIPTION',
+      remainingCredits: { $gt: 0 }
+    })
+      .sort({ createdAt: 1 })
+      .lean()
+
+    return docs.map(toPurchaseEntity)
+  },
+
+  listExpiredSubscriptionPurchases: async (nowIso: string): Promise<PurchaseEntity[]> => {
+    const docs = await PurchaseModel.find({
+      planType: 'SUBSCRIPTION',
+      remainingCredits: { $gt: 0 },
+      creditsExpiresAt: { $lte: nowIso }
+    }).lean()
+
+    return docs.map(toPurchaseEntity)
+  },
+
+  updateCreditsExpiration: async (id: string, creditsExpiresAt: string): Promise<void> => {
+    await PurchaseModel.updateOne({ _id: id }, { $set: { creditsExpiresAt } })
+  },
+
+  expirePurchaseCredits: async (id: string, nowIso: string): Promise<number> => {
+    const previous = await PurchaseModel.findOneAndUpdate(
+      { _id: id, remainingCredits: { $gt: 0 } },
+      [
+        {
+          $set: {
+            expiredCredits: { $add: [{ $ifNull: ['$expiredCredits', 0] }, '$remainingCredits'] },
+            remainingCredits: 0,
+            creditsExpiredAt: nowIso
+          }
+        }
+      ],
+      { new: false, lean: true, updatePipeline: true }
+    )
+
+    return previous?.remainingCredits ?? 0
   }
 }
 

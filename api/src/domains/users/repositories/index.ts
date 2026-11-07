@@ -89,6 +89,28 @@ export const userRepository = {
 
     if (!doc) return null
     return toUserEntity(doc)
+  },
+
+  deductCredits: async (id: string, type: CreditType, amount: number): Promise<UserEntity | null> => {
+    if (amount <= 0) return userRepository.findById(id)
+
+    const field = type === 'free' ? 'freeCredits' : 'paidCredits'
+
+    const doc = await UserModel.findByIdAndUpdate(
+      id,
+      [
+        {
+          $set: {
+            [field]: { $max: [0, { $subtract: [{ $ifNull: [`$${field}`, 0] }, amount] }] },
+            updatedAt: new Date().toISOString()
+          }
+        }
+      ],
+      { new: true, lean: true, updatePipeline: true }
+    )
+
+    if (!doc) return null
+    return toUserEntity(doc)
   }
 }
 

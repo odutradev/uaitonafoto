@@ -13,9 +13,18 @@ export interface PurchaseEntity {
   amount: number
   currency: string
   credits: number
+  remainingCredits: number
+  expiredCredits: number
+  creditsExpiresAt?: string
+  creditsExpiredAt?: string
   creditType: CreditType
   extraStorageDays: number
   createdAt: string
 }
 
-export type CreatePurchasePayload = Omit<PurchaseEntity, 'id' | 'createdAt'>
+export type CreatePurchasePayload = Omit<
+  PurchaseEntity,
+  'id' | 'remainingCredits' | 'expiredCredits' | 'creditsExpiredAt' | 'createdAt'
+> & {
+  remainingCredits?: number
+}
