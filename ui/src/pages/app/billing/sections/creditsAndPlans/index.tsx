@@ -47,7 +47,6 @@ const CreditsAndPlans = ({
 
     return (
       plan.type === 'ONE_TIME' ||
-      plan.type === 'UPSELL' ||
       (plan.type === 'FREE' && !freeTrialClaimed)
     )
   })
@@ -59,10 +58,10 @@ const CreditsAndPlans = ({
       <Box sx={blockWrapperStyles}>
         <Box>
           <Typography variant="h5" component="h2">
-            Comprar créditos avulsos e complementos
+            Comprar créditos avulsos
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Adquira créditos individuais para eventos únicos, créditos extras de assinante ou extensões de armazenamento.
+            Adquira créditos individuais para eventos únicos{hasActiveSubscription ? ' ou créditos extras de assinante' : ''}.
           </Typography>
         </Box>
 
