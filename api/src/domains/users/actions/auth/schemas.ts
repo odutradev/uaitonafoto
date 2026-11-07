@@ -14,6 +14,7 @@ export const userSchema = z.object({
   authProviderId: z.string().optional().openapi({ example: 'google.com' }),
   freeCredits: z.number().openapi({ example: 1 }),
   paidCredits: z.number().openapi({ example: 4 }),
+  freeTrialClaimedAt: z.string().optional().openapi({ example: '2026-01-01T00:00:00.000Z' }),
   createdAt: z.string().openapi({ example: '2026-01-01T00:00:00.000Z' }),
   updatedAt: z.string().openapi({ example: '2026-01-01T00:00:00.000Z' })
 }).openapi('UserResponse')

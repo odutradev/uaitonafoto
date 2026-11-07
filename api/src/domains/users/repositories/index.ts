@@ -13,6 +13,7 @@ const toUserEntity = (doc: any): UserEntity => ({
   authProviderId: doc.authProviderId,
   freeCredits: doc.freeCredits ?? 0,
   paidCredits: doc.paidCredits ?? 0,
+  freeTrialClaimedAt: doc.freeTrialClaimedAt ?? undefined,
   createdAt: doc.createdAt,
   updatedAt: doc.updatedAt
 })
@@ -107,6 +108,25 @@ export const userRepository = {
         }
       ],
       { new: true, lean: true, updatePipeline: true }
+    )
+
+    if (!doc) return null
+    return toUserEntity(doc)
+  },
+
+  claimFreeTrial: async (id: string, credits: number): Promise<UserEntity | null> => {
+    const now = new Date().toISOString()
+
+    const doc = await UserModel.findOneAndUpdate(
+      {
+        _id: id,
+        $or: [{ freeTrialClaimedAt: { $exists: false } }, { freeTrialClaimedAt: null }]
+      },
+      {
+        $inc: { freeCredits: credits },
+        $set: { freeTrialClaimedAt: now, updatedAt: now }
+      },
+      { new: true, lean: true }
     )
 
     if (!doc) return null

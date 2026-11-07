@@ -12,6 +12,7 @@ export interface UserDocument {
   authProviderId?: string
   freeCredits: number
   paidCredits: number
+  freeTrialClaimedAt?: string
   createdAt: string
   updatedAt: string
 }
@@ -28,6 +29,7 @@ const userSchema = new Schema<UserDocument>(
     authProviderId: { type: String, default: 'google' },
     freeCredits: { type: Number, default: 0, min: 0 },
     paidCredits: { type: Number, default: 0, min: 0 },
+    freeTrialClaimedAt: { type: String },
     createdAt: { type: String, default: () => new Date().toISOString() },
     updatedAt: { type: String, default: () => new Date().toISOString() }
   },

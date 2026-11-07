@@ -11,6 +11,7 @@ export interface UserEntity {
   authProviderId?: string
   freeCredits: number
   paidCredits: number
+  freeTrialClaimedAt?: string
   createdAt: string
   updatedAt: string
 }
