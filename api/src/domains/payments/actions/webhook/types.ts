@@ -1,10 +1,7 @@
 import type { z } from 'zod'
-import type { webhookBodySchema, webhookQuerySchema, webhookResponseSchema } from './schemas'
+import type { webhookBodySchema, webhookResponseSchema } from './schemas'
 
-export type WebhookRequest = {
-  query: z.infer<typeof webhookQuerySchema>
-  body: z.infer<typeof webhookBodySchema>
-}
+export type WebhookRequest = { body: z.infer<typeof webhookBodySchema> }
 
 export type WebhookResponse = z.infer<typeof webhookResponseSchema>
 
@@ -21,3 +18,4 @@ export interface WebhookEventData {
   checkout?: WebhookCheckoutData
   payerInformation?: { method?: string }
 }
+

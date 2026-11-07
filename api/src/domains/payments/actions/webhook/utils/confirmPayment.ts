@@ -72,3 +72,4 @@ export const confirmPayment = async (transaction: TransactionEntity, data: Webho
 }
 
 export default confirmPayment
+

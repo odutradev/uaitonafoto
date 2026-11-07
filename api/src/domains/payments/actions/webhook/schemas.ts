@@ -3,12 +3,6 @@ import { z } from 'zod'
 
 extendZodWithOpenApi(z)
 
-export const webhookQuerySchema = z
-  .object({
-    webhookSecret: z.string().min(1).openapi({ example: 'secret-configurado-no-abacatepay' })
-  })
-  .openapi('PaymentWebhookQuery')
-
 export const webhookBodySchema = z
   .object({
     id: z.string().optional(),
@@ -25,3 +19,4 @@ export const webhookResponseSchema = z
     received: z.boolean().openapi({ example: true })
   })
   .openapi('PaymentWebhookResponse')
+

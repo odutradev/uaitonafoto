@@ -1,9 +1,10 @@
 import env from '@config/env'
 import defineAction from '@factories/defineAction'
-import isValidWebhookSecret from './utils/isValidWebhookSecret'
+import verifyWebhookRequest from './utils/verifyWebhookRequest'
 import processWebhookEvent from './utils/processWebhookEvent'
-import { webhookBodySchema, webhookQuerySchema, webhookResponseSchema } from './schemas'
+import { webhookBodySchema, webhookResponseSchema } from './schemas'
 
+import type { RawBodyRequest } from '@middlewares/rawBody/types'
 import type { ManageRequestBody, ManageRequestResponse } from '@middlewares/manageRequest/types'
 import type { WebhookEventData, WebhookRequest, WebhookResponse } from './types'
 
@@ -15,20 +16,21 @@ export const paymentWebhook = defineAction(
     tags: ['Pagamentos'],
     authenticate: false,
     schema: {
-      query: webhookQuerySchema,
       body: webhookBodySchema
     },
     responses: {
       200: { description: 'Evento recebido', schema: webhookResponseSchema },
-      401: { description: 'Secret do webhook inválido' }
+      401: { description: 'Assinatura do webhook inválida' }
     }
   },
-  async ({ query, data, defaultExpress, manageError }: ManageRequestBody<WebhookRequest>): ManageRequestResponse<WebhookResponse> => {
-    if (!isValidWebhookSecret(query.webhookSecret, env.ABACATEPAY_WEBHOOK_SECRET)) {
+  async ({ data, defaultExpress, manageError }: ManageRequestBody<WebhookRequest>): ManageRequestResponse<WebhookResponse> => {
+    const { headers, rawBody } = defaultExpress.req as RawBodyRequest
+
+    if (!verifyWebhookRequest(rawBody, headers, env.ABACATEPAY_WEBHOOK_SECRET)) {
       return manageError({ code: 'unauthorized' })
     }
 
-    const deliveryHeader = defaultExpress.req.headers['webhook-id']
+    const deliveryHeader = headers['webhook-id']
 
     await processWebhookEvent({
       event: data.event ?? data.type ?? 'unknown',
@@ -41,3 +43,4 @@ export const paymentWebhook = defineAction(
     return { received: true }
   }
 )
+
