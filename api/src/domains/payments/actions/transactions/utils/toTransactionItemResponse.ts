@@ -11,6 +11,7 @@ export const toTransactionItemResponse = (entity: TransactionEntity): Transactio
   currency: entity.currency,
   status: entity.status,
   paymentMethod: entity.paymentMethod,
+  checkoutUrl: entity.status === 'PENDING' ? entity.checkoutUrl : undefined,
   receiptUrl: entity.receiptUrl,
   subscriptionId: entity.subscriptionId,
   paidAt: entity.paidAt,

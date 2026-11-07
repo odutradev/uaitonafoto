@@ -20,6 +20,7 @@ export const transactionItemSchema = z
     currency: z.string().openapi({ example: 'BRL' }),
     status: transactionStatusSchema,
     paymentMethod: z.string().optional().openapi({ example: 'PIX' }),
+    checkoutUrl: z.string().optional().openapi({ example: 'https://app.abacatepay.com/pay/bill_abc123' }),
     receiptUrl: z.string().optional().openapi({ example: 'https://app.abacatepay.com/receipt/bill_abc123' }),
     subscriptionId: z.string().optional().openapi({ example: 'subs_abc123' }),
     paidAt: z.string().optional().openapi({ example: '2026-11-06T20:00:00.000Z' }),

@@ -1,8 +1,10 @@
 import { getPlanByProductId } from '@payment/plans'
 import defineAction from '@factories/defineAction'
 import { authRateLimiter } from '@middlewares/rateLimit'
+import logRepository from '@domains/system/repositories'
 import userRepository from '@domains/users/repositories'
 import resolveFrontendBaseUrl from '@domains/users/utils/resolveFrontendBaseUrl'
+import subscriptionRepository from '../../repositories/subscriptions'
 import transactionRepository from '../../repositories/transactions'
 import createGatewayCheckout from './utils/createGatewayCheckout'
 import { checkoutResponseSchema, createCheckoutBodySchema } from './schemas'
@@ -20,6 +22,7 @@ export const createCheckout = defineAction(
     middlewares: [authRateLimiter],
     responses: {
       200: { description: 'URL de checkout criada', schema: checkoutResponseSchema },
+      403: { description: 'Produto restrito a assinantes ativos' },
       404: { description: 'Plano não encontrado' }
     }
   },
@@ -33,6 +36,18 @@ export const createCheckout = defineAction(
     if (!plan) return manageError({ code: 'not_found' })
 
     if (plan.type === 'FREE' || plan.price <= 0) return manageError({ code: 'bad_request' })
+
+    if (plan.abacateProductId === 'prod_agency_extra_credit') {
+      const userSubscriptions = await subscriptionRepository.listByUser(user.id)
+      const hasActiveSubscription = userSubscriptions.some((sub) => sub.status === 'ACTIVE')
+
+      if (!hasActiveSubscription) {
+        return manageError({
+          code: 'forbidden',
+          details: 'O Crédito Extra Avulso com desconto é exclusivo para assinantes ativos dos planos Agência.'
+        })
+      }
+    }
 
     const { req } = defaultExpress
     const baseUrl = resolveFrontendBaseUrl(undefined, req.headers.origin)
@@ -55,8 +70,8 @@ export const createCheckout = defineAction(
       userAgent: req.headers['user-agent']
     })
 
-    const returnUrl = `${baseUrl}/app?payment=cancelled&plan=${plan.id}`
-    const completionUrl = `${baseUrl}/app?payment=success&transaction=${transaction.id}`
+    const returnUrl = `${baseUrl}/app/billing?payment=cancelled&plan=${plan.id}`
+    const completionUrl = `${baseUrl}/app/billing?payment=success&transaction=${transaction.id}`
 
     try {
       const { customerId, checkout } = await createGatewayCheckout({
@@ -76,6 +91,20 @@ export const createCheckout = defineAction(
         returnUrl,
         completionUrl,
         gatewayResponse: checkout.raw
+      })
+
+      logRepository.create({
+        category: 'user',
+        level: 'info',
+        action: 'CHECKOUT_CREATED',
+        title: 'Checkout de pagamento iniciado',
+        description: `${user.fullName || user.name} iniciou pagamento de ${plan.name}`,
+        userId: user.id,
+        userName: user.fullName || user.name,
+        userEmail: user.email,
+        targetId: transaction.id,
+        targetName: plan.name,
+        details: { planId: plan.id, planType: plan.type, amount: plan.price }
       })
 
       return { transactionId: transaction.id, checkoutId: checkout.id, checkoutUrl: checkout.url }
