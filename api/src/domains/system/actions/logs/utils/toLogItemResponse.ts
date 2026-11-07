@@ -1,13 +1,16 @@
 import type { LogEntity } from '../../../repositories/types'
 import type { LogItemResponse } from '../types'
 
+const replaceLegacyFreeTrialLabel = (text?: string): string | undefined =>
+  text ? text.replace(/Modo Degustação/gi, 'Teste Grátis') : text
+
 export const toLogItemResponse = (entity: LogEntity, isAdmin: boolean): LogItemResponse => ({
   id: entity.id,
   category: entity.category,
   level: entity.level,
   action: entity.action,
-  title: entity.title,
-  description: entity.description,
+  title: replaceLegacyFreeTrialLabel(entity.title) ?? entity.title,
+  description: replaceLegacyFreeTrialLabel(entity.description) ?? entity.description,
   userId: entity.userId,
   userName: entity.userName,
   userEmail: entity.userEmail,

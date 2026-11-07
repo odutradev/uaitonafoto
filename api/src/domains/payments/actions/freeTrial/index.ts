@@ -13,14 +13,14 @@ export const claimFreeTrial = defineAction(
   {
     method: 'post',
     path: '/payments/free-trial/claim',
-    summary: 'Resgatar o crédito grátis do Modo Degustação (limitado a 1 uso por conta)',
+    summary: 'Resgatar o crédito do Teste Grátis (limitado a 1 uso por conta)',
     tags: ['Pagamentos'],
     authenticate: true,
     middlewares: [authRateLimiter],
     responses: {
-      200: { description: 'Modo Degustação ativado com sucesso', schema: claimFreeTrialResponseSchema },
+      200: { description: 'Teste Grátis ativado com sucesso', schema: claimFreeTrialResponseSchema },
       404: { description: 'Usuário não encontrado' },
-      409: { description: 'Modo Degustação já resgatado nesta conta' }
+      409: { description: 'Teste Grátis já resgatado nesta conta' }
     }
   },
   async ({ ids, manageError }): ManageRequestResponse<ClaimFreeTrialResponse> => {
@@ -32,7 +32,7 @@ export const claimFreeTrial = defineAction(
     if (user.freeTrialClaimedAt) {
       return manageError({
         code: 'conflict',
-        details: 'O Modo Degustação já foi resgatado nesta conta.'
+        details: 'O Teste Grátis já foi resgatado nesta conta.'
       })
     }
 
@@ -40,7 +40,7 @@ export const claimFreeTrial = defineAction(
     if (!updatedUser) {
       return manageError({
         code: 'conflict',
-        details: 'O Modo Degustação já foi resgatado nesta conta.'
+        details: 'O Teste Grátis já foi resgatado nesta conta.'
       })
     }
 
@@ -68,8 +68,8 @@ export const claimFreeTrial = defineAction(
       category: 'user',
       level: 'info',
       action: 'FREE_TRIAL_CLAIMED',
-      title: 'Modo Degustação ativado',
-      description: `${updatedUser.fullName || updatedUser.name} resgatou ${freeTrialPlan.credits} crédito grátis do Modo Degustação`,
+      title: 'Teste Grátis ativado',
+      description: `${updatedUser.fullName || updatedUser.name} resgatou ${freeTrialPlan.credits} crédito do Teste Grátis`,
       userId: updatedUser.id,
       userName: updatedUser.fullName || updatedUser.name,
       userEmail: updatedUser.email
