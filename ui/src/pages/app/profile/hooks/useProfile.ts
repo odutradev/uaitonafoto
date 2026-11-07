@@ -11,8 +11,7 @@ import type { ProfileFormValues, UseProfileReturn } from '../types'
 const toFormValues = (user: AuthUser | null): ProfileFormValues => ({
   name: user?.name ?? '',
   fullName: user?.fullName ?? '',
-  phone: user?.phone ?? '',
-  photoUrl: user?.photoUrl ?? ''
+  phone: user?.phone ?? ''
 })
 
 export const useProfile = (): UseProfileReturn => {
@@ -49,8 +48,7 @@ export const useProfile = (): UseProfileReturn => {
     return (
       values.name.trim() !== baseline.name.trim() ||
       values.fullName.trim() !== baseline.fullName.trim() ||
-      values.phone.trim() !== baseline.phone.trim() ||
-      values.photoUrl.trim() !== baseline.photoUrl.trim()
+      values.phone.trim() !== baseline.phone.trim()
     )
   }, [user, values])
 
@@ -79,8 +77,7 @@ export const useProfile = (): UseProfileReturn => {
         const updated = await updateMeData({
           name: trimmedName,
           fullName: values.fullName.trim() || undefined,
-          phone: digitsOnlyPhone || undefined,
-          photoUrl: values.photoUrl.trim()
+          phone: digitsOnlyPhone || undefined
         })
         updateUser(updated)
         setValues(toFormValues(updated))

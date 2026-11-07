@@ -69,14 +69,6 @@ const ProfileDetailsForm = ({
           />
         </Box>
 
-        <TextField
-          label="URL da foto de perfil (opcional)"
-          placeholder="https://..."
-          value={values.photoUrl}
-          onChange={(e) => onChangeField('photoUrl', e.target.value)}
-          fullWidth
-        />
-
         <Box sx={actionsRowStyles}>
           {isDirty && (
             <Button

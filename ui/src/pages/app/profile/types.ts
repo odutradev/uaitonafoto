@@ -5,7 +5,6 @@ export interface ProfileFormValues {
   name: string
   fullName: string
   phone: string
-  photoUrl: string
 }
 
 export interface UseProfileReturn {
