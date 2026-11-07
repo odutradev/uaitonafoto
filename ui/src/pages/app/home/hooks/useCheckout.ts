@@ -6,6 +6,7 @@ import {
   cancelSubscription,
   createCheckout,
   getMySubscriptions,
+  getMyTransactions,
   getPlans
 } from '@actions/payments'
 import { getMeData } from '@actions/auth'
@@ -13,13 +14,14 @@ import useQueryParams from '@hooks/useQueryParams'
 import useAuthStore from '@stores/auth'
 import { formatPlanCard } from '@pages/public/landingPage/sections/plans/utils'
 
-import type { SubscriptionItem } from '@actions/payments/types'
+import type { SubscriptionItem, TransactionItem } from '@actions/payments/types'
 import type { PlanCardData } from '@pages/public/landingPage/sections/plans/types'
 import type { CheckoutQueryParams, UseCheckoutReturn } from './types'
 
 const FREE_PLAN_ID = 'free_trial'
 const CREDITS_REFRESH_ATTEMPTS = 5
 const CREDITS_REFRESH_INTERVAL_MS = 2000
+const INVOICES_PER_PAGE = 5
 
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
@@ -32,7 +34,11 @@ export const useCheckout = (): UseCheckoutReturn => {
 
   const [plans, setPlans] = useState<PlanCardData[]>([])
   const [subscriptions, setSubscriptions] = useState<SubscriptionItem[]>([])
+  const [invoices, setInvoices] = useState<TransactionItem[]>([])
+  const [invoicesPage, setInvoicesPage] = useState(1)
+  const [invoicesTotalPages, setInvoicesTotalPages] = useState(1)
   const [isLoadingPlans, setIsLoadingPlans] = useState(true)
+  const [isLoadingInvoices, setIsLoadingInvoices] = useState(false)
   const [checkoutPlanId, setCheckoutPlanId] = useState<string | null>(null)
   const [cancellingSubscriptionId, setCancellingSubscriptionId] = useState<string | null>(null)
 
@@ -42,6 +48,24 @@ export const useCheckout = (): UseCheckoutReturn => {
       setSubscriptions(items)
     } catch {
       setSubscriptions([])
+    }
+  }, [])
+
+  const loadInvoices = useCallback(async (targetPage: number) => {
+    setIsLoadingInvoices(true)
+    try {
+      const response = await getMyTransactions({
+        page: targetPage,
+        limit: INVOICES_PER_PAGE,
+        status: 'PAID'
+      })
+      setInvoices(response.data)
+      setInvoicesPage(response.meta.page)
+      setInvoicesTotalPages(response.meta.totalPages)
+    } catch {
+      setInvoices([])
+    } finally {
+      setIsLoadingInvoices(false)
     }
   }, [])
 
@@ -60,11 +84,12 @@ export const useCheckout = (): UseCheckoutReturn => {
       })
 
     loadSubscriptions()
+    loadInvoices(1)
 
     return () => {
       isMounted = false
     }
-  }, [loadSubscriptions])
+  }, [loadSubscriptions, loadInvoices])
 
   const startCheckout = useCallback(async (planId: string) => {
     setCheckoutPlanId(planId)
@@ -94,17 +119,28 @@ export const useCheckout = (): UseCheckoutReturn => {
     }
   }, [])
 
+  const handleInvoicesPageChange = useCallback(
+    (nextPage: number) => {
+      loadInvoices(nextPage)
+    },
+    [loadInvoices]
+  )
+
   const refreshCredits = useCallback(async (initialPaidCredits: number) => {
     for (let attempt = 0; attempt < CREDITS_REFRESH_ATTEMPTS; attempt++) {
       await wait(CREDITS_REFRESH_INTERVAL_MS)
 
       try {
-        const [freshUser, freshSubscriptions] = await Promise.all([
+        const [freshUser, freshSubscriptions, freshInvoices] = await Promise.all([
           getMeData(),
-          getMySubscriptions()
+          getMySubscriptions(),
+          getMyTransactions({ page: 1, limit: INVOICES_PER_PAGE, status: 'PAID' })
         ])
         updateUser(freshUser)
         setSubscriptions(freshSubscriptions)
+        setInvoices(freshInvoices.data)
+        setInvoicesPage(freshInvoices.meta.page)
+        setInvoicesTotalPages(freshInvoices.meta.totalPages)
         if (freshUser.paidCredits > initialPaidCredits) return
       } catch {
         return
@@ -143,11 +179,16 @@ export const useCheckout = (): UseCheckoutReturn => {
   return {
     plans,
     subscriptions,
+    invoices,
+    invoicesPage,
+    invoicesTotalPages,
     isLoadingPlans,
+    isLoadingInvoices,
     checkoutPlanId,
     cancellingSubscriptionId,
     startCheckout,
-    handleCancelSubscription
+    handleCancelSubscription,
+    handleInvoicesPageChange
   }
 }
 

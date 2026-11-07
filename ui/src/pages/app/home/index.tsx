@@ -8,6 +8,7 @@ import useAuth from '@hooks/useAuth'
 import useAuthStore from '@stores/auth'
 
 import Events from './sections/events'
+import Invoices from './sections/invoices'
 import Plans from './sections/plans'
 import Subscriptions from './sections/subscriptions'
 import Welcome from './sections/welcome'
@@ -23,11 +24,16 @@ const Home = () => {
   const {
     plans,
     subscriptions,
+    invoices,
+    invoicesPage,
+    invoicesTotalPages,
     isLoadingPlans,
+    isLoadingInvoices,
     checkoutPlanId,
     cancellingSubscriptionId,
     startCheckout,
-    handleCancelSubscription
+    handleCancelSubscription,
+    handleInvoicesPageChange
   } = useCheckout()
 
   useEffect(() => {
@@ -65,6 +71,13 @@ const Home = () => {
           freeCredits={user.freeCredits}
           paidCredits={user.paidCredits}
           onSelectPlan={startCheckout}
+        />
+        <Invoices
+          invoices={invoices}
+          page={invoicesPage}
+          totalPages={invoicesTotalPages}
+          isLoading={isLoadingInvoices}
+          onPageChange={handleInvoicesPageChange}
         />
       </Container>
     </Box>
