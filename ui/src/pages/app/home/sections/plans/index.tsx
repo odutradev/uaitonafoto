@@ -20,6 +20,7 @@ import {
 } from './styles'
 import type { PlansProps } from './types'
 
+const FREE_PLAN_ID = 'free_trial'
 const SKELETON_CARDS = [0, 1, 2]
 
 const Plans = ({
@@ -27,6 +28,7 @@ const Plans = ({
   isLoading,
   checkoutPlanId,
   activeSubscriptionPlanIds = [],
+  freeTrialClaimed = false,
   freeCredits,
   paidCredits,
   onSelectPlan
@@ -54,8 +56,10 @@ const Plans = ({
 
         {!isLoading &&
           plans.map((plan) => {
+            const isFreeTrial = plan.id === FREE_PLAN_ID
             const isCheckingOut = checkoutPlanId === plan.ctaHref
             const isAlreadySubscribed = activeSubscriptionPlanIds.includes(plan.id)
+            const isFreeTrialAlreadyClaimed = isFreeTrial && freeTrialClaimed
 
             return (
               <Card key={plan.id} elevation={0} sx={getPlanCardStyles(plan.highlighted)}>
@@ -90,16 +94,20 @@ const Plans = ({
                 <Button
                   variant={plan.highlighted ? 'contained' : 'outlined'}
                   size="large"
-                  disabled={isCheckoutRunning || isAlreadySubscribed}
+                  disabled={isCheckoutRunning || isAlreadySubscribed || isFreeTrialAlreadyClaimed}
                   onClick={() => onSelectPlan(plan.ctaHref)}
                   startIcon={isCheckingOut ? <CircularProgress size={18} color="inherit" /> : undefined}
                   sx={buyButtonStyles}
                 >
                   {isCheckingOut
-                    ? 'Abrindo pagamento...'
+                    ? isFreeTrial
+                      ? 'Ativando degustação...'
+                      : 'Abrindo pagamento...'
                     : isAlreadySubscribed
                       ? 'Assinatura ativa'
-                      : plan.ctaText}
+                      : isFreeTrialAlreadyClaimed
+                        ? 'Degustação já resgatada'
+                        : plan.ctaText}
                 </Button>
               </Card>
             )

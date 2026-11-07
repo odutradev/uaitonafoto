@@ -1,6 +1,7 @@
 import api from '@interceptor'
 import type {
   CheckoutResponse,
+  ClaimFreeTrialResponse,
   GetMyTransactionsParams,
   PaginatedTransactionsResponse,
   PlanApiItem,
@@ -19,6 +20,11 @@ export const getPlanById = async (id: string): Promise<PlanApiItem> => {
 
 export const createCheckout = async (planId: string): Promise<CheckoutResponse> => {
   const response = await api.post<CheckoutResponse>('/payments/checkout', { planId })
+  return response.data
+}
+
+export const claimFreeTrial = async (): Promise<ClaimFreeTrialResponse> => {
+  const response = await api.post<ClaimFreeTrialResponse>('/payments/free-trial/claim')
   return response.data
 }
 

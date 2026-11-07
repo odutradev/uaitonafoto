@@ -1,3 +1,5 @@
+import type { AuthUser } from '@stores/auth/types'
+
 export type PlanType = 'ONE_TIME' | 'SUBSCRIPTION' | 'UPSELL' | 'FREE'
 
 export interface PlanApiItem {
@@ -32,6 +34,10 @@ export interface CheckoutResponse {
   transactionId: string
   checkoutId: string
   checkoutUrl: string
+}
+
+export interface ClaimFreeTrialResponse {
+  user: AuthUser
 }
 
 export type SubscriptionStatus = 'ACTIVE' | 'PAST_DUE' | 'CANCELLED'

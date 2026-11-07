@@ -1,11 +1,8 @@
 import { Box, Container } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
-import { useEffect } from 'react'
 import { toast } from 'react-toastify'
 
-import { getMeData } from '@actions/auth'
 import useAuth from '@hooks/useAuth'
-import useAuthStore from '@stores/auth'
 
 import Events from './sections/events'
 import Invoices from './sections/invoices'
@@ -20,7 +17,6 @@ const Home = () => {
   const theme = useTheme()
   const isDark = theme.palette.mode === 'dark'
   const { user, logout } = useAuth()
-  const updateUser = useAuthStore((state) => state.updateUser)
   const {
     plans,
     subscriptions,
@@ -35,10 +31,6 @@ const Home = () => {
     handleCancelSubscription,
     handleInvoicesPageChange
   } = useCheckout()
-
-  useEffect(() => {
-    getMeData().then(updateUser).catch(() => undefined)
-  }, [updateUser])
 
   if (!user) return null
 
@@ -68,6 +60,7 @@ const Home = () => {
           isLoading={isLoadingPlans}
           checkoutPlanId={checkoutPlanId}
           activeSubscriptionPlanIds={activeSubscriptionPlanIds}
+          freeTrialClaimed={Boolean(user.freeTrialClaimedAt)}
           freeCredits={user.freeCredits}
           paidCredits={user.paidCredits}
           onSelectPlan={startCheckout}

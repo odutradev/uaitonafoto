@@ -5,6 +5,7 @@ export interface PlansProps {
   isLoading: boolean
   checkoutPlanId: string | null
   activeSubscriptionPlanIds?: string[]
+  freeTrialClaimed?: boolean
   freeCredits: number
   paidCredits: number
   onSelectPlan: (planId: string) => void

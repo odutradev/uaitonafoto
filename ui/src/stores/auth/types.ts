@@ -9,6 +9,7 @@ export interface AuthUser {
   id: string
   freeCredits: number
   paidCredits: number
+  freeTrialClaimedAt?: string
 }
 
 export interface AuthStoreData {

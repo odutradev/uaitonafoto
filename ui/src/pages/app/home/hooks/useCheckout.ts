@@ -1,9 +1,11 @@
+import axios from 'axios'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 
 import {
   cancelSubscription,
+  claimFreeTrial,
   createCheckout,
   getMySubscriptions,
   getMyTransactions,
@@ -31,6 +33,7 @@ export const useCheckout = (): UseCheckoutReturn => {
   const user = useAuthStore((state) => state.auth.user)
   const updateUser = useAuthStore((state) => state.updateUser)
   const handledParamsRef = useRef('')
+  const isInitialFreeTrialCheckoutRef = useRef(checkout === FREE_PLAN_ID)
 
   const [plans, setPlans] = useState<PlanCardData[]>([])
   const [subscriptions, setSubscriptions] = useState<SubscriptionItem[]>([])
@@ -72,9 +75,13 @@ export const useCheckout = (): UseCheckoutReturn => {
   useEffect(() => {
     let isMounted = true
 
+    if (!isInitialFreeTrialCheckoutRef.current) {
+      getMeData().then(updateUser).catch(() => undefined)
+    }
+
     getPlans()
       .then((items) => {
-        if (isMounted) setPlans(items.filter((item) => item.type !== 'FREE').map(formatPlanCard))
+        if (isMounted) setPlans(items.map(formatPlanCard))
       })
       .catch(() => {
         if (isMounted) setPlans([])
@@ -89,10 +96,28 @@ export const useCheckout = (): UseCheckoutReturn => {
     return () => {
       isMounted = false
     }
-  }, [loadSubscriptions, loadInvoices])
+  }, [loadSubscriptions, loadInvoices, updateUser])
 
   const startCheckout = useCallback(async (planId: string) => {
     setCheckoutPlanId(planId)
+
+    if (planId === FREE_PLAN_ID) {
+      try {
+        const { user: updatedUser } = await claimFreeTrial()
+        updateUser(updatedUser)
+        toast.success('Modo Degustação ativado! Você recebeu 1 crédito grátis.')
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response?.status === 409) {
+          getMeData().then(updateUser).catch(() => undefined)
+          toast.info('Você já resgatou o crédito do Modo Degustação nesta conta.')
+        } else {
+          toast.error('Não foi possível ativar o Modo Degustação. Tente novamente.')
+        }
+      } finally {
+        setCheckoutPlanId(null)
+      }
+      return
+    }
 
     try {
       const { checkoutUrl } = await createCheckout(planId)
@@ -101,7 +126,7 @@ export const useCheckout = (): UseCheckoutReturn => {
       toast.error('Não foi possível iniciar o pagamento. Tente novamente.')
       setCheckoutPlanId(null)
     }
-  }, [])
+  }, [updateUser])
 
   const handleCancelSubscription = useCallback(async (subscriptionId: string): Promise<boolean> => {
     setCancellingSubscriptionId(subscriptionId)
@@ -160,7 +185,7 @@ export const useCheckout = (): UseCheckoutReturn => {
     handledParamsRef.current = paramsKey
     navigate('/app', { replace: true })
 
-    if (checkout && checkout !== FREE_PLAN_ID) {
+    if (checkout) {
       startCheckout(checkout)
       return
     }
