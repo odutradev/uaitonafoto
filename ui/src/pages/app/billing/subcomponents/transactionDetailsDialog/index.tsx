@@ -65,6 +65,7 @@ const getStatusLabel = (status: TransactionStatus) => {
 const getPlanTypeLabel = (planType: string): string => {
   if (planType === 'SUBSCRIPTION') return 'Assinatura recorrente'
   if (planType === 'UPSELL') return 'Complemento'
+  if (planType === 'FREE') return 'Teste grátis'
   return 'Compra avulsa'
 }
 

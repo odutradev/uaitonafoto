@@ -85,8 +85,13 @@ const getStatusBadge = (status: TransactionStatus) => {
 const getTypeLabel = (planType: string): string => {
   if (planType === 'SUBSCRIPTION') return 'Mensalidade'
   if (planType === 'UPSELL') return 'Complemento'
-  if (planType === 'FREE') return 'Degustação'
+  if (planType === 'FREE') return 'Teste grátis'
   return 'Avulso'
+}
+
+const formatDisplayPlanName = (planName: string, planType: string): string => {
+  if (planType === 'FREE' || planName === 'Modo Degustação') return 'Teste Grátis'
+  return planName
 }
 
 const formatMethodLabel = (method?: string): string | null => {
@@ -242,7 +247,7 @@ const TransactionsHistory = ({
               <MenuItem value="SUBSCRIPTION">Assinatura</MenuItem>
               <MenuItem value="ONE_TIME">Avulso</MenuItem>
               <MenuItem value="UPSELL">Complemento</MenuItem>
-              <MenuItem value="FREE">Degustação</MenuItem>
+              <MenuItem value="FREE">Teste grátis</MenuItem>
             </Select>
           </FormControl>
         </Box>
@@ -284,7 +289,7 @@ const TransactionsHistory = ({
                   <Box sx={rowMainInfoStyles}>
                     <Box sx={rowTitleBadgesStyles}>
                       <Typography variant="body2" fontWeight={700}>
-                        {purchase.planName}
+                        {formatDisplayPlanName(purchase.planName, purchase.planType)}
                       </Typography>
                       <Chip
                         size="small"
@@ -324,7 +329,7 @@ const TransactionsHistory = ({
                 <Box sx={rowMainInfoStyles}>
                   <Box sx={rowTitleBadgesStyles}>
                     <Typography variant="body2" fontWeight={700}>
-                      {item.planName}
+                      {formatDisplayPlanName(item.planName, item.planType)}
                     </Typography>
                     <Chip
                       size="small"

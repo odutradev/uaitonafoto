@@ -118,7 +118,7 @@ const UserOverview = ({ user }: UserOverviewProps) => {
 
         <Box sx={metaItemBoxStyles}>
           <Typography variant="caption" color="text.secondary" fontWeight={700}>
-            MODO DEGUSTAÇÃO
+            TESTE GRÁTIS
           </Typography>
           <Typography variant="body2" fontWeight={700}>
             {user.freeTrialClaimedAt ? `Resgatado em ${formatDatePtBr(user.freeTrialClaimedAt)}` : 'Disponível para resgate'}

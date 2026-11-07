@@ -105,13 +105,13 @@ export const useCheckout = (): UseCheckoutReturn => {
       try {
         const { user: updatedUser } = await claimFreeTrial()
         updateUser(updatedUser)
-        toast.success('Modo Degustação ativado! Você recebeu 1 crédito grátis.')
+        toast.success('Teste Grátis ativado! Você recebeu 1 crédito grátis.')
       } catch (error) {
         if (axios.isAxiosError(error) && error.response?.status === 409) {
           getMeData().then(updateUser).catch(() => undefined)
-          toast.info('Você já resgatou o crédito do Modo Degustação nesta conta.')
+          toast.info('Você já resgatou o Teste Grátis nesta conta.')
         } else {
-          toast.error('Não foi possível ativar o Modo Degustação. Tente novamente.')
+          toast.error('Não foi possível ativar o Teste Grátis. Tente novamente.')
         }
       } finally {
         setCheckoutPlanId(null)

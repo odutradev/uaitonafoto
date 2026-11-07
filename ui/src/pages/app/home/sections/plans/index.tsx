@@ -101,12 +101,12 @@ const Plans = ({
                 >
                   {isCheckingOut
                     ? isFreeTrial
-                      ? 'Ativando degustação...'
+                      ? 'Ativando teste grátis...'
                       : 'Abrindo pagamento...'
                     : isAlreadySubscribed
                       ? 'Assinatura ativa'
                       : isFreeTrialAlreadyClaimed
-                        ? 'Degustação já resgatada'
+                        ? 'Teste grátis já resgatado'
                         : plan.ctaText}
                 </Button>
               </Card>

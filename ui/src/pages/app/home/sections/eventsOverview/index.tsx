@@ -37,7 +37,7 @@ const EventsOverview = ({
             {totalAvailable} {totalAvailable === 1 ? 'disponível' : 'disponíveis'}
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-            {paidCredits} {paidCredits === 1 ? 'passe completo' : 'passes completos'} e {freeCredits} de degustação.
+            {paidCredits} {paidCredits === 1 ? 'passe completo' : 'passes completos'} e {freeCredits} de teste grátis.
           </Typography>
         </Box>
 

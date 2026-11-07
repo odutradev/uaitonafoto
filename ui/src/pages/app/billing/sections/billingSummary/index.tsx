@@ -56,9 +56,9 @@ const BillingSummary = ({
         <Typography variant="caption" color="text.secondary">
           {freeTrialClaimed
             ? freeCredits > 0
-              ? 'Degustação pronta para uso (até 25 fotos)'
-              : 'Degustação já utilizada nesta conta'
-            : '1 evento de degustação disponível'}
+              ? 'Teste grátis pronto para uso (até 25 fotos)'
+              : 'Teste grátis já utilizado nesta conta'
+            : '1 evento de teste grátis disponível'}
         </Typography>
       </Card>
 

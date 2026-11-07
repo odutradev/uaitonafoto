@@ -92,7 +92,7 @@ const CreateEventDialog = ({
                   </Button>
                 }
               >
-                Você não possui créditos ativos no momento. Resgate sua degustação grátis ou adquira um passe na aba de planos.
+                Você não possui créditos ativos no momento. Resgate seu teste grátis ou adquira um passe na aba de planos.
               </Alert>
             )}
 
@@ -154,7 +154,7 @@ const CreateEventDialog = ({
                   Passe Completo ({paidCredits} {paidCredits === 1 ? 'disponível' : 'disponíveis'})
                 </MenuItem>
                 <MenuItem value="FREE_TRIAL" disabled={freeCredits === 0}>
-                  Modo Degustação — até 25 fotos ({freeCredits} {freeCredits === 1 ? 'disponível' : 'disponíveis'})
+                  Teste Grátis — até 25 fotos ({freeCredits} {freeCredits === 1 ? 'disponível' : 'disponíveis'})
                 </MenuItem>
               </Select>
             </FormControl>
