@@ -19,6 +19,7 @@ export const transactionItemSchema = z
     paidAmount: z.number().optional().openapi({ example: 24700 }),
     currency: z.string().openapi({ example: 'BRL' }),
     status: transactionStatusSchema,
+    cancelReason: z.string().optional().openapi({ example: 'cancelled_by_user' }),
     paymentMethod: z.string().optional().openapi({ example: 'PIX' }),
     checkoutUrl: z.string().optional().openapi({ example: 'https://app.abacatepay.com/pay/bill_abc123' }),
     receiptUrl: z.string().optional().openapi({ example: 'https://app.abacatepay.com/receipt/bill_abc123' }),

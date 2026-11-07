@@ -1,6 +1,8 @@
 import defineAction from '@factories/defineAction'
 import { authRateLimiter } from '@middlewares/rateLimit'
+import userRepository from '@domains/users/repositories'
 import logRepository from '@domains/system/repositories'
+import transactionRepository from '../../repositories/transactions'
 import subscriptionRepository from '../../repositories/subscriptions'
 import cancelGatewaySubscription from './utils/cancelGatewaySubscription'
 import syncUserSubscriptions from './utils/syncUserSubscriptions'
@@ -78,6 +80,31 @@ export const cancelMySubscription = defineAction(
       })
 
       if (!updated) return manageError({ code: 'internal_error' })
+
+      const user = await userRepository.findById(ids.userId)
+      const userEmail = user?.email ?? 'unknown@user'
+      const userName = user?.fullName || user?.name || 'Usuário'
+
+      await transactionRepository.createCancelled({
+        userId: ids.userId,
+        userEmail,
+        userName,
+        planId: subscription.planId,
+        planType: 'SUBSCRIPTION',
+        planName: subscription.planName,
+        planSnapshot: subscription.planSnapshot,
+        quantity: 1,
+        amount: subscription.amount,
+        currency: subscription.currency,
+        cancelReason: 'cancelled_by_user',
+        gateway: 'abacatepay',
+        subscriptionId: subscription.subscriptionId,
+        checkoutId: subscription.checkoutId,
+        customerId: subscription.customerId,
+        paymentMethod: subscription.method,
+        methods: subscription.method ? [subscription.method] : [],
+        devMode: false
+      })
 
       logRepository.create({
         category: 'user',

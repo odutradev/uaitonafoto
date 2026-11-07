@@ -33,6 +33,7 @@ const transactionSchema = new Schema<TransactionDocument>(
       default: 'PENDING',
       index: true
     },
+    cancelReason: { type: String },
     gateway: { type: String, required: true, default: 'abacatepay' },
     checkoutId: { type: String, index: true },
     checkoutUrl: { type: String },

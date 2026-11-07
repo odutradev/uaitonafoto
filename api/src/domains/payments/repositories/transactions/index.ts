@@ -1,6 +1,7 @@
 import { removeUndefined } from '@utils/object'
 import TransactionModel from './model'
 import type {
+  CreateCancelledTransactionPayload,
   CreatePaidTransactionPayload,
   CreateTransactionPayload,
   ListUserTransactionsPaginatedParams,
@@ -24,6 +25,13 @@ export const transactionRepository = {
 
   createPaid: async (payload: CreatePaidTransactionPayload): Promise<TransactionEntity> => {
     const created = await TransactionModel.create(removeUndefined({ ...payload, status: 'PAID' as const }))
+    return toTransactionEntity(created.toObject())
+  },
+
+  createCancelled: async (payload: CreateCancelledTransactionPayload): Promise<TransactionEntity> => {
+    const created = await TransactionModel.create(
+      removeUndefined({ ...payload, status: 'CANCELLED' as const, webhookEvents: [] })
+    )
     return toTransactionEntity(created.toObject())
   },
 

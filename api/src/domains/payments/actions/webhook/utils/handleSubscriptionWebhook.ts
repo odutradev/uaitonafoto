@@ -1,3 +1,4 @@
+import userRepository from '@domains/users/repositories'
 import logRepository from '@domains/system/repositories'
 import transactionRepository from '../../../repositories/transactions'
 import subscriptionRepository from '../../../repositories/subscriptions'
@@ -75,10 +76,38 @@ export const handleSubscriptionWebhook = async ({
   if (event === 'subscription.cancelled') {
     if (subscription.status === 'CANCELLED') return
 
+    const cancelReason = data.subscription?.cancelledDueTo ?? 'cancelled_by_gateway'
+
     await subscriptionRepository.updateStatus(subscription.id, {
       status: 'CANCELLED',
       cancelledAt: data.subscription?.canceledAt ?? new Date().toISOString(),
-      cancelReason: data.subscription?.cancelledDueTo ?? 'cancelled_by_gateway'
+      cancelReason
+    })
+
+    const user = await userRepository.findById(subscription.userId)
+    const initialTx = user ? null : await transactionRepository.findById(subscription.initialTransactionId)
+    const userEmail = user?.email ?? initialTx?.userEmail ?? 'unknown@user'
+    const userName = user?.fullName || user?.name || initialTx?.userName || 'Usuário'
+
+    await transactionRepository.createCancelled({
+      userId: subscription.userId,
+      userEmail,
+      userName,
+      planId: subscription.planId,
+      planType: 'SUBSCRIPTION',
+      planName: subscription.planName,
+      planSnapshot: subscription.planSnapshot,
+      quantity: 1,
+      amount: subscription.amount,
+      currency: subscription.currency,
+      cancelReason,
+      gateway: 'abacatepay',
+      subscriptionId: subscription.subscriptionId,
+      checkoutId: subscription.checkoutId,
+      customerId: subscription.customerId,
+      paymentMethod: subscription.method,
+      methods: subscription.method ? [subscription.method] : [],
+      devMode: false
     })
 
     logRepository.create({
