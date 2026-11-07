@@ -6,6 +6,8 @@ export interface PlanApiItem {
   productId?: string
   type: PlanType
   credits: number
+  rolloverDays?: number
+  maxAccumulatedCredits?: number
   extraStorageDays?: number
   name: string
   title?: string
