@@ -53,3 +53,40 @@ export interface SubscriptionItem {
   cancelledAt?: string
   createdAt: string
 }
+
+export type TransactionStatus = 'PENDING' | 'PAID' | 'REFUNDED' | 'DISPUTED' | 'EXPIRED' | 'CANCELLED'
+
+export interface TransactionItem {
+  id: string
+  planId: string
+  planType: string
+  planName: string
+  amount: number
+  paidAmount?: number
+  currency: string
+  status: TransactionStatus
+  paymentMethod?: string
+  receiptUrl?: string
+  subscriptionId?: string
+  paidAt?: string
+  createdAt: string
+}
+
+export interface PaginationMeta {
+  totalPages: number
+  limit: number
+  total: number
+  page: number
+}
+
+export interface PaginatedTransactionsResponse {
+  meta: PaginationMeta
+  data: TransactionItem[]
+}
+
+export interface GetMyTransactionsParams {
+  page?: number
+  limit?: number
+  status?: TransactionStatus
+  planType?: string
+}
