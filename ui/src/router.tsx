@@ -9,6 +9,7 @@ import ErrorPage from '@pages/public/errorPage'
 import NotFound from '@pages/public/notFound'
 import AuthPage from '@pages/auth/authPage'
 import AuthRoute from '@components/authRoute'
+import DashboardLayout from '@components/dashboardLayout'
 import Home from '@pages/app/home'
 
 const appRouter = createBrowserRouter([
@@ -24,7 +25,13 @@ const appRouter = createBrowserRouter([
       },
       {
         element: createElement(AuthRoute, { access: 'private' }),
-        children: [{ path: '/app', element: createElement(Home) }]
+        children: [
+          {
+            path: '/app',
+            element: createElement(DashboardLayout),
+            children: [{ index: true, element: createElement(Home) }]
+          }
+        ]
       },
       { path: '/reset-password', element: createElement(ResetPassword) },
       { path: '/termos-de-uso', element: createElement(TermsOfUse) },

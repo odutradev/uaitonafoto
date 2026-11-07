@@ -1,5 +1,4 @@
-import { Box, Container } from '@mui/material'
-import { useTheme } from '@mui/material/styles'
+import { Box } from '@mui/material'
 import { toast } from 'react-toastify'
 
 import useAuth from '@hooks/useAuth'
@@ -10,13 +9,10 @@ import Plans from './sections/plans'
 import Subscriptions from './sections/subscriptions'
 import Welcome from './sections/welcome'
 import useCheckout from './hooks/useCheckout'
-import { AppHeader } from './subcomponents/appHeader'
-import { homeContentStyles, homeWrapperStyles } from './styles'
+import { homeContentStyles } from './styles'
 
 const Home = () => {
-  const theme = useTheme()
-  const isDark = theme.palette.mode === 'dark'
-  const { user, logout } = useAuth()
+  const { user } = useAuth()
   const {
     plans,
     subscriptions,
@@ -44,35 +40,31 @@ const Home = () => {
   }
 
   return (
-    <Box sx={homeWrapperStyles}>
-      <AppHeader user={user} isDark={isDark} onLogout={logout} />
-
-      <Container component="main" maxWidth="lg" sx={homeContentStyles}>
-        <Welcome firstName={firstName} onCreateEvent={handleCreateEvent} />
-        <Events onCreateEvent={handleCreateEvent} />
-        <Subscriptions
-          subscriptions={subscriptions}
-          cancellingId={cancellingSubscriptionId}
-          onCancelSubscription={handleCancelSubscription}
-        />
-        <Plans
-          plans={plans}
-          isLoading={isLoadingPlans}
-          checkoutPlanId={checkoutPlanId}
-          activeSubscriptionPlanIds={activeSubscriptionPlanIds}
-          freeTrialClaimed={Boolean(user.freeTrialClaimedAt)}
-          freeCredits={user.freeCredits}
-          paidCredits={user.paidCredits}
-          onSelectPlan={startCheckout}
-        />
-        <Invoices
-          invoices={invoices}
-          page={invoicesPage}
-          totalPages={invoicesTotalPages}
-          isLoading={isLoadingInvoices}
-          onPageChange={handleInvoicesPageChange}
-        />
-      </Container>
+    <Box sx={homeContentStyles}>
+      <Welcome firstName={firstName} onCreateEvent={handleCreateEvent} />
+      <Events onCreateEvent={handleCreateEvent} />
+      <Subscriptions
+        subscriptions={subscriptions}
+        cancellingId={cancellingSubscriptionId}
+        onCancelSubscription={handleCancelSubscription}
+      />
+      <Plans
+        plans={plans}
+        isLoading={isLoadingPlans}
+        checkoutPlanId={checkoutPlanId}
+        activeSubscriptionPlanIds={activeSubscriptionPlanIds}
+        freeTrialClaimed={Boolean(user.freeTrialClaimedAt)}
+        freeCredits={user.freeCredits}
+        paidCredits={user.paidCredits}
+        onSelectPlan={startCheckout}
+      />
+      <Invoices
+        invoices={invoices}
+        page={invoicesPage}
+        totalPages={invoicesTotalPages}
+        isLoading={isLoadingInvoices}
+        onPageChange={handleInvoicesPageChange}
+      />
     </Box>
   )
 }
