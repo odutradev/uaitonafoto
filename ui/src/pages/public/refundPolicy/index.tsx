@@ -105,7 +105,7 @@ export const RefundPolicy = ({ lastUpdated = '04 de novembro de 2026' }: RefundP
               <strong>Cancelamento a qualquer momento sem fidelidade:</strong> Não há cláusula de carência nem multa rescisória. O cancelamento da renovação automática pode ser solicitado a qualquer instante pelo painel ou canal de atendimento.
             </li>
             <li>
-              <strong>Proteção de Eventos (Grace Period):</strong> Caso a assinatura seja cancelada ou deixe de ser renovada, o sistema interrompe a liberação de novos créditos, mas <strong>jamais interrompe ou cancela eventos que já tenham sido ativados previamente</strong> com créditos válidos.
+              <strong>Proteção de Eventos e Créditos:</strong> Caso a assinatura seja cancelada ou deixe de ser renovada, o sistema apenas interrompe a liberação de novos créditos mensais; créditos já adquiridos permanecem disponíveis na conta e <strong>eventos já ativados jamais são interrompidos</strong>.
             </li>
           </Box>
 

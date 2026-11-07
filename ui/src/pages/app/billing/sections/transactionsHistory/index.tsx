@@ -44,13 +44,6 @@ const toTimestampMs = (isoDate?: string): number => {
   return Number.isNaN(ms) ? 0 : ms
 }
 
-const formatShortDatePtBr = (isoDate?: string): string | null => {
-  if (!isoDate) return null
-  const parsed = new Date(isoDate)
-  if (Number.isNaN(parsed.getTime())) return null
-  return parsed.toLocaleDateString('pt-BR')
-}
-
 const formatDatePtBr = (isoDate?: string): string => {
   if (!isoDate) return '-'
   const parsed = new Date(isoDate)
@@ -278,8 +271,6 @@ const TransactionsHistory = ({
             if (entry.kind === 'purchase') {
               const { purchase } = entry
               const displayName = formatDisplayPlanName(purchase.planName, purchase.planType)
-              const expiresFormatted =
-                purchase.remainingCredits > 0 ? formatShortDatePtBr(purchase.creditsExpiresAt) : null
               const rowTitle =
                 purchase.credits > 0
                   ? `Recebimento de créditos • ${displayName}`
@@ -301,7 +292,6 @@ const TransactionsHistory = ({
 
                     <Typography variant="caption" color="text.secondary">
                       {referenceDate} • {getTypeLabel(purchase.planType)}
-                      {expiresFormatted ? ` • Válido até ${expiresFormatted}` : ''}
                     </Typography>
                   </Box>
 

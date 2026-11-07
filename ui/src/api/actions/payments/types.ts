@@ -8,8 +8,6 @@ export interface PlanApiItem {
   productId?: string
   type: PlanType
   credits: number
-  rolloverDays?: number
-  maxAccumulatedCredits?: number
   extraStorageDays?: number
   name: string
   title?: string
@@ -90,9 +88,6 @@ export interface PurchaseItem {
   currency: string
   credits: number
   remainingCredits: number
-  expiredCredits: number
-  creditsExpiresAt?: string
-  creditsExpiredAt?: string
   creditType: 'free' | 'paid'
   extraStorageDays: number
   createdAt: string

@@ -149,7 +149,7 @@ export const landingPageData: LandingPageData = {
   plans: {
     tag: 'Preços transparentes via Pix e Cartão',
     title: 'planos simples para anfitriões e agências',
-    subtitle: 'Sem taxas escondidas. Crie desde um evento de teste gratuito até uma operação completa de cerimonial.'
+    subtitle: 'Sem taxas escondidas. Crie desde um evento no teste grátis até planos mensais com créditos acumulativos enquanto sua assinatura estiver ativa.'
   },
   finalCta: {
     title: 'pronto para transformar as fotos do seu próximo evento?',

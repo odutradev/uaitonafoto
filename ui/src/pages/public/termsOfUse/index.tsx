@@ -122,7 +122,7 @@ export const TermsOfUse = ({ lastUpdated = '04 de novembro de 2026' }: TermsOfUs
           </Typography>
           <Box component="ul" sx={listStyles}>
             <li><strong>Passe Avulso por Evento (B2C):</strong> Pagamento único com liberação do Modo Telão sem marca d&apos;água bloqueante, fotos e convidados ilimitados e armazenamento da galeria conforme o período contratado.</li>
-            <li><strong>Planos de Assinatura para Agências / Cerimonialistas (B2B):</strong> Cobrança recorrente mensal com franquia de eventos, personalização white-label e acúmulo de créditos conforme as regras do plano ativo.</li>
+            <li><strong>Planos de Assinatura para Agências / Cerimonialistas (B2B):</strong> Cobrança recorrente mensal com franquia de eventos, personalização white-label e créditos acumulativos contínuos enquanto o plano estiver ativo.</li>
           </Box>
           <Typography variant="body1" sx={paragraphStyles}>
             As transações financeiras são intermediadas por processadores e instituições de pagamento autorizadas pelo Banco Central do Brasil (incluindo o gateway AbacatePay), aceitando modalidades como PIX e Cartão de Crédito.
