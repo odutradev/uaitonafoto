@@ -1,5 +1,5 @@
 import api from '@interceptor'
-import type { CheckoutResponse, PlanApiItem } from './types'
+import type { CheckoutResponse, PlanApiItem, SubscriptionItem } from './types'
 
 export const getPlans = async (): Promise<PlanApiItem[]> => {
   const response = await api.get<PlanApiItem[]>('/plans')
@@ -16,5 +16,13 @@ export const createCheckout = async (planId: string): Promise<CheckoutResponse> 
   return response.data
 }
 
-export * from './types'
+export const getMySubscriptions = async (): Promise<SubscriptionItem[]> => {
+  const response = await api.get<SubscriptionItem[]>('/payments/subscriptions')
+  return response.data
+}
+
+export const cancelSubscription = async (id: string): Promise<SubscriptionItem> => {
+  const response = await api.post<SubscriptionItem>(`/payments/subscriptions/${id}/cancel`)
+  return response.data
+}
 

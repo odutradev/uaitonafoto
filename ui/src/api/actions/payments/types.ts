@@ -31,3 +31,23 @@ export interface CheckoutResponse {
   checkoutId: string
   checkoutUrl: string
 }
+
+export type SubscriptionStatus = 'ACTIVE' | 'PAST_DUE' | 'CANCELLED'
+
+export interface SubscriptionItem {
+  id: string
+  subscriptionId: string
+  planId: string
+  planName: string
+  amount: number
+  currency: string
+  creditsPerCycle: number
+  frequency: string
+  method?: string
+  status: SubscriptionStatus
+  cyclesCompleted: number
+  lastPaidAt: string
+  nextBillingAt?: string
+  cancelledAt?: string
+  createdAt: string
+}
