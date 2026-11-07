@@ -93,27 +93,19 @@ const formatMethodLabel = (method?: string): string | null => {
   return null
 }
 
-const renderAcquiredBadges = (purchase: PurchaseItem) => (
-  <>
-    {purchase.credits > 0 && (
-      <Chip
-        size="small"
-        color={purchase.remainingCredits > 0 ? 'primary' : 'default'}
-        variant={purchase.remainingCredits > 0 ? 'filled' : 'outlined'}
-        label={`${purchase.remainingCredits}/${purchase.credits} disp.`}
-        sx={chipCompactStyles}
-      />
-    )}
-    {purchase.extraStorageDays > 0 && (
+const renderAcquiredBadges = (purchase: PurchaseItem) => {
+  if (purchase.extraStorageDays > 0 && purchase.credits > 0) {
+    return (
       <Chip
         size="small"
         variant="outlined"
         label={`+${purchase.extraStorageDays} dias de galeria`}
         sx={chipCompactStyles}
       />
-    )}
-  </>
-)
+    )
+  }
+  return null
+}
 
 const TransactionsHistory = ({
   purchases,
