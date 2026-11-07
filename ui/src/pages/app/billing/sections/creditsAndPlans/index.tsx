@@ -41,12 +41,16 @@ const CreditsAndPlans = ({
 }: CreditsAndPlansProps) => {
   const isCheckoutBusy = checkoutPlanId !== null
 
-  const singlePurchasePlans = plans.filter(
-    (plan) =>
+  const singlePurchasePlans = plans.filter((plan) => {
+    const isExtraCredit = plan.abacateProductId === EXTRA_CREDIT_ID || plan.id === EXTRA_CREDIT_ID
+    if (isExtraCredit) return hasActiveSubscription
+
+    return (
       plan.type === 'ONE_TIME' ||
       plan.type === 'UPSELL' ||
       (plan.type === 'FREE' && !freeTrialClaimed)
-  )
+    )
+  })
 
   const subscriptionPlans = plans.filter((plan) => plan.type === 'SUBSCRIPTION')
 
@@ -72,8 +76,7 @@ const CreditsAndPlans = ({
             singlePurchasePlans.map((plan) => {
               const targetId = plan.ctaHref || plan.id
               const isCurrentCheckingOut = checkoutPlanId === targetId
-              const isExtraCredit = plan.abacateProductId === EXTRA_CREDIT_ID
-              const isRestrictedSubscriberOnly = isExtraCredit && !hasActiveSubscription
+              const isExtraCredit = plan.abacateProductId === EXTRA_CREDIT_ID || plan.id === EXTRA_CREDIT_ID
 
               const periodLabel =
                 plan.period ||
@@ -83,13 +86,13 @@ const CreditsAndPlans = ({
                 <Card
                   key={plan.id}
                   elevation={0}
-                  sx={getProductCardStyles(isExtraCredit && hasActiveSubscription)}
+                  sx={getProductCardStyles(isExtraCredit)}
                 >
                   <Box sx={cardTopMetaRowStyles}>
                     <Chip
                       size="small"
-                      variant={isExtraCredit && hasActiveSubscription ? 'filled' : 'outlined'}
-                      color={isExtraCredit && hasActiveSubscription ? 'primary' : 'default'}
+                      variant={isExtraCredit ? 'filled' : 'outlined'}
+                      color={isExtraCredit ? 'primary' : 'default'}
                       label={plan.tag || plan.badge || 'Avulso'}
                       sx={{ fontWeight: 700 }}
                     />
@@ -130,18 +133,16 @@ const CreditsAndPlans = ({
                   <Button
                     variant={plan.id === FREE_PLAN_ID ? 'outlined' : 'contained'}
                     color="primary"
-                    disabled={isCheckoutBusy || isRestrictedSubscriberOnly}
+                    disabled={isCheckoutBusy}
                     onClick={() => onSelectPlan(targetId)}
                     startIcon={isCurrentCheckingOut ? <CircularProgress size={18} color="inherit" /> : undefined}
                     sx={ctaButtonStyles}
                   >
                     {isCurrentCheckingOut
                       ? 'Iniciando...'
-                      : isRestrictedSubscriberOnly
-                        ? 'Exclusivo para assinantes'
-                        : plan.id === FREE_PLAN_ID
-                          ? 'Resgatar grátis'
-                          : 'Comprar agora'}
+                      : plan.id === FREE_PLAN_ID
+                        ? 'Resgatar grátis'
+                        : 'Comprar agora'}
                   </Button>
                 </Card>
               )
