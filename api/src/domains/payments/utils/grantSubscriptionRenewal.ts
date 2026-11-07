@@ -6,6 +6,7 @@ import transactionRepository from '../repositories/transactions'
 import purchaseRepository from '../repositories/purchases'
 import subscriptionRepository from '../repositories/subscriptions'
 import computeNextBillingDate from './computeNextBillingDate'
+import { sendSubscriptionRenewedEmail } from './notifySubscriptionEmail'
 
 import type { CachedPlan } from '@payment/plans/types'
 import type { SubscriptionEntity } from '../repositories/subscriptions/types'
@@ -118,10 +119,21 @@ export const grantSubscriptionRenewal = async ({
     await userRepository.addCredits(subscription.userId, 'paid', creditsToGrant)
   }
 
+  const nextBillingAt = computeNextBillingDate(resolvedPaidAt, resolvedFrequency)
+
   await subscriptionRepository.recordRenewal(subscription.id, {
     lastPaidAt: resolvedPaidAt,
-    nextBillingAt: computeNextBillingDate(resolvedPaidAt, resolvedFrequency),
+    nextBillingAt,
     method: resolvedMethod
+  })
+
+  await sendSubscriptionRenewedEmail({
+    userEmail,
+    userName,
+    planName: subscription.planName,
+    amount: resolvedAmount,
+    creditsAdded: creditsToGrant,
+    nextBillingAt
   })
 
   logger.success(

@@ -3,6 +3,7 @@ import transactionRepository from '../../../repositories/transactions'
 import subscriptionRepository from '../../../repositories/subscriptions'
 import ensureSubscriptionRecord from '../../../utils/ensureSubscriptionRecord'
 import grantSubscriptionRenewal from '../../../utils/grantSubscriptionRenewal'
+import { sendSubscriptionPaymentFailedEmail } from '../../../utils/notifySubscriptionEmail'
 
 import type { SubscriptionEntity } from '../../../repositories/subscriptions/types'
 import type { TransactionWebhookEvent } from '../../../repositories/transactions/types'
@@ -62,6 +63,13 @@ export const handleSubscriptionWebhook = async ({
     return
   }
 
+  const initialTx = deliveryId
+    ? await transactionRepository.findById(subscription.initialTransactionId)
+    : null
+  const isDuplicateDelivery = Boolean(
+    deliveryId && initialTx?.webhookEvents.some((item) => item.deliveryId === deliveryId)
+  )
+
   await transactionRepository.appendWebhookEvent(subscription.initialTransactionId, webhookEvent)
 
   if (event === 'subscription.cancelled') {
@@ -86,8 +94,15 @@ export const handleSubscriptionWebhook = async ({
     return
   }
 
-  if (event === 'subscription.payment_failed' && subscription.status === 'ACTIVE') {
-    await subscriptionRepository.updateStatus(subscription.id, { status: 'PAST_DUE' })
+  if (event === 'subscription.payment_failed' && !isDuplicateDelivery) {
+    if (subscription.status === 'ACTIVE') {
+      await subscriptionRepository.updateStatus(subscription.id, { status: 'PAST_DUE' })
+    }
+
+    await sendSubscriptionPaymentFailedEmail(
+      subscription,
+      data.payerInformation?.method ?? data.subscription?.method
+    )
 
     logRepository.create({
       category: 'system',
