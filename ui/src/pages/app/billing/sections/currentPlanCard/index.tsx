@@ -6,22 +6,15 @@ import {
   Card,
   Chip,
   CircularProgress,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
   Typography
 } from '@mui/material'
 
+import Modal from '@components/modal'
 import { formatPriceInBrl } from '@pages/public/landingPage/sections/plans/utils'
 
 import {
   activePlanCardStyles,
   cancelButtonStyles,
-  dialogActionsStyles,
-  dialogButtonStyles,
-  dialogPaperStyles,
   metaItemsStyles,
   metaRowStyles,
   sectionBoxStyles,
@@ -130,39 +123,29 @@ const CurrentPlanCard = ({
         )
       })}
 
-      <Dialog
+      <Modal
         open={Boolean(confirmTarget)}
-        onClose={isCancelling ? undefined : () => setConfirmTarget(null)}
-        slotProps={{ paper: { sx: dialogPaperStyles } }}
-      >
-        <DialogTitle>Cancelar assinatura?</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Ao cancelar <strong>{confirmTarget?.planName}</strong>, novas mensalidades não serão cobradas.
+        onClose={() => setConfirmTarget(null)}
+        variant="danger"
+        title="Cancelar assinatura?"
+        description={
+          <>
+            Ao cancelar o plano <strong>{confirmTarget?.planName}</strong>, novas mensalidades não serão cobradas.
             Seus créditos atuais e eventos ativos continuam disponíveis normalmente.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions sx={dialogActionsStyles}>
-          <Button
-            variant="outlined"
-            disabled={isCancelling}
-            onClick={() => setConfirmTarget(null)}
-            sx={dialogButtonStyles}
-          >
-            Manter plano
-          </Button>
-          <Button
-            variant="contained"
-            color="error"
-            disabled={isCancelling}
-            onClick={handleConfirmCancel}
-            startIcon={isCancelling ? <CircularProgress size={16} color="inherit" /> : undefined}
-            sx={dialogButtonStyles}
-          >
-            {isCancelling ? 'Cancelando...' : 'Confirmar cancelamento'}
-          </Button>
-        </DialogActions>
-      </Dialog>
+          </>
+        }
+        primaryAction={{
+          label: isCancelling ? 'Cancelando...' : 'Confirmar cancelamento',
+          onClick: handleConfirmCancel,
+          loading: isCancelling,
+          color: 'error'
+        }}
+        secondaryAction={{
+          label: 'Manter plano',
+          onClick: () => setConfirmTarget(null),
+          disabled: isCancelling
+        }}
+      />
     </Box>
   )
 }

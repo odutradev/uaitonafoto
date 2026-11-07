@@ -53,23 +53,3 @@ export const cancelButtonStyles: SxProps<Theme> = {
   fontSize: '0.8125rem',
   width: { xs: '100%', sm: 'auto' }
 }
-
-export const dialogButtonStyles: SxProps<Theme> = {
-  minHeight: 44,
-  width: { xs: '100%', sm: 'auto' }
-}
-
-export const dialogPaperStyles: SxProps<Theme> = {
-  borderRadius: '20px',
-  p: 1,
-  maxWidth: 460,
-  width: 'calc(100% - 32px)',
-  m: 2
-}
-
-export const dialogActionsStyles: SxProps<Theme> = {
-  px: 3,
-  pb: 2,
-  gap: 1,
-  flexDirection: { xs: 'column-reverse', sm: 'row' }
-}
