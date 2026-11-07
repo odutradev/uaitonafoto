@@ -12,7 +12,7 @@ import type {
 import type { PaginatedData } from '@factories/pagination/types'
 
 const toTransactionEntity = (doc: any): TransactionEntity => {
-  const { _id, ...rest } = doc
+  const { _id, effectiveDate: _effectiveDate, ...rest } = doc
   return { ...rest, id: String(_id), webhookEvents: rest.webhookEvents ?? [] }
 }
 
@@ -78,11 +78,13 @@ export const transactionRepository = {
 
     const [count, docs] = await Promise.all([
       TransactionModel.countDocuments(filter),
-      TransactionModel.find(filter)
-        .sort({ paidAt: -1, createdAt: -1 })
-        .skip(offset)
-        .limit(limit)
-        .lean()
+      TransactionModel.aggregate([
+        { $match: filter },
+        { $addFields: { effectiveDate: { $ifNull: ['$paidAt', '$createdAt'] } } },
+        { $sort: { effectiveDate: -1, _id: -1 } },
+        { $skip: offset },
+        { $limit: limit }
+      ])
     ])
 
     return {
