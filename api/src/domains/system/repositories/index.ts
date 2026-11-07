@@ -1,9 +1,12 @@
 import createLogger from '@utils/logger'
 import { removeUndefined } from '@utils/object'
 import LogModel from './model'
-import type { CreateLogPayload, LogEntity } from './types'
+import type { PaginatedData } from '@factories/pagination/types'
+import type { CreateLogPayload, ListLogsPaginatedParams, LogEntity } from './types'
 
 const logger = createLogger('log-repository')
+
+const escapeRegex = (value: string): string => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 
 const toLogEntity = (doc: any): LogEntity => ({
   id: String(doc._id || doc.id),
@@ -38,9 +41,51 @@ export const logRepository = {
       logger.warn('Failed to persist audit log entry', error)
       return null
     }
+  },
+
+  listPaginated: async ({
+    limit,
+    offset,
+    userId,
+    category,
+    level,
+    action,
+    search
+  }: ListLogsPaginatedParams): Promise<PaginatedData<LogEntity>> => {
+    const baseFilter = removeUndefined({
+      userId,
+      category,
+      level,
+      action
+    })
+
+    const trimmedSearch = search?.trim()
+    const searchRegex = trimmedSearch ? new RegExp(escapeRegex(trimmedSearch), 'i') : null
+
+    const filter = searchRegex
+      ? {
+          ...baseFilter,
+          $or: [
+            { title: searchRegex },
+            { description: searchRegex },
+            { action: searchRegex },
+            { userEmail: searchRegex },
+            { userName: searchRegex },
+            { targetName: searchRegex }
+          ]
+        }
+      : baseFilter
+
+    const [count, docs] = await Promise.all([
+      LogModel.countDocuments(filter),
+      LogModel.find(filter).sort({ createdAt: -1 }).skip(offset).limit(limit).lean()
+    ])
+
+    return {
+      count,
+      rows: docs.map(toLogEntity)
+    }
   }
 }
-
-
 
 export default logRepository

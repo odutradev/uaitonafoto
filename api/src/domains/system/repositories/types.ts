@@ -22,3 +22,13 @@ export interface LogEntity extends CreateLogPayload {
   id: string
   createdAt: string
 }
+
+export interface ListLogsPaginatedParams {
+  limit: number
+  offset: number
+  userId?: string
+  category?: LogCategory
+  level?: LogLevel
+  action?: string
+  search?: string
+}
