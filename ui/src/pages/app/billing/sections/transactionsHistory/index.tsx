@@ -13,11 +13,7 @@ import {
   Stack,
   Typography
 } from '@mui/material'
-import {
-  InfoOutlined as DetailsIcon,
-  OpenInNew as PayNowIcon,
-  ReceiptLong as ReceiptIcon
-} from '@mui/icons-material'
+import { OpenInNew as PayNowIcon } from '@mui/icons-material'
 
 import { formatPriceInBrl } from '@pages/public/landingPage/sections/plans/utils'
 
@@ -27,15 +23,16 @@ import {
   emptyBoxStyles,
   filterSelectStyles,
   filtersRowStyles,
-  getListContainerStyles,
+  getListCardStyles,
+  getTransactionRowStyles,
   headerFilterBarStyles,
   historyWrapperStyles,
   paginationRowStyles,
   rowActionsStyles,
   rowButtonStyles,
   rowMainInfoStyles,
-  rowTitleBadgesStyles,
-  transactionRowCardStyles
+  rowRightColStyles,
+  rowTitleBadgesStyles
 } from './styles'
 import type { TransactionStatus } from '@actions/payments/types'
 import type { TransactionStatusFilter, TransactionTypeFilter } from '../../types'
@@ -112,60 +109,16 @@ const TransactionsHistory = ({
 
   return (
     <Box id="transacoes" component="section" sx={historyWrapperStyles}>
-      {activeBatches.length > 0 && (
-        <Card elevation={0} sx={batchesCardStyles}>
-          <Typography variant="subtitle1" fontWeight={700}>
-            Lotes de créditos e complementos ativos
-          </Typography>
-          <Stack spacing={1}>
-            {activeBatches.slice(0, 5).map((batch) => {
-              const expiresFormatted = formatShortDatePtBr(batch.creditsExpiresAt)
-              const acquiredFormatted = formatShortDatePtBr(batch.createdAt)
-
-              return (
-                <Box key={batch.id} sx={batchItemRowStyles}>
-                  <Box sx={{ minWidth: 0 }}>
-                    <Typography variant="body2" fontWeight={700}>
-                      {batch.planName}
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      Adquirido em {acquiredFormatted ?? '-'}
-                      {expiresFormatted ? ` • Rollover válido até ${expiresFormatted}` : ' • Sem expiração de ciclo'}
-                    </Typography>
-                  </Box>
-
-                  <Stack direction="row" spacing={1} flexWrap="wrap">
-                    {batch.remainingCredits > 0 && (
-                      <Chip
-                        size="small"
-                        color={batch.creditType === 'paid' ? 'primary' : 'default'}
-                        label={`${batch.remainingCredits} de ${batch.credits} disp.`}
-                        sx={{ fontWeight: 700 }}
-                      />
-                    )}
-                    {batch.extraStorageDays > 0 && (
-                      <Chip
-                        size="small"
-                        variant="outlined"
-                        label={`+${batch.extraStorageDays} dias de galeria`}
-                      />
-                    )}
-                  </Stack>
-                </Box>
-              )
-            })}
-          </Stack>
-        </Card>
-      )}
-
       <Box sx={headerFilterBarStyles}>
         <Box>
-          <Typography variant="h5" component="h2">
-            Histórico de pagamentos e transações
+          <Typography variant="h6" component="h2">
+            Transações
           </Typography>
-          <Typography variant="body2" color="text.secondary">
-            {total} {total === 1 ? 'registro encontrado' : 'registros encontrados'} na sua conta.
-          </Typography>
+          {total > 0 && (
+            <Typography variant="caption" color="text.secondary">
+              {total} {total === 1 ? 'registro' : 'registros'}
+            </Typography>
+          )}
         </Box>
 
         <Box sx={filtersRowStyles}>
@@ -177,7 +130,7 @@ const TransactionsHistory = ({
               value={statusFilter}
               onChange={(e) => onStatusFilterChange(e.target.value as TransactionStatusFilter)}
             >
-              <MenuItem value="ALL">Todos os status</MenuItem>
+              <MenuItem value="ALL">Todos</MenuItem>
               <MenuItem value="PAID">Pagos</MenuItem>
               <MenuItem value="PENDING">Pendentes</MenuItem>
               <MenuItem value="CANCELLED">Cancelados</MenuItem>
@@ -195,114 +148,161 @@ const TransactionsHistory = ({
               value={typeFilter}
               onChange={(e) => onTypeFilterChange(e.target.value as TransactionTypeFilter)}
             >
-              <MenuItem value="ALL">Todas as modalidades</MenuItem>
-              <MenuItem value="SUBSCRIPTION">Assinatura mensal</MenuItem>
-              <MenuItem value="ONE_TIME">Crédito avulso</MenuItem>
+              <MenuItem value="ALL">Todas</MenuItem>
+              <MenuItem value="SUBSCRIPTION">Assinatura</MenuItem>
+              <MenuItem value="ONE_TIME">Avulso</MenuItem>
               <MenuItem value="UPSELL">Complemento</MenuItem>
             </Select>
           </FormControl>
         </Box>
       </Box>
 
+      {activeBatches.length > 0 && (
+        <Card elevation={0} sx={batchesCardStyles}>
+          <Typography variant="subtitle2" fontWeight={700}>
+            Lotes de créditos e complementos ativos
+          </Typography>
+          <Stack spacing={1}>
+            {activeBatches.slice(0, 5).map((batch) => {
+              const expiresFormatted = formatShortDatePtBr(batch.creditsExpiresAt)
+              const acquiredFormatted = formatShortDatePtBr(batch.createdAt)
+
+              return (
+                <Box key={batch.id} sx={batchItemRowStyles}>
+                  <Box sx={{ minWidth: 0 }}>
+                    <Typography variant="body2" fontWeight={700}>
+                      {batch.planName}
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      Adquirido em {acquiredFormatted ?? '-'}
+                      {expiresFormatted ? ` • Válido até ${expiresFormatted}` : ''}
+                    </Typography>
+                  </Box>
+
+                  <Stack direction="row" spacing={0.75} flexWrap="wrap">
+                    {batch.remainingCredits > 0 && (
+                      <Chip
+                        size="small"
+                        color={batch.creditType === 'paid' ? 'primary' : 'default'}
+                        label={`${batch.remainingCredits}/${batch.credits} disp.`}
+                        sx={{ fontWeight: 700, height: 22 }}
+                      />
+                    )}
+                    {batch.extraStorageDays > 0 && (
+                      <Chip
+                        size="small"
+                        variant="outlined"
+                        label={`+${batch.extraStorageDays} dias de galeria`}
+                        sx={{ height: 22 }}
+                      />
+                    )}
+                  </Stack>
+                </Box>
+              )
+            })}
+          </Stack>
+        </Card>
+      )}
+
       {isLoading && transactions.length === 0 && (
-        <Box sx={getListContainerStyles(false)}>
+        <Stack spacing={1}>
           {[0, 1, 2].map((item) => (
-            <Skeleton key={item} variant="rounded" height={96} sx={{ borderRadius: '20px' }} />
+            <Skeleton key={item} variant="rounded" height={68} sx={{ borderRadius: '16px' }} />
           ))}
-        </Box>
+        </Stack>
       )}
 
       {!isLoading && transactions.length === 0 && (
         <Paper elevation={0} sx={emptyBoxStyles}>
-          <Typography variant="h6" component="h3">
+          <Typography variant="subtitle1" fontWeight={700}>
             Nenhuma transação encontrada
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Não há pagamentos correspondentes aos filtros selecionados no momento.
+            Seus pagamentos aparecerão aqui assim que forem gerados.
           </Typography>
         </Paper>
       )}
 
       {transactions.length > 0 && (
-        <Box sx={getListContainerStyles(isLoading)}>
-          {transactions.map((item) => {
+        <Card elevation={0} sx={getListCardStyles(isLoading)}>
+          {transactions.map((item, index) => {
             const statusBadge = getStatusBadge(item.status)
             const amountFormatted = formatPriceInBrl(item.paidAmount ?? item.amount)
             const methodLabel = formatMethodLabel(item.paymentMethod)
             const referenceDate = formatDatePtBr(item.paidAt ?? item.createdAt)
+            const isLast = index === transactions.length - 1
 
             return (
-              <Card key={item.id} elevation={0} sx={transactionRowCardStyles}>
+              <Box key={item.id} sx={getTransactionRowStyles(isLast)}>
                 <Box sx={rowMainInfoStyles}>
                   <Box sx={rowTitleBadgesStyles}>
-                    <Typography variant="subtitle1" fontWeight={700}>
+                    <Typography variant="body2" fontWeight={700}>
                       {item.planName}
                     </Typography>
                     <Chip
                       size="small"
-                      variant="outlined"
-                      label={getTypeLabel(item.planType)}
-                    />
-                    <Chip
-                      size="small"
                       color={statusBadge.color}
                       label={statusBadge.label}
-                      sx={{ fontWeight: 700 }}
+                      sx={{ fontWeight: 700, height: 20, fontSize: '0.7rem' }}
                     />
                   </Box>
 
-                  <Typography variant="body2" color="text.secondary">
-                    <strong>{amountFormatted}</strong> • {item.paidAt ? `Pago em ${referenceDate}` : `Criado em ${referenceDate}`}
+                  <Typography variant="caption" color="text.secondary">
+                    {referenceDate} • {getTypeLabel(item.planType)}
                     {methodLabel ? ` • ${methodLabel}` : ''}
                   </Typography>
                 </Box>
 
-                <Box sx={rowActionsStyles}>
-                  {item.status === 'PENDING' && item.checkoutUrl && (
+                <Box sx={rowRightColStyles}>
+                  <Typography variant="body2" fontWeight={800}>
+                    {amountFormatted}
+                  </Typography>
+
+                  <Box sx={rowActionsStyles}>
+                    {item.status === 'PENDING' && item.checkoutUrl && (
+                      <Button
+                        component="a"
+                        href={item.checkoutUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        variant="contained"
+                        color="primary"
+                        size="small"
+                        endIcon={<PayNowIcon sx={{ fontSize: 14 }} />}
+                        sx={rowButtonStyles}
+                      >
+                        Pagar
+                      </Button>
+                    )}
+
+                    {item.receiptUrl && (
+                      <Button
+                        component="a"
+                        href={item.receiptUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        variant="outlined"
+                        size="small"
+                        sx={rowButtonStyles}
+                      >
+                        Recibo
+                      </Button>
+                    )}
+
                     <Button
-                      component="a"
-                      href={item.checkoutUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      variant="contained"
-                      color="primary"
+                      variant="text"
                       size="small"
-                      startIcon={<PayNowIcon />}
+                      onClick={() => onSelectTransaction(item)}
                       sx={rowButtonStyles}
                     >
-                      Pagar agora
+                      Detalhes
                     </Button>
-                  )}
-
-                  {item.receiptUrl && (
-                    <Button
-                      component="a"
-                      href={item.receiptUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      variant="outlined"
-                      size="small"
-                      startIcon={<ReceiptIcon />}
-                      sx={rowButtonStyles}
-                    >
-                      Recibo
-                    </Button>
-                  )}
-
-                  <Button
-                    variant="text"
-                    size="small"
-                    startIcon={<DetailsIcon />}
-                    onClick={() => onSelectTransaction(item)}
-                    sx={rowButtonStyles}
-                  >
-                    Detalhes
-                  </Button>
+                  </Box>
                 </Box>
-              </Card>
+              </Box>
             )
           })}
-        </Box>
+        </Card>
       )}
 
       {totalPages > 1 && (
@@ -312,6 +312,7 @@ const TransactionsHistory = ({
             page={page}
             disabled={isLoading}
             color="primary"
+            size="small"
             shape="rounded"
             onChange={(_e, nextPage) => onPageChange(nextPage)}
           />

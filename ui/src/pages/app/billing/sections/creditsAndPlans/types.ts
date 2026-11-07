@@ -6,6 +6,5 @@ export interface CreditsAndPlansProps {
   checkoutPlanId: string | null
   activeSubscriptionPlanIds: string[]
   hasActiveSubscription: boolean
-  freeTrialClaimed: boolean
   onSelectPlan: (planId: string) => void
 }

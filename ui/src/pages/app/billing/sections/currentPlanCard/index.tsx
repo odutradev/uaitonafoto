@@ -11,31 +11,25 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Stack,
   Typography
 } from '@mui/material'
-import { useTheme } from '@mui/material/styles'
-import { AddShoppingCart as ExtraCreditIcon } from '@mui/icons-material'
 
 import { formatPriceInBrl } from '@pages/public/landingPage/sections/plans/utils'
 
 import {
-  actionsBarStyles,
   activePlanCardStyles,
-  buttonResponsiveStyles,
-  cancelledItemStyles,
-  detailsGridStyles,
-  detailTileStyles,
+  cancelButtonStyles,
   dialogActionsStyles,
+  dialogButtonStyles,
   dialogPaperStyles,
+  metaItemsStyles,
+  metaRowStyles,
   sectionBoxStyles,
   titleChipsRowStyles,
   topHeaderRowStyles
 } from './styles'
 import type { SubscriptionItem, SubscriptionStatus } from '@actions/payments/types'
 import type { CurrentPlanCardProps } from './types'
-
-const EXTRA_CREDIT_PLAN_ID = 'prod_agency_extra_credit'
 
 const formatDatePtBr = (isoDate?: string): string => {
   if (!isoDate) return '-'
@@ -45,8 +39,8 @@ const formatDatePtBr = (isoDate?: string): string => {
 }
 
 const formatMethodLabel = (method?: string): string => {
-  if (method === 'PIX') return 'PIX Recorrente'
-  if (method === 'CARD') return 'Cartão de Crédito'
+  if (method === 'PIX') return 'PIX'
+  if (method === 'CARD') return 'Cartão'
   return 'Automático'
 }
 
@@ -59,20 +53,13 @@ const getStatusProps = (status: SubscriptionStatus) => {
 const CurrentPlanCard = ({
   subscriptions,
   cancellingId,
-  checkoutPlanId,
-  hasExtraCreditPlan,
-  onBuyExtraCredit,
+  isCheckoutBusy,
   onCancelSubscription
 }: CurrentPlanCardProps) => {
-  const theme = useTheme()
-  const isDark = theme.palette.mode === 'dark'
   const [confirmTarget, setConfirmTarget] = useState<SubscriptionItem | null>(null)
 
   const currentSubscriptions = subscriptions.filter((sub) => sub.status !== 'CANCELLED')
-  const cancelledSubscriptions = subscriptions.filter((sub) => sub.status === 'CANCELLED')
-
   const isCancelling = cancellingId !== null
-  const isBuyingExtra = checkoutPlanId === EXTRA_CREDIT_PLAN_ID
 
   const handleConfirmCancel = async () => {
     if (!confirmTarget) return
@@ -80,31 +67,27 @@ const CurrentPlanCard = ({
     if (ok) setConfirmTarget(null)
   }
 
-  if (currentSubscriptions.length === 0 && cancelledSubscriptions.length === 0) {
+  if (currentSubscriptions.length === 0) {
     return null
   }
 
   return (
     <Box component="section" sx={sectionBoxStyles}>
-      <Typography variant="h5" component="h2">
-        Assinatura e plano recorrente
-      </Typography>
-
       {currentSubscriptions.map((sub) => {
         const statusProps = getStatusProps(sub.status)
         const isThisCancelling = cancellingId === sub.id
 
         return (
-          <Card key={sub.id} elevation={0} sx={activePlanCardStyles(isDark)}>
+          <Card key={sub.id} elevation={0} sx={activePlanCardStyles}>
             <Box sx={topHeaderRowStyles}>
               <Box sx={titleChipsRowStyles}>
-                <Typography variant="h5" component="h3">
+                <Typography variant="subtitle1" component="h2" fontWeight={800}>
                   {sub.planName}
                 </Typography>
                 <Chip size="small" color={statusProps.color} label={statusProps.label} sx={{ fontWeight: 700 }} />
               </Box>
 
-              <Typography variant="h5" fontWeight={800}>
+              <Typography variant="subtitle1" fontWeight={800}>
                 {formatPriceInBrl(sub.amount)}
                 <Typography component="span" variant="body2" color="text.secondary">
                   /mês
@@ -113,114 +96,50 @@ const CurrentPlanCard = ({
             </Box>
 
             {sub.status === 'PAST_DUE' && (
-              <Alert severity="warning" sx={{ borderRadius: '14px' }}>
-                Identificamos uma pendência na última renovação. Eventos já ativados nunca são interrompidos, mas regularize sua assinatura para liberar novos ciclos.
+              <Alert severity="warning" sx={{ borderRadius: '12px', py: 0.5 }}>
+                Pendência na renovação. Regularize o pagamento para liberar os próximos ciclos.
               </Alert>
             )}
 
-            <Box sx={detailsGridStyles}>
-              <Box sx={detailTileStyles}>
-                <Typography variant="caption" color="text.secondary" fontWeight={700}>
-                  FRANQUIA POR CICLO
+            <Box sx={metaRowStyles}>
+              <Box sx={metaItemsStyles}>
+                <Typography variant="body2" color="text.secondary">
+                  Franquia: <strong>{sub.creditsPerCycle} eventos/mês</strong>
                 </Typography>
-                <Typography variant="body1" fontWeight={800}>
-                  {sub.creditsPerCycle} {sub.creditsPerCycle === 1 ? 'evento/mês' : 'eventos/mês'}
+                <Typography variant="body2" color="text.secondary">
+                  Próxima cobrança: <strong>{formatDatePtBr(sub.nextBillingAt)}</strong>
                 </Typography>
-              </Box>
-
-              <Box sx={detailTileStyles}>
-                <Typography variant="caption" color="text.secondary" fontWeight={700}>
-                  PRÓXIMA COBRANÇA
-                </Typography>
-                <Typography variant="body1" fontWeight={800}>
-                  {formatDatePtBr(sub.nextBillingAt)}
+                <Typography variant="body2" color="text.secondary">
+                  Cobrança: <strong>{formatMethodLabel(sub.method)}</strong>
                 </Typography>
               </Box>
-
-              <Box sx={detailTileStyles}>
-                <Typography variant="caption" color="text.secondary" fontWeight={700}>
-                  ÚLTIMO PAGAMENTO
-                </Typography>
-                <Typography variant="body1" fontWeight={800}>
-                  {formatDatePtBr(sub.lastPaidAt)}
-                </Typography>
-              </Box>
-
-              <Box sx={detailTileStyles}>
-                <Typography variant="caption" color="text.secondary" fontWeight={700}>
-                  FORMA DE COBRANÇA
-                </Typography>
-                <Typography variant="body1" fontWeight={800}>
-                  {formatMethodLabel(sub.method)} ({sub.cyclesCompleted}x)
-                </Typography>
-              </Box>
-            </Box>
-
-            <Box sx={actionsBarStyles}>
-              {sub.status === 'ACTIVE' && hasExtraCreditPlan ? (
-                <Button
-                  variant="contained"
-                  color="primary"
-                  disabled={checkoutPlanId !== null || isCancelling}
-                  onClick={onBuyExtraCredit}
-                  startIcon={
-                    isBuyingExtra ? <CircularProgress size={18} color="inherit" /> : <ExtraCreditIcon />
-                  }
-                  sx={buttonResponsiveStyles}
-                >
-                  {isBuyingExtra ? 'Abrindo checkout...' : 'Comprar crédito extra de assinante'}
-                </Button>
-              ) : (
-                <Box />
-              )}
 
               <Button
-                variant="outlined"
+                variant="text"
                 color="error"
-                disabled={isCancelling || checkoutPlanId !== null}
+                size="small"
+                disabled={isCancelling || isCheckoutBusy}
                 onClick={() => setConfirmTarget(sub)}
-                startIcon={isThisCancelling ? <CircularProgress size={18} color="inherit" /> : undefined}
-                sx={buttonResponsiveStyles}
+                startIcon={isThisCancelling ? <CircularProgress size={14} color="inherit" /> : undefined}
+                sx={cancelButtonStyles}
               >
-                {isThisCancelling ? 'Cancelando...' : 'Cancelar plano recorrente'}
+                {isThisCancelling ? 'Cancelando...' : 'Cancelar assinatura'}
               </Button>
             </Box>
           </Card>
         )
       })}
 
-      {cancelledSubscriptions.length > 0 && (
-        <Stack spacing={1}>
-          <Typography variant="subtitle2" color="text.secondary" fontWeight={700}>
-            Assinaturas encerradas anteriormente
-          </Typography>
-          {cancelledSubscriptions.map((sub) => (
-            <Card key={sub.id} elevation={0} sx={cancelledItemStyles}>
-              <Box>
-                <Typography variant="body2" fontWeight={700}>
-                  {sub.planName} • {formatPriceInBrl(sub.amount)}/mês
-                </Typography>
-                <Typography variant="caption" color="text.secondary">
-                  Cancelada em {formatDatePtBr(sub.cancelledAt)} • {sub.cyclesCompleted}{' '}
-                  {sub.cyclesCompleted === 1 ? 'ciclo concluído' : 'ciclos concluídos'}
-                </Typography>
-              </Box>
-              <Chip size="small" variant="outlined" label="Cancelada" />
-            </Card>
-          ))}
-        </Stack>
-      )}
-
       <Dialog
         open={Boolean(confirmTarget)}
         onClose={isCancelling ? undefined : () => setConfirmTarget(null)}
         slotProps={{ paper: { sx: dialogPaperStyles } }}
       >
-        <DialogTitle>Cancelar plano recorrente?</DialogTitle>
+        <DialogTitle>Cancelar assinatura?</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Ao cancelar o plano <strong>{confirmTarget?.planName}</strong>, nenhuma nova mensalidade será cobrada nos próximos ciclos.
-            Todos os créditos já liberados na sua conta e eventos em andamento permanecem funcionando normalmente.
+            Ao cancelar <strong>{confirmTarget?.planName}</strong>, novas mensalidades não serão cobradas.
+            Seus créditos atuais e eventos ativos continuam disponíveis normalmente.
           </DialogContentText>
         </DialogContent>
         <DialogActions sx={dialogActionsStyles}>
@@ -228,17 +147,17 @@ const CurrentPlanCard = ({
             variant="outlined"
             disabled={isCancelling}
             onClick={() => setConfirmTarget(null)}
-            sx={buttonResponsiveStyles}
+            sx={dialogButtonStyles}
           >
-            Manter meu plano
+            Manter plano
           </Button>
           <Button
             variant="contained"
             color="error"
             disabled={isCancelling}
             onClick={handleConfirmCancel}
-            startIcon={isCancelling ? <CircularProgress size={18} color="inherit" /> : undefined}
-            sx={buttonResponsiveStyles}
+            startIcon={isCancelling ? <CircularProgress size={16} color="inherit" /> : undefined}
+            sx={dialogButtonStyles}
           >
             {isCancelling ? 'Cancelando...' : 'Confirmar cancelamento'}
           </Button>

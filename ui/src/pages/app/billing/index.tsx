@@ -10,7 +10,6 @@ import TransactionDetailsDialog from './subcomponents/transactionDetailsDialog'
 import { billingPageStyles, headerButtonStyles, headerRowStyles, pageTitleStyles } from './styles'
 
 const FREE_PLAN_ID = 'free_trial'
-const EXTRA_CREDIT_ID = 'prod_agency_extra_credit'
 
 const Billing = () => {
   const {
@@ -46,30 +45,29 @@ const Billing = () => {
     .filter((sub) => sub.status !== 'CANCELLED')
     .map((sub) => sub.planId)
 
-  const hasExtraCreditPlan = plans.some((p) => p.abacateProductId === EXTRA_CREDIT_ID)
-
   return (
     <Box sx={billingPageStyles}>
       <Box component="header" sx={headerRowStyles}>
         <Box sx={{ minWidth: 0 }}>
-          <Typography variant="h3" component="h1" sx={pageTitleStyles}>
-            Plano, créditos e transações
+          <Typography variant="h4" component="h1" sx={pageTitleStyles}>
+            Planos e transações
           </Typography>
-          <Typography variant="body1" color="text.secondary">
-            Gerencie sua assinatura recorrente, adquira créditos avulsos e acompanhe todos os seus pagamentos.
+          <Typography variant="body2" color="text.secondary">
+            Gerencie seus créditos, assinatura e histórico de pagamentos.
           </Typography>
         </Box>
 
         <Button
           variant="outlined"
+          size="small"
           disabled={isLoadingTransactions || isLoadingInitial}
           onClick={handleRefreshAll}
           startIcon={
-            isLoadingTransactions ? <CircularProgress size={18} color="inherit" /> : <RefreshIcon />
+            isLoadingTransactions ? <CircularProgress size={16} color="inherit" /> : <RefreshIcon fontSize="small" />
           }
           sx={headerButtonStyles}
         >
-          Atualizar dados
+          Atualizar
         </Button>
       </Box>
 
@@ -86,9 +84,7 @@ const Billing = () => {
       <CurrentPlanCard
         subscriptions={subscriptions}
         cancellingId={cancellingSubscriptionId}
-        checkoutPlanId={checkoutPlanId}
-        hasExtraCreditPlan={hasExtraCreditPlan}
-        onBuyExtraCredit={() => startCheckout(EXTRA_CREDIT_ID)}
+        isCheckoutBusy={checkoutPlanId !== null}
         onCancelSubscription={handleCancelSubscription}
       />
 
@@ -98,7 +94,6 @@ const Billing = () => {
         checkoutPlanId={checkoutPlanId}
         activeSubscriptionPlanIds={activeSubscriptionPlanIds}
         hasActiveSubscription={hasActiveSubscription}
-        freeTrialClaimed={Boolean(user.freeTrialClaimedAt)}
         onSelectPlan={startCheckout}
       />
 

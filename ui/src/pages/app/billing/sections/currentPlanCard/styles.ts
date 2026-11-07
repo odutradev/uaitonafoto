@@ -1,21 +1,17 @@
 import type { SxProps, Theme } from '@mui/material'
-import { brandColors } from '@theme'
 
 export const sectionBoxStyles: SxProps<Theme> = {
   display: 'flex',
   flexDirection: 'column',
-  gap: 2
+  gap: 1.5
 }
 
-export const activePlanCardStyles = (isDark: boolean): SxProps<Theme> => ({
-  p: { xs: 2.5, sm: 3.5 },
+export const activePlanCardStyles: SxProps<Theme> = {
+  p: { xs: 2, sm: 2.5 },
   display: 'flex',
   flexDirection: 'column',
-  gap: 2.5,
-  borderWidth: '2px',
-  borderColor: brandColors.flashYellow,
-  bgcolor: isDark ? brandColors.darkPaper : '#FFFFFF'
-})
+  gap: 1.75
+}
 
 export const topHeaderRowStyles: SxProps<Theme> = {
   display: 'flex',
@@ -32,54 +28,41 @@ export const titleChipsRowStyles: SxProps<Theme> = {
   gap: 1
 }
 
-export const detailsGridStyles: SxProps<Theme> = {
-  display: 'grid',
-  gridTemplateColumns: {
-    xs: '1fr',
-    sm: 'repeat(2, minmax(0, 1fr))',
-    md: 'repeat(4, minmax(0, 1fr))'
-  },
-  gap: 1.5
-}
-
-export const detailTileStyles: SxProps<Theme> = {
-  p: 1.75,
-  borderRadius: '12px',
-  bgcolor: 'action.hover',
+export const metaRowStyles: SxProps<Theme> = {
   display: 'flex',
-  flexDirection: 'column',
-  gap: 0.25
-}
-
-export const actionsBarStyles: SxProps<Theme> = {
-  display: 'flex',
-  flexDirection: { xs: 'column', sm: 'row' },
-  alignItems: { xs: 'stretch', sm: 'center' },
+  flexWrap: 'wrap',
+  alignItems: 'center',
   justifyContent: 'space-between',
   gap: 1.5,
-  pt: 1,
+  pt: 1.5,
   borderTop: 1,
   borderColor: 'divider'
 }
 
-export const buttonResponsiveStyles: SxProps<Theme> = {
-  minHeight: 48,
+export const metaItemsStyles: SxProps<Theme> = {
+  display: 'flex',
+  flexWrap: 'wrap',
+  columnGap: 3,
+  rowGap: 0.75
+}
+
+export const cancelButtonStyles: SxProps<Theme> = {
+  minHeight: 36,
+  px: 1.75,
+  py: 0.5,
+  fontSize: '0.8125rem',
   width: { xs: '100%', sm: 'auto' }
 }
 
-export const cancelledItemStyles: SxProps<Theme> = {
-  p: 2,
-  display: 'flex',
-  flexDirection: { xs: 'column', sm: 'row' },
-  alignItems: { xs: 'flex-start', sm: 'center' },
-  justifyContent: 'space-between',
-  gap: 1
+export const dialogButtonStyles: SxProps<Theme> = {
+  minHeight: 44,
+  width: { xs: '100%', sm: 'auto' }
 }
 
 export const dialogPaperStyles: SxProps<Theme> = {
   borderRadius: '20px',
   p: 1,
-  maxWidth: 480,
+  maxWidth: 460,
   width: 'calc(100% - 32px)',
   m: 2
 }

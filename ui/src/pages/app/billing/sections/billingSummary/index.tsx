@@ -1,17 +1,11 @@
 import { Box, Button, Card, CircularProgress, Typography } from '@mui/material'
-import {
-  AutoAwesomeOutlined as SparklesIcon,
-  CardGiftcardOutlined as GiftIcon,
-  WorkspacePremiumOutlined as PlanIcon
-} from '@mui/icons-material'
 
 import {
   claimButtonStyles,
   kpiCardStyles,
   kpiGridStyles,
-  kpiHeaderRowStyles,
   kpiValueStyles,
-  summaryWrapperStyles
+  trialRowStyles
 } from './styles'
 import type { BillingSummaryProps } from './types'
 
@@ -25,78 +19,64 @@ const BillingSummary = ({
   onClaimFreeTrial
 }: BillingSummaryProps) => {
   return (
-    <Box component="section" sx={summaryWrapperStyles}>
-      <Box sx={kpiGridStyles}>
-        <Card elevation={0} sx={kpiCardStyles}>
-          <Box sx={kpiHeaderRowStyles}>
-            <Typography variant="caption" color="text.secondary" fontWeight={700}>
-              CRÉDITOS COMPLETOS
-            </Typography>
-            <SparklesIcon color="primary" fontSize="small" />
-          </Box>
-          <Box>
-            <Typography variant="h4" component="p" sx={kpiValueStyles}>
-              {paidCredits} {paidCredits === 1 ? 'evento' : 'eventos'}
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-              Fotos ilimitadas, modo telão liberado e download em alta resolução.
-            </Typography>
-          </Box>
-        </Card>
+    <Box component="section" sx={kpiGridStyles}>
+      <Card elevation={0} sx={kpiCardStyles}>
+        <Typography variant="caption" color="text.secondary" fontWeight={700}>
+          CRÉDITOS DISPONÍVEIS
+        </Typography>
+        <Typography variant="h4" component="p" sx={kpiValueStyles}>
+          {paidCredits}
+        </Typography>
+        <Typography variant="caption" color="text.secondary">
+          {paidCredits === 1 ? 'Evento completo disponível' : 'Eventos completos disponíveis'}
+        </Typography>
+      </Card>
 
-        <Card elevation={0} sx={kpiCardStyles}>
-          <Box sx={kpiHeaderRowStyles}>
-            <Typography variant="caption" color="text.secondary" fontWeight={700}>
-              MODO DEGUSTAÇÃO
-            </Typography>
-            <GiftIcon color="action" fontSize="small" />
-          </Box>
-          <Box>
-            <Typography variant="h4" component="p" sx={kpiValueStyles}>
-              {freeCredits} {freeCredits === 1 ? 'crédito grátis' : 'créditos grátis'}
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-              {freeTrialClaimed
-                ? 'Degustação já ativada nesta conta (até 25 fotos).'
-                : 'Você tem direito a 1 evento grátis para testar a plataforma.'}
-            </Typography>
-          </Box>
-
+      <Card elevation={0} sx={kpiCardStyles}>
+        <Typography variant="caption" color="text.secondary" fontWeight={700}>
+          TESTE GRÁTIS
+        </Typography>
+        <Box sx={trialRowStyles}>
+          <Typography variant="h4" component="p" sx={kpiValueStyles}>
+            {freeCredits}
+          </Typography>
           {!freeTrialClaimed && (
             <Button
               variant="outlined"
               size="small"
               disabled={isCheckoutBusy}
               onClick={onClaimFreeTrial}
-              startIcon={isCheckingOutFreeTrial ? <CircularProgress size={16} color="inherit" /> : undefined}
+              startIcon={isCheckingOutFreeTrial ? <CircularProgress size={14} color="inherit" /> : undefined}
               sx={claimButtonStyles}
             >
-              {isCheckingOutFreeTrial ? 'Ativando...' : 'Resgatar crédito grátis'}
+              {isCheckingOutFreeTrial ? 'Ativando...' : 'Resgatar grátis'}
             </Button>
           )}
-        </Card>
+        </Box>
+        <Typography variant="caption" color="text.secondary">
+          {freeTrialClaimed
+            ? freeCredits > 0
+              ? 'Degustação pronta para uso (até 25 fotos)'
+              : 'Degustação já utilizada nesta conta'
+            : '1 evento de degustação disponível'}
+        </Typography>
+      </Card>
 
-        <Card elevation={0} sx={kpiCardStyles}>
-          <Box sx={kpiHeaderRowStyles}>
-            <Typography variant="caption" color="text.secondary" fontWeight={700}>
-              PLANO ATUAL
-            </Typography>
-            <PlanIcon color={activeSubscription ? 'primary' : 'action'} fontSize="small" />
-          </Box>
-          <Box>
-            <Typography variant="h5" component="p" fontWeight={800} sx={{ lineHeight: 1.2 }}>
-              {activeSubscription ? activeSubscription.planName : 'Modo Avulso'}
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-              {activeSubscription
-                ? `${activeSubscription.creditsPerCycle} créditos/mês • ${
-                    activeSubscription.status === 'ACTIVE' ? 'Assinatura em dia' : 'Pagamento pendente'
-                  }`
-                : 'Sem cobrança mensal recorrente. Compre créditos sob demanda ou assine.'}
-            </Typography>
-          </Box>
-        </Card>
-      </Box>
+      <Card elevation={0} sx={kpiCardStyles}>
+        <Typography variant="caption" color="text.secondary" fontWeight={700}>
+          ASSINATURA ATUAL
+        </Typography>
+        <Typography variant="h6" component="p" fontWeight={800} sx={{ lineHeight: 1.2 }}>
+          {activeSubscription ? activeSubscription.planName : 'Sem plano ativo'}
+        </Typography>
+        <Typography variant="caption" color="text.secondary">
+          {activeSubscription
+            ? `${activeSubscription.creditsPerCycle} eventos/mês • ${
+                activeSubscription.status === 'ACTIVE' ? 'Em dia' : 'Pagamento pendente'
+              }`
+            : 'Modo avulso sob demanda'}
+        </Typography>
+      </Card>
     </Box>
   )
 }

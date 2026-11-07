@@ -3,49 +3,71 @@ import type { SxProps, Theme } from '@mui/material'
 export const historyWrapperStyles: SxProps<Theme> = {
   display: 'flex',
   flexDirection: 'column',
-  gap: 2.5
+  gap: 2
 }
 
 export const headerFilterBarStyles: SxProps<Theme> = {
   display: 'flex',
-  flexDirection: { xs: 'column', md: 'row' },
-  alignItems: { xs: 'stretch', md: 'center' },
+  flexDirection: { xs: 'column', sm: 'row' },
+  alignItems: { xs: 'stretch', sm: 'center' },
   justifyContent: 'space-between',
-  gap: 2
+  gap: 1.5
 }
 
 export const filtersRowStyles: SxProps<Theme> = {
   display: 'flex',
   flexDirection: { xs: 'column', sm: 'row' },
-  gap: 1.5
+  gap: 1.25
 }
 
 export const filterSelectStyles: SxProps<Theme> = {
-  minWidth: { xs: '100%', sm: 190 }
+  minWidth: { xs: '100%', sm: 165 }
 }
 
-export const getListContainerStyles = (isLoading: boolean): SxProps<Theme> => ({
+export const batchesCardStyles: SxProps<Theme> = {
+  p: 2,
   display: 'flex',
   flexDirection: 'column',
-  gap: 1.5,
+  gap: 1.25
+}
+
+export const batchItemRowStyles: SxProps<Theme> = {
+  display: 'flex',
+  flexDirection: { xs: 'column', sm: 'row' },
+  alignItems: { xs: 'flex-start', sm: 'center' },
+  justifyContent: 'space-between',
+  gap: 1,
+  py: 1,
+  px: 1.5,
+  borderRadius: '12px',
+  bgcolor: 'action.hover'
+}
+
+export const getListCardStyles = (isLoading: boolean): SxProps<Theme> => ({
+  overflow: 'hidden',
   opacity: isLoading ? 0.6 : 1,
   transition: 'opacity 0.2s ease'
 })
 
-export const transactionRowCardStyles: SxProps<Theme> = {
-  p: { xs: 2, sm: 2.5 },
+export const getTransactionRowStyles = (isLast: boolean): SxProps<Theme> => ({
+  px: { xs: 2, sm: 2.5 },
+  py: 1.75,
   display: 'flex',
-  flexDirection: { xs: 'column', md: 'row' },
-  alignItems: { xs: 'stretch', md: 'center' },
+  flexDirection: { xs: 'column', sm: 'row' },
+  alignItems: { xs: 'stretch', sm: 'center' },
   justifyContent: 'space-between',
-  gap: 2,
-  minWidth: 0
-}
+  gap: 1.5,
+  minWidth: 0,
+  ...(!isLast && {
+    borderBottom: 1,
+    borderColor: 'divider'
+  })
+})
 
 export const rowMainInfoStyles: SxProps<Theme> = {
   display: 'flex',
   flexDirection: 'column',
-  gap: 0.75,
+  gap: 0.25,
   minWidth: 0
 }
 
@@ -56,48 +78,39 @@ export const rowTitleBadgesStyles: SxProps<Theme> = {
   gap: 1
 }
 
-export const rowActionsStyles: SxProps<Theme> = {
+export const rowRightColStyles: SxProps<Theme> = {
   display: 'flex',
-  flexDirection: { xs: 'column', sm: 'row' },
-  alignItems: { xs: 'stretch', sm: 'center' },
-  gap: 1,
+  alignItems: 'center',
+  justifyContent: { xs: 'space-between', sm: 'flex-end' },
+  flexWrap: 'wrap',
+  gap: 1.5,
   flexShrink: 0
 }
 
+export const rowActionsStyles: SxProps<Theme> = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: 0.75
+}
+
 export const rowButtonStyles: SxProps<Theme> = {
-  minHeight: 44,
-  width: { xs: '100%', sm: 'auto' }
+  minHeight: 34,
+  px: 1.5,
+  py: 0.5,
+  fontSize: '0.8125rem'
 }
 
 export const emptyBoxStyles: SxProps<Theme> = {
-  p: { xs: 3, sm: 5 },
+  p: { xs: 3, sm: 4 },
   textAlign: 'center',
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  gap: 1
+  gap: 0.5
 }
 
 export const paginationRowStyles: SxProps<Theme> = {
   display: 'flex',
   justifyContent: 'center',
-  pt: 1
-}
-
-export const batchesCardStyles: SxProps<Theme> = {
-  p: 2.5,
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 1.5
-}
-
-export const batchItemRowStyles: SxProps<Theme> = {
-  display: 'flex',
-  flexDirection: { xs: 'column', sm: 'row' },
-  alignItems: { xs: 'flex-start', sm: 'center' },
-  justifyContent: 'space-between',
-  gap: 1,
-  p: 1.5,
-  borderRadius: '12px',
-  bgcolor: 'action.hover'
+  pt: 0.5
 }
