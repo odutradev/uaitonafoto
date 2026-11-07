@@ -17,7 +17,6 @@ import {
   HistoryOutlined as LogsIcon,
   Logout as LogoutIcon,
   Menu as MenuIcon,
-  PersonOutline as ProfileIcon,
   PhotoCameraOutlined as EventsIcon,
   ReceiptLongOutlined as BillingIcon
 } from '@mui/icons-material'
@@ -37,6 +36,7 @@ import {
   getMobileDrawerPaperStyles,
   getMobileTopBarStyles,
   getNavButtonStyles,
+  getUserSummaryRowStyles,
   layoutRootStyles,
   logoutButtonStyles,
   mainAreaStyles,
@@ -48,7 +48,6 @@ import {
   sidebarHeaderStyles,
   sidebarInnerStyles,
   userAvatarStyles,
-  userSummaryRowStyles,
   userTextBoxStyles
 } from './styles'
 import type { DashboardNavItem, SidebarContentProps } from './types'
@@ -56,7 +55,6 @@ import type { DashboardNavItem, SidebarContentProps } from './types'
 const NAV_ITEMS: DashboardNavItem[] = [
   { label: 'Meus eventos', path: '/app', icon: <EventsIcon fontSize="small" />, exact: true },
   { label: 'Plano e transações', path: '/app/billing', icon: <BillingIcon fontSize="small" /> },
-  { label: 'Meu perfil', path: '/app/profile', icon: <ProfileIcon fontSize="small" /> },
   { label: 'Logs de atividade', path: '/app/logs', icon: <LogsIcon fontSize="small" /> }
 ]
 
@@ -131,7 +129,22 @@ const SidebarContent = ({
       </Box>
 
       <Box sx={sidebarFooterStyles}>
-        <Box sx={userSummaryRowStyles}>
+        <Box
+          role="button"
+          tabIndex={0}
+          aria-label="Acessar meu perfil"
+          onClick={() => onNavigate('/app/profile')}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              onNavigate('/app/profile')
+            }
+          }}
+          sx={getUserSummaryRowStyles(
+            currentPath === '/app/profile' || currentPath.startsWith('/app/profile/'),
+            isDark
+          )}
+        >
           <Avatar src={userPhotoUrl} alt={userName} sx={userAvatarStyles}>
             {userName.charAt(0).toUpperCase()}
           </Avatar>

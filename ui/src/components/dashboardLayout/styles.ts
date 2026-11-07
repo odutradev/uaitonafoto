@@ -145,18 +145,38 @@ export const getNavButtonStyles = (isActive: boolean, isDark: boolean): SxProps<
 export const sidebarFooterStyles: SxProps<Theme> = {
   display: 'flex',
   flexDirection: 'column',
-  gap: 1.5,
-  pt: 2,
+  gap: 1,
+  pt: 1.5,
   borderTop: 1,
   borderColor: 'divider'
 }
 
-export const userSummaryRowStyles: SxProps<Theme> = {
+export const getUserSummaryRowStyles = (isActive: boolean, isDark: boolean): SxProps<Theme> => ({
   display: 'flex',
   alignItems: 'center',
   gap: 1.5,
-  minWidth: 0
-}
+  minWidth: 0,
+  px: 1.5,
+  py: 1,
+  borderRadius: '14px',
+  cursor: 'pointer',
+  border: `1px solid ${isActive ? brandColors.flashYellow : 'transparent'}`,
+  bgcolor: isActive
+    ? isDark
+      ? 'rgba(255, 207, 31, 0.12)'
+      : 'rgba(255, 207, 31, 0.2)'
+    : 'transparent',
+  transition: 'background-color 0.15s ease, border-color 0.15s ease',
+  '&:hover': {
+    bgcolor: isActive
+      ? isDark
+        ? 'rgba(255, 207, 31, 0.18)'
+        : 'rgba(255, 207, 31, 0.28)'
+      : isDark
+        ? 'rgba(255, 207, 31, 0.08)'
+        : 'rgba(23, 20, 15, 0.05)'
+  }
+})
 
 export const userAvatarStyles: SxProps<Theme> = {
   width: 40,
