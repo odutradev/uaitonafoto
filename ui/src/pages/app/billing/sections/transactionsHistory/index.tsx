@@ -101,31 +101,27 @@ const formatMethodLabel = (method?: string): string | null => {
   return null
 }
 
-const renderAcquiredBadges = (purchase?: PurchaseItem) => {
-  if (!purchase) return null
-
-  return (
-    <>
-      {purchase.credits > 0 && (
-        <Chip
-          size="small"
-          color={purchase.remainingCredits > 0 ? 'primary' : 'default'}
-          variant={purchase.remainingCredits > 0 ? 'filled' : 'outlined'}
-          label={`${purchase.remainingCredits}/${purchase.credits} disp.`}
-          sx={chipCompactStyles}
-        />
-      )}
-      {purchase.extraStorageDays > 0 && (
-        <Chip
-          size="small"
-          variant="outlined"
-          label={`+${purchase.extraStorageDays} dias de galeria`}
-          sx={chipCompactStyles}
-        />
-      )}
-    </>
-  )
-}
+const renderAcquiredBadges = (purchase: PurchaseItem) => (
+  <>
+    {purchase.credits > 0 && (
+      <Chip
+        size="small"
+        color={purchase.remainingCredits > 0 ? 'primary' : 'default'}
+        variant={purchase.remainingCredits > 0 ? 'filled' : 'outlined'}
+        label={`${purchase.remainingCredits}/${purchase.credits} disp.`}
+        sx={chipCompactStyles}
+      />
+    )}
+    {purchase.extraStorageDays > 0 && (
+      <Chip
+        size="small"
+        variant="outlined"
+        label={`+${purchase.extraStorageDays} dias de galeria`}
+        sx={chipCompactStyles}
+      />
+    )}
+  </>
+)
 
 const TransactionsHistory = ({
   purchases,
@@ -142,21 +138,9 @@ const TransactionsHistory = ({
   onSelectTransaction
 }: TransactionsHistoryProps) => {
   const { entries, totalRecords } = useMemo(() => {
-    const purchaseByTxId = new Map<string, PurchaseItem>(
-      purchases.map((item) => [item.transactionId, item])
-    )
     const txIdsOnPage = new Set(transactions.map((tx) => tx.id))
 
-    const matchingStandalonePurchases = purchases.filter((item) => {
-      if (txIdsOnPage.has(item.transactionId)) return false
-
-      const isStandaloneAcquisition =
-        item.creditType === 'free' ||
-        item.planType === 'FREE' ||
-        (totalPages <= 1 && statusFilter === 'ALL' && typeFilter === 'ALL')
-
-      if (!isStandaloneAcquisition) return false
-
+    const matchingPurchases = purchases.filter((item) => {
       const matchesStatus = statusFilter === 'ALL' || statusFilter === 'PAID'
       const matchesType = typeFilter === 'ALL' || item.planType === typeFilter
       return matchesStatus && matchesType
@@ -166,8 +150,17 @@ const TransactionsHistory = ({
     const newestOnPage = txTimestamps.length > 0 ? Math.max(...txTimestamps) : 0
     const oldestOnPage = txTimestamps.length > 0 ? Math.min(...txTimestamps) : 0
 
-    const pageStandalonePurchases = matchingStandalonePurchases.filter((item) => {
+    const pagePurchases = matchingPurchases.filter((item) => {
+      if (txIdsOnPage.has(item.transactionId)) return true
+
+      const isStandaloneAcquisition =
+        item.creditType === 'free' ||
+        item.planType === 'FREE' ||
+        (totalPages <= 1 && statusFilter === 'ALL' && typeFilter === 'ALL')
+
+      if (!isStandaloneAcquisition) return false
       if (totalPages <= 1 || transactions.length === 0) return true
+
       const itemMs = toTimestampMs(item.createdAt)
       if (page === 1) return itemMs >= oldestOnPage
       if (page === totalPages) return itemMs < oldestOnPage
@@ -178,13 +171,12 @@ const TransactionsHistory = ({
       ...transactions.map(
         (tx): UnifiedHistoryEntry => ({
           kind: 'transaction',
-          id: tx.id,
+          id: `tx_${tx.id}`,
           timestamp: tx.paidAt ?? tx.createdAt,
-          transaction: tx,
-          purchase: purchaseByTxId.get(tx.id)
+          transaction: tx
         })
       ),
-      ...pageStandalonePurchases.map(
+      ...pagePurchases.map(
         (purchase): UnifiedHistoryEntry => ({
           kind: 'purchase',
           id: `purchase_${purchase.id}`,
@@ -194,11 +186,16 @@ const TransactionsHistory = ({
       )
     ]
 
-    combined.sort((a, b) => toTimestampMs(b.timestamp) - toTimestampMs(a.timestamp))
+    combined.sort((a, b) => {
+      const diff = toTimestampMs(b.timestamp) - toTimestampMs(a.timestamp)
+      if (diff !== 0) return diff
+      if (a.kind === b.kind) return 0
+      return a.kind === 'purchase' ? -1 : 1
+    })
 
     return {
       entries: combined,
-      totalRecords: total + matchingStandalonePurchases.length
+      totalRecords: total + matchingPurchases.length
     }
   }, [page, purchases, statusFilter, total, totalPages, transactions, typeFilter])
 
@@ -207,7 +204,7 @@ const TransactionsHistory = ({
       <Box sx={headerFilterBarStyles}>
         <Box>
           <Typography variant="h6" component="h2">
-            Transações e itens adquiridos
+            Transações e créditos
           </Typography>
           {totalRecords > 0 && (
             <Typography variant="caption" color="text.secondary">
@@ -226,7 +223,7 @@ const TransactionsHistory = ({
               onChange={(e) => onStatusFilterChange(e.target.value as TransactionStatusFilter)}
             >
               <MenuItem value="ALL">Todos</MenuItem>
-              <MenuItem value="PAID">Pagos / Ativos</MenuItem>
+              <MenuItem value="PAID">Pagos / Recebidos</MenuItem>
               <MenuItem value="PENDING">Pendentes</MenuItem>
               <MenuItem value="CANCELLED">Cancelados</MenuItem>
               <MenuItem value="EXPIRED">Expirados</MenuItem>
@@ -267,7 +264,7 @@ const TransactionsHistory = ({
             Nenhum registro encontrado
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Suas transações e créditos adquiridos aparecerão aqui.
+            Seus pagamentos e recebimentos de créditos aparecerão aqui.
           </Typography>
         </Paper>
       )}
@@ -280,23 +277,25 @@ const TransactionsHistory = ({
 
             if (entry.kind === 'purchase') {
               const { purchase } = entry
+              const displayName = formatDisplayPlanName(purchase.planName, purchase.planType)
               const expiresFormatted =
                 purchase.remainingCredits > 0 ? formatShortDatePtBr(purchase.creditsExpiresAt) : null
-              const amountLabel = purchase.amount === 0 ? 'Grátis' : formatPriceInBrl(purchase.amount)
+              const rowTitle =
+                purchase.credits > 0
+                  ? `Recebimento de créditos • ${displayName}`
+                  : `Complemento liberado • ${displayName}`
+              const creditSummaryLabel =
+                purchase.credits > 0
+                  ? `+${purchase.credits} ${purchase.credits === 1 ? 'crédito' : 'créditos'}`
+                  : `+${purchase.extraStorageDays} dias`
 
               return (
                 <Box key={entry.id} sx={getTransactionRowStyles(isLast)}>
                   <Box sx={rowMainInfoStyles}>
                     <Box sx={rowTitleBadgesStyles}>
                       <Typography variant="body2" fontWeight={700}>
-                        {formatDisplayPlanName(purchase.planName, purchase.planType)}
+                        {rowTitle}
                       </Typography>
-                      <Chip
-                        size="small"
-                        color="success"
-                        label="Resgatado"
-                        sx={chipCompactStyles}
-                      />
                       {renderAcquiredBadges(purchase)}
                     </Box>
 
@@ -307,22 +306,18 @@ const TransactionsHistory = ({
                   </Box>
 
                   <Box sx={rowRightColStyles}>
-                    <Typography variant="body2" fontWeight={800}>
-                      {amountLabel}
+                    <Typography variant="body2" fontWeight={800} color="success.main">
+                      {creditSummaryLabel}
                     </Typography>
                   </Box>
                 </Box>
               )
             }
 
-            const { transaction: item, purchase } = entry
+            const { transaction: item } = entry
             const statusBadge = getStatusBadge(item.status)
             const amountFormatted = formatPriceInBrl(item.paidAmount ?? item.amount)
             const methodLabel = formatMethodLabel(item.paymentMethod)
-            const expiresFormatted =
-              purchase && purchase.remainingCredits > 0
-                ? formatShortDatePtBr(purchase.creditsExpiresAt)
-                : null
 
             return (
               <Box key={entry.id} sx={getTransactionRowStyles(isLast)}>
@@ -337,13 +332,11 @@ const TransactionsHistory = ({
                       label={statusBadge.label}
                       sx={chipCompactStyles}
                     />
-                    {renderAcquiredBadges(purchase)}
                   </Box>
 
                   <Typography variant="caption" color="text.secondary">
                     {referenceDate} • {getTypeLabel(item.planType)}
                     {methodLabel ? ` • ${methodLabel}` : ''}
-                    {expiresFormatted ? ` • Válido até ${expiresFormatted}` : ''}
                   </Typography>
                 </Box>
 

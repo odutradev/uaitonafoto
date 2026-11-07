@@ -7,7 +7,6 @@ export type UnifiedHistoryEntry =
       id: string
       timestamp: string
       transaction: TransactionItem
-      purchase?: PurchaseItem
     }
   | {
       kind: 'purchase'
