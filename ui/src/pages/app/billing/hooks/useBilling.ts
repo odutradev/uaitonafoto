@@ -200,6 +200,7 @@ export const useBilling = (): UseBillingReturn => {
     try {
       const updated = await cancelSubscription(subscriptionId)
       setSubscriptions((prev) => prev.map((sub) => (sub.id === updated.id ? updated : sub)))
+      await loadTransactions(1, statusFilter, typeFilter)
       toast.success('Assinatura cancelada com sucesso. Seus créditos atuais seguem disponíveis.')
       return true
     } catch {
@@ -208,7 +209,7 @@ export const useBilling = (): UseBillingReturn => {
     } finally {
       setCancellingSubscriptionId(null)
     }
-  }, [])
+  }, [loadTransactions, statusFilter, typeFilter])
 
   const pollPostPaymentUpdate = useCallback(
     async (initialPaidCredits: number) => {

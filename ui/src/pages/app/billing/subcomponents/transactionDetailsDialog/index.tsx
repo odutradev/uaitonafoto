@@ -44,7 +44,7 @@ const formatDateTimePtBr = (isoDate?: string): string => {
   })
 }
 
-const getStatusLabel = (status: TransactionStatus) => {
+const getStatusLabel = (status: TransactionStatus, cancelReason?: string) => {
   switch (status) {
     case 'PAID':
       return { label: 'Pago', color: 'success' as const }
@@ -57,6 +57,10 @@ const getStatusLabel = (status: TransactionStatus) => {
     case 'EXPIRED':
       return { label: 'Expirado', color: 'default' as const }
     case 'CANCELLED':
+      if (cancelReason === 'cancelled_by_user') {
+        return { label: 'Cancelado pelo usuário', color: 'default' as const }
+      }
+      return { label: 'Cancelado', color: 'default' as const }
     default:
       return { label: 'Cancelado', color: 'default' as const }
   }
@@ -79,7 +83,7 @@ const formatMethodLabel = (method?: string): string => {
 const TransactionDetailsDialog = ({ transaction, onClose }: TransactionDetailsDialogProps) => {
   if (!transaction) return null
 
-  const statusMeta = getStatusLabel(transaction.status)
+  const statusMeta = getStatusLabel(transaction.status, transaction.cancelReason)
   const displayAmount = formatPriceInBrl(transaction.paidAmount ?? transaction.amount)
 
   const handleCopyId = async () => {
@@ -111,6 +115,19 @@ const TransactionDetailsDialog = ({ transaction, onClose }: TransactionDetailsDi
             </Typography>
             <Chip size="small" color={statusMeta.color} label={statusMeta.label} sx={{ fontWeight: 700 }} />
           </Box>
+
+          {transaction.status === 'CANCELLED' && (
+            <Box sx={metaRowStyles}>
+              <Typography variant="caption" color="text.secondary" fontWeight={700}>
+                MOTIVO
+              </Typography>
+              <Typography variant="body2" fontWeight={700}>
+                {transaction.cancelReason === 'cancelled_by_user'
+                  ? 'Cancelado pelo usuário'
+                  : 'Cancelado pelo gateway'}
+              </Typography>
+            </Box>
+          )}
 
           <Box sx={metaRowStyles}>
             <Typography variant="caption" color="text.secondary" fontWeight={700}>

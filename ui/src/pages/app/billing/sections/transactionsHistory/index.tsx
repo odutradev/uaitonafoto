@@ -56,7 +56,7 @@ const formatDatePtBr = (isoDate?: string): string => {
   })
 }
 
-const getStatusBadge = (status: TransactionStatus) => {
+const getStatusBadge = (status: TransactionStatus, cancelReason?: string) => {
   switch (status) {
     case 'PAID':
       return { label: 'Pago', color: 'success' as const }
@@ -69,6 +69,10 @@ const getStatusBadge = (status: TransactionStatus) => {
     case 'EXPIRED':
       return { label: 'Expirado', color: 'default' as const }
     case 'CANCELLED':
+      if (cancelReason === 'cancelled_by_user') {
+        return { label: 'Cancelado pelo usuário', color: 'default' as const }
+      }
+      return { label: 'Cancelado', color: 'default' as const }
     default:
       return { label: 'Cancelado', color: 'default' as const }
   }
@@ -312,7 +316,7 @@ const TransactionsHistory = ({
             }
 
             const { transaction: item } = entry
-            const statusBadge = getStatusBadge(item.status)
+            const statusBadge = getStatusBadge(item.status, item.cancelReason)
             const amountFormatted = formatPriceInBrl(item.paidAmount ?? item.amount)
             const methodLabel = formatMethodLabel(item.paymentMethod)
 

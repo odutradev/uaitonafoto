@@ -69,6 +69,7 @@ export interface TransactionItem {
   paidAmount?: number
   currency: string
   status: TransactionStatus
+  cancelReason?: string
   paymentMethod?: string
   checkoutUrl?: string
   receiptUrl?: string
