@@ -13,7 +13,6 @@ const BillingSummary = ({
   paidCredits,
   freeCredits,
   freeTrialClaimed,
-  activeSubscription,
   isCheckingOutFreeTrial,
   isCheckoutBusy,
   onClaimFreeTrial
@@ -59,22 +58,6 @@ const BillingSummary = ({
               ? 'Teste grátis pronto para uso (até 25 fotos)'
               : 'Teste grátis já utilizado nesta conta'
             : '1 evento de teste grátis disponível'}
-        </Typography>
-      </Card>
-
-      <Card elevation={0} sx={kpiCardStyles}>
-        <Typography variant="caption" color="text.secondary" fontWeight={700}>
-          ASSINATURA ATUAL
-        </Typography>
-        <Typography variant="h6" component="p" fontWeight={800} sx={{ lineHeight: 1.2 }}>
-          {activeSubscription ? activeSubscription.planName : 'Sem plano ativo'}
-        </Typography>
-        <Typography variant="caption" color="text.secondary">
-          {activeSubscription
-            ? `${activeSubscription.creditsPerCycle} eventos/mês • ${
-                activeSubscription.status === 'ACTIVE' ? 'Em dia' : 'Pagamento pendente'
-              }`
-            : 'Modo avulso sob demanda'}
         </Typography>
       </Card>
     </Box>

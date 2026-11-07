@@ -39,7 +39,6 @@ const Billing = () => {
 
   if (!user) return null
 
-  const activeSubscription = subscriptions.find((sub) => sub.status !== 'CANCELLED') ?? null
   const hasActiveSubscription = subscriptions.some((sub) => sub.status === 'ACTIVE')
   const activeSubscriptionPlanIds = subscriptions
     .filter((sub) => sub.status !== 'CANCELLED')
@@ -75,7 +74,6 @@ const Billing = () => {
         paidCredits={user.paidCredits}
         freeCredits={user.freeCredits}
         freeTrialClaimed={Boolean(user.freeTrialClaimedAt)}
-        activeSubscription={activeSubscription}
         isCheckingOutFreeTrial={checkoutPlanId === FREE_PLAN_ID}
         isCheckoutBusy={checkoutPlanId !== null}
         onClaimFreeTrial={() => startCheckout(FREE_PLAN_ID)}
