@@ -1,69 +1,55 @@
+import { useEffect, useState } from 'react'
 import { Box } from '@mui/material'
-import { toast } from 'react-toastify'
+import { useNavigate } from 'react-router-dom'
 
+import { getMeData } from '@actions/auth'
 import useAuth from '@hooks/useAuth'
+import useAuthStore from '@stores/auth'
 
 import Events from './sections/events'
-import Invoices from './sections/invoices'
-import Plans from './sections/plans'
-import Subscriptions from './sections/subscriptions'
+import EventsOverview from './sections/eventsOverview'
 import Welcome from './sections/welcome'
-import useCheckout from './hooks/useCheckout'
+import CreateEventDialog from './subcomponents/createEventDialog'
 import { homeContentStyles } from './styles'
 
 const Home = () => {
+  const navigate = useNavigate()
   const { user } = useAuth()
-  const {
-    plans,
-    subscriptions,
-    invoices,
-    invoicesPage,
-    invoicesTotalPages,
-    isLoadingPlans,
-    isLoadingInvoices,
-    checkoutPlanId,
-    cancellingSubscriptionId,
-    startCheckout,
-    handleCancelSubscription,
-    handleInvoicesPageChange
-  } = useCheckout()
+  const updateUser = useAuthStore((state) => state.updateUser)
+  const [isCreateOpen, setIsCreateOpen] = useState(false)
+
+  useEffect(() => {
+    getMeData().then(updateUser).catch(() => undefined)
+  }, [updateUser])
 
   if (!user) return null
 
   const firstName = user.name.split(' ')[0]
-  const activeSubscriptionPlanIds = subscriptions
-    .filter((sub) => sub.status !== 'CANCELLED')
-    .map((sub) => sub.planId)
 
-  const handleCreateEvent = () => {
-    toast.info('A criação de eventos chega em breve!')
+  const handleGoToBilling = () => {
+    setIsCreateOpen(false)
+    navigate('/app/billing')
   }
 
   return (
     <Box sx={homeContentStyles}>
-      <Welcome firstName={firstName} onCreateEvent={handleCreateEvent} />
-      <Events onCreateEvent={handleCreateEvent} />
-      <Subscriptions
-        subscriptions={subscriptions}
-        cancellingId={cancellingSubscriptionId}
-        onCancelSubscription={handleCancelSubscription}
-      />
-      <Plans
-        plans={plans}
-        isLoading={isLoadingPlans}
-        checkoutPlanId={checkoutPlanId}
-        activeSubscriptionPlanIds={activeSubscriptionPlanIds}
-        freeTrialClaimed={Boolean(user.freeTrialClaimedAt)}
-        freeCredits={user.freeCredits}
+      <Welcome firstName={firstName} onCreateEvent={() => setIsCreateOpen(true)} />
+
+      <EventsOverview
         paidCredits={user.paidCredits}
-        onSelectPlan={startCheckout}
+        freeCredits={user.freeCredits}
+        freeTrialClaimed={Boolean(user.freeTrialClaimedAt)}
+        onGoToBilling={handleGoToBilling}
       />
-      <Invoices
-        invoices={invoices}
-        page={invoicesPage}
-        totalPages={invoicesTotalPages}
-        isLoading={isLoadingInvoices}
-        onPageChange={handleInvoicesPageChange}
+
+      <Events onCreateEvent={() => setIsCreateOpen(true)} />
+
+      <CreateEventDialog
+        open={isCreateOpen}
+        paidCredits={user.paidCredits}
+        freeCredits={user.freeCredits}
+        onClose={() => setIsCreateOpen(false)}
+        onGoToBilling={handleGoToBilling}
       />
     </Box>
   )
