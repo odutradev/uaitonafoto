@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
   Avatar,
   Box,
@@ -169,6 +169,11 @@ const DashboardLayout = () => {
   const navigate = useNavigate()
   const { user, logout } = useAuth()
   const [mobileOpen, setMobileOpen] = useState(false)
+  const mainRef = useRef<HTMLElement | null>(null)
+
+  useEffect(() => {
+    mainRef.current?.scrollTo({ top: 0 })
+  }, [location.pathname])
 
   if (!user) return null
 
@@ -244,7 +249,7 @@ const DashboardLayout = () => {
         <SidebarContent {...sidebarProps} />
       </Box>
 
-      <Box component="main" sx={mainAreaStyles}>
+      <Box ref={mainRef} component="main" sx={mainAreaStyles}>
         <Container maxWidth="lg" sx={mainContainerStyles}>
           <Outlet />
         </Container>

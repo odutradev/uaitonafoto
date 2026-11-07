@@ -4,13 +4,13 @@ import { brandColors } from '@theme'
 export const SIDEBAR_WIDTH = 272
 
 export const layoutRootStyles: SxProps<Theme> = {
-  minHeight: '100vh',
+  height: '100dvh',
   display: 'flex',
   flexDirection: { xs: 'column', md: 'row' },
   bgcolor: 'background.default',
   width: '100%',
   maxWidth: '100%',
-  overflowX: 'hidden'
+  overflow: 'hidden'
 }
 
 export const getMobileTopBarStyles = (isDark: boolean): SxProps<Theme> => ({
@@ -20,8 +20,7 @@ export const getMobileTopBarStyles = (isDark: boolean): SxProps<Theme> => ({
   px: 2,
   py: 1,
   minHeight: 64,
-  position: 'sticky',
-  top: 0,
+  flexShrink: 0,
   zIndex: 20,
   borderBottom: 1,
   borderColor: 'divider',
@@ -49,9 +48,7 @@ export const getDesktopSidebarStyles = (isDark: boolean): SxProps<Theme> => ({
   flexDirection: 'column',
   width: SIDEBAR_WIDTH,
   flexShrink: 0,
-  height: '100vh',
-  position: 'sticky',
-  top: 0,
+  height: '100%',
   borderRight: 1,
   borderColor: 'divider',
   bgcolor: isDark ? brandColors.darkPaper : '#FFFFFF'
@@ -204,14 +201,16 @@ export const logoutButtonStyles: SxProps<Theme> = {
 export const mainAreaStyles: SxProps<Theme> = {
   flex: 1,
   minWidth: 0,
+  minHeight: 0,
   width: '100%',
   display: 'flex',
   flexDirection: 'column',
+  overflowY: 'auto',
   overflowX: 'hidden'
 }
 
 export const mainContainerStyles: SxProps<Theme> = {
-  flex: 1,
+  flex: '1 0 auto',
   display: 'flex',
   flexDirection: 'column',
   gap: { xs: 3.5, sm: 4.5 },
