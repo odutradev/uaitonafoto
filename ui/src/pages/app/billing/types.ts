@@ -7,7 +7,7 @@ import type {
 } from '@actions/payments/types'
 import type { AuthUser } from '@stores/auth/types'
 
-export type TransactionTypeFilter = 'ALL' | 'SUBSCRIPTION' | 'ONE_TIME' | 'UPSELL'
+export type TransactionTypeFilter = 'ALL' | 'SUBSCRIPTION' | 'ONE_TIME' | 'UPSELL' | 'FREE'
 export type TransactionStatusFilter = 'ALL' | TransactionStatus
 
 export type BillingQueryParams = Record<'checkout' | 'payment' | 'plan' | 'transaction', string>

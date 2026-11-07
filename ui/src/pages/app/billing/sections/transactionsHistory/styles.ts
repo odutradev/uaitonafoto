@@ -24,25 +24,6 @@ export const filterSelectStyles: SxProps<Theme> = {
   minWidth: { xs: '100%', sm: 165 }
 }
 
-export const batchesCardStyles: SxProps<Theme> = {
-  p: 2,
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 1.25
-}
-
-export const batchItemRowStyles: SxProps<Theme> = {
-  display: 'flex',
-  flexDirection: { xs: 'column', sm: 'row' },
-  alignItems: { xs: 'flex-start', sm: 'center' },
-  justifyContent: 'space-between',
-  gap: 1,
-  py: 1,
-  px: 1.5,
-  borderRadius: '12px',
-  bgcolor: 'action.hover'
-}
-
 export const getListCardStyles = (isLoading: boolean): SxProps<Theme> => ({
   overflow: 'hidden',
   opacity: isLoading ? 0.6 : 1,
@@ -75,7 +56,7 @@ export const rowTitleBadgesStyles: SxProps<Theme> = {
   display: 'flex',
   alignItems: 'center',
   flexWrap: 'wrap',
-  gap: 1
+  gap: 0.75
 }
 
 export const rowRightColStyles: SxProps<Theme> = {
@@ -98,6 +79,12 @@ export const rowButtonStyles: SxProps<Theme> = {
   px: 1.5,
   py: 0.5,
   fontSize: '0.8125rem'
+}
+
+export const chipCompactStyles: SxProps<Theme> = {
+  fontWeight: 700,
+  height: 20,
+  fontSize: '0.7rem'
 }
 
 export const emptyBoxStyles: SxProps<Theme> = {

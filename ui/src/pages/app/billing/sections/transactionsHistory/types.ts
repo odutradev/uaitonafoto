@@ -1,6 +1,21 @@
 import type { PurchaseItem, TransactionItem } from '@actions/payments/types'
 import type { TransactionStatusFilter, TransactionTypeFilter } from '../../types'
 
+export type UnifiedHistoryEntry =
+  | {
+      kind: 'transaction'
+      id: string
+      timestamp: string
+      transaction: TransactionItem
+      purchase?: PurchaseItem
+    }
+  | {
+      kind: 'purchase'
+      id: string
+      timestamp: string
+      purchase: PurchaseItem
+    }
+
 export interface TransactionsHistoryProps {
   purchases: PurchaseItem[]
   transactions: TransactionItem[]
