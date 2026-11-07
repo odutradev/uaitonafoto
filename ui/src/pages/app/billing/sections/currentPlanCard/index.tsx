@@ -28,7 +28,6 @@ import {
   detailTileStyles,
   dialogActionsStyles,
   dialogPaperStyles,
-  emptyPlanCardStyles,
   sectionBoxStyles,
   titleChipsRowStyles,
   topHeaderRowStyles
@@ -81,32 +80,15 @@ const CurrentPlanCard = ({
     if (ok) setConfirmTarget(null)
   }
 
+  if (currentSubscriptions.length === 0 && cancelledSubscriptions.length === 0) {
+    return null
+  }
+
   return (
     <Box component="section" sx={sectionBoxStyles}>
       <Typography variant="h5" component="h2">
         Assinatura e plano recorrente
       </Typography>
-
-      {currentSubscriptions.length === 0 && (
-        <Card elevation={0} sx={emptyPlanCardStyles}>
-          <Box sx={{ minWidth: 0 }}>
-            <Typography variant="h6" component="h3">
-              Você não possui assinatura mensal ativa
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Sua conta opera sob demanda. Você pode comprar créditos avulsos quando precisar ou assinar um plano Agência abaixo para economizar até 70% por evento.
-            </Typography>
-          </Box>
-          <Button
-            component="a"
-            href="#loja-creditos"
-            variant="outlined"
-            sx={buttonResponsiveStyles}
-          >
-            Ver opções de planos
-          </Button>
-        </Card>
-      )}
 
       {currentSubscriptions.map((sub) => {
         const statusProps = getStatusProps(sub.status)

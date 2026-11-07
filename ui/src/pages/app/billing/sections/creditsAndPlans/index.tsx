@@ -54,7 +54,7 @@ const CreditsAndPlans = ({
   const subscriptionPlans = plans.filter((plan) => plan.type === 'SUBSCRIPTION')
 
   return (
-    <Box id="loja-creditos" component="section" sx={storeWrapperStyles}>
+    <Box component="section" sx={storeWrapperStyles}>
       <Box sx={blockWrapperStyles}>
         <Box>
           <Typography variant="h5" component="h2">

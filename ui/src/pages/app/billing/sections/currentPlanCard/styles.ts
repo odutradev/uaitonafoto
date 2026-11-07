@@ -17,15 +17,6 @@ export const activePlanCardStyles = (isDark: boolean): SxProps<Theme> => ({
   bgcolor: isDark ? brandColors.darkPaper : '#FFFFFF'
 })
 
-export const emptyPlanCardStyles: SxProps<Theme> = {
-  p: { xs: 2.5, sm: 3 },
-  display: 'flex',
-  flexDirection: { xs: 'column', sm: 'row' },
-  alignItems: { xs: 'flex-start', sm: 'center' },
-  justifyContent: 'space-between',
-  gap: 2
-}
-
 export const topHeaderRowStyles: SxProps<Theme> = {
   display: 'flex',
   flexDirection: { xs: 'column', sm: 'row' },
