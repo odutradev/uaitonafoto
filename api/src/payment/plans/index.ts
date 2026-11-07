@@ -81,8 +81,6 @@ export const plansConfig: PlanConfig[] = [
     abacateProductId: 'prod_agency_essential',
     type: 'SUBSCRIPTION',
     credits: 4,
-    rolloverDays: 30,
-    maxAccumulatedCredits: 8,
     tag: 'Cerimonialistas',
     name: 'Agência Essencial',
     title: 'Agência Essencial',
@@ -95,7 +93,7 @@ export const plansConfig: PlanConfig[] = [
       '4 eventos inclusos por mês',
       'Sua própria marca no telão e no aplicativo',
       'Link para seu WhatsApp ou Instagram no telão',
-      'Créditos acumulativos por 30 dias (até 8 eventos)',
+      'Créditos acumulativos enquanto o plano estiver ativo',
       'Acesso de moderação com senha para sua equipe',
       'Crédito extra avulso por R$ 69,00'
     ],
@@ -108,8 +106,6 @@ export const plansConfig: PlanConfig[] = [
     abacateProductId: 'prod_agency_pro',
     type: 'SUBSCRIPTION',
     credits: 10,
-    rolloverDays: 30,
-    maxAccumulatedCredits: 20,
     badge: 'Mais Escolhido',
     tag: 'Alta Demanda',
     name: 'Agência Pro',
@@ -123,7 +119,7 @@ export const plansConfig: PlanConfig[] = [
       '10 eventos inclusos por mês',
       'Sua marca em destaque para atrair novos clientes',
       'Botão direto para seu WhatsApp no mural de fotos',
-      'Créditos acumulativos por 30 dias (até 20 eventos)',
+      'Créditos acumulativos enquanto o plano estiver ativo',
       'Painel de moderação para recepcionistas na festa',
       'Crédito extra avulso por apenas R$ 49,00',
       'Suporte prioritário via WhatsApp'
@@ -146,7 +142,7 @@ export const plansConfig: PlanConfig[] = [
     description: 'Crédito avulso adicional para ativação de evento, exclusivo para assinantes ativos dos planos de agência.',
     features: [
       '1 evento adicional para ativação imediata',
-      'Crédito não expira em planos ativos'
+      'Crédito acumulativo sem expiração'
     ],
     ctaText: 'Comprar Crédito',
     ctaHref: 'prod_agency_extra_credit'

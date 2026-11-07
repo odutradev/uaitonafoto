@@ -15,8 +15,6 @@ export const planSchema = z
     productId: z.string().optional().openapi({ example: 'prod_GesxhTHw1GkDDHHH5MmSyUSX' }),
     type: planTypeSchema,
     credits: z.number().openapi({ example: 4 }),
-    rolloverDays: z.number().optional().openapi({ example: 30 }),
-    maxAccumulatedCredits: z.number().optional().openapi({ example: 8 }),
     extraStorageDays: z.number().optional().openapi({ example: 365 }),
     name: z.string().openapi({ example: 'Plano Agência Essencial' }),
     title: z.string().optional().openapi({ example: 'Agência Essencial' }),

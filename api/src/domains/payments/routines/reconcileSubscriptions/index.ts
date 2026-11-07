@@ -5,7 +5,6 @@ import subscriptionRepository from '../../repositories/subscriptions'
 import confirmPayment from '../../actions/webhook/utils/confirmPayment'
 import ensureSubscriptionRecord from '../../utils/ensureSubscriptionRecord'
 import grantSubscriptionRenewal from '../../utils/grantSubscriptionRenewal'
-import { expireOverdueSubscriptionCredits } from '../../utils/applySubscriptionRollover'
 
 import type { AbacatePayClient } from '@payment/types'
 import type { ConfirmedStatementCharge } from './types'
@@ -89,8 +88,6 @@ export const runSubscriptionReconciliation = async (): Promise<void> => {
   isRunning = true
 
   try {
-    await expireOverdueSubscriptionCredits()
-
     const client = await getPaymentClient()
 
     await syncPendingSubscriptionTransactions(client)

@@ -15,9 +15,6 @@ export const purchaseItemSchema = z
     currency: z.string().openapi({ example: 'BRL' }),
     credits: z.number().openapi({ example: 4 }),
     remainingCredits: z.number().openapi({ example: 3 }),
-    expiredCredits: z.number().openapi({ example: 0 }),
-    creditsExpiresAt: z.string().optional().openapi({ example: '2026-12-06T20:00:00.000Z' }),
-    creditsExpiredAt: z.string().optional().openapi({ example: '2026-12-06T20:00:00.000Z' }),
     creditType: z.enum(['free', 'paid']).openapi({ example: 'paid' }),
     extraStorageDays: z.number().openapi({ example: 0 }),
     createdAt: z.string().openapi({ example: '2026-11-06T20:00:00.000Z' })

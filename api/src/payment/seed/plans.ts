@@ -33,7 +33,7 @@ export const SEED_PLANS: SeedProduct[] = [
     name: 'Plano Agência Essencial',
     price: 24700,
     currency: 'BRL',
-    description: 'Franquia de 4 eventos por mês, selo White-Label da assessoria, rollover de créditos por 30 dias e painel de moderação de equipe.',
+    description: 'Franquia de 4 eventos por mês, selo White-Label da assessoria, créditos acumulativos enquanto o plano estiver ativo e painel de moderação de equipe.',
     cycle: ProductCycle.Monthly
   },
   {
@@ -41,7 +41,7 @@ export const SEED_PLANS: SeedProduct[] = [
     name: 'Plano Agência Pro',
     price: 44700,
     currency: 'BRL',
-    description: 'Franquia de 10 eventos por mês, selo White-Label da assessoria, rollover de créditos por 30 dias e painel de moderação de equipe.',
+    description: 'Franquia de 10 eventos por mês, selo White-Label da assessoria, créditos acumulativos enquanto o plano estiver ativo e painel de moderação de equipe.',
     cycle: ProductCycle.Monthly
   },
   {

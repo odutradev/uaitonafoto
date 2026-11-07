@@ -19,9 +19,6 @@ export const toPurchaseItemResponse = (entity: PurchaseEntity): PurchaseItemResp
   currency: entity.currency,
   credits: entity.credits,
   remainingCredits: entity.remainingCredits,
-  expiredCredits: entity.expiredCredits,
-  creditsExpiresAt: entity.creditsExpiresAt,
-  creditsExpiredAt: entity.creditsExpiredAt,
   creditType: entity.creditType,
   extraStorageDays: entity.extraStorageDays,
   createdAt: entity.createdAt

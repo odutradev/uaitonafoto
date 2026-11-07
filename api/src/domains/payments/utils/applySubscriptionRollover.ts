@@ -41,9 +41,9 @@ export const applySubscriptionRolloverOnRenewal = async ({
   paidAt,
   frequency
 }: ApplyRolloverParams): Promise<ApplyRolloverResult> => {
-  const rolloverDays = plan?.rolloverDays ?? DEFAULT_ROLLOVER_DAYS
+  const rolloverDays = DEFAULT_ROLLOVER_DAYS
   const planCredits = plan?.credits ?? subscription.creditsPerCycle
-  const maxAccumulatedCredits = plan?.maxAccumulatedCredits ?? planCredits * 2
+  const maxAccumulatedCredits = planCredits * 2
 
   const activeBatches = await purchaseRepository.listActiveBySubscription(subscription.subscriptionId)
   const paidAtTime = new Date(paidAt).getTime()

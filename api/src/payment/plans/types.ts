@@ -5,8 +5,6 @@ export interface PlanConfig {
   abacateProductId: string
   type: PlanType
   credits: number
-  rolloverDays?: number
-  maxAccumulatedCredits?: number
   extraStorageDays?: number
   name: string
   title?: string
