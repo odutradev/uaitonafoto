@@ -6,6 +6,7 @@ import transactionRepository from '../repositories/transactions'
 import purchaseRepository from '../repositories/purchases'
 import subscriptionRepository from '../repositories/subscriptions'
 import computeNextBillingDate from './computeNextBillingDate'
+import { applySubscriptionRolloverOnRenewal } from './applySubscriptionRollover'
 import { sendSubscriptionRenewedEmail } from './notifySubscriptionEmail'
 
 import type { CachedPlan } from '@payment/plans/types'
@@ -59,7 +60,6 @@ export const grantSubscriptionRenewal = async ({
   const userName = user?.fullName || user?.name || initialTx?.userName || 'Usuário'
 
   const snapshot = (subscription.planSnapshot as CachedPlan | undefined) ?? getPlanByProductId(subscription.planId)
-  const creditsToGrant = snapshot?.credits ?? subscription.creditsPerCycle
   const resolvedPaidAt = paidAt ?? new Date().toISOString()
   const resolvedAmount = amount ?? subscription.amount
   const resolvedFrequency = frequency ?? subscription.frequency
@@ -99,6 +99,14 @@ export const grantSubscriptionRenewal = async ({
     throw error
   }
 
+  const { creditsToGrant, carriedOverCredits, expiredCredits, creditsExpiresAt } =
+    await applySubscriptionRolloverOnRenewal({
+      subscription,
+      plan: snapshot,
+      paidAt: resolvedPaidAt,
+      frequency: resolvedFrequency
+    })
+
   await purchaseRepository.create({
     userId: subscription.userId,
     transactionId: renewalTransaction.id,
@@ -111,6 +119,7 @@ export const grantSubscriptionRenewal = async ({
     amount: resolvedAmount,
     currency: subscription.currency,
     credits: creditsToGrant,
+    creditsExpiresAt,
     creditType: 'paid',
     extraStorageDays: snapshot?.extraStorageDays ?? 0
   })
@@ -137,7 +146,7 @@ export const grantSubscriptionRenewal = async ({
   })
 
   logger.success(
-    `Subscription renewed: ${subscription.subscriptionId}, +${creditsToGrant} paid credits for user ${subscription.userId}`
+    `Subscription renewed: ${subscription.subscriptionId}, +${creditsToGrant} paid credits (rollover: ${carriedOverCredits}, expired: ${expiredCredits}) for user ${subscription.userId}`
   )
 
   logRepository.create({
@@ -154,7 +163,9 @@ export const grantSubscriptionRenewal = async ({
       transactionId: renewalTransaction.id,
       externalPaymentId,
       amount: resolvedAmount,
-      credits: creditsToGrant
+      credits: creditsToGrant,
+      carriedOverCredits,
+      expiredCredits
     }
   })
 

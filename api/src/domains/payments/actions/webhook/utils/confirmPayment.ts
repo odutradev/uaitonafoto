@@ -4,6 +4,7 @@ import logRepository from '@domains/system/repositories'
 import transactionRepository from '../../../repositories/transactions'
 import purchaseRepository from '../../../repositories/purchases'
 import ensureSubscriptionRecord from '../../../utils/ensureSubscriptionRecord'
+import { computeCycleCreditsExpiration, DEFAULT_ROLLOVER_DAYS } from '../../../utils/applySubscriptionRollover'
 
 import type { CachedPlan } from '@payment/plans/types'
 import type { TransactionEntity } from '../../../repositories/transactions/types'
@@ -43,6 +44,14 @@ export const confirmPayment = async (transaction: TransactionEntity, data: Webho
       : null
 
   const plan = transaction.planSnapshot as CachedPlan
+  const creditsExpiresAt =
+    transaction.planType === 'SUBSCRIPTION'
+      ? computeCycleCreditsExpiration(
+          current.paidAt ?? new Date().toISOString(),
+          subscriptionRecord?.frequency ?? subscription?.frequency ?? 'MONTHLY',
+          plan.rolloverDays ?? DEFAULT_ROLLOVER_DAYS
+        )
+      : undefined
 
   try {
     await purchaseRepository.create({
@@ -57,6 +66,7 @@ export const confirmPayment = async (transaction: TransactionEntity, data: Webho
       amount: transaction.amount,
       currency: transaction.currency,
       credits: plan.credits,
+      creditsExpiresAt,
       creditType: 'paid',
       extraStorageDays: plan.extraStorageDays ?? 0
     })
