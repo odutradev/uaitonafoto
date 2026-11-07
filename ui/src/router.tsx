@@ -11,6 +11,7 @@ import AuthPage from '@pages/auth/authPage'
 import AuthRoute from '@components/authRoute'
 import DashboardLayout from '@components/dashboardLayout'
 import Home from '@pages/app/home'
+import Profile from '@pages/app/profile'
 
 const appRouter = createBrowserRouter([
   {
@@ -29,7 +30,10 @@ const appRouter = createBrowserRouter([
           {
             path: '/app',
             element: createElement(DashboardLayout),
-            children: [{ index: true, element: createElement(Home) }]
+            children: [
+              { index: true, element: createElement(Home) },
+              { path: 'profile', element: createElement(Profile) }
+            ]
           }
         ]
       },
