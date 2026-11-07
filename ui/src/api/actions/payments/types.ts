@@ -72,9 +72,29 @@ export interface TransactionItem {
   currency: string
   status: TransactionStatus
   paymentMethod?: string
+  checkoutUrl?: string
   receiptUrl?: string
   subscriptionId?: string
   paidAt?: string
+  createdAt: string
+}
+
+export interface PurchaseItem {
+  id: string
+  transactionId: string
+  subscriptionId?: string
+  planId: string
+  planType: string
+  planName: string
+  amount: number
+  currency: string
+  credits: number
+  remainingCredits: number
+  expiredCredits: number
+  creditsExpiresAt?: string
+  creditsExpiredAt?: string
+  creditType: 'free' | 'paid'
+  extraStorageDays: number
   createdAt: string
 }
 

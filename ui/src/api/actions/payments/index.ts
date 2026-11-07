@@ -5,6 +5,7 @@ import type {
   GetMyTransactionsParams,
   PaginatedTransactionsResponse,
   PlanApiItem,
+  PurchaseItem,
   SubscriptionItem
 } from './types'
 
@@ -42,6 +43,11 @@ export const getMyTransactions = async (
   params?: GetMyTransactionsParams
 ): Promise<PaginatedTransactionsResponse> => {
   const response = await api.get<PaginatedTransactionsResponse>('/payments/transactions', { params })
+  return response.data
+}
+
+export const getMyPurchases = async (): Promise<PurchaseItem[]> => {
+  const response = await api.get<PurchaseItem[]>('/payments/purchases')
   return response.data
 }
 
