@@ -10,6 +10,7 @@ import NotFound from '@pages/public/notFound'
 import AuthPage from '@pages/auth/authPage'
 import AuthRoute from '@components/authRoute'
 import DashboardLayout from '@components/dashboardLayout'
+import Billing from '@pages/app/billing'
 import Home from '@pages/app/home'
 import Profile from '@pages/app/profile'
 
@@ -32,6 +33,7 @@ const appRouter = createBrowserRouter([
             element: createElement(DashboardLayout),
             children: [
               { index: true, element: createElement(Home) },
+              { path: 'billing', element: createElement(Billing) },
               { path: 'profile', element: createElement(Profile) }
             ]
           }
