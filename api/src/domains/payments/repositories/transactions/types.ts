@@ -50,3 +50,11 @@ export type CreateTransactionPayload = Omit<TransactionEntity, 'id' | 'status' |
 export type CreatePaidTransactionPayload = Omit<TransactionEntity, 'id' | 'status' | 'createdAt' | 'updatedAt'>
 
 export type UpdateTransactionPayload = Partial<Omit<TransactionEntity, 'id' | 'webhookEvents' | 'createdAt' | 'updatedAt'>>
+
+export interface ListUserTransactionsPaginatedParams {
+  userId: string
+  limit: number
+  offset: number
+  status?: TransactionStatus
+  planType?: string
+}

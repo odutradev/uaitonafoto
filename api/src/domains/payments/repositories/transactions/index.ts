@@ -3,11 +3,13 @@ import TransactionModel from './model'
 import type {
   CreatePaidTransactionPayload,
   CreateTransactionPayload,
+  ListUserTransactionsPaginatedParams,
   TransactionEntity,
   TransactionStatus,
   TransactionWebhookEvent,
   UpdateTransactionPayload
 } from './types'
+import type { PaginatedData } from '@factories/pagination/types'
 
 const toTransactionEntity = (doc: any): TransactionEntity => {
   const { _id, ...rest } = doc
@@ -59,6 +61,34 @@ export const transactionRepository = {
   listByUser: async (userId: string): Promise<TransactionEntity[]> => {
     const docs = await TransactionModel.find({ userId }).sort({ createdAt: -1 }).lean()
     return docs.map(toTransactionEntity)
+  },
+
+  listPaginatedByUser: async ({
+    userId,
+    limit,
+    offset,
+    status,
+    planType
+  }: ListUserTransactionsPaginatedParams): Promise<PaginatedData<TransactionEntity>> => {
+    const filter = removeUndefined({
+      userId,
+      status,
+      planType
+    })
+
+    const [count, docs] = await Promise.all([
+      TransactionModel.countDocuments(filter),
+      TransactionModel.find(filter)
+        .sort({ paidAt: -1, createdAt: -1 })
+        .skip(offset)
+        .limit(limit)
+        .lean()
+    ])
+
+    return {
+      count,
+      rows: docs.map(toTransactionEntity)
+    }
   },
 
   update: async (id: string, data: UpdateTransactionPayload): Promise<TransactionEntity | null> => {
