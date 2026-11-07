@@ -43,21 +43,3 @@ export const claimButtonStyles: SxProps<Theme> = {
   alignSelf: 'flex-start',
   width: { xs: '100%', sm: 'auto' }
 }
-
-export const batchesCardStyles: SxProps<Theme> = {
-  p: 2.5,
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 1.5
-}
-
-export const batchItemRowStyles: SxProps<Theme> = {
-  display: 'flex',
-  flexDirection: { xs: 'column', sm: 'row' },
-  alignItems: { xs: 'flex-start', sm: 'center' },
-  justifyContent: 'space-between',
-  gap: 1,
-  p: 1.5,
-  borderRadius: '12px',
-  bgcolor: 'action.hover'
-}

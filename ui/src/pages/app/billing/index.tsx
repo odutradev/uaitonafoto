@@ -78,7 +78,6 @@ const Billing = () => {
         freeCredits={user.freeCredits}
         freeTrialClaimed={Boolean(user.freeTrialClaimedAt)}
         activeSubscription={activeSubscription}
-        purchases={purchases}
         isCheckingOutFreeTrial={checkoutPlanId === FREE_PLAN_ID}
         isCheckoutBusy={checkoutPlanId !== null}
         onClaimFreeTrial={() => startCheckout(FREE_PLAN_ID)}
@@ -104,6 +103,7 @@ const Billing = () => {
       />
 
       <TransactionsHistory
+        purchases={purchases}
         transactions={transactions}
         page={transactionsPage}
         total={transactionsTotal}

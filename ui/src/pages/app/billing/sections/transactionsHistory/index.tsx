@@ -10,6 +10,7 @@ import {
   Paper,
   Select,
   Skeleton,
+  Stack,
   Typography
 } from '@mui/material'
 import {
@@ -21,6 +22,8 @@ import {
 import { formatPriceInBrl } from '@pages/public/landingPage/sections/plans/utils'
 
 import {
+  batchesCardStyles,
+  batchItemRowStyles,
   emptyBoxStyles,
   filterSelectStyles,
   filtersRowStyles,
@@ -37,6 +40,13 @@ import {
 import type { TransactionStatus } from '@actions/payments/types'
 import type { TransactionStatusFilter, TransactionTypeFilter } from '../../types'
 import type { TransactionsHistoryProps } from './types'
+
+const formatShortDatePtBr = (isoDate?: string): string | null => {
+  if (!isoDate) return null
+  const parsed = new Date(isoDate)
+  if (Number.isNaN(parsed.getTime())) return null
+  return parsed.toLocaleDateString('pt-BR')
+}
 
 const formatDatePtBr = (isoDate?: string): string => {
   if (!isoDate) return '-'
@@ -83,6 +93,7 @@ const formatMethodLabel = (method?: string): string | null => {
 }
 
 const TransactionsHistory = ({
+  purchases,
   transactions,
   page,
   total,
@@ -95,8 +106,58 @@ const TransactionsHistory = ({
   onPageChange,
   onSelectTransaction
 }: TransactionsHistoryProps) => {
+  const activeBatches = purchases.filter(
+    (item) => item.remainingCredits > 0 || item.extraStorageDays > 0
+  )
+
   return (
     <Box id="transacoes" component="section" sx={historyWrapperStyles}>
+      {activeBatches.length > 0 && (
+        <Card elevation={0} sx={batchesCardStyles}>
+          <Typography variant="subtitle1" fontWeight={700}>
+            Lotes de créditos e complementos ativos
+          </Typography>
+          <Stack spacing={1}>
+            {activeBatches.slice(0, 5).map((batch) => {
+              const expiresFormatted = formatShortDatePtBr(batch.creditsExpiresAt)
+              const acquiredFormatted = formatShortDatePtBr(batch.createdAt)
+
+              return (
+                <Box key={batch.id} sx={batchItemRowStyles}>
+                  <Box sx={{ minWidth: 0 }}>
+                    <Typography variant="body2" fontWeight={700}>
+                      {batch.planName}
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      Adquirido em {acquiredFormatted ?? '-'}
+                      {expiresFormatted ? ` • Rollover válido até ${expiresFormatted}` : ' • Sem expiração de ciclo'}
+                    </Typography>
+                  </Box>
+
+                  <Stack direction="row" spacing={1} flexWrap="wrap">
+                    {batch.remainingCredits > 0 && (
+                      <Chip
+                        size="small"
+                        color={batch.creditType === 'paid' ? 'primary' : 'default'}
+                        label={`${batch.remainingCredits} de ${batch.credits} disp.`}
+                        sx={{ fontWeight: 700 }}
+                      />
+                    )}
+                    {batch.extraStorageDays > 0 && (
+                      <Chip
+                        size="small"
+                        variant="outlined"
+                        label={`+${batch.extraStorageDays} dias de galeria`}
+                      />
+                    )}
+                  </Stack>
+                </Box>
+              )
+            })}
+          </Stack>
+        </Card>
+      )}
+
       <Box sx={headerFilterBarStyles}>
         <Box>
           <Typography variant="h5" component="h2">

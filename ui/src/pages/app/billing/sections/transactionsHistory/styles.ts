@@ -83,3 +83,21 @@ export const paginationRowStyles: SxProps<Theme> = {
   justifyContent: 'center',
   pt: 1
 }
+
+export const batchesCardStyles: SxProps<Theme> = {
+  p: 2.5,
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 1.5
+}
+
+export const batchItemRowStyles: SxProps<Theme> = {
+  display: 'flex',
+  flexDirection: { xs: 'column', sm: 'row' },
+  alignItems: { xs: 'flex-start', sm: 'center' },
+  justifyContent: 'space-between',
+  gap: 1,
+  p: 1.5,
+  borderRadius: '12px',
+  bgcolor: 'action.hover'
+}

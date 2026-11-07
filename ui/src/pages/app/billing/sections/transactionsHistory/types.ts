@@ -1,7 +1,8 @@
-import type { TransactionItem } from '@actions/payments/types'
+import type { PurchaseItem, TransactionItem } from '@actions/payments/types'
 import type { TransactionStatusFilter, TransactionTypeFilter } from '../../types'
 
 export interface TransactionsHistoryProps {
+  purchases: PurchaseItem[]
   transactions: TransactionItem[]
   page: number
   total: number
