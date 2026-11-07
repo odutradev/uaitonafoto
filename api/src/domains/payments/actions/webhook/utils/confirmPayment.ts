@@ -3,6 +3,7 @@ import userRepository from '@domains/users/repositories'
 import logRepository from '@domains/system/repositories'
 import transactionRepository from '../../../repositories/transactions'
 import purchaseRepository from '../../../repositories/purchases'
+import ensureSubscriptionRecord from '../../../utils/ensureSubscriptionRecord'
 
 import type { CachedPlan } from '@payment/plans/types'
 import type { TransactionEntity } from '../../../repositories/transactions/types'
@@ -13,21 +14,33 @@ const logger = createLogger('payments:confirm')
 const isDuplicateKeyError = (error: unknown): boolean => (error as { code?: number })?.code === 11000
 
 export const confirmPayment = async (transaction: TransactionEntity, data: WebhookEventData): Promise<void> => {
-  const { checkout } = data
+  const { checkout, payment, subscription } = data
   const payerInformation = data.payerInformation ?? checkout?.payerInformation
+  const paymentMethod = data.payerInformation?.method ?? subscription?.method
 
   const claimed = await transactionRepository.transitionStatus(transaction.id, ['PENDING', 'EXPIRED', 'CANCELLED'], {
     status: 'PAID',
     paidAt: new Date().toISOString(),
-    paidAmount: checkout?.paidAmount ?? transaction.amount,
-    platformFee: checkout?.platformFee ?? undefined,
-    receiptUrl: checkout?.receiptUrl ?? undefined,
-    paymentMethod: data.payerInformation?.method,
-    payerInformation
+    paidAmount: payment?.paidAmount ?? checkout?.paidAmount ?? transaction.amount,
+    platformFee: payment?.platformFee ?? checkout?.platformFee ?? undefined,
+    receiptUrl: payment?.receiptUrl ?? checkout?.receiptUrl ?? undefined,
+    paymentMethod,
+    payerInformation,
+    subscriptionId: subscription?.id,
+    externalPaymentId: payment?.id
   })
 
-  const current = claimed ?? (await transactionRepository.findById(transaction.id))
+  let current = claimed ?? (await transactionRepository.findById(transaction.id))
   if (current?.status !== 'PAID') return
+
+  if (!claimed && payment?.id && !current.externalPaymentId) {
+    current = (await transactionRepository.update(current.id, { externalPaymentId: payment.id })) ?? current
+  }
+
+  const subscriptionRecord =
+    current.planType === 'SUBSCRIPTION'
+      ? await ensureSubscriptionRecord(current, subscription)
+      : null
 
   const plan = transaction.planSnapshot as CachedPlan
 
@@ -35,6 +48,7 @@ export const confirmPayment = async (transaction: TransactionEntity, data: Webho
     await purchaseRepository.create({
       userId: transaction.userId,
       transactionId: transaction.id,
+      subscriptionId: subscriptionRecord?.subscriptionId ?? subscription?.id,
       planId: transaction.planId,
       planType: transaction.planType,
       planName: transaction.planName,
@@ -72,4 +86,3 @@ export const confirmPayment = async (transaction: TransactionEntity, data: Webho
 }
 
 export default confirmPayment
-

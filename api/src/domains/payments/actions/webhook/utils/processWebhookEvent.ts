@@ -1,7 +1,8 @@
 import transactionRepository from '../../../repositories/transactions'
 import confirmPayment from './confirmPayment'
+import handleSubscriptionWebhook from './handleSubscriptionWebhook'
 
-import type { TransactionStatus } from '../../../repositories/transactions/types'
+import type { TransactionStatus, TransactionWebhookEvent } from '../../../repositories/transactions/types'
 import type { WebhookEventData } from '../types'
 
 const statusByEvent: Record<string, TransactionStatus> = {
@@ -10,6 +11,11 @@ const statusByEvent: Record<string, TransactionStatus> = {
 }
 
 const completionEvents = ['checkout.completed', 'subscription.completed']
+const subscriptionLifecycleEvents = [
+  'subscription.renewed',
+  'subscription.cancelled',
+  'subscription.payment_failed'
+]
 
 interface ProcessWebhookParams {
   event: string
@@ -20,22 +26,31 @@ interface ProcessWebhookParams {
 }
 
 export const processWebhookEvent = async ({ event, deliveryId, devMode, data, payload }: ProcessWebhookParams): Promise<void> => {
-  const checkout = data.checkout
-  if (!checkout?.id && !checkout?.externalId) return
-
-  const transaction =
-    (checkout.externalId ? await transactionRepository.findById(checkout.externalId) : null) ??
-    (checkout.id ? await transactionRepository.findByCheckoutId(checkout.id) : null)
-
-  if (!transaction) return
-
-  await transactionRepository.appendWebhookEvent(transaction.id, {
+  const webhookEvent: TransactionWebhookEvent = {
     deliveryId,
     event,
     devMode,
     receivedAt: new Date().toISOString(),
     payload
-  })
+  }
+
+  if (subscriptionLifecycleEvents.includes(event)) {
+    await handleSubscriptionWebhook({ event, deliveryId, data, webhookEvent })
+    return
+  }
+
+  const checkout = data.checkout
+  const subscriptionId = data.subscription?.id
+  if (!checkout?.id && !checkout?.externalId && !subscriptionId) return
+
+  const transaction =
+    (checkout?.externalId ? await transactionRepository.findById(checkout.externalId) : null) ??
+    (checkout?.id ? await transactionRepository.findByCheckoutId(checkout.id) : null) ??
+    (subscriptionId ? await transactionRepository.findBySubscriptionId(subscriptionId) : null)
+
+  if (!transaction) return
+
+  await transactionRepository.appendWebhookEvent(transaction.id, webhookEvent)
 
   if (completionEvents.includes(event)) {
     await confirmPayment(transaction, data)
@@ -47,4 +62,3 @@ export const processWebhookEvent = async ({ event, deliveryId, devMode, data, pa
 }
 
 export default processWebhookEvent
-

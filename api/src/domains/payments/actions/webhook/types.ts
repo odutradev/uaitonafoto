@@ -14,8 +14,31 @@ export interface WebhookCheckoutData {
   payerInformation?: unknown
 }
 
-export interface WebhookEventData {
-  checkout?: WebhookCheckoutData
-  payerInformation?: { method?: string }
+export interface WebhookSubscriptionData {
+  id: string
+  amount?: number
+  currency?: string
+  method?: string
+  status?: 'PENDING' | 'ACTIVE' | 'CANCELLED'
+  frequency?: string
+  canceledAt?: string | null
+  cancelledDueTo?: string | null
 }
 
+export interface WebhookPaymentData {
+  id?: string
+  externalId?: string | null
+  amount?: number
+  paidAmount?: number | null
+  platformFee?: number
+  status?: string
+  receiptUrl?: string | null
+  createdAt?: string
+}
+
+export interface WebhookEventData {
+  checkout?: WebhookCheckoutData
+  subscription?: WebhookSubscriptionData
+  payment?: WebhookPaymentData
+  payerInformation?: { method?: string }
+}
