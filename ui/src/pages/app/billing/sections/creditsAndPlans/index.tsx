@@ -51,6 +51,7 @@ const CreditsAndPlans = ({
   })
 
   const subscriptionPlans = plans.filter((plan) => plan.type === 'SUBSCRIPTION')
+  const singleCreditsCount = hasActiveSubscription ? 2 : 1
 
   return (
     <Box component="section" sx={storeWrapperStyles}>
@@ -59,10 +60,35 @@ const CreditsAndPlans = ({
           Créditos avulsos
         </Typography>
 
-        <Box sx={getSingleCreditsGridStyles(isLoading ? 2 : singlePurchasePlans.length)}>
-          {isLoading && (
-            <Skeleton variant="rounded" height={96} sx={{ borderRadius: '20px' }} />
-          )}
+        <Box sx={getSingleCreditsGridStyles(isLoading ? singleCreditsCount : singlePurchasePlans.length)}>
+          {isLoading &&
+            Array.from({ length: singleCreditsCount }).map((_, idx) => (
+              <Card key={idx} elevation={0} sx={singleCreditCardStyles}>
+                <Box sx={singleCreditInfoStyles}>
+                  <Box sx={singleCreditTitleRowStyles}>
+                    <Skeleton width={130} height={24} sx={{ borderRadius: '6px' }} />
+                    <Skeleton width={68} height={22} sx={{ borderRadius: '9999px' }} />
+                  </Box>
+                  <Skeleton width={idx === 1 ? '85%' : '65%'} height={16} sx={{ borderRadius: '4px', mt: 0.5 }} />
+                </Box>
+
+                <Box sx={singleCreditActionColStyles}>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: { xs: 'flex-start', sm: 'flex-end' },
+                      gap: 0.5
+                    }}
+                  >
+                    <Skeleton width={56} height={22} sx={{ borderRadius: '6px' }} />
+                    <Skeleton width={80} height={14} sx={{ borderRadius: '4px' }} />
+                  </Box>
+
+                  <Skeleton width={96} height={40} sx={{ borderRadius: '9999px', flexShrink: 0 }} />
+                </Box>
+              </Card>
+            ))}
 
           {!isLoading &&
             singlePurchasePlans.map((plan) => {
@@ -126,7 +152,32 @@ const CreditsAndPlans = ({
         <Box sx={subscriptionPlansGridStyles}>
           {isLoading &&
             [0, 1].map((skeletonKey) => (
-              <Skeleton key={skeletonKey} variant="rounded" height={300} sx={{ borderRadius: '20px' }} />
+              <Card key={skeletonKey} elevation={0} sx={getPlanCardStyles(skeletonKey === 1)}>
+                <Box>
+                  <Box sx={cardTopMetaRowStyles}>
+                    <Skeleton width={130} height={26} sx={{ borderRadius: '6px' }} />
+                    <Skeleton width={88} height={22} sx={{ borderRadius: '9999px' }} />
+                  </Box>
+
+                  <Box sx={{ ...priceLineStyles, mt: 1 }}>
+                    <Skeleton width={96} height={32} sx={{ borderRadius: '6px' }} />
+                    <Skeleton width={42} height={18} sx={{ borderRadius: '4px' }} />
+                  </Box>
+
+                  <Skeleton width={180} height={14} sx={{ borderRadius: '4px', mt: 0.5 }} />
+                </Box>
+
+                <Box sx={featuresListStyles}>
+                  {[1, 2, 3, 4, 5].map((featureKey) => (
+                    <Box key={featureKey} sx={featureRowStyles}>
+                      <Skeleton variant="circular" width={16} height={16} sx={{ flexShrink: 0, mt: '3px' }} />
+                      <Skeleton width={`${85 - featureKey * 5}%`} height={16} sx={{ borderRadius: '4px' }} />
+                    </Box>
+                  ))}
+                </Box>
+
+                <Skeleton width="100%" height={42} sx={{ borderRadius: '9999px', mt: 'auto' }} />
+              </Card>
             ))}
 
           {!isLoading &&

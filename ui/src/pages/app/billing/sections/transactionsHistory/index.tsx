@@ -11,7 +11,6 @@ import {
   Paper,
   Select,
   Skeleton,
-  Stack,
   Typography
 } from '@mui/material'
 import { OpenInNew as PayNowIcon } from '@mui/icons-material'
@@ -244,11 +243,27 @@ const TransactionsHistory = ({
       </Box>
 
       {isLoading && entries.length === 0 && (
-        <Stack spacing={1}>
-          {[0, 1, 2].map((item) => (
-            <Skeleton key={item} variant="rounded" height={68} sx={{ borderRadius: '16px' }} />
-          ))}
-        </Stack>
+        <Card elevation={0} sx={getListCardStyles(false)}>
+          {[0, 1, 2].map((item, index) => {
+            const isLast = index === 2
+            return (
+              <Box key={item} sx={getTransactionRowStyles(isLast)}>
+                <Box sx={rowMainInfoStyles}>
+                  <Box sx={rowTitleBadgesStyles}>
+                    <Skeleton width={140} height={18} sx={{ borderRadius: '4px' }} />
+                    <Skeleton width={54} height={20} sx={{ borderRadius: '9999px' }} />
+                  </Box>
+                  <Skeleton width={index % 2 === 0 ? 210 : 170} height={14} sx={{ borderRadius: '4px', mt: 0.5 }} />
+                </Box>
+
+                <Box sx={rowRightColStyles}>
+                  <Skeleton width={60} height={20} sx={{ borderRadius: '4px' }} />
+                  <Skeleton width={68} height={32} sx={{ borderRadius: '9999px' }} />
+                </Box>
+              </Box>
+            )
+          })}
+        </Card>
       )}
 
       {!isLoading && entries.length === 0 && (
