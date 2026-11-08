@@ -200,19 +200,3 @@ export const checkIconStyles: SxProps<Theme> = {
   flexShrink: 0,
   mt: 0.25
 }
-
-export const upsellCardStyles = (isDark: boolean): SxProps<Theme> => ({
-  borderRadius: { xs: '20px', sm: '24px' },
-  p: { xs: 2.5, sm: 3, md: 3.5 },
-  bgcolor: isDark ? brandColors.darkPaper : '#FFFFFF',
-  border: '1px dashed',
-  borderColor: isDark ? brandColors.darkBorder : brandColors.sandDark,
-  display: 'flex',
-  flexDirection: { xs: 'column', md: 'row' },
-  alignItems: { xs: 'stretch', md: 'center' },
-  justifyContent: 'space-between',
-  gap: { xs: 2, md: 3 },
-  overflow: 'visible',
-  width: '100%',
-  boxSizing: 'border-box'
-})

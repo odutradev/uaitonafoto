@@ -13,12 +13,10 @@ const LandingPage = () => {
   const {
     isDark,
     plans,
-    upsell,
     isLoadingPlans,
     data,
     user,
-    onSelectPlan,
-    onSelectUpsell
+    onSelectPlan
   } = useLandingPage()
 
   return (
@@ -43,11 +41,9 @@ const LandingPage = () => {
       <Plans
         data={data.plans}
         plans={plans}
-        upsell={upsell}
         isDark={isDark}
         isLoading={isLoadingPlans}
         onSelectPlan={onSelectPlan}
-        onSelectUpsell={onSelectUpsell}
       />
       <FinalCta data={data.finalCta} isDark={isDark} />
       <Footer data={data.footer} />

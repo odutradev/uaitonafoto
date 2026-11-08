@@ -10,8 +10,7 @@ import {
   sectionHeaderStyles,
   sectionSubtitleStyles,
   sectionTitleStyles,
-  tagBadgeStyles,
-  upsellCardStyles
+  tagBadgeStyles
 } from './styles'
 export interface PlansSkeletonProps {
   data: {
@@ -83,39 +82,6 @@ export const PlansSkeleton = ({ data, isDark }: PlansSkeletonProps) => {
               </Card>
             )
           })}
-        </Box>
-
-        <Box sx={upsellCardStyles(isDark)}>
-          <Stack
-            direction={{ xs: 'column', sm: 'row' }}
-            spacing={2}
-            alignItems={{ xs: 'flex-start', sm: 'center' }}
-            sx={{ minWidth: 0, flex: 1 }}
-          >
-            <Skeleton
-              variant="rounded"
-              width={48}
-              height={48}
-              borderRadius="14px"
-              sx={{ flexShrink: 0 }}
-            />
-            <Box sx={{ minWidth: 0, flex: 1, width: '100%' }}>
-              <Skeleton width={160} height={18} sx={{ mb: 1 }} />
-              <Skeleton width={220} height={22} sx={{ mb: 0.75 }} />
-              <Skeleton width="80%" height={16} />
-            </Box>
-          </Stack>
-
-          <Skeleton
-            variant="rounded"
-            height={42}
-            borderRadius="12px"
-            sx={{
-              width: { xs: '100%', sm: 180 },
-              flexShrink: 0,
-              alignSelf: { xs: 'stretch', md: 'center' }
-            }}
-          />
         </Box>
       </Container>
     </Box>
