@@ -124,10 +124,15 @@ export const startRoutines = (divisions?: RoutineDivisionDefinition[]): void => 
         }
 
         isRunning = true
+        const startTime = Date.now()
+
         try {
           await routine.handler()
+          const durationMs = Date.now() - startTime
+          logger.info(`Routine [${routineKey}] completed in ${durationMs}ms`)
         } catch (error) {
-          logger.error(`Error running routine [${routineKey}]:`, error)
+          const durationMs = Date.now() - startTime
+          logger.error(`Error running routine [${routineKey}] after ${durationMs}ms:`, error)
         } finally {
           isRunning = false
         }
