@@ -1,4 +1,4 @@
-﻿import GuestModel from './model'
+import GuestModel from './model'
 import type { CreateGuestPayload, GuestEntity } from './types'
 
 const toGuestEntity = (doc: any): GuestEntity => {
@@ -15,6 +15,11 @@ export const guestRepository = {
   findById: async (id: string): Promise<GuestEntity | null> => {
     const doc = await GuestModel.findById(id).lean()
     return doc ? toGuestEntity(doc) : null
+  },
+
+  findByIds: async (ids: string[]): Promise<GuestEntity[]> => {
+    const docs = await GuestModel.find({ _id: { $in: ids } }).lean()
+    return docs.map(toGuestEntity)
   },
 
   listByEvent: async (eventId: string): Promise<GuestEntity[]> => {
