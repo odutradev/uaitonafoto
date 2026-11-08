@@ -1,3 +1,4 @@
+import { brandColors } from '@theme'
 import type { SxProps, Theme } from '@mui/material'
 
 export const pinContainerStyles: SxProps<Theme> = {
@@ -23,12 +24,37 @@ export const pinSlotInputStyles: SxProps<Theme> = {
     borderRadius: '14px',
     fontFamily: 'monospace',
     fontWeight: 800,
-    fontSize: { xs: '1.5rem', sm: '1.75rem' }
+    fontSize: { xs: '1.5rem', sm: '1.75rem' },
+    '&.Mui-focused': {
+      '& input::placeholder': {
+        color: `${brandColors.flashYellow} !important`,
+        WebkitTextFillColor: `${brandColors.flashYellow} !important`,
+        opacity: '1 !important',
+        animation: 'pinDotBlink 1s ease-in-out infinite'
+      }
+    }
   },
   '& .MuiOutlinedInput-input': {
     textAlign: 'center',
     py: { xs: 1.5, sm: 1.75 },
-    px: 0
+    px: 0,
+    caretColor: 'transparent !important',
+    '&::placeholder': {
+      opacity: 0.35,
+      transition: 'opacity 0.2s ease, color 0.2s ease'
+    }
+  },
+  '@keyframes pinDotBlink': {
+    '0%, 100%': {
+      opacity: 1,
+      color: brandColors.flashYellow,
+      WebkitTextFillColor: brandColors.flashYellow
+    },
+    '50%': {
+      opacity: 0.2,
+      color: brandColors.flashYellow,
+      WebkitTextFillColor: brandColors.flashYellow
+    }
   }
 }
 

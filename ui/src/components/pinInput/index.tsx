@@ -142,7 +142,8 @@ const PinInput = ({
                 pattern: '[0-9]*',
                 maxLength: 4,
                 autoComplete: index === 0 ? 'one-time-code' : 'off',
-                'aria-label': `${ariaLabelPrefix} ${index + 1}`
+                'aria-label': `${ariaLabelPrefix} ${index + 1}`,
+                style: { caretColor: 'transparent' }
               }
             }}
             sx={[pinSlotInputStyles, ...(Array.isArray(slotSx) ? slotSx : [slotSx])]}
