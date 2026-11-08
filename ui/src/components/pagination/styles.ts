@@ -16,11 +16,16 @@ export const paginationMuiStyles: SxProps<Theme> = {
     borderRadius: '10px',
     transition: 'all 0.2s ease',
     '&:hover': {
-      bgcolor: 'rgba(255, 207, 31, 0.12)'
+      bgcolor: 'rgba(255, 207, 31, 0.16)'
     },
     '&.Mui-selected': {
       fontWeight: 800,
-      boxShadow: '0 2px 8px rgba(255, 207, 31, 0.3)'
+      bgcolor: 'primary.main',
+      color: 'primary.contrastText',
+      boxShadow: '0 2px 8px rgba(255, 207, 31, 0.3)',
+      '&:hover': {
+        bgcolor: 'primary.light'
+      }
     }
   }
 }
@@ -30,3 +35,4 @@ export const summaryTextStyles: SxProps<Theme> = {
   color: 'text.secondary',
   fontWeight: 500
 }
+

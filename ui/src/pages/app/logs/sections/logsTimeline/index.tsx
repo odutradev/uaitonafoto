@@ -136,12 +136,16 @@ const LogsTimeline = ({
         </Box>
       )}
 
-      <Pagination
-        page={page}
-        totalPages={totalPages}
-        isLoading={isLoading}
-        onPageChange={onPageChange}
-      />
+      {logs.length > 0 && (
+        <Pagination
+          page={page}
+          totalPages={totalPages}
+          totalItems={total}
+          isLoading={isLoading}
+          onPageChange={onPageChange}
+          hideOnSinglePage={false}
+        />
+      )}
     </Box>
   )
 }

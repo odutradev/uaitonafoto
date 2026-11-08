@@ -111,12 +111,12 @@ const renderAcquiredBadges = (purchase: PurchaseItem) => {
   return null
 }
 
+const ITEMS_PER_PAGE = 6
+
 const TransactionsHistory = ({
   purchases,
   transactions,
   page,
-  total,
-  totalPages,
   statusFilter,
   typeFilter,
   isLoading,
@@ -125,38 +125,21 @@ const TransactionsHistory = ({
   onPageChange,
   onSelectTransaction
 }: TransactionsHistoryProps) => {
-  const { entries, totalRecords } = useMemo(() => {
-    const txIdsOnPage = new Set(transactions.map((tx) => tx.id))
-
+  const allEntries = useMemo(() => {
     const matchingPurchases = purchases.filter((item) => {
       const matchesStatus = statusFilter === 'ALL' || statusFilter === 'PAID'
       const matchesType = typeFilter === 'ALL' || item.planType === typeFilter
       return matchesStatus && matchesType
     })
 
-    const txTimestamps = transactions.map((tx) => toTimestampMs(tx.paidAt ?? tx.createdAt))
-    const newestOnPage = txTimestamps.length > 0 ? Math.max(...txTimestamps) : 0
-    const oldestOnPage = txTimestamps.length > 0 ? Math.min(...txTimestamps) : 0
-
-    const pagePurchases = matchingPurchases.filter((item) => {
-      if (txIdsOnPage.has(item.transactionId)) return true
-
-      const isStandaloneAcquisition =
-        item.creditType === 'free' ||
-        item.planType === 'FREE' ||
-        (totalPages <= 1 && statusFilter === 'ALL' && typeFilter === 'ALL')
-
-      if (!isStandaloneAcquisition) return false
-      if (totalPages <= 1 || transactions.length === 0) return true
-
-      const itemMs = toTimestampMs(item.createdAt)
-      if (page === 1) return itemMs >= oldestOnPage
-      if (page === totalPages) return itemMs < oldestOnPage
-      return itemMs < newestOnPage && itemMs >= oldestOnPage
+    const matchingTransactions = transactions.filter((tx) => {
+      const matchesStatus = statusFilter === 'ALL' || tx.status === statusFilter
+      const matchesType = typeFilter === 'ALL' || tx.planType === typeFilter
+      return matchesStatus && matchesType
     })
 
     const combined: UnifiedHistoryEntry[] = [
-      ...transactions.map(
+      ...matchingTransactions.map(
         (tx): UnifiedHistoryEntry => ({
           kind: 'transaction',
           id: `tx_${tx.id}`,
@@ -164,7 +147,7 @@ const TransactionsHistory = ({
           transaction: tx
         })
       ),
-      ...pagePurchases.map(
+      ...matchingPurchases.map(
         (purchase): UnifiedHistoryEntry => ({
           kind: 'purchase',
           id: `purchase_${purchase.id}`,
@@ -181,11 +164,17 @@ const TransactionsHistory = ({
       return a.kind === 'purchase' ? -1 : 1
     })
 
-    return {
-      entries: combined,
-      totalRecords: total + matchingPurchases.length
-    }
-  }, [page, purchases, statusFilter, total, totalPages, transactions, typeFilter])
+    return combined
+  }, [purchases, statusFilter, transactions, typeFilter])
+
+  const totalRecords = allEntries.length
+  const totalPages = Math.max(1, Math.ceil(totalRecords / ITEMS_PER_PAGE))
+  const safePage = Math.min(Math.max(1, page), totalPages)
+
+  const paginatedEntries = useMemo(() => {
+    const startIndex = (safePage - 1) * ITEMS_PER_PAGE
+    return allEntries.slice(startIndex, startIndex + ITEMS_PER_PAGE)
+  }, [allEntries, safePage])
 
   return (
     <Box id="transacoes" component="section" sx={historyWrapperStyles}>
@@ -238,7 +227,7 @@ const TransactionsHistory = ({
         </Box>
       </Box>
 
-      {isLoading && entries.length === 0 && (
+      {isLoading && allEntries.length === 0 && (
         <Card elevation={0} sx={getListCardStyles(false)}>
           {[0, 1, 2].map((item, index) => {
             const isLast = index === 2
@@ -262,7 +251,7 @@ const TransactionsHistory = ({
         </Card>
       )}
 
-      {!isLoading && entries.length === 0 && (
+      {!isLoading && allEntries.length === 0 && (
         <Paper elevation={0} sx={emptyBoxStyles}>
           <Typography variant="subtitle1" fontWeight={700}>
             Nenhum registro encontrado
@@ -273,10 +262,10 @@ const TransactionsHistory = ({
         </Paper>
       )}
 
-      {entries.length > 0 && (
+      {paginatedEntries.length > 0 && (
         <Card elevation={0} sx={getListCardStyles(isLoading)}>
-          {entries.map((entry, index) => {
-            const isLast = index === entries.length - 1
+          {paginatedEntries.map((entry, index) => {
+            const isLast = index === paginatedEntries.length - 1
             const referenceDate = formatDatePtBr(entry.timestamp)
 
             if (entry.kind === 'purchase') {
@@ -393,12 +382,16 @@ const TransactionsHistory = ({
         </Card>
       )}
 
-      <Pagination
-        page={page}
-        totalPages={totalPages}
-        isLoading={isLoading}
-        onPageChange={onPageChange}
-      />
+      {allEntries.length > 0 && (
+        <Pagination
+          page={safePage}
+          totalPages={totalPages}
+          totalItems={totalRecords}
+          isLoading={isLoading}
+          onPageChange={onPageChange}
+          hideOnSinglePage={false}
+        />
+      )}
     </Box>
   )
 }

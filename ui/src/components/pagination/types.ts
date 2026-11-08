@@ -15,3 +15,4 @@ export interface PaginationProps {
   boundaryCount?: number
   sx?: SxProps<Theme>
 }
+

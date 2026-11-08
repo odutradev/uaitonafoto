@@ -30,7 +30,7 @@ import type {
 } from '../types'
 
 const FREE_PLAN_ID = 'free_trial'
-const TRANSACTIONS_PER_PAGE = 8
+const TRANSACTIONS_FETCH_LIMIT = 100
 const CREDITS_REFRESH_ATTEMPTS = 5
 const CREDITS_REFRESH_INTERVAL_MS = 2000
 
@@ -67,13 +67,13 @@ export const useBilling = (): UseBillingReturn => {
       setIsLoadingTransactions(true)
       try {
         const response = await getMyTransactions({
-          page,
-          limit: TRANSACTIONS_PER_PAGE,
+          page: 1,
+          limit: TRANSACTIONS_FETCH_LIMIT,
           status: status === 'ALL' ? undefined : status,
           planType: planType === 'ALL' ? undefined : planType
         })
         setTransactions(response.data)
-        setTransactionsPage(response.meta.page)
+        setTransactionsPage(page)
         setTransactionsTotal(response.meta.total)
         setTransactionsTotalPages(Math.max(1, response.meta.totalPages))
       } catch {
@@ -135,6 +135,7 @@ export const useBilling = (): UseBillingReturn => {
   const handleStatusFilterChange = useCallback(
     (nextStatus: TransactionStatusFilter) => {
       setStatusFilter(nextStatus)
+      setTransactionsPage(1)
       loadTransactions(1, nextStatus, typeFilter)
     },
     [loadTransactions, typeFilter]
@@ -143,17 +144,15 @@ export const useBilling = (): UseBillingReturn => {
   const handleTypeFilterChange = useCallback(
     (nextType: TransactionTypeFilter) => {
       setTypeFilter(nextType)
+      setTransactionsPage(1)
       loadTransactions(1, statusFilter, nextType)
     },
     [loadTransactions, statusFilter]
   )
 
-  const handlePageChange = useCallback(
-    (nextPage: number) => {
-      loadTransactions(nextPage, statusFilter, typeFilter)
-    },
-    [loadTransactions, statusFilter, typeFilter]
-  )
+  const handlePageChange = useCallback((nextPage: number) => {
+    setTransactionsPage(nextPage)
+  }, [])
 
   const startCheckout = useCallback(
     async (planId: string) => {
@@ -221,7 +220,7 @@ export const useBilling = (): UseBillingReturn => {
             getMeData(),
             getMySubscriptions(),
             getMyPurchases(),
-            getMyTransactions({ page: 1, limit: TRANSACTIONS_PER_PAGE })
+            getMyTransactions({ page: 1, limit: TRANSACTIONS_FETCH_LIMIT })
           ])
 
           updateUser(freshUser)

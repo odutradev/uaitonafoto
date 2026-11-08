@@ -9,7 +9,7 @@ export const Pagination = ({
   onPageChange,
   disabled = false,
   isLoading = false,
-  hideOnSinglePage = true,
+  hideOnSinglePage = false,
   size,
   totalItems,
   showSummary = false,
@@ -21,13 +21,15 @@ export const Pagination = ({
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
 
-  if (hideOnSinglePage && totalPages <= 1) {
+  if (totalPages <= 0 || (hideOnSinglePage && totalPages <= 1)) {
     return null
   }
 
   const effectiveDisabled = disabled || isLoading
   const effectiveSize = size || (isMobile ? 'small' : 'medium')
   const effectiveSiblingCount = siblingCount ?? (isMobile ? 0 : 1)
+  const safeTotalPages = Math.max(1, totalPages)
+  const safeCurrentPage = Math.min(Math.max(1, page), safeTotalPages)
 
   const handleChange = (_event: React.ChangeEvent<unknown>, nextPage: number) => {
     if (nextPage !== page && !effectiveDisabled) {
@@ -41,14 +43,14 @@ export const Pagination = ({
         <Typography variant="body2" sx={summaryTextStyles}>
           {summaryText ||
             (totalItems !== undefined
-              ? `Página ${page} de ${totalPages} • Total de ${totalItems} ${totalItems === 1 ? 'item' : 'itens'}`
-              : `Página ${page} de ${totalPages}`)}
+              ? `Página ${safeCurrentPage} de ${safeTotalPages} • Total de ${totalItems} ${totalItems === 1 ? 'item' : 'itens'}`
+              : `Página ${safeCurrentPage} de ${safeTotalPages}`)}
         </Typography>
       )}
 
       <MuiPagination
-        count={totalPages}
-        page={page}
+        count={safeTotalPages}
+        page={safeCurrentPage}
         disabled={effectiveDisabled}
         color="primary"
         shape="rounded"
