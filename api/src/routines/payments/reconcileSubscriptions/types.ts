@@ -4,3 +4,4 @@ export interface ConfirmedStatementCharge {
   amount: number
   createdAt: string
 }
+

@@ -13,3 +13,4 @@ export const paymentsRoutines: RoutineDivisionDefinition<typeof routines> = {
 }
 
 export default paymentsRoutines
+
