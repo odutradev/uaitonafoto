@@ -1,11 +1,15 @@
-﻿import defineAction from '@factories/defineAction'
+import defineAction from '@factories/defineAction'
 import eventRepository from '../../repositories/events'
 import guestRepository from '../../repositories/guests'
+import photoRepository from '../../repositories/photos'
+import guestSessionMiddleware from '../../middlewares/guestSession'
+import { loadGuestContext } from '../../utils/loadGuestContext'
 import { getEventPhase } from '../../utils/eventWindows'
 import { signGuestToken } from '../../utils/guestToken'
 import toGuestEventInfo from './utils/toGuestEventInfo'
 import {
   guestEventInfoSchema,
+  guestSessionResponseSchema,
   guestTokenParamsSchema,
   joinEventResponseSchema,
   joinEventSchema
@@ -15,6 +19,7 @@ import type { ManageRequestBody, ManageRequestResponse } from '@middlewares/mana
 import type {
   GetGuestEventRequest,
   GuestEventInfo,
+  GuestSessionResponse,
   JoinEventRequest,
   JoinEventResponse
 } from './types'
@@ -64,6 +69,35 @@ export const joinEvent = defineAction(
       guestToken: signGuestToken(guest.id, event.galleryExpiresAt),
       guest: { id: guest.id, name: guest.name },
       event: toGuestEventInfo(event)
+    }
+  }
+)
+
+export const getGuestSession = defineAction(
+  {
+    method: 'get',
+    path: '/guest/me',
+    summary: 'Obter sessão do convidado: dados, evento e cota de fotos',
+    tags: ['Convidado'],
+    middlewares: [guestSessionMiddleware],
+    responses: {
+      200: { description: 'Sessão do convidado', schema: guestSessionResponseSchema }
+    }
+  },
+  async ({ ids, manageError }: ManageRequestBody): ManageRequestResponse<GuestSessionResponse> => {
+    if (!ids.guestId) return manageError({ code: 'unauthorized' })
+
+    const context = await loadGuestContext(ids.guestId)
+    if (!context) return manageError({ code: 'user_not_found' })
+
+    const { guest, event } = context
+    const photosSent = await photoRepository.countByGuest(guest.id)
+
+    return {
+      guest: { id: guest.id, name: guest.name },
+      event: toGuestEventInfo(event),
+      photosSent,
+      photosRemaining: Math.max(0, event.settings.maxPhotosPerGuest - photosSent)
     }
   }
 )

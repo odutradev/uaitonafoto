@@ -1,4 +1,4 @@
-﻿import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi'
+import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi'
 import { z } from 'zod'
 
 import { eventTypeSchema } from '../event/schemas'
@@ -51,3 +51,12 @@ export const joinEventResponseSchema = z
     event: guestEventInfoSchema
   })
   .openapi('JoinEventResponse')
+
+export const guestSessionResponseSchema = z
+  .object({
+    guest: guestSchema,
+    event: guestEventInfoSchema,
+    photosSent: z.number().openapi({ example: 3 }),
+    photosRemaining: z.number().openapi({ example: 7 })
+  })
+  .openapi('GuestSessionResponse')

@@ -1,6 +1,7 @@
-﻿import type { z } from 'zod'
+import type { z } from 'zod'
 import type {
   guestEventInfoSchema,
+  guestSessionResponseSchema,
   guestTokenParamsSchema,
   joinEventResponseSchema,
   joinEventSchema
@@ -16,3 +17,5 @@ export type JoinEventRequest = {
 export type GuestEventInfo = z.infer<typeof guestEventInfoSchema>
 
 export type JoinEventResponse = z.infer<typeof joinEventResponseSchema>
+
+export type GuestSessionResponse = z.infer<typeof guestSessionResponseSchema>
