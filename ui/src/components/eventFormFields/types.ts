@@ -20,6 +20,7 @@ export interface EventFormFieldsProps {
   form: EventFormState
   onChange: <K extends keyof EventFormState>(key: K, value: EventFormState[K]) => void
   isCreate?: boolean
+  step?: number
   paidCredits?: number
   freeCredits?: number
 }

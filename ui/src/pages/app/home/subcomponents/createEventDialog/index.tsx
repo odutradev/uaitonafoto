@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react'
-import { Alert, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material'
+import { Alert, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 
 import { getMeData } from '@actions/auth'
 import { createEvent } from '@actions/events'
 import EventFormFields from '@components/eventFormFields'
+import Stepper from '@components/stepper'
 import { buildInitialEventForm, isValidEventPeriod, isValidEventPin, toEventPayload } from '@components/eventFormFields/utils'
 import { getErrorMessage } from '@config/events'
 import useAuth from '@hooks/useAuth'
@@ -15,6 +16,12 @@ import { dialogActionsStyles, dialogButtonStyles, dialogPaperStyles } from './st
 import type { FormEvent } from 'react'
 import type { EventFormState } from '@components/eventFormFields/types'
 import type { CreateEventDialogProps } from './types'
+
+const STEPS = [
+  { label: 'Básico', description: 'Informações essenciais' },
+  { label: 'Dinâmica', description: 'Fotos e telão' },
+  { label: 'Acesso', description: 'Senha PIN' }
+]
 
 const CreateEventDialog = ({ open, onClose, onCreated }: CreateEventDialogProps) => {
   const navigate = useNavigate()
@@ -26,11 +33,13 @@ const CreateEventDialog = ({ open, onClose, onCreated }: CreateEventDialogProps)
   const hasCredits = paidCredits > 0 || freeCredits > 0
   const defaultCreditType = paidCredits > 0 ? 'paid' : freeCredits > 0 ? 'free' : 'paid'
 
+  const [activeStep, setActiveStep] = useState(0)
   const [form, setForm] = useState<EventFormState>(() => buildInitialEventForm(defaultCreditType))
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   useEffect(() => {
     if (open) {
+      setActiveStep(0)
       setForm(buildInitialEventForm(defaultCreditType))
     }
   }, [open, defaultCreditType])
@@ -38,31 +47,74 @@ const CreateEventDialog = ({ open, onClose, onCreated }: CreateEventDialogProps)
   const setField = <K extends keyof EventFormState>(key: K, value: EventFormState[K]) =>
     setForm((current) => ({ ...current, [key]: value }))
 
+  const validateStep = (stepIndex: number): boolean => {
+    if (stepIndex === 0) {
+      if (!hasCredits) {
+        toast.error('Você não possui créditos para criar um evento.')
+        return false
+      }
+      if (form.creditType === 'paid' && paidCredits <= 0) {
+        toast.error('Você não possui créditos normais disponíveis.')
+        return false
+      }
+      if (form.creditType === 'free' && freeCredits <= 0) {
+        toast.error('Você não possui créditos de teste grátis disponíveis.')
+        return false
+      }
+      if (!form.name.trim()) {
+        toast.error('Informe o nome do evento.')
+        return false
+      }
+      if (!form.startsAt) {
+        toast.error('Informe a data e hora de início.')
+        return false
+      }
+      return true
+    }
+
+    if (stepIndex === 1) {
+      if (!form.maxPhotosPerGuest || form.maxPhotosPerGuest < 1 || form.maxPhotosPerGuest > 100) {
+        toast.error('O limite deve ser entre 1 e 100 fotos por convidado.')
+        return false
+      }
+      return true
+    }
+
+    if (stepIndex === 2) {
+      if (!isValidEventPin(form)) {
+        toast.error('O PIN de acesso deve ter exatamente 4 dígitos numéricos.')
+        return false
+      }
+      return true
+    }
+
+    return true
+  }
+
+  const handleNext = () => {
+    if (validateStep(activeStep)) {
+      setActiveStep((current) => Math.min(current + 1, STEPS.length - 1))
+    }
+  }
+
+  const handleBack = () => {
+    setActiveStep((current) => Math.max(current - 1, 0))
+  }
+
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
 
-    if (!hasCredits) {
-      toast.error('Você não possui créditos para criar um evento.')
+    if (activeStep < STEPS.length - 1) {
+      handleNext()
       return
     }
 
-    if (form.creditType === 'paid' && paidCredits <= 0) {
-      toast.error('Você não possui créditos normais disponíveis.')
-      return
-    }
-
-    if (form.creditType === 'free' && freeCredits <= 0) {
-      toast.error('Você não possui créditos de teste grátis disponíveis.')
+    if (!validateStep(0) || !validateStep(1) || !validateStep(2)) {
       return
     }
 
     if (!isValidEventPeriod(form)) {
       toast.error('O término do evento deve ser depois do início.')
-      return
-    }
-
-    if (!isValidEventPin(form)) {
-      toast.error('O PIN de acesso deve ter exatamente 4 dígitos numéricos.')
       return
     }
 
@@ -83,9 +135,25 @@ const CreateEventDialog = ({ open, onClose, onCreated }: CreateEventDialogProps)
   return (
     <Dialog open={open} onClose={onClose} slotProps={{ paper: { sx: dialogPaperStyles } }}>
       <Box component="form" onSubmit={handleSubmit}>
-        <DialogTitle>Criar novo evento</DialogTitle>
+        <DialogTitle sx={{ pb: 1 }}>
+          <Typography variant="h6" fontWeight={800}>
+            Criar novo evento
+          </Typography>
+          <Box sx={{ mt: 1.5 }}>
+            <Stepper
+              steps={STEPS}
+              activeStep={activeStep}
+              onStepClick={(targetStep) => {
+                if (targetStep < activeStep || validateStep(activeStep)) {
+                  setActiveStep(targetStep)
+                }
+              }}
+              clickablePastSteps
+            />
+          </Box>
+        </DialogTitle>
 
-        <DialogContent>
+        <DialogContent sx={{ pt: 1 }}>
           {!hasCredits && (
             <Alert severity="warning" sx={{ mb: 2 }}>
               Você não possui créditos para criar eventos. Adquira créditos avulsos ou assine um plano para começar.
@@ -94,6 +162,7 @@ const CreateEventDialog = ({ open, onClose, onCreated }: CreateEventDialogProps)
 
           <EventFormFields
             isCreate
+            step={activeStep}
             form={form}
             onChange={setField}
             paidCredits={paidCredits}
@@ -102,9 +171,22 @@ const CreateEventDialog = ({ open, onClose, onCreated }: CreateEventDialogProps)
         </DialogContent>
 
         <DialogActions sx={dialogActionsStyles}>
-          <Button type="button" variant="outlined" onClick={onClose} sx={dialogButtonStyles}>
-            Cancelar
-          </Button>
+          {activeStep === 0 ? (
+            <Button type="button" variant="outlined" onClick={onClose} sx={dialogButtonStyles}>
+              Cancelar
+            </Button>
+          ) : (
+            <Button
+              type="button"
+              variant="outlined"
+              onClick={handleBack}
+              disabled={isSubmitting}
+              sx={dialogButtonStyles}
+            >
+              Voltar
+            </Button>
+          )}
+
           {!hasCredits ? (
             <Button
               type="button"
@@ -118,8 +200,24 @@ const CreateEventDialog = ({ open, onClose, onCreated }: CreateEventDialogProps)
             >
               Adquirir créditos
             </Button>
+          ) : activeStep < STEPS.length - 1 ? (
+            <Button
+              type="button"
+              variant="contained"
+              color="primary"
+              onClick={handleNext}
+              sx={dialogButtonStyles}
+            >
+              Avançar
+            </Button>
           ) : (
-            <Button type="submit" variant="contained" color="primary" disabled={isSubmitting} sx={dialogButtonStyles}>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              disabled={isSubmitting}
+              sx={dialogButtonStyles}
+            >
               {isSubmitting ? 'Criando...' : 'Criar evento'}
             </Button>
           )}

@@ -1,4 +1,4 @@
-﻿import type { SxProps, Theme } from '@mui/material'
+import type { SxProps, Theme } from '@mui/material'
 
 export const dialogPaperStyles: SxProps<Theme> = {
   borderRadius: '20px',
@@ -11,6 +11,9 @@ export const dialogActionsStyles: SxProps<Theme> = {
   px: 3,
   pb: 2.5,
   gap: 1,
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
   flexDirection: { xs: 'column-reverse', sm: 'row' }
 }
 
