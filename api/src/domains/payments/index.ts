@@ -5,6 +5,7 @@ import * as webhookActions from './actions/webhook'
 import * as subscriptionsActions from './actions/subscriptions'
 import * as transactionsActions from './actions/transactions'
 import * as purchasesActions from './actions/purchases'
+import { paymentsRateLimiter } from '@middlewares/rateLimit'
 import type { DomainDefinition } from '@config/domain'
 
 const actions = {
@@ -19,6 +20,7 @@ const actions = {
 
 export const paymentsDomain: DomainDefinition<typeof actions> = {
   name: 'payments',
+  rateLimit: paymentsRateLimiter,
   actions
 }
 

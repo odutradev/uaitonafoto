@@ -1,6 +1,5 @@
 import { getPlanByProductId } from '@payment/plans'
 import defineAction from '@factories/defineAction'
-import { authRateLimiter } from '@middlewares/rateLimit'
 import logRepository from '@domains/system/repositories'
 import userRepository from '@domains/users/repositories'
 import resolveFrontendBaseUrl from '@domains/users/utils/resolveFrontendBaseUrl'
@@ -19,7 +18,6 @@ export const createCheckout = defineAction(
     summary: 'Criar checkout do AbacatePay para um plano ou produto',
     tags: ['Pagamentos'],
     authenticate: true,
-    middlewares: [authRateLimiter],
     responses: {
       200: { description: 'URL de checkout criada', schema: checkoutResponseSchema },
       403: { description: 'Produto restrito a assinantes ativos' },

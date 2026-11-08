@@ -1,5 +1,4 @@
 import defineAction from '@factories/defineAction'
-import { authRateLimiter } from '@middlewares/rateLimit'
 import userRepository from '@domains/users/repositories'
 import logRepository from '@domains/system/repositories'
 import transactionRepository from '../../repositories/transactions'
@@ -48,7 +47,6 @@ export const cancelMySubscription = defineAction(
     summary: 'Cancelar assinatura recorrente do usuário autenticado',
     tags: ['Pagamentos'],
     authenticate: true,
-    middlewares: [authRateLimiter],
     schema: {
       params: cancelSubscriptionParamsSchema
     },

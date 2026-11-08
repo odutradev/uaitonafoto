@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import createLogger from '@utils/logger'
+import { createRateLimiter } from '@middlewares/rateLimit'
 import type { DomainDefinition, DomainRegistry, ActionDefinition, ActionHandler } from './types'
 
 const logger = createLogger('domain')
@@ -71,6 +72,15 @@ export const registerDomainEndpoints = (
   const registeredEndpoints = new Set<string>()
 
   for (const domain of targetDomains) {
+    const domainLimiter = domain.rateLimit
+      ? typeof domain.rateLimit === 'function'
+        ? domain.rateLimit
+        : createRateLimiter({
+            domainName: domain.name,
+            ...domain.rateLimit
+          })
+      : null
+
     const actions = (domain.actions || {}) as Record<string, unknown>
     const actionEntries = extractActionHandlers(actions)
 
@@ -85,8 +95,17 @@ export const registerDomainEndpoints = (
         continue
       }
 
+      const isWebhook =
+        normalizedPath.endsWith('/webhook') ||
+        normalizedPath.endsWith('/webhook/')
+
+      const actionHandlers =
+        domainLimiter && !isWebhook
+          ? [domainLimiter, ...handlers]
+          : handlers
+
       if (typeof router[httpMethod] === 'function') {
-        router[httpMethod](normalizedPath, ...handlers)
+        router[httpMethod](normalizedPath, ...actionHandlers)
         registeredEndpoints.add(endpointKey)
       } else {
         logger.warn(`Unsupported HTTP method: ${method} for action ${domain.name}.${name}`)

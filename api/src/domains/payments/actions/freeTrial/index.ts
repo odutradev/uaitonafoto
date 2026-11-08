@@ -1,6 +1,5 @@
 import { freeTrialPlan } from '@payment/plans'
 import defineAction from '@factories/defineAction'
-import { authRateLimiter } from '@middlewares/rateLimit'
 import logRepository from '@domains/system/repositories'
 import userRepository from '@domains/users/repositories'
 import purchaseRepository from '../../repositories/purchases'
@@ -16,7 +15,6 @@ export const claimFreeTrial = defineAction(
     summary: 'Resgatar o crédito do Teste Grátis (limitado a 1 uso por conta)',
     tags: ['Pagamentos'],
     authenticate: true,
-    middlewares: [authRateLimiter],
     responses: {
       200: { description: 'Teste Grátis ativado com sucesso', schema: claimFreeTrialResponseSchema },
       404: { description: 'Usuário não encontrado' },

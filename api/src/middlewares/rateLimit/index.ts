@@ -86,3 +86,33 @@ export const authRateLimiter: DocumentedMiddleware = Object.assign(
     }
   }
 )
+
+export const paymentsRateLimiter: DocumentedMiddleware = Object.assign(
+  rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 60,
+    standardHeaders: 'draft-7',
+    legacyHeaders: false,
+    skip: (req) =>
+      req.path === '/payments/webhook' ||
+      req.path === '/api/payments/webhook' ||
+      req.path.endsWith('/webhook') ||
+      req.path.endsWith('/webhook/'),
+    handler: (_req, res) => {
+      sendError({
+        res,
+        code: 'too_many_requests',
+        details:
+          'Limite de requisições excedido para o serviço de pagamentos. Aguarde alguns instantes antes de tentar novamente.'
+      })
+    }
+  }),
+  {
+    responses: {
+      429: {
+        description: 'Muitas requisições no domínio de pagamentos. Limite de taxa excedido',
+        schema: errorResponseSchema
+      }
+    }
+  }
+)
