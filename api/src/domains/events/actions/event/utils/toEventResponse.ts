@@ -6,6 +6,7 @@ export const toEventResponse = (entity: EventEntity, myRole: EventMemberRole): E
   name: entity.name,
   description: entity.description,
   type: entity.type,
+  creditType: entity.creditType,
   startsAt: entity.startsAt,
   endsAt: entity.endsAt,
   guestToken: entity.guestToken,

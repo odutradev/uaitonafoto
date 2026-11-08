@@ -1,9 +1,9 @@
 import { generatePin } from '../../../utils/eventPin'
-import type { EventSettings } from '../../../repositories/events/types'
+import type { EventCreditType, EventSettings } from '../../../repositories/events/types'
 
-export const buildDefaultEventSettings = (): EventSettings => ({
-  uploadWindowHours: 24,
-  galleryDurationDays: 30,
+export const buildDefaultEventSettings = (creditType: EventCreditType = 'paid'): EventSettings => ({
+  uploadWindowHours: 0,
+  galleryDurationDays: creditType === 'free' ? 14 : 90,
   maxPhotosPerGuest: 10,
   photoVisibility: 'during_event',
   pinEnabled: true,

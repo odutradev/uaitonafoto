@@ -19,10 +19,11 @@ export const freeTrialPlan: CachedPlan = {
   description: 'Experimente a dinâmica do telão e do aplicativo na sua festa sem nenhum compromisso financeiro.',
   features: [
     'Até 25 fotos compartilhadas no mural',
+    'Duração do evento: 4 horas no mural e telão',
     'Modo Telão ao vivo com marca d\'água',
     'Código QR pronto para os convidados',
     'Mural no celular com curtidas em tempo real',
-    'Galeria ativa por 7 dias'
+    'Galeria ativa por 14 dias'
   ],
   ctaText: 'Começar grátis',
   ctaHref: 'free_trial',
@@ -47,6 +48,7 @@ export const plansConfig: PlanConfig[] = [
     description: 'Perfeito para noivos, aniversariantes e formaturas contratando para uma data especial.',
     features: [
       '1 evento completo com fotos ilimitadas',
+      'Duração do evento: 8 horas no mural e telão',
       'Convidados ilimitados sem precisar baixar aplicativo',
       'Modo Telão ao vivo sem marcas d\'água',
       'Moderação de fotos com senha de segurança',

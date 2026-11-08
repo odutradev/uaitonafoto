@@ -15,6 +15,7 @@ const toEventEntity = (doc: any): EventEntity => {
   return {
     ...rest,
     id: String(_id),
+    creditType: rest.creditType ?? 'paid',
     screens,
     settings: {
       uploadWindowHours: settings.uploadWindowHours ?? 24,

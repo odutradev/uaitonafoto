@@ -1,5 +1,6 @@
 import { removeUndefined } from '@utils/object'
 import PurchaseModel from './model'
+import type { CreditType } from '@domains/users/repositories/types'
 import type { CreatePurchasePayload, PurchaseEntity } from './types'
 
 const toPurchaseEntity = (doc: any): PurchaseEntity => {
@@ -77,6 +78,16 @@ export const purchaseRepository = {
     )
 
     return previous?.remainingCredits ?? 0
+  },
+
+  consumeCredit: async (userId: string, creditType: CreditType): Promise<PurchaseEntity | null> => {
+    const purchase = await PurchaseModel.findOneAndUpdate(
+      { userId, creditType, remainingCredits: { $gt: 0 } },
+      { $inc: { remainingCredits: -1 } },
+      { sort: { createdAt: 1 }, new: true, lean: true }
+    )
+
+    return purchase ? toPurchaseEntity(purchase) : null
   }
 }
 

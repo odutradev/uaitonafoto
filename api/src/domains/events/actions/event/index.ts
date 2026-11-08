@@ -1,5 +1,8 @@
 import defineAction from '@factories/defineAction'
 import { buildPaginatedResponse, getPaginationOptions } from '@factories/pagination/utils'
+import logRepository from '@domains/system/repositories'
+import userRepository from '@domains/users/repositories'
+import purchaseRepository from '@domains/payments/repositories/purchases'
 import eventRepository from '../../repositories/events'
 import guestRepository from '../../repositories/guests'
 import { ensureCurrentEventPin } from '../../utils/eventPin'
@@ -41,21 +44,80 @@ export const createEvent = defineAction(
     }
   },
   async ({ ids, data, manageError }: ManageRequestBody<CreateEventRequest>): ManageRequestResponse<EventResponse> => {
-    if (!ids.userId) return manageError({ code: 'unauthorized' })
-    if (!isValidEventPeriod(data.startsAt, data.endsAt)) {
+    const userId = ids.userId
+    if (!userId) return manageError({ code: 'unauthorized' })
+
+    const user = await userRepository.findById(userId)
+    if (!user) return manageError({ code: 'user_not_found' })
+
+    let creditType = data.creditType
+    if (creditType) {
+      if (creditType === 'paid' && user.paidCredits < 1) {
+        return manageError({ code: 'bad_request', details: 'Saldo insuficiente de créditos normais.' })
+      }
+      if (creditType === 'free' && user.freeCredits < 1) {
+        return manageError({ code: 'bad_request', details: 'Saldo insuficiente de créditos de teste grátis.' })
+      }
+    } else {
+      if (user.paidCredits >= 1) {
+        creditType = 'paid'
+      } else if (user.freeCredits >= 1) {
+        creditType = 'free'
+      } else {
+        return manageError({ code: 'bad_request', details: 'Você não possui créditos disponíveis para criar um evento.' })
+      }
+    }
+
+    const durationHours = creditType === 'free' ? 4 : 8
+    const calculatedEndsAt = new Date(new Date(data.startsAt).getTime() + durationHours * 60 * 60 * 1000).toISOString()
+    const endsAt = data.endsAt || calculatedEndsAt
+
+    if (!isValidEventPeriod(data.startsAt, endsAt)) {
       return manageError({ code: 'bad_request', details: 'endsAt must be after startsAt' })
     }
 
-    const settings = { ...buildDefaultEventSettings(), ...data.settings }
+    const deductedUser = await userRepository.deductCredits(user.id, creditType, 1)
+    if (!deductedUser) {
+      return manageError({ code: 'bad_request', details: 'Não foi possível debitar o crédito. Saldo insuficiente.' })
+    }
+    await purchaseRepository.consumeCredit(user.id, creditType)
 
-    const event = await eventRepository.create({
-      ...data,
-      settings,
-      ...computeEventWindows(data.endsAt, settings),
-      creatorId: ids.userId
-    })
+    const settings = { ...buildDefaultEventSettings(creditType), ...data.settings }
 
-    return toEventResponse(event, 'creator')
+    try {
+      const event = await eventRepository.create({
+        ...data,
+        creditType,
+        endsAt,
+        settings,
+        ...computeEventWindows(endsAt, settings),
+        creatorId: user.id
+      })
+
+      logRepository.create({
+        category: 'user',
+        level: 'info',
+        action: 'EVENT_CREATED',
+        title: 'Evento criado',
+        description: `Evento "${event.name}" criado com crédito ${creditType === 'free' ? 'grátis' : 'normal'} por ${user.fullName || user.name}`,
+        userId: user.id,
+        userEmail: user.email,
+        targetId: event.id,
+        targetName: event.name,
+        details: {
+          creditType,
+          startsAt: event.startsAt,
+          endsAt: event.endsAt,
+          durationHours,
+          galleryDurationDays: settings.galleryDurationDays
+        }
+      })
+
+      return toEventResponse(event, 'creator')
+    } catch (error) {
+      await userRepository.addCredits(user.id, creditType, 1)
+      throw error
+    }
   }
 )
 

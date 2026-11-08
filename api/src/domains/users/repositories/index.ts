@@ -118,17 +118,13 @@ export const userRepository = {
 
     const field = type === 'free' ? 'freeCredits' : 'paidCredits'
 
-    const doc = await UserModel.findByIdAndUpdate(
-      id,
-      [
-        {
-          $set: {
-            [field]: { $max: [0, { $subtract: [{ $ifNull: [`$${field}`, 0] }, amount] }] },
-            updatedAt: new Date().toISOString()
-          }
-        }
-      ],
-      { new: true, lean: true, updatePipeline: true }
+    const doc = await UserModel.findOneAndUpdate(
+      { _id: id, [field]: { $gte: amount } },
+      {
+        $inc: { [field]: -amount },
+        $set: { updatedAt: new Date().toISOString() }
+      },
+      { new: true, lean: true }
     )
 
     if (!doc) return null
