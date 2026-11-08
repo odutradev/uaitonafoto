@@ -7,7 +7,9 @@ import type { WebhookEventData } from '../types'
 
 const statusByEvent: Record<string, TransactionStatus> = {
   'checkout.refunded': 'REFUNDED',
-  'checkout.disputed': 'DISPUTED'
+  'checkout.disputed': 'DISPUTED',
+  'checkout.expired': 'EXPIRED',
+  'checkout.cancelled': 'CANCELLED'
 }
 
 const completionEvents = ['checkout.completed', 'subscription.completed']
@@ -58,7 +60,15 @@ export const processWebhookEvent = async ({ event, deliveryId, devMode, data, pa
   }
 
   const status = statusByEvent[event]
-  if (status) await transactionRepository.update(transaction.id, { status })
+  if (status) {
+    const cancelReason =
+      status === 'EXPIRED'
+        ? 'checkout_expired'
+        : status === 'CANCELLED'
+          ? 'checkout_cancelled'
+          : undefined
+    await transactionRepository.update(transaction.id, { status, cancelReason })
+  }
 }
 
 export default processWebhookEvent

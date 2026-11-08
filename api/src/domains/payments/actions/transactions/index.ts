@@ -1,6 +1,7 @@
 import defineAction from '@factories/defineAction'
 import { buildPaginatedResponse, getPaginationOptions } from '@factories/pagination/utils'
 import transactionRepository from '../../repositories/transactions'
+import syncOrExpirePendingTransactions from '../../utils/syncOrExpirePendingTransactions'
 import toTransactionItemResponse from './utils/toTransactionItemResponse'
 import { listTransactionsQuerySchema, listTransactionsResponseSchema } from './schemas'
 
@@ -23,6 +24,8 @@ export const listMyTransactions = defineAction(
   },
   async ({ ids, query, manageError }: ManageRequestBody<ListTransactionsRequest>): ManageRequestResponse<ListTransactionsResponse> => {
     if (!ids.userId) return manageError({ code: 'unauthorized' })
+
+    await syncOrExpirePendingTransactions({ userId: ids.userId, checkGateway: true })
 
     const { page, limit, offset } = getPaginationOptions(query)
 
