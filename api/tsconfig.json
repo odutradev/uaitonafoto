@@ -26,6 +26,7 @@
       "@payment": ["./src/payment/index.ts"],
       "@payment/*": ["./src/payment/*"],
       "@routes/*": ["./src/routes/*"],
+      "@routines/*": ["./src/routines/*"],
       "@utils/*": ["./src/utils/*"]
     }
   },
