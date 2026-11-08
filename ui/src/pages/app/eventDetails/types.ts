@@ -1,1 +1,1 @@
-export type EventDetailsTab = 'access' | 'album' | 'team' | 'settings'
+export type EventDetailsTab = 'access' | 'screens' | 'album' | 'team' | 'settings'

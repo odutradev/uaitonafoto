@@ -4,34 +4,27 @@ import {
   Button,
   Card,
   Chip,
-  CircularProgress,
   IconButton,
   TextField,
   Tooltip,
   Typography
 } from '@mui/material'
 import {
-  AddOutlined as AddIcon,
   CheckOutlined as CheckIcon,
   CloseOutlined as CloseIcon,
   ContentCopyOutlined as CopyIcon,
-  DeleteOutline as DeleteIcon,
   EditOutlined as EditIcon,
   LiveTvOutlined as ScreenIcon,
   LockOutlined as LockIcon,
-  OpenInNewOutlined as OpenIcon,
-  RefreshOutlined as RefreshIcon
+  OpenInNewOutlined as OpenIcon
 } from '@mui/icons-material'
 import dayjs from 'dayjs'
 import { QRCodeSVG } from 'qrcode.react'
 import { toast } from 'react-toastify'
 
-import Modal from '@components/modal'
 import {
   buildGuestLink,
-  buildScreenLink,
   generateRandomPin,
-  MAX_EVENT_SCREENS,
   photoVisibilityLabels,
   pinRotationLabels
 } from '@config/events'
@@ -43,11 +36,6 @@ import {
   pinBannerStyles,
   pinCodeTextStyles,
   qrBoxStyles,
-  screenHeaderRowStyles,
-  screenSlotCardStyles,
-  screenSlotFooterStyles,
-  screenSlotHeaderStyles,
-  screenSlotsGridStyles,
   shareActionsRowStyles,
   shareButtonStyles,
   shareCardStyles,
@@ -57,105 +45,21 @@ import {
   summaryGridStyles,
   summaryItemStyles
 } from './styles'
-import type { EventScreenSlot } from '@actions/events/types'
 import type { ShareLinkProps } from './types'
-
-const SCREEN_ONLINE_TIMEOUT_MS = 30_000
-
-const getScreenStatusBadge = (slot: EventScreenSlot) => {
-  if (!slot.activatedAt) {
-    return {
-      label: 'Aguardando ativação',
-      color: 'default' as const,
-      variant: 'outlined' as const,
-      detail: 'Aguardando inserção do PIN no telão'
-    }
-  }
-
-  const lastSeenMs = slot.lastSeenAt ? Date.parse(slot.lastSeenAt) : NaN
-  const isOnline = !Number.isNaN(lastSeenMs) && Date.now() - lastSeenMs < SCREEN_ONLINE_TIMEOUT_MS
-
-  if (isOnline) {
-    return {
-      label: 'Online',
-      color: 'success' as const,
-      variant: 'filled' as const,
-      detail: `Conectado em tempo real · Sinal às ${dayjs(slot.lastSeenAt).format('HH:mm:ss')}`
-    }
-  }
-
-  return {
-    label: 'Offline',
-    color: 'warning' as const,
-    variant: 'outlined' as const,
-    detail: slot.lastSeenAt
-      ? `Último sinal em ${dayjs(slot.lastSeenAt).format('DD/MM [às] HH:mm')}`
-      : `Ativado em ${dayjs(slot.activatedAt).format('DD/MM [às] HH:mm')}`
-  }
-}
 
 const ShareLink = ({
   event,
-  onOpenScreen,
   onSave,
-  onAddScreen,
-  onDisconnectScreen,
-  onRefresh
+  onOpenScreen
 }: ShareLinkProps) => {
   const link = buildGuestLink(event.guestToken)
-  const screenLink = buildScreenLink(event.id)
-  const screens = event.screens ?? []
-  const isScreenLimitReached = screens.length >= MAX_EVENT_SCREENS
   const [isEditingPin, setIsEditingPin] = useState(false)
   const [customPin, setCustomPin] = useState(event.settings.pin)
   const [isUpdatingPin, setIsUpdatingPin] = useState(false)
-  const [isManagingScreen, setIsManagingScreen] = useState(false)
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false)
-  const [screenNameInput, setScreenNameInput] = useState('')
-  const [isRefreshing, setIsRefreshing] = useState(false)
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(link)
     toast.success('Link copiado!')
-  }
-
-  const handleCopyScreenLink = async () => {
-    await navigator.clipboard.writeText(screenLink)
-    toast.success('Link do telão copiado!')
-  }
-
-  const handleCopyScreenPin = async (pin: string) => {
-    await navigator.clipboard.writeText(pin)
-    toast.success('PIN do telão copiado!')
-  }
-
-  const handleRefresh = async () => {
-    if (!onRefresh) return
-    setIsRefreshing(true)
-    try {
-      await onRefresh()
-      toast.success('Status dos telões atualizado!')
-    } finally {
-      setIsRefreshing(false)
-    }
-  }
-
-  const handleOpenAddModal = () => {
-    setScreenNameInput('')
-    setIsAddModalOpen(true)
-  }
-
-  const handleConfirmAddScreen = async () => {
-    setIsManagingScreen(true)
-    await onAddScreen(screenNameInput.trim() || undefined)
-    setIsManagingScreen(false)
-    setIsAddModalOpen(false)
-  }
-
-  const handleDisconnectScreen = async (screenId: string) => {
-    setIsManagingScreen(true)
-    await onDisconnectScreen(screenId)
-    setIsManagingScreen(false)
   }
 
   const handleCopyPin = async () => {
@@ -199,7 +103,7 @@ const ShareLink = ({
                 Acesso dos convidados
               </Typography>
               <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-                Compartilhe o link direto ou imprima o QR Code nas mesas. Os convidados enviam fotos sem instalar nada e sem criar conta.
+                Compartilhe este link ou QR Code com os convidados do evento para que eles enviem fotos sem precisar baixar app.
               </Typography>
             </Box>
 
@@ -208,15 +112,20 @@ const ShareLink = ({
                 {link}
               </Typography>
               <Tooltip title="Copiar link">
-                <IconButton size="small" onClick={handleCopy} aria-label="Copiar link dos convidados">
+                <IconButton size="small" onClick={handleCopy} aria-label="Copiar link">
                   <CopyIcon fontSize="small" />
                 </IconButton>
               </Tooltip>
             </Box>
 
             <Box sx={shareActionsRowStyles}>
-              <Button variant="contained" startIcon={<CopyIcon fontSize="small" />} onClick={handleCopy} sx={shareButtonStyles}>
-                Copiar link
+              <Button
+                variant="contained"
+                startIcon={<CopyIcon fontSize="small" />}
+                onClick={handleCopy}
+                sx={shareButtonStyles}
+              >
+                Copiar link do convidado
               </Button>
               <Button
                 variant="outlined"
@@ -229,9 +138,16 @@ const ShareLink = ({
               >
                 Ver como convidado
               </Button>
-              <Button variant="outlined" startIcon={<ScreenIcon fontSize="small" />} onClick={onOpenScreen} sx={shareButtonStyles}>
-                Abrir telão
-              </Button>
+              {onOpenScreen && (
+                <Button
+                  variant="outlined"
+                  startIcon={<ScreenIcon fontSize="small" />}
+                  onClick={onOpenScreen}
+                  sx={shareButtonStyles}
+                >
+                  Abrir telão
+                </Button>
+              )}
             </Box>
           </Box>
         </Box>
@@ -256,37 +172,32 @@ const ShareLink = ({
               </Box>
 
               {isEditingPin ? (
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 0.5 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1 }}>
                   <TextField
                     size="small"
                     value={customPin}
                     onChange={(e) => setCustomPin(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                    slotProps={{ htmlInput: { maxLength: 4, style: { letterSpacing: '0.25em', fontWeight: 800 } } }}
                     placeholder="0000"
-                    slotProps={{
-                      htmlInput: {
-                        inputMode: 'numeric',
-                        maxLength: 4,
-                        style: { width: 84, fontFamily: 'monospace', fontWeight: 700, letterSpacing: '0.2em' }
-                      }
-                    }}
+                    disabled={isUpdatingPin}
                   />
                   <IconButton
                     size="small"
                     color="primary"
-                    disabled={isUpdatingPin}
                     onClick={handleSaveCustomPin}
-                    aria-label="Salvar novo PIN"
+                    disabled={isUpdatingPin || customPin.length !== 4}
+                    aria-label="Salvar PIN"
                   >
                     <CheckIcon fontSize="small" />
                   </IconButton>
                   <IconButton
                     size="small"
-                    disabled={isUpdatingPin}
                     onClick={() => {
                       setCustomPin(event.settings.pin)
                       setIsEditingPin(false)
                     }}
-                    aria-label="Cancelar edição do PIN"
+                    disabled={isUpdatingPin}
+                    aria-label="Cancelar edição"
                   >
                     <CloseIcon fontSize="small" />
                   </IconButton>
@@ -294,20 +205,22 @@ const ShareLink = ({
               ) : (
                 <Typography sx={pinCodeTextStyles}>{event.settings.pin}</Typography>
               )}
+
+              <Typography variant="caption" color="text.secondary">
+                Os convidados precisarão inserir este código de 4 dígitos para enviar fotos.
+              </Typography>
             </Box>
 
             <Box sx={pinActionsRowStyles}>
-              <Tooltip title="Copiar PIN">
-                <Button
-                  size="small"
-                  variant="outlined"
-                  startIcon={<CopyIcon fontSize="small" />}
-                  onClick={handleCopyPin}
-                  disabled={isUpdatingPin}
-                >
-                  Copiar PIN
-                </Button>
-              </Tooltip>
+              <Button
+                size="small"
+                variant="outlined"
+                startIcon={<CopyIcon fontSize="small" />}
+                onClick={handleCopyPin}
+                disabled={isUpdatingPin}
+              >
+                Copiar PIN
+              </Button>
               <Button
                 size="small"
                 variant="outlined"
@@ -318,16 +231,15 @@ const ShareLink = ({
                 }}
                 disabled={isUpdatingPin || isEditingPin}
               >
-                Alterar PIN
+                Personalizar
               </Button>
               <Button
                 size="small"
                 variant="outlined"
-                startIcon={<RefreshIcon fontSize="small" />}
                 onClick={handleRegeneratePin}
-                disabled={isUpdatingPin}
+                disabled={isUpdatingPin || isEditingPin}
               >
-                Novo PIN
+                Gerar novo
               </Button>
             </Box>
           </Box>
@@ -371,174 +283,6 @@ const ShareLink = ({
           </Box>
         </Box>
       </Card>
-
-      <Card elevation={0} sx={shareCardStyles}>
-        <Box sx={screenHeaderRowStyles}>
-          <Box>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
-              <ScreenIcon fontSize="small" color="primary" />
-              <Typography variant="h6" component="h2">
-                Telões do evento
-              </Typography>
-              <Chip
-                size="small"
-                variant="outlined"
-                color={isScreenLimitReached ? 'warning' : 'default'}
-                label={`${screens.length}/${MAX_EVENT_SCREENS} configurados`}
-              />
-              {screens.some((slot) => !slot.activatedAt) && (
-                <Chip size="small" variant="outlined" color="info" label="Sincronizando em tempo real" />
-              )}
-            </Box>
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-              A URL do telão é pública, mas exige ativação por PIN. Gere até {MAX_EVENT_SCREENS} PINs e insira no navegador de cada telão para liberar o acesso.
-            </Typography>
-          </Box>
-
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
-            {onRefresh && (
-              <Button
-                variant="outlined"
-                startIcon={
-                  isRefreshing ? (
-                    <CircularProgress size={16} color="inherit" />
-                  ) : (
-                    <RefreshIcon fontSize="small" />
-                  )
-                }
-                onClick={handleRefresh}
-                disabled={isRefreshing}
-                sx={shareButtonStyles}
-              >
-                Atualizar status
-              </Button>
-            )}
-
-            <Button
-              variant="contained"
-              startIcon={<AddIcon fontSize="small" />}
-              onClick={handleOpenAddModal}
-              disabled={isManagingScreen || isScreenLimitReached}
-              sx={shareButtonStyles}
-            >
-              Gerar PIN de telão
-            </Button>
-          </Box>
-        </Box>
-
-        <Box sx={linkFieldBoxStyles}>
-          <Typography variant="body2" sx={linkTextStyles} title={screenLink}>
-            {screenLink}
-          </Typography>
-          <Tooltip title="Copiar link do telão">
-            <IconButton size="small" onClick={handleCopyScreenLink} aria-label="Copiar link do telão">
-              <CopyIcon fontSize="small" />
-            </IconButton>
-          </Tooltip>
-        </Box>
-
-        {screens.length === 0 ? (
-          <Typography variant="body2" color="text.secondary">
-            Nenhum telão configurado ainda. Clique em &ldquo;Gerar PIN de telão&rdquo; para liberar um dispositivo.
-          </Typography>
-        ) : (
-          <Box sx={screenSlotsGridStyles}>
-            {screens.map((slot, index) => {
-              const badge = getScreenStatusBadge(slot)
-
-              return (
-                <Box key={slot.id} sx={screenSlotCardStyles}>
-                  <Box sx={screenSlotHeaderStyles}>
-                    <Box sx={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-                      <Typography variant="subtitle2" fontWeight={700} noWrap>
-                        {slot.name || `Telão ${index + 1}`}
-                      </Typography>
-                      {slot.name && (
-                        <Typography variant="caption" color="text.secondary">
-                          Telão {index + 1}
-                        </Typography>
-                      )}
-                    </Box>
-                    <Chip
-                      size="small"
-                      color={badge.color}
-                      variant={badge.variant}
-                      label={badge.label}
-                    />
-                  </Box>
-
-                  <Box>
-                    <Typography variant="caption" color="text.secondary" fontWeight={700}>
-                      PIN DE ATIVAÇÃO
-                    </Typography>
-                    <Typography sx={pinCodeTextStyles}>{slot.pin}</Typography>
-                  </Box>
-
-                  <Typography variant="caption" color="text.secondary">
-                    {badge.detail}
-                  </Typography>
-
-                  <Box sx={screenSlotFooterStyles}>
-                    <Button
-                      size="small"
-                      variant="outlined"
-                      startIcon={<CopyIcon fontSize="small" />}
-                      onClick={() => handleCopyScreenPin(slot.pin)}
-                      disabled={isManagingScreen}
-                    >
-                      Copiar PIN
-                    </Button>
-                    <Button
-                      size="small"
-                      color="error"
-                      variant="outlined"
-                      startIcon={<DeleteIcon fontSize="small" />}
-                      onClick={() => handleDisconnectScreen(slot.id)}
-                      disabled={isManagingScreen}
-                    >
-                      Desconectar
-                    </Button>
-                  </Box>
-                </Box>
-              )
-            })}
-          </Box>
-        )}
-      </Card>
-
-      <Modal
-        open={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
-        title="Gerar PIN de telão"
-        description="Defina opcionalmente um nome ou local para identificar este dispositivo (ex: Telão Entrada, Palco Principal)."
-        primaryAction={{
-          label: 'Gerar PIN',
-          onClick: handleConfirmAddScreen,
-          loading: isManagingScreen
-        }}
-        secondaryAction={{
-          label: 'Cancelar',
-          onClick: () => setIsAddModalOpen(false),
-          disabled: isManagingScreen
-        }}
-      >
-        <TextField
-          label="Identificação do telão (opcional)"
-          placeholder="Ex: Telão Entrada"
-          value={screenNameInput}
-          onChange={(e) => setScreenNameInput(e.target.value)}
-          slotProps={{ htmlInput: { maxLength: 60 } }}
-          fullWidth
-          autoFocus
-          disabled={isManagingScreen}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              e.preventDefault()
-              handleConfirmAddScreen()
-            }
-          }}
-        />
-      </Modal>
     </Box>
   )
 }

@@ -17,6 +17,7 @@ import useAuth from '@hooks/useAuth'
 
 import useEventDetails from './hooks/useEventDetails'
 import EventAlbum from './sections/eventAlbum'
+import EventScreens from './sections/eventScreens'
 import EventSettings from './sections/eventSettings'
 import EventTeam from './sections/eventTeam'
 import ShareLink from './sections/shareLink'
@@ -120,6 +121,13 @@ const EventDetails = () => {
             sx={tabItemStyles}
           />
           <Tab
+            value="screens"
+            icon={<ScreenIcon fontSize="small" />}
+            iconPosition="start"
+            label="Telões"
+            sx={tabItemStyles}
+          />
+          <Tab
             value="album"
             icon={<AlbumIcon fontSize="small" />}
             iconPosition="start"
@@ -148,6 +156,12 @@ const EventDetails = () => {
           event={event}
           onOpenScreen={openScreen}
           onSave={save}
+        />
+      )}
+      {activeTab === 'screens' && (
+        <EventScreens
+          event={event}
+          onOpenScreen={openScreen}
           onAddScreen={addScreen}
           onDisconnectScreen={disconnectScreen}
           onRefresh={refresh}
