@@ -16,6 +16,7 @@ const PinInput = ({
   length = 4,
   autoFocus = false,
   disabled = false,
+  mask = false,
   label,
   helperText,
   ariaLabelPrefix = 'Dígito',
@@ -114,7 +115,7 @@ const PinInput = ({
         {digits.map((digit, index) => (
           <TextField
             key={index}
-            value={digit}
+            value={mask && digit ? '●' : digit}
             disabled={disabled}
             placeholder="•"
             onChange={(e) => handleDigitChange(index, e.target.value)}
