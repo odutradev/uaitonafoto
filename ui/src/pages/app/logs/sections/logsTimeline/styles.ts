@@ -54,9 +54,3 @@ export const emptyPaperStyles: SxProps<Theme> = {
   gap: 1
 }
 
-export const paginationContainerStyles: SxProps<Theme> = {
-  display: 'flex',
-  justifyContent: 'center',
-  pt: 1
-}
-

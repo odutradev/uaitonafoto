@@ -3,12 +3,13 @@ import {
   Button,
   Card,
   Chip,
-  Pagination,
   Paper,
   Skeleton,
   Typography
 } from '@mui/material'
 import { VisibilityOutlined as InspectIcon } from '@mui/icons-material'
+
+import Pagination from '@components/pagination'
 
 import {
   detailsBtnStyles,
@@ -17,7 +18,6 @@ import {
   logBadgesRowStyles,
   logCardStyles,
   logInfoColumnStyles,
-  paginationContainerStyles,
   timelineSectionStyles
 } from './styles'
 import type { LogCategory, LogLevel } from '@actions/logs/types'
@@ -136,18 +136,12 @@ const LogsTimeline = ({
         </Box>
       )}
 
-      {totalPages > 1 && (
-        <Box sx={paginationContainerStyles}>
-          <Pagination
-            count={totalPages}
-            page={page}
-            disabled={isLoading}
-            color="primary"
-            shape="rounded"
-            onChange={(_e, nextPage) => onPageChange(nextPage)}
-          />
-        </Box>
-      )}
+      <Pagination
+        page={page}
+        totalPages={totalPages}
+        isLoading={isLoading}
+        onPageChange={onPageChange}
+      />
     </Box>
   )
 }
