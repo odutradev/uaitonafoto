@@ -5,6 +5,7 @@ export interface SyncPayload {
   photoUrl?: string
   email: string
   name: string
+  fullName?: string
   id: string
 }
 

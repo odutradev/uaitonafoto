@@ -60,11 +60,28 @@ api.interceptors.response.use(
 
         const firebaseToken = await currentUser.getIdToken(true)
 
+        const isKnown = (val?: string | null) =>
+          !!val && val.trim().length > 0 && val.trim().toLowerCase() !== 'unknown'
+
+        const storedUser = useAuthStore.getState().auth.user
+        const resolvedName = isKnown(currentUser.displayName)
+          ? currentUser.displayName!.trim()
+          : isKnown(storedUser?.name)
+            ? storedUser!.name.trim()
+            : isKnown(storedUser?.fullName)
+              ? storedUser!.fullName!.trim()
+              : currentUser.email?.split('@')[0] || 'Usuário'
+
         const { data } = await axios.post<SyncResponse>(
           `${api.defaults.baseURL}/auth/sync`,
           {
             authProviderId: currentUser.providerData[0]?.providerId ?? 'password',
-            name: currentUser.displayName ?? 'Unknown',
+            name: resolvedName,
+            fullName: isKnown(storedUser?.fullName)
+              ? storedUser!.fullName
+              : resolvedName !== 'Usuário'
+                ? resolvedName
+                : undefined,
             email: currentUser.email ?? '',
             photoUrl: currentUser.photoURL ?? undefined,
             id: currentUser.uid
