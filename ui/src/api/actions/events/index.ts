@@ -1,5 +1,7 @@
 import api from '@interceptor'
+import screenApi, { withScreenToken } from './screenClient'
 import type {
+  ActivateScreenResponse,
   AlbumParams,
   CreateEventPayload,
   EventGuest,
@@ -59,8 +61,20 @@ export const getEventGuests = async (id: string): Promise<EventGuest[]> => {
   return response.data
 }
 
-export const getEventScreen = async (id: string, params?: ScreenParams): Promise<ScreenResponse> => {
-  const response = await api.get<ScreenResponse>(`/events/${id}/screen`, { params })
+export const activateEventScreen = async (id: string, pin: string): Promise<ActivateScreenResponse> => {
+  const response = await screenApi.post<ActivateScreenResponse>(`/events/${id}/screen/activate`, { pin })
+  return response.data
+}
+
+export const getEventScreen = async (
+  id: string,
+  screenToken: string,
+  params?: ScreenParams
+): Promise<ScreenResponse> => {
+  const response = await screenApi.get<ScreenResponse>(`/events/${id}/screen`, {
+    ...withScreenToken(screenToken),
+    params
+  })
   return response.data
 }
 

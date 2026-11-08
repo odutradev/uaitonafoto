@@ -45,10 +45,7 @@ const appRouter = createBrowserRouter([
           }
         ]
       },
-      {
-        element: createElement(AuthRoute, { access: 'private' }),
-        children: [{ path: '/app/events/:id/screen', element: createElement(EventScreen) }]
-      },
+      { path: '/app/events/:id/screen', element: createElement(EventScreen) },
       { path: '/e/:token', element: createElement(GuestEvent) },
       { path: '/reset-password', element: createElement(ResetPassword) },
       { path: '/termos-de-uso', element: createElement(TermsOfUse) },

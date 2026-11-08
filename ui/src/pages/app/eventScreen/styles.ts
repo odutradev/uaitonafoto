@@ -79,3 +79,43 @@ export const pinBadgeStyles: SxProps<Theme> = {
   fontSize: { xs: '0.95rem', md: '1.35rem' },
   letterSpacing: '0.12em'
 }
+
+export const activationCardStyles: SxProps<Theme> = {
+  width: '100%',
+  maxWidth: 420,
+  mx: 2,
+  p: { xs: 3, sm: 4 },
+  borderRadius: '24px',
+  bgcolor: 'rgba(255,255,255,0.06)',
+  border: '1px solid rgba(255,255,255,0.14)',
+  backdropFilter: 'blur(12px)',
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  textAlign: 'center',
+  gap: 2.5
+}
+
+export const activationPinInputStyles: SxProps<Theme> = {
+  width: '100%',
+  maxWidth: 220,
+  '& .MuiOutlinedInput-root': {
+    color: '#fff',
+    bgcolor: 'rgba(255,255,255,0.08)',
+    borderRadius: '14px',
+    '& fieldset': {
+      borderColor: 'rgba(255,255,255,0.24)'
+    },
+    '&:hover fieldset': {
+      borderColor: 'rgba(255,255,255,0.45)'
+    }
+  },
+  '& input': {
+    textAlign: 'center',
+    fontFamily: 'monospace',
+    fontWeight: 800,
+    fontSize: '1.75rem',
+    letterSpacing: '0.35em',
+    py: 1.5
+  }
+}
