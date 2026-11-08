@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 
-import { deleteEvent, getEvent, updateEvent } from '@actions/events'
+import { createEventScreen, deleteEvent, getEvent, removeEventScreen, updateEvent } from '@actions/events'
 import { getErrorMessage } from '@config/events'
 
 import type { EventItem, UpdateEventPayload } from '@actions/events/types'
@@ -74,7 +74,30 @@ const useEventDetails = (eventId: string) => {
     }
   }, [eventId, navigate])
 
-  return { event, isLoading, save, remove }
+  const addScreen = useCallback(async () => {
+    try {
+      const screens = await createEventScreen(eventId)
+      setEvent((prev) => (prev ? { ...prev, screens } : prev))
+      toast.success('PIN do telão gerado!')
+    } catch (error) {
+      toast.error(getErrorMessage(error, 'Não foi possível gerar o PIN do telão.'))
+    }
+  }, [eventId])
+
+  const disconnectScreen = useCallback(
+    async (screenId: string) => {
+      try {
+        const screens = await removeEventScreen(eventId, screenId)
+        setEvent((prev) => (prev ? { ...prev, screens } : prev))
+        toast.success('Telão desconectado.')
+      } catch (error) {
+        toast.error(getErrorMessage(error, 'Não foi possível desconectar o telão.'))
+      }
+    },
+    [eventId]
+  )
+
+  return { event, isLoading, save, remove, addScreen, disconnectScreen }
 }
 
 export default useEventDetails

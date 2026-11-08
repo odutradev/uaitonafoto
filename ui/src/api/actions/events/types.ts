@@ -22,6 +22,13 @@ export interface EventMember {
   addedAt: string
 }
 
+export interface EventScreenSlot {
+  id: string
+  pin: string
+  createdAt: string
+  activatedAt?: string
+}
+
 export interface EventItem {
   id: string
   name: string
@@ -34,6 +41,7 @@ export interface EventItem {
   uploadsCloseAt: string
   galleryExpiresAt: string
   members: EventMember[]
+  screens: EventScreenSlot[]
   myRole: EventMemberRole
   createdAt: string
   updatedAt: string
@@ -96,7 +104,20 @@ export interface EventGuest {
   createdAt: string
 }
 
+export interface ScreenEventInfo {
+  id: string
+  name: string
+  guestToken: string
+}
+
+export interface ActivateScreenResponse {
+  screenToken: string
+  event: ScreenEventInfo
+  pin: string | null
+}
+
 export interface ScreenResponse {
+  event: ScreenEventInfo
   photos: EventPhoto[]
   nextSince?: string
   pin: string | null

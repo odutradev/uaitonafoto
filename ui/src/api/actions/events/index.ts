@@ -1,10 +1,11 @@
-﻿import api from '@interceptor'
+import api from '@interceptor'
 import type {
   AlbumParams,
   CreateEventPayload,
   EventGuest,
   EventItem,
   EventPhoto,
+  EventScreenSlot,
   Paginated,
   PaginationParams,
   ScreenParams,
@@ -60,6 +61,16 @@ export const getEventGuests = async (id: string): Promise<EventGuest[]> => {
 
 export const getEventScreen = async (id: string, params?: ScreenParams): Promise<ScreenResponse> => {
   const response = await api.get<ScreenResponse>(`/events/${id}/screen`, { params })
+  return response.data
+}
+
+export const createEventScreen = async (id: string): Promise<EventScreenSlot[]> => {
+  const response = await api.post<EventScreenSlot[]>(`/events/${id}/screens`)
+  return response.data
+}
+
+export const removeEventScreen = async (id: string, screenId: string): Promise<EventScreenSlot[]> => {
+  const response = await api.delete<EventScreenSlot[]>(`/events/${id}/screens/${screenId}`)
   return response.data
 }
 

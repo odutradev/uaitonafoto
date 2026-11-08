@@ -38,7 +38,11 @@ export const eventPhaseLabels: Record<EventPhase, string> = {
   expired: 'Galeria encerrada'
 }
 
+export const MAX_EVENT_SCREENS = 2
+
 export const buildGuestLink = (guestToken: string): string => `${window.location.origin}/e/${guestToken}`
+
+export const buildScreenLink = (eventId: string): string => `${window.location.origin}/app/events/${eventId}/screen`
 
 export const getErrorMessage = (error: unknown, fallback: string): string => {
   const data = (error as { response?: { data?: { details?: unknown; message?: string } } })?.response?.data

@@ -39,7 +39,7 @@ const EventDetails = () => {
   const { id = '' } = useParams()
   const navigate = useNavigate()
   const { user } = useAuth()
-  const { event, isLoading, save, remove } = useEventDetails(id)
+  const { event, isLoading, save, remove, addScreen, disconnectScreen } = useEventDetails(id)
   const [activeTab, setActiveTab] = useState<EventDetailsTab>('access')
 
   if (isLoading || !event || !user) {
@@ -143,7 +143,15 @@ const EventDetails = () => {
         </Tabs>
       </Box>
 
-      {activeTab === 'access' && <ShareLink event={event} onOpenScreen={openScreen} onSave={save} />}
+      {activeTab === 'access' && (
+        <ShareLink
+          event={event}
+          onOpenScreen={openScreen}
+          onSave={save}
+          onAddScreen={addScreen}
+          onDisconnectScreen={disconnectScreen}
+        />
+      )}
       {activeTab === 'album' && <EventAlbum event={event} />}
       {activeTab === 'team' && <EventTeam event={event} currentUserId={user.id} />}
       {activeTab === 'settings' && <EventSettings event={event} onSave={save} onDelete={remove} />}

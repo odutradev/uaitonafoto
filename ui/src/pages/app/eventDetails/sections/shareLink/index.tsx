@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import { Box, Button, Card, Chip, IconButton, TextField, Tooltip, Typography } from '@mui/material'
 import {
+  AddOutlined as AddIcon,
   CheckOutlined as CheckIcon,
   CloseOutlined as CloseIcon,
   ContentCopyOutlined as CopyIcon,
+  DeleteOutline as DeleteIcon,
   EditOutlined as EditIcon,
   LiveTvOutlined as ScreenIcon,
   LockOutlined as LockIcon,
@@ -14,7 +16,14 @@ import dayjs from 'dayjs'
 import { QRCodeSVG } from 'qrcode.react'
 import { toast } from 'react-toastify'
 
-import { buildGuestLink, generateRandomPin, photoVisibilityLabels, pinRotationLabels } from '@config/events'
+import {
+  buildGuestLink,
+  buildScreenLink,
+  generateRandomPin,
+  MAX_EVENT_SCREENS,
+  photoVisibilityLabels,
+  pinRotationLabels
+} from '@config/events'
 
 import {
   linkFieldBoxStyles,
@@ -23,6 +32,11 @@ import {
   pinBannerStyles,
   pinCodeTextStyles,
   qrBoxStyles,
+  screenHeaderRowStyles,
+  screenSlotCardStyles,
+  screenSlotFooterStyles,
+  screenSlotHeaderStyles,
+  screenSlotsGridStyles,
   shareActionsRowStyles,
   shareButtonStyles,
   shareCardStyles,
@@ -34,15 +48,41 @@ import {
 } from './styles'
 import type { ShareLinkProps } from './types'
 
-const ShareLink = ({ event, onOpenScreen, onSave }: ShareLinkProps) => {
+const ShareLink = ({ event, onOpenScreen, onSave, onAddScreen, onDisconnectScreen }: ShareLinkProps) => {
   const link = buildGuestLink(event.guestToken)
+  const screenLink = buildScreenLink(event.id)
+  const screens = event.screens ?? []
+  const isScreenLimitReached = screens.length >= MAX_EVENT_SCREENS
   const [isEditingPin, setIsEditingPin] = useState(false)
   const [customPin, setCustomPin] = useState(event.settings.pin)
   const [isUpdatingPin, setIsUpdatingPin] = useState(false)
+  const [isManagingScreen, setIsManagingScreen] = useState(false)
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(link)
     toast.success('Link copiado!')
+  }
+
+  const handleCopyScreenLink = async () => {
+    await navigator.clipboard.writeText(screenLink)
+    toast.success('Link do telão copiado!')
+  }
+
+  const handleCopyScreenPin = async (pin: string) => {
+    await navigator.clipboard.writeText(pin)
+    toast.success('PIN do telão copiado!')
+  }
+
+  const handleAddScreen = async () => {
+    setIsManagingScreen(true)
+    await onAddScreen()
+    setIsManagingScreen(false)
+  }
+
+  const handleDisconnectScreen = async (screenId: string) => {
+    setIsManagingScreen(true)
+    await onDisconnectScreen(screenId)
+    setIsManagingScreen(false)
   }
 
   const handleCopyPin = async () => {
@@ -257,6 +297,102 @@ const ShareLink = ({ event, onOpenScreen, onSave }: ShareLinkProps) => {
             </Typography>
           </Box>
         </Box>
+      </Card>
+
+      <Card elevation={0} sx={shareCardStyles}>
+        <Box sx={screenHeaderRowStyles}>
+          <Box>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+              <ScreenIcon fontSize="small" color="primary" />
+              <Typography variant="h6" component="h2">
+                Telões do evento
+              </Typography>
+              <Chip
+                size="small"
+                variant="outlined"
+                color={isScreenLimitReached ? 'warning' : 'default'}
+                label={`${screens.length}/${MAX_EVENT_SCREENS} configurados`}
+              />
+            </Box>
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+              A URL do telão é pública, mas exige ativação por PIN. Gere até {MAX_EVENT_SCREENS} PINs e insira no navegador de cada telão para liberar o acesso.
+            </Typography>
+          </Box>
+
+          <Button
+            variant="contained"
+            startIcon={<AddIcon fontSize="small" />}
+            onClick={handleAddScreen}
+            disabled={isManagingScreen || isScreenLimitReached}
+            sx={shareButtonStyles}
+          >
+            Gerar PIN de telão
+          </Button>
+        </Box>
+
+        <Box sx={linkFieldBoxStyles}>
+          <Typography variant="body2" sx={linkTextStyles} title={screenLink}>
+            {screenLink}
+          </Typography>
+          <Tooltip title="Copiar link do telão">
+            <IconButton size="small" onClick={handleCopyScreenLink} aria-label="Copiar link do telão">
+              <CopyIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+        </Box>
+
+        {screens.length === 0 ? (
+          <Typography variant="body2" color="text.secondary">
+            Nenhum telão configurado ainda. Clique em &ldquo;Gerar PIN de telão&rdquo; para liberar um dispositivo.
+          </Typography>
+        ) : (
+          <Box sx={screenSlotsGridStyles}>
+            {screens.map((slot, index) => (
+              <Box key={slot.id} sx={screenSlotCardStyles}>
+                <Box sx={screenSlotHeaderStyles}>
+                  <Typography variant="subtitle2" fontWeight={700}>
+                    Telão {index + 1}
+                  </Typography>
+                  <Chip
+                    size="small"
+                    color={slot.activatedAt ? 'success' : 'default'}
+                    variant={slot.activatedAt ? 'filled' : 'outlined'}
+                    label={slot.activatedAt ? 'Ativo' : 'Aguardando ativação'}
+                  />
+                </Box>
+
+                <Box>
+                  <Typography variant="caption" color="text.secondary" fontWeight={700}>
+                    PIN DE ATIVAÇÃO
+                  </Typography>
+                  <Typography sx={pinCodeTextStyles}>{slot.pin}</Typography>
+                </Box>
+
+                <Box sx={screenSlotFooterStyles}>
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    startIcon={<CopyIcon fontSize="small" />}
+                    onClick={() => handleCopyScreenPin(slot.pin)}
+                    disabled={isManagingScreen}
+                  >
+                    Copiar PIN
+                  </Button>
+                  <Button
+                    size="small"
+                    color="error"
+                    variant="outlined"
+                    startIcon={<DeleteIcon fontSize="small" />}
+                    onClick={() => handleDisconnectScreen(slot.id)}
+                    disabled={isManagingScreen}
+                  >
+                    Desconectar
+                  </Button>
+                </Box>
+              </Box>
+            ))}
+          </Box>
+        )}
       </Card>
     </Box>
   )
