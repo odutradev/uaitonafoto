@@ -1,4 +1,4 @@
-﻿import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi'
+import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi'
 import { z } from 'zod'
 
 import { createPaginatedSchema, paginationQuerySchema } from '@factories/pagination/schemas'
@@ -48,6 +48,8 @@ export const eventSchema = z
     endsAt: z.string().openapi({ example: '2026-12-21T05:00:00.000Z' }),
     guestToken: z.string().openapi({ example: 'k3J9xQ2mZ1aB' }),
     settings: eventSettingsSchema,
+    uploadsCloseAt: z.string().openapi({ example: '2026-12-22T05:00:00.000Z' }),
+    galleryExpiresAt: z.string().openapi({ example: '2027-01-20T05:00:00.000Z' }),
     members: z.array(eventMemberSchema),
     myRole: eventMemberRoleSchema,
     createdAt: z.string().openapi({ example: '2026-11-08T17:00:00.000Z' }),

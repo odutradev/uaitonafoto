@@ -5,6 +5,7 @@ import defaultEventSettings from './utils/defaultEventSettings'
 import findMemberRole from './utils/findMemberRole'
 import isValidEventPeriod from './utils/isValidEventPeriod'
 import toEventResponse from './utils/toEventResponse'
+import { computeEventWindows } from '../../utils/eventWindows'
 import {
   createEventSchema,
   eventParamsSchema,
@@ -42,9 +43,12 @@ export const createEvent = defineAction(
       return manageError({ code: 'bad_request', details: 'endsAt must be after startsAt' })
     }
 
+    const settings = { ...defaultEventSettings, ...data.settings }
+
     const event = await eventRepository.create({
       ...data,
-      settings: { ...defaultEventSettings, ...data.settings },
+      settings,
+      ...computeEventWindows(data.endsAt, settings),
       creatorId: ids.userId
     })
 
@@ -138,7 +142,8 @@ export const updateEvent = defineAction(
       return manageError({ code: 'bad_request', details: 'endsAt must be after startsAt' })
     }
 
-    const updated = await eventRepository.update(event.id, data)
+    const windows = computeEventWindows(endsAt, { ...event.settings, ...data.settings })
+    const updated = await eventRepository.update(event.id, { ...data, ...windows })
     if (!updated) return manageError({ code: 'not_found' })
 
     return toEventResponse(updated, role)

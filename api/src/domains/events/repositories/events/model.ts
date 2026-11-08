@@ -1,4 +1,4 @@
-﻿import { randomBytes } from 'crypto'
+import { randomBytes } from 'crypto'
 import mongoose, { Schema } from 'mongoose'
 import type { EventEntity } from './types'
 
@@ -33,6 +33,9 @@ const eventSchema = new Schema<EventDocument>(
     endsAt: { type: String, required: true },
     guestToken: { type: String, required: true, unique: true, default: () => randomBytes(9).toString('base64url') },
     settings: { type: settingsSchema, required: true },
+    uploadsCloseAt: { type: String, required: true },
+    galleryExpiresAt: { type: String, required: true, index: true },
+    galleryCleanedAt: { type: String },
     members: { type: [memberSchema], required: true },
     createdAt: { type: String, default: () => new Date().toISOString() },
     updatedAt: { type: String, default: () => new Date().toISOString() }

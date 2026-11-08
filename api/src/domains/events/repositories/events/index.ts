@@ -1,4 +1,4 @@
-﻿import { removeUndefined } from '@utils/object'
+import { removeUndefined } from '@utils/object'
 import EventModel from './model'
 import type {
   CreateEventPayload,
@@ -56,6 +56,18 @@ export const eventRepository = {
     const set = { ...removeUndefined(data), ...flattenSettings(settings), updatedAt: new Date().toISOString() }
     const doc = await EventModel.findByIdAndUpdate(id, { $set: set }, { new: true, lean: true })
     return doc ? toEventEntity(doc) : null
+  },
+
+  listExpiredGalleries: async (nowIso: string): Promise<EventEntity[]> => {
+    const docs = await EventModel.find({
+      galleryExpiresAt: { $lte: nowIso },
+      galleryCleanedAt: { $exists: false }
+    }).lean()
+    return docs.map(toEventEntity)
+  },
+
+  markGalleryCleaned: async (id: string): Promise<void> => {
+    await EventModel.updateOne({ _id: id }, { $set: { galleryCleanedAt: new Date().toISOString() } })
   },
 
   delete: async (id: string): Promise<boolean> => {

@@ -1,4 +1,4 @@
-﻿export type EventType = 'birthday' | 'wedding' | 'corporate' | 'other'
+export type EventType = 'birthday' | 'wedding' | 'corporate' | 'other'
 
 export type EventMemberRole = 'creator' | 'organizer'
 
@@ -26,6 +26,9 @@ export interface EventEntity {
   endsAt: string
   guestToken: string
   settings: EventSettings
+  uploadsCloseAt: string
+  galleryExpiresAt: string
+  galleryCleanedAt?: string
   members: EventMember[]
   createdAt: string
   updatedAt: string
@@ -38,6 +41,8 @@ export interface CreateEventPayload {
   startsAt: string
   endsAt: string
   settings: EventSettings
+  uploadsCloseAt: string
+  galleryExpiresAt: string
   creatorId: string
 }
 
@@ -48,6 +53,8 @@ export interface UpdateEventPayload {
   startsAt?: string
   endsAt?: string
   settings?: Partial<EventSettings>
+  uploadsCloseAt?: string
+  galleryExpiresAt?: string
 }
 
 export interface ListEventsByMemberParams {
