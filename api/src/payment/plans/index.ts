@@ -92,7 +92,6 @@ export const plansConfig: PlanConfig[] = [
     features: [
       '4 eventos inclusos por mês',
       'Sua própria marca no telão e no aplicativo',
-      'Link para seu WhatsApp ou Instagram no telão',
       'Créditos acumulativos enquanto o plano estiver ativo',
       'Acesso de moderação com senha para sua equipe',
       'Crédito extra avulso por R$ 69,00'
@@ -120,9 +119,7 @@ export const plansConfig: PlanConfig[] = [
       'Sua marca em destaque para atrair novos clientes',
       'Botão direto para seu WhatsApp no mural de fotos',
       'Créditos acumulativos enquanto o plano estiver ativo',
-      'Painel de moderação para recepcionistas na festa',
-      'Crédito extra avulso por R$ 69,00',
-      'Suporte prioritário via WhatsApp'
+      'Crédito extra avulso por R$ 69,00'
     ],
     ctaText: 'Assinar Pro',
     ctaHref: 'prod_agency_pro',
