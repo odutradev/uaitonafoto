@@ -30,6 +30,7 @@ export interface EventScreenSlot {
   pin: string
   createdAt: string
   activatedAt?: string
+  lastSeenAt?: string
 }
 
 export interface EventEntity {

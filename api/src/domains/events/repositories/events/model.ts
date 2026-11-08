@@ -19,7 +19,8 @@ const screenSlotSchema = new Schema(
     name: { type: String, trim: true },
     pin: { type: String, required: true, match: /^\d{4}$/ },
     createdAt: { type: String, default: () => new Date().toISOString() },
-    activatedAt: { type: String }
+    activatedAt: { type: String },
+    lastSeenAt: { type: String }
   },
   { _id: false }
 )

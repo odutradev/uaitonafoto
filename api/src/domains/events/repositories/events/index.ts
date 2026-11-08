@@ -139,12 +139,20 @@ export const eventRepository = {
       {
         $set: {
           'screens.$.activatedAt': activatedAt,
+          'screens.$.lastSeenAt': activatedAt,
           updatedAt: activatedAt
         }
       },
       { new: true, lean: true }
     )
     return doc ? toEventEntity(doc) : null
+  },
+
+  touchScreenLastSeen: async (id: string, screenId: string, lastSeenAt: string): Promise<void> => {
+    await EventModel.updateOne(
+      { _id: id, 'screens.id': screenId },
+      { $set: { 'screens.$.lastSeenAt': lastSeenAt } }
+    )
   }
 }
 

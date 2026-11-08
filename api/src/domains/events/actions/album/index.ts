@@ -196,6 +196,8 @@ export const getScreen = defineAction(
 
     const event = await ensureCurrentEventPin(foundEvent)
 
+    await eventRepository.touchScreenLastSeen(event.id, ids.screenId, new Date().toISOString())
+
     const photos = await photoRepository.listSince({
       eventId: event.id,
       since: query?.since,
