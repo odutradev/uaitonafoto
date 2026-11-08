@@ -16,6 +16,7 @@ const memberSchema = new Schema(
 const screenSlotSchema = new Schema(
   {
     id: { type: String, required: true, default: () => new mongoose.Types.ObjectId().toString() },
+    name: { type: String, trim: true },
     pin: { type: String, required: true, match: /^\d{4}$/ },
     createdAt: { type: String, default: () => new Date().toISOString() },
     activatedAt: { type: String }

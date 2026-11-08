@@ -4,6 +4,7 @@ import type {
   activateScreenSchema,
   albumQuerySchema,
   albumResponseSchema,
+  createScreenSlotSchema,
   eventGuestListResponseSchema,
   eventIdParamsSchema,
   eventPhotoParamsSchema,
@@ -14,6 +15,11 @@ import type {
 } from './schemas'
 
 export type EventIdRequest = { params: z.infer<typeof eventIdParamsSchema> }
+
+export type CreateScreenSlotRequest = {
+  params: z.infer<typeof eventIdParamsSchema>
+  body?: z.infer<typeof createScreenSlotSchema>
+}
 
 export type EventPhotoRequest = { params: z.infer<typeof eventPhotoParamsSchema> }
 

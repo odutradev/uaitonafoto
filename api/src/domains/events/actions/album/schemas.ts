@@ -27,6 +27,12 @@ export const eventScreenParamsSchema = z
   })
   .openapi('EventScreenParams')
 
+export const createScreenSlotSchema = z
+  .object({
+    name: z.string().trim().max(60).optional().openapi({ example: 'Telão Entrada', description: 'Apelido ou local do telão' })
+  })
+  .openapi('CreateScreenSlot')
+
 export const screenSlotListResponseSchema = z.array(eventScreenSlotSchema).openapi('ScreenSlotListResponse')
 
 export const activateScreenSchema = z

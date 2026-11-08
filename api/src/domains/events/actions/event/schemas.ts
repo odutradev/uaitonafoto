@@ -70,6 +70,7 @@ export const eventMemberSchema = z
 export const eventScreenSlotSchema = z
   .object({
     id: z.string().openapi({ example: '665f1c2e9b1e8a001c8e4d99' }),
+    name: z.string().optional().openapi({ example: 'Telão Entrada', description: 'Apelido ou local do telão' }),
     pin: eventPinSchema,
     createdAt: z.string().openapi({ example: '2026-11-08T17:00:00.000Z' }),
     activatedAt: z.string().optional().openapi({ example: '2026-11-08T17:05:00.000Z' })

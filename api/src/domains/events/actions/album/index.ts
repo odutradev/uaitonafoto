@@ -17,6 +17,7 @@ import {
   activateScreenSchema,
   albumQuerySchema,
   albumResponseSchema,
+  createScreenSlotSchema,
   eventGuestListResponseSchema,
   eventIdParamsSchema,
   eventPhotoParamsSchema,
@@ -34,6 +35,7 @@ import type {
   ActivateScreenResponse,
   AlbumRequest,
   AlbumResponse,
+  CreateScreenSlotRequest,
   EventGuestListResponse,
   EventIdRequest,
   EventPhotoRequest,
@@ -53,7 +55,7 @@ export const createScreenSlot = defineAction(
     summary: 'Gerar um novo PIN de telão para o evento (máximo de 2 telões ativos)',
     tags: ['Álbum e Telão'],
     authenticate: true,
-    schema: { params: eventIdParamsSchema },
+    schema: { params: eventIdParamsSchema, body: createScreenSlotSchema },
     responses: {
       200: { description: 'Lista atualizada de telões do evento', schema: screenSlotListResponseSchema },
       403: { description: 'Usuário não pertence à equipe do evento' },
@@ -61,7 +63,7 @@ export const createScreenSlot = defineAction(
       409: { description: 'Limite máximo de 2 telões atingido' }
     }
   },
-  async ({ ids, params, manageError }: ManageRequestBody<EventIdRequest>): ManageRequestResponse<ScreenSlotListResponse> => {
+  async ({ ids, params, data, manageError }: ManageRequestBody<CreateScreenSlotRequest>): ManageRequestResponse<ScreenSlotListResponse> => {
     if (!ids.userId) return manageError({ code: 'unauthorized' })
 
     const access = await loadTeamAccess(params.id, ids.userId)
@@ -75,8 +77,10 @@ export const createScreenSlot = defineAction(
     }
 
     const existingPins = [access.event.settings.pin, ...access.event.screens.map((s) => s.pin)]
+    const trimmedName = data?.name?.trim()
     const slot = {
       id: new mongoose.Types.ObjectId().toString(),
+      ...(trimmedName ? { name: trimmedName } : {}),
       pin: generatePin(existingPins),
       createdAt: new Date().toISOString()
     }
