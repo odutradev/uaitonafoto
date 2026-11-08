@@ -13,6 +13,7 @@
 > É **estritamente proibido** criar ou manter barrel files ou arquivos que centralizem/reexportem múltiplos módulos no backend.
 > - **Zero arquivos centralizadores/reexportadores:** cada model, middleware, utilitário, schema ou repositório deve ser consumido via importação direta do arquivo que o define.
 > - **O papel do `index.ts` do domínio:** o `index.ts` de cada domínio **não é um barrel file**. Sua única finalidade é exportar como `default` a definição tipada `DomainDefinition` com `name` e `actions` para o registrador no `server.ts`. É proibido reexportar repositórios, middlewares ou types no `index.ts` do domínio.
+> - **O papel do `index.ts` da divisão de rotinas:** o `index.ts` de cada divisão em `src/routines/<divisao>/` **não é um barrel file**. Sua única finalidade é exportar como `default` a definição tipada `RoutineDivisionDefinition` com `name` e `routines` para o registrador no `server.ts`. É proibido reexportar utilitários ou types no `index.ts` da divisão.
 > - **Importação direta obrigatória:** todo e qualquer consumo deve ser feito via importação direta do arquivo específico (ex: `import { syncAuthUser } from '@domains/users/actions/auth'`, `import authMiddleware from '@domains/users/middlewares/auth'`, `import userRepository from '@domains/users/repositories'`).
 
 > [!IMPORTANT]
@@ -57,7 +58,7 @@
 > - `<util>/index.ts`: Lógica da utilidade e exportações principais.
 > - `<util>/types.ts`: Tipagens e contratos TypeScript (quando necessário).
 
-Este documento define os padrões para desenvolvimento na API. Toda a aplicação fica centralizada diretamente em `src/`, utilizando path aliases dedicados por módulo (`@config/*`, `@database/*`, `@domains/*`, `@email/*`, `@error/*`, `@factories/*`, `@firebase/*`, `@middlewares/*`, `@payment/*`, `@routes/*`, `@utils/*`) além do alias base `@/*`.
+Este documento define os padrões para desenvolvimento na API. Toda a aplicação fica centralizada diretamente em `src/`, utilizando path aliases dedicados por módulo (`@config/*`, `@database/*`, `@domains/*`, `@email/*`, `@error/*`, `@factories/*`, `@firebase/*`, `@middlewares/*`, `@payment/*`, `@routes/*`, `@routines/*`, `@utils/*`) além do alias base `@/*`.
 
 ### **Estrutura de Diretórios**
 
@@ -76,6 +77,11 @@ A pasta `src/` organiza a aplicação de forma limpa e modular:
     * `actions/` (Ações do sistema: `health/` com separação em `index.ts`, `schemas.ts` e `types.ts`)
     * `repositories/` (Model Mongoose `LogModel` e `logRepository`)
     * `index.ts` (Centralizador público do domínio)
+* `src/routines/` (Rotinas periódicas agendadas com node-cron por divisões de negócio)
+  * `payments/` (Divisão de rotinas de pagamentos)
+    * `expirePendingTransactions/` (Rotina com `index.ts` exportando `defineRoutine`)
+    * `reconcileSubscriptions/` (Rotina com `index.ts` e `types.ts`)
+    * `index.ts` (Centralizador tipado da divisão `RoutineDivisionDefinition`)
 * `src/middlewares/` (Middlewares globais padronizados com `index.ts` e `types.ts`)
   * `manageRequest/` (Middleware centralizador de validação Zod e execução de ações)
   * `rateLimit/` (Limitadores de taxa global e de rotas sensíveis)
@@ -88,6 +94,7 @@ A pasta `src/` organiza a aplicação de forma limpa e modular:
   * `docs/` (Gerador e registro do OpenAPI/Swagger: `index.ts` e `metadata.ts`)
   * `domain/` (Definição, registro de domínios e mapeamento automático de endpoints)
   * `env/` (Validação centralizada estrita de variáveis de ambiente com schema Zod e exportação tipada)
+  * `routine/` (Definição, registro, agendamento via `node-cron`, prevenção de concorrência e graceful shutdown de rotinas)
   * `version/` (Resolução dinâmica da versão da aplicação a partir de `uaitonafoto-package.json` ou `../package.json`)
 * `src/utils/` (Utilitários reutilizáveis com padrão `<util>/index.ts` e `types.ts`)
   * `date/` (Formatação e cálculos de datas: `formatTimestamp`, `formatDateBR`, `addDays`, `isPast`)
@@ -337,7 +344,95 @@ export default createApiRouter
 
 Ao executar, `registerDomainEndpoints` percorre as ações de cada domínio no registro e associa os endpoints ao roteador Express automaticamente.
 
-#### **9. Utilitários e Helpers Globais (`utils/<nome>/index.ts` e `types.ts`)**
+#### **9. Definição de Rotinas Periódicas (`src/routines/<divisao>/<rotina>/index.ts`)**
+
+As rotinas periódicas são tarefas de background executadas de forma agendada com `node-cron`. Elas utilizam o helper `defineRoutine` importado de `@config/routine`, definindo nome, expressão cron, opções de inicialização e a função executora:
+
+```ts
+// src/routines/payments/expirePendingTransactions/index.ts
+import { defineRoutine } from '@config/routine'
+import createLogger from '@utils/logger'
+import syncOrExpirePendingTransactions from '@domains/payments/utils/syncOrExpirePendingTransactions'
+
+const logger = createLogger('payments:expire-routine')
+
+export const runExpirePendingTransactions = async (): Promise<void> => {
+  const result = await syncOrExpirePendingTransactions({ checkGateway: true })
+  if (result.expiredCount > 0 || result.gatewayUpdatedCount > 0) {
+    logger.info(
+      `Routine completed: ${result.expiredCount} pending transactions expired by time, ${result.gatewayUpdatedCount} updated via gateway.`
+    )
+  }
+}
+
+export const expirePendingTransactionsRoutine = defineRoutine({
+  name: 'expirePendingTransactions',
+  description: 'Expire pending checkout transactions and sync recent ones with the gateway',
+  cronExpression: '*/15 * * * *',
+  runOnInit: true,
+  handler: runExpirePendingTransactions
+})
+
+export default expirePendingTransactionsRoutine
+```
+
+> [!IMPORTANT]
+> **Regras para rotinas periódicas:**
+> - **Separação estrita:** O arquivo `index.ts` da rotina contém exclusivamente a lógica de execução e exportação padrão via `defineRoutine`. Tipagens auxiliares devem residir em `types.ts`.
+> - **Expressão Cron válida:** Toda rotina deve declarar uma `cronExpression` com sintaxe cron válida (`* * * * *`).
+> - **Execução na subida (`runOnInit`):** Quando `runOnInit: true`, a rotina é acionada imediatamente na inicialização do servidor além de seguir o agendamento cron programado.
+> - **Prevenção de concorrência:** O agendador garante que ciclos subsequentes sejam ignorados se o ciclo anterior da mesma rotina ainda estiver em execução.
+
+#### **10. Divisão de Rotinas para Registro (`src/routines/<divisao>/index.ts`)**
+
+Seguindo o mesmo conceito dos domínios, cada pasta de divisão reúne suas rotinas e exporta como `default` um objeto tipado `RoutineDivisionDefinition` com o nome da divisão e o dicionário de rotinas:
+
+```ts
+// src/routines/payments/index.ts
+import expirePendingTransactions from './expirePendingTransactions'
+import reconcileSubscriptions from './reconcileSubscriptions'
+import type { RoutineDivisionDefinition } from '@config/routine'
+
+const routines = {
+  expirePendingTransactions,
+  reconcileSubscriptions
+}
+
+export const paymentsRoutines: RoutineDivisionDefinition<typeof routines> = {
+  name: 'payments',
+  routines
+}
+
+export default paymentsRoutines
+```
+
+#### **11. Registrador e Ciclo de Vida de Rotinas (`src/config/routine/index.ts` e `server.ts`)**
+
+O registro e a inicialização de rotinas ficam centralizados em `src/config/routine/index.ts`. No `server.ts`, as rotinas são registradas na inicialização, ativadas após as conexões de banco e serviços externos, e interrompidas ordenadamente durante o graceful shutdown:
+
+```ts
+// server.ts
+import { registerRoutines, startRoutines, stopRoutines } from '@config/routine'
+import paymentsRoutines from '@routines/payments'
+
+const startServer = async (): Promise<void> => {
+  // Registra as rotinas da aplicação
+  registerRoutines([paymentsRoutines])
+
+  const server = app.listen(port, '0.0.0.0', async () => {
+    // Conexões de banco, Firebase, e-mail e gateways...
+    await Promise.all([connectDatabase(), connectFirebase(), connectEmail(), connectPayment()])
+
+    // Inicia e agenda todas as rotinas registradas
+    startRoutines()
+  })
+
+  // No graceful shutdown:
+  // stopRoutines()
+}
+```
+
+#### **12. Utilitários e Helpers Globais (`utils/<nome>/index.ts` e `types.ts`)**
 
 Cada utilitário fica isolado em seu próprio subdiretório, contendo a lógica central em `index.ts` e contratos de tipos em `types.ts` quando necessário:
 
@@ -363,7 +458,7 @@ export const createLogger = (prefix: string): Logger => {
 export default createLogger
 ```
 
-#### **10. Configuração e Validação de Ambiente (`src/config/env/index.ts` e `types.ts`)**
+#### **13. Configuração e Validação de Ambiente (`src/config/env/index.ts` e `types.ts`)**
 
 Todas as variáveis de ambiente devem ser declaradas no schema Zod em `types.ts` e validadas em `index.ts`. Fallbacks são terminantemente proibidos e qualquer inconsistência aborta o processo imediatamente:
 
@@ -412,7 +507,7 @@ export const { PORT, NODE_ENV, ... } = env
 export default env
 ```
 
-#### **11. Middlewares Documentados e Mapeamento Automático no OpenAPI**
+#### **14. Middlewares Documentados e Mapeamento Automático no OpenAPI**
 
 Para garantir que a documentação OpenAPI gerada pela factory `defineAction` reflita todas as respostas possíveis da API de forma fidedigna e sem repetição manual, todos os middlewares do sistema (globais ou de domínio) devem seguir o contrato de `DocumentedMiddleware`.
 
