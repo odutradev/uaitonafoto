@@ -39,7 +39,7 @@ const EventDetails = () => {
   const { id = '' } = useParams()
   const navigate = useNavigate()
   const { user } = useAuth()
-  const { event, isLoading, save, remove, addScreen, disconnectScreen } = useEventDetails(id)
+  const { event, isLoading, save, remove, addScreen, disconnectScreen, refresh } = useEventDetails(id)
   const [activeTab, setActiveTab] = useState<EventDetailsTab>('access')
 
   if (isLoading || !event || !user) {
@@ -150,6 +150,7 @@ const EventDetails = () => {
           onSave={save}
           onAddScreen={addScreen}
           onDisconnectScreen={disconnectScreen}
+          onRefresh={refresh}
         />
       )}
       {activeTab === 'album' && <EventAlbum event={event} />}

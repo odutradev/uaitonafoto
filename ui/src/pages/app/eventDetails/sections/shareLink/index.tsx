@@ -47,9 +47,51 @@ import {
   summaryGridStyles,
   summaryItemStyles
 } from './styles'
+import type { EventScreenSlot } from '@actions/events/types'
 import type { ShareLinkProps } from './types'
 
-const ShareLink = ({ event, onOpenScreen, onSave, onAddScreen, onDisconnectScreen }: ShareLinkProps) => {
+const SCREEN_ONLINE_TIMEOUT_MS = 30_000
+
+const getScreenStatusBadge = (slot: EventScreenSlot) => {
+  if (!slot.activatedAt) {
+    return {
+      label: 'Aguardando ativação',
+      color: 'default' as const,
+      variant: 'outlined' as const,
+      detail: 'Aguardando inserção do PIN no telão'
+    }
+  }
+
+  const lastSeenMs = slot.lastSeenAt ? Date.parse(slot.lastSeenAt) : NaN
+  const isOnline = !Number.isNaN(lastSeenMs) && Date.now() - lastSeenMs < SCREEN_ONLINE_TIMEOUT_MS
+
+  if (isOnline) {
+    return {
+      label: 'Online',
+      color: 'success' as const,
+      variant: 'filled' as const,
+      detail: `Conectado em tempo real · Sinal às ${dayjs(slot.lastSeenAt).format('HH:mm:ss')}`
+    }
+  }
+
+  return {
+    label: 'Offline',
+    color: 'warning' as const,
+    variant: 'outlined' as const,
+    detail: slot.lastSeenAt
+      ? `Último sinal em ${dayjs(slot.lastSeenAt).format('DD/MM [às] HH:mm')}`
+      : `Ativado em ${dayjs(slot.activatedAt).format('DD/MM [às] HH:mm')}`
+  }
+}
+
+const ShareLink = ({
+  event,
+  onOpenScreen,
+  onSave,
+  onAddScreen,
+  onDisconnectScreen,
+  onRefresh
+}: ShareLinkProps) => {
   const link = buildGuestLink(event.guestToken)
   const screenLink = buildScreenLink(event.id)
   const screens = event.screens ?? []
@@ -322,6 +364,17 @@ const ShareLink = ({ event, onOpenScreen, onSave, onAddScreen, onDisconnectScree
                 color={isScreenLimitReached ? 'warning' : 'default'}
                 label={`${screens.length}/${MAX_EVENT_SCREENS} configurados`}
               />
+              {onRefresh && (
+                <Tooltip title="Atualizar status">
+                  <IconButton
+                    size="small"
+                    onClick={() => onRefresh()}
+                    aria-label="Atualizar status dos telões"
+                  >
+                    <RefreshIcon fontSize="small" />
+                  </IconButton>
+                </Tooltip>
+              )}
             </Box>
             <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
               A URL do telão é pública, mas exige ativação por PIN. Gere até {MAX_EVENT_SCREENS} PINs e insira no navegador de cada telão para liberar o acesso.
@@ -356,57 +409,65 @@ const ShareLink = ({ event, onOpenScreen, onSave, onAddScreen, onDisconnectScree
           </Typography>
         ) : (
           <Box sx={screenSlotsGridStyles}>
-            {screens.map((slot, index) => (
-              <Box key={slot.id} sx={screenSlotCardStyles}>
-                <Box sx={screenSlotHeaderStyles}>
-                  <Box sx={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-                    <Typography variant="subtitle2" fontWeight={700} noWrap>
-                      {slot.name || `Telão ${index + 1}`}
-                    </Typography>
-                    {slot.name && (
-                      <Typography variant="caption" color="text.secondary">
-                        Telão {index + 1}
+            {screens.map((slot, index) => {
+              const badge = getScreenStatusBadge(slot)
+
+              return (
+                <Box key={slot.id} sx={screenSlotCardStyles}>
+                  <Box sx={screenSlotHeaderStyles}>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+                      <Typography variant="subtitle2" fontWeight={700} noWrap>
+                        {slot.name || `Telão ${index + 1}`}
                       </Typography>
-                    )}
+                      {slot.name && (
+                        <Typography variant="caption" color="text.secondary">
+                          Telão {index + 1}
+                        </Typography>
+                      )}
+                    </Box>
+                    <Chip
+                      size="small"
+                      color={badge.color}
+                      variant={badge.variant}
+                      label={badge.label}
+                    />
                   </Box>
-                  <Chip
-                    size="small"
-                    color={slot.activatedAt ? 'success' : 'default'}
-                    variant={slot.activatedAt ? 'filled' : 'outlined'}
-                    label={slot.activatedAt ? 'Ativo' : 'Aguardando ativação'}
-                  />
-                </Box>
 
-                <Box>
-                  <Typography variant="caption" color="text.secondary" fontWeight={700}>
-                    PIN DE ATIVAÇÃO
+                  <Box>
+                    <Typography variant="caption" color="text.secondary" fontWeight={700}>
+                      PIN DE ATIVAÇÃO
+                    </Typography>
+                    <Typography sx={pinCodeTextStyles}>{slot.pin}</Typography>
+                  </Box>
+
+                  <Typography variant="caption" color="text.secondary">
+                    {badge.detail}
                   </Typography>
-                  <Typography sx={pinCodeTextStyles}>{slot.pin}</Typography>
-                </Box>
 
-                <Box sx={screenSlotFooterStyles}>
-                  <Button
-                    size="small"
-                    variant="outlined"
-                    startIcon={<CopyIcon fontSize="small" />}
-                    onClick={() => handleCopyScreenPin(slot.pin)}
-                    disabled={isManagingScreen}
-                  >
-                    Copiar PIN
-                  </Button>
-                  <Button
-                    size="small"
-                    color="error"
-                    variant="outlined"
-                    startIcon={<DeleteIcon fontSize="small" />}
-                    onClick={() => handleDisconnectScreen(slot.id)}
-                    disabled={isManagingScreen}
-                  >
-                    Desconectar
-                  </Button>
+                  <Box sx={screenSlotFooterStyles}>
+                    <Button
+                      size="small"
+                      variant="outlined"
+                      startIcon={<CopyIcon fontSize="small" />}
+                      onClick={() => handleCopyScreenPin(slot.pin)}
+                      disabled={isManagingScreen}
+                    >
+                      Copiar PIN
+                    </Button>
+                    <Button
+                      size="small"
+                      color="error"
+                      variant="outlined"
+                      startIcon={<DeleteIcon fontSize="small" />}
+                      onClick={() => handleDisconnectScreen(slot.id)}
+                      disabled={isManagingScreen}
+                    >
+                      Desconectar
+                    </Button>
+                  </Box>
                 </Box>
-              </Box>
-            ))}
+              )
+            })}
           </Box>
         )}
       </Card>

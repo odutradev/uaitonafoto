@@ -74,6 +74,27 @@ const useEventDetails = (eventId: string) => {
     }
   }, [eventId, navigate])
 
+  const refresh = useCallback(async () => {
+    try {
+      const refreshed = await getEvent(eventId)
+      setEvent(refreshed)
+    } catch {
+      // noop
+    }
+  }, [eventId])
+
+  useEffect(() => {
+    if (!event?.screens?.some((screen) => screen.activatedAt)) return undefined
+
+    const intervalId = window.setInterval(() => {
+      getEvent(eventId)
+        .then(setEvent)
+        .catch(() => undefined)
+    }, 10_000)
+
+    return () => window.clearInterval(intervalId)
+  }, [eventId, event?.screens])
+
   const addScreen = useCallback(
     async (name?: string) => {
       try {
@@ -100,7 +121,7 @@ const useEventDetails = (eventId: string) => {
     [eventId]
   )
 
-  return { event, isLoading, save, remove, addScreen, disconnectScreen }
+  return { event, isLoading, save, remove, addScreen, disconnectScreen, refresh }
 }
 
 export default useEventDetails
