@@ -1,8 +1,10 @@
-﻿import * as eventActions from './actions/event'
+import * as eventActions from './actions/event'
+import * as teamActions from './actions/team'
 import type { DomainDefinition } from '@config/domain'
 
 const actions = {
-  event: eventActions
+  event: eventActions,
+  team: teamActions
 }
 
 export const eventsDomain: DomainDefinition<typeof actions> = {
