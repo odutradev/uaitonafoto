@@ -12,6 +12,7 @@ import systemDomain from '@domains/system'
 import paymentsDomain from '@domains/payments'
 import eventsDomain from '@domains/events'
 import paymentsRoutines from '@routines/payments'
+import eventsRoutines from '@routines/events'
 import { connectDatabase, disconnectDatabase } from '@database'
 import { connectEmail } from '@email'
 import { connectFirebase } from '@firebase'
@@ -71,7 +72,7 @@ const setupGracefulShutdown = (server: Server): void => {
 const startServer = async (): Promise<void> => {
   const version = resolveAppVersion()
   registerDomains([usersDomain, systemDomain, paymentsDomain, eventsDomain])
-  registerRoutines([paymentsRoutines])
+  registerRoutines([paymentsRoutines, eventsRoutines])
 
   const app = buildApp()
   const port = env.PORT
