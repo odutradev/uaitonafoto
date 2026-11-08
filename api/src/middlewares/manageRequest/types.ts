@@ -32,6 +32,7 @@ export type DefaultExpressContext = {
 
 export type RequestIdentifiers = {
   userId?: string
+  guestId?: string
 }
 
 export type RouteSchema = {

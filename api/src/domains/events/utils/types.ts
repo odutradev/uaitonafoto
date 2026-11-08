@@ -12,3 +12,8 @@ export interface EventWindowsInput extends EventWindows {
   endsAt: string
   settings: EventSettings
 }
+
+export interface GuestTokenPayload {
+  purpose: 'guest'
+  guestId: string
+}
