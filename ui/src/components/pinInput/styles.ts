@@ -27,10 +27,7 @@ export const pinSlotInputStyles: SxProps<Theme> = {
     fontSize: { xs: '1.5rem', sm: '1.75rem' },
     '&.Mui-focused': {
       '& input::placeholder': {
-        color: `${brandColors.flashYellow} !important`,
-        WebkitTextFillColor: `${brandColors.flashYellow} !important`,
-        opacity: '1 !important',
-        animation: 'pinDotBlink 1s ease-in-out infinite'
+        animation: 'pinDotPulse 1.1s ease-in-out infinite'
       }
     }
   },
@@ -40,20 +37,22 @@ export const pinSlotInputStyles: SxProps<Theme> = {
     px: 0,
     caretColor: 'transparent !important',
     '&::placeholder': {
-      opacity: 0.35,
+      color: '#7E7769',
+      WebkitTextFillColor: '#7E7769',
+      opacity: 0.45,
       transition: 'opacity 0.2s ease, color 0.2s ease'
     }
   },
-  '@keyframes pinDotBlink': {
+  '@keyframes pinDotPulse': {
     '0%, 100%': {
-      opacity: 1,
-      color: brandColors.flashYellow,
-      WebkitTextFillColor: brandColors.flashYellow
+      color: '#7E7769',
+      WebkitTextFillColor: '#7E7769',
+      opacity: 0.55
     },
     '50%': {
-      opacity: 0.2,
       color: brandColors.flashYellow,
-      WebkitTextFillColor: brandColors.flashYellow
+      WebkitTextFillColor: brandColors.flashYellow,
+      opacity: 1
     }
   }
 }
