@@ -4,8 +4,8 @@ import type { SxProps, Theme } from '@mui/material'
 export const screenRootStyles: SxProps<Theme> = {
   position: 'fixed',
   inset: 0,
-  bgcolor: brandColors.darkBg,
-  color: brandColors.darkTextPrimary,
+  bgcolor: 'background.default',
+  color: 'text.primary',
   display: 'flex',
   flexDirection: 'column',
   p: { xs: 2, sm: 3, md: 4 },
@@ -52,27 +52,28 @@ export const liveTextStyles: SxProps<Theme> = {
   fontWeight: 900,
   fontSize: { xs: '1rem', md: '1.25rem' },
   letterSpacing: '0.06em',
-  color: '#FFFFFF'
+  color: 'text.primary'
 }
 
 export const controlsRowStyles: SxProps<Theme> = {
   display: 'flex',
   alignItems: 'center',
   gap: 1,
-  opacity: 0.45,
+  opacity: 0.7,
   transition: 'opacity 0.2s ease',
   '&:hover': {
     opacity: 1
   }
 }
 
-export const iconButtonStyles: SxProps<Theme> = {
-  color: '#FFFFFF',
-  bgcolor: 'rgba(255, 255, 255, 0.08)',
+export const iconButtonStyles: SxProps<Theme> = (theme) => ({
+  color: 'text.primary',
+  bgcolor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.05)',
+  border: `1px solid ${theme.palette.divider}`,
   '&:hover': {
-    bgcolor: 'rgba(255, 255, 255, 0.16)'
+    bgcolor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.16)' : 'rgba(0, 0, 0, 0.1)'
   }
-}
+})
 
 export const contentGridStyles: SxProps<Theme> = {
   display: 'flex',
@@ -91,17 +92,18 @@ export const leftColumnStyles: SxProps<Theme> = {
   height: '100%'
 }
 
-export const mainCardStyles: SxProps<Theme> = {
+export const mainCardStyles: SxProps<Theme> = (theme) => ({
   flex: 1,
-  bgcolor: brandColors.darkPaper,
+  bgcolor: theme.palette.mode === 'dark' ? brandColors.darkPaper : '#FFFFFF',
   borderRadius: '28px',
-  border: `1px solid ${brandColors.darkBorder}`,
+  border: `1px solid ${theme.palette.divider}`,
   display: 'flex',
   flexDirection: 'column',
   overflow: 'hidden',
   position: 'relative',
-  minHeight: 0
-}
+  minHeight: 0,
+  boxShadow: theme.palette.mode === 'dark' ? 'none' : '0 8px 30px rgba(0, 0, 0, 0.06)'
+})
 
 export const photoContainerStyles: SxProps<Theme> = {
   flex: 1,
@@ -178,11 +180,11 @@ export const thumbnailsRowStyles: SxProps<Theme> = {
   flexShrink: 0
 }
 
-export const getThumbnailSlotStyles = (isActive: boolean = false): SxProps<Theme> => ({
+export const getThumbnailSlotStyles = (isActive: boolean = false): SxProps<Theme> => (theme) => ({
   borderRadius: '18px',
-  bgcolor: brandColors.darkSurface,
+  bgcolor: theme.palette.mode === 'dark' ? brandColors.darkSurface : brandColors.sand,
   overflow: 'hidden',
-  border: isActive ? `3px solid ${brandColors.flashYellow}` : `1.5px solid ${brandColors.darkBorder}`,
+  border: isActive ? `3px solid ${brandColors.flashYellow}` : `1.5px solid ${theme.palette.divider}`,
   boxShadow: isActive ? '0 0 16px rgba(255, 207, 31, 0.45)' : 'none',
   transition: 'all 0.2s ease',
   cursor: 'pointer',
@@ -197,11 +199,12 @@ export const thumbnailImgStyles: SxProps<Theme> = {
   objectFit: 'cover'
 }
 
-export const rightCardStyles: SxProps<Theme> = {
+export const rightCardStyles: SxProps<Theme> = (theme) => ({
   width: { xs: '100%', md: 330, lg: 380 },
   bgcolor: '#FFFFFF',
   color: brandColors.ink,
   borderRadius: '28px',
+  border: `1px solid ${theme.palette.divider}`,
   p: { xs: 2.5, md: 3.5 },
   display: 'flex',
   flexDirection: 'column',
@@ -209,8 +212,8 @@ export const rightCardStyles: SxProps<Theme> = {
   justifyContent: 'space-between',
   gap: 2.5,
   flexShrink: 0,
-  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.45)'
-}
+  boxShadow: theme.palette.mode === 'dark' ? '0 8px 32px rgba(0, 0, 0, 0.45)' : '0 8px 30px rgba(0, 0, 0, 0.08)'
+})
 
 export const qrFrameStyles: SxProps<Theme> = {
   border: `2px solid ${brandColors.ink}`,
@@ -295,17 +298,17 @@ export const activationWrapperStyles: SxProps<Theme> = {
   width: '100%'
 }
 
-export const activationCardStyles: SxProps<Theme> = {
+export const activationCardStyles: SxProps<Theme> = (theme) => ({
   width: '100%',
   maxWidth: 440,
   p: { xs: 3.5, sm: 4.5 },
   borderRadius: '28px',
-  bgcolor: brandColors.darkPaper,
-  border: `1px solid ${brandColors.darkBorder}`,
+  bgcolor: theme.palette.mode === 'dark' ? brandColors.darkPaper : '#FFFFFF',
+  border: `1px solid ${theme.palette.divider}`,
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
   textAlign: 'center',
   gap: 2.5,
-  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.5)'
-}
+  boxShadow: theme.palette.mode === 'dark' ? '0 8px 32px rgba(0, 0, 0, 0.5)' : '0 8px 32px rgba(0, 0, 0, 0.08)'
+})

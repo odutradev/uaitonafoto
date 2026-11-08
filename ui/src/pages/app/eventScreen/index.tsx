@@ -20,6 +20,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 
 import Logo from '@components/logo'
 import PinInput from '@components/pinInput'
+import ThemeToggle from '@components/themeToggle'
 import { buildGuestLink } from '@config/events'
 import { brandColors } from '@theme'
 
@@ -111,7 +112,7 @@ const EventScreen = () => {
     <Box sx={screenRootStyles}>
       <Box component="header" sx={topBarStyles}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <Logo variant="dark" size="small" />
+          <Logo variant="auto" size="small" />
         </Box>
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2.5 }}>
@@ -140,6 +141,7 @@ const EventScreen = () => {
                 </IconButton>
               </Tooltip>
             )}
+            <ThemeToggle sx={iconButtonStyles} size="small" />
             <Tooltip title="Alternar tela cheia">
               <IconButton aria-label="Tela cheia" onClick={handleFullscreen} sx={iconButtonStyles} size="small">
                 <FullscreenIcon fontSize="small" />
@@ -152,7 +154,7 @@ const EventScreen = () => {
       {!isActivated ? (
         <Box sx={activationWrapperStyles}>
           <Box component="form" onSubmit={handleActivateSubmit} sx={activationCardStyles}>
-            <Logo variant="dark" size="medium" symbolOnly />
+            <Logo variant="auto" size="medium" symbolOnly />
             <Box>
               <Typography
                 variant="h5"
@@ -162,7 +164,7 @@ const EventScreen = () => {
               >
                 Ativar telão do evento
               </Typography>
-              <Typography variant="body2" sx={{ color: brandColors.darkTextSecondary, mt: 0.75 }}>
+              <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.75 }}>
                 Digite o PIN de 4 dígitos gerado pelo administrador no painel do evento para liberar este dispositivo.
               </Typography>
             </Box>
@@ -178,18 +180,18 @@ const EventScreen = () => {
               onChange={setPinInput}
               autoFocus
               disabled={isActivating}
-              slotSx={{
+              slotSx={(theme) => ({
                 '& .MuiOutlinedInput-root': {
-                  bgcolor: brandColors.darkSurface,
-                  color: brandColors.darkTextPrimary,
+                  bgcolor: theme.palette.mode === 'dark' ? brandColors.darkSurface : brandColors.sand,
+                  color: 'text.primary',
                   '& fieldset': {
-                    borderColor: brandColors.darkBorder
+                    borderColor: theme.palette.divider
                   },
                   '&:hover fieldset': {
                     borderColor: brandColors.flashYellow
                   }
                 }
-              }}
+              })}
             />
 
             <Button
@@ -261,7 +263,7 @@ const EventScreen = () => {
                     >
                       O mural ao vivo está aberto!
                     </Typography>
-                    <Typography variant="body1" sx={{ color: brandColors.darkTextSecondary, maxWidth: 440 }}>
+                    <Typography variant="body1" sx={{ color: 'text.secondary', maxWidth: 440 }}>
                       Aponte a câmera do seu celular para o QR Code ao lado e seja o primeiro a mandar sua foto.
                     </Typography>
                   </Box>
