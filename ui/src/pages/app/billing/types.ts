@@ -28,11 +28,15 @@ export interface UseBillingReturn {
   checkoutPlanId: string | null
   cancellingSubscriptionId: string | null
   selectedTransaction: TransactionItem | null
+  confirmingPlan: PlanApiItem | null
   setSelectedTransaction: (item: TransactionItem | null) => void
   handleStatusFilterChange: (nextStatus: TransactionStatusFilter) => void
   handleTypeFilterChange: (nextType: TransactionTypeFilter) => void
   handlePageChange: (nextPage: number) => void
   handleRefreshAll: () => Promise<void>
   startCheckout: (planId: string) => Promise<void>
+  handleOpenCheckoutConfirmation: (planIdOrPlan: string | PlanApiItem) => void
+  handleCloseCheckoutConfirmation: () => void
+  handleConfirmCheckout: () => Promise<void>
   handleCancelSubscription: (subscriptionId: string) => Promise<boolean>
 }

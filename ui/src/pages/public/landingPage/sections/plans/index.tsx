@@ -36,6 +36,7 @@ export const Plans = ({
   plans,
   isDark,
   isLoading = false,
+  isAuthenticated = false,
   onSelectPlan
 }: PlansSectionProps) => {
   if (isLoading) {
@@ -110,7 +111,11 @@ export const Plans = ({
 
               <Button
                 component={RouterLink}
-                to={`/signin?planId=${encodeURIComponent(plan.ctaHref)}`}
+                to={
+                  isAuthenticated
+                    ? `/app/billing?checkout=${encodeURIComponent(plan.ctaHref)}`
+                    : `/signin?planId=${encodeURIComponent(plan.ctaHref)}`
+                }
                 onClick={() => onSelectPlan?.(plan)}
                 variant={plan.highlighted ? 'contained' : 'outlined'}
                 disableElevation

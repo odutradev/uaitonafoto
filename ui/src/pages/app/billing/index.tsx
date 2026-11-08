@@ -7,6 +7,7 @@ import CreditsAndPlans from './sections/creditsAndPlans'
 import CurrentPlanCard from './sections/currentPlanCard'
 import TransactionsHistory from './sections/transactionsHistory'
 import TransactionDetailsDialog from './subcomponents/transactionDetailsDialog'
+import CheckoutConfirmationDialog from './subcomponents/checkoutConfirmationDialog'
 import { billingPageStyles, headerButtonStyles, headerRowStyles, pageTitleStyles } from './styles'
 
 const FREE_PLAN_ID = 'free_trial'
@@ -28,12 +29,16 @@ const Billing = () => {
     checkoutPlanId,
     cancellingSubscriptionId,
     selectedTransaction,
+    confirmingPlan,
     setSelectedTransaction,
     handleStatusFilterChange,
     handleTypeFilterChange,
     handlePageChange,
     handleRefreshAll,
     startCheckout,
+    handleOpenCheckoutConfirmation,
+    handleCloseCheckoutConfirmation,
+    handleConfirmCheckout,
     handleCancelSubscription
   } = useBilling()
 
@@ -92,7 +97,7 @@ const Billing = () => {
         checkoutPlanId={checkoutPlanId}
         activeSubscriptionPlanIds={activeSubscriptionPlanIds}
         hasActiveSubscription={hasActiveSubscription}
-        onSelectPlan={startCheckout}
+        onSelectPlan={handleOpenCheckoutConfirmation}
       />
 
       <TransactionsHistory
@@ -113,6 +118,14 @@ const Billing = () => {
       <TransactionDetailsDialog
         transaction={selectedTransaction}
         onClose={() => setSelectedTransaction(null)}
+      />
+
+      <CheckoutConfirmationDialog
+        plan={confirmingPlan}
+        open={Boolean(confirmingPlan)}
+        isLoading={checkoutPlanId !== null}
+        onClose={handleCloseCheckoutConfirmation}
+        onConfirm={handleConfirmCheckout}
       />
     </Box>
   )

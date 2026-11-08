@@ -43,6 +43,7 @@ const LandingPage = () => {
         plans={plans}
         isDark={isDark}
         isLoading={isLoadingPlans}
+        isAuthenticated={Boolean(user)}
         onSelectPlan={onSelectPlan}
       />
       <FinalCta data={data.finalCta} isDark={isDark} />

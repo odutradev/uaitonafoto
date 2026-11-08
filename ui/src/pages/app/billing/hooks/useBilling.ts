@@ -61,6 +61,8 @@ export const useBilling = (): UseBillingReturn => {
   const [checkoutPlanId, setCheckoutPlanId] = useState<string | null>(null)
   const [cancellingSubscriptionId, setCancellingSubscriptionId] = useState<string | null>(null)
   const [selectedTransaction, setSelectedTransaction] = useState<TransactionItem | null>(null)
+  const [confirmingPlan, setConfirmingPlan] = useState<PlanApiItem | null>(null)
+  const [pendingCheckoutPlanId, setPendingCheckoutPlanId] = useState<string | null>(null)
 
   const loadTransactions = useCallback(
     async (page: number, status: TransactionStatusFilter, planType: TransactionTypeFilter) => {
@@ -193,6 +195,65 @@ export const useBilling = (): UseBillingReturn => {
     [updateUser]
   )
 
+  const handleOpenCheckoutConfirmation = useCallback(
+    (planIdOrPlan: string | PlanApiItem) => {
+      if (typeof planIdOrPlan === 'object') {
+        if (planIdOrPlan.id === FREE_PLAN_ID || planIdOrPlan.abacateProductId === FREE_PLAN_ID) {
+          startCheckout(FREE_PLAN_ID)
+          return
+        }
+        setConfirmingPlan(planIdOrPlan)
+        return
+      }
+
+      if (planIdOrPlan === FREE_PLAN_ID) {
+        startCheckout(FREE_PLAN_ID)
+        return
+      }
+
+      const found = plans.find(
+        (p) =>
+          p.id === planIdOrPlan ||
+          p.abacateProductId === planIdOrPlan ||
+          p.ctaHref === planIdOrPlan
+      )
+
+      if (found) {
+        setConfirmingPlan(found)
+      } else {
+        setPendingCheckoutPlanId(planIdOrPlan)
+      }
+    },
+    [plans, startCheckout]
+  )
+
+  const handleCloseCheckoutConfirmation = useCallback(() => {
+    setConfirmingPlan(null)
+    setPendingCheckoutPlanId(null)
+  }, [])
+
+  const handleConfirmCheckout = useCallback(async () => {
+    if (!confirmingPlan) return
+    const planId = confirmingPlan.ctaHref || confirmingPlan.id || confirmingPlan.abacateProductId
+    await startCheckout(planId)
+  }, [confirmingPlan, startCheckout])
+
+  useEffect(() => {
+    if (!pendingCheckoutPlanId || plans.length === 0) return
+
+    const found = plans.find(
+      (p) =>
+        p.id === pendingCheckoutPlanId ||
+        p.abacateProductId === pendingCheckoutPlanId ||
+        p.ctaHref === pendingCheckoutPlanId
+    )
+
+    if (found) {
+      setConfirmingPlan(found)
+      setPendingCheckoutPlanId(null)
+    }
+  }, [pendingCheckoutPlanId, plans])
+
   const handleCancelSubscription = useCallback(async (subscriptionId: string): Promise<boolean> => {
     setCancellingSubscriptionId(subscriptionId)
 
@@ -255,7 +316,11 @@ export const useBilling = (): UseBillingReturn => {
     navigate('/app/billing', { replace: true })
 
     if (checkout) {
-      startCheckout(checkout)
+      if (checkout === FREE_PLAN_ID) {
+        startCheckout(FREE_PLAN_ID)
+      } else {
+        handleOpenCheckoutConfirmation(checkout)
+      }
       return
     }
 
@@ -271,6 +336,7 @@ export const useBilling = (): UseBillingReturn => {
     }
   }, [
     checkout,
+    handleOpenCheckoutConfirmation,
     loadTransactions,
     navigate,
     payment,
@@ -297,12 +363,16 @@ export const useBilling = (): UseBillingReturn => {
     checkoutPlanId,
     cancellingSubscriptionId,
     selectedTransaction,
+    confirmingPlan,
     setSelectedTransaction,
     handleStatusFilterChange,
     handleTypeFilterChange,
     handlePageChange,
     handleRefreshAll,
     startCheckout,
+    handleOpenCheckoutConfirmation,
+    handleCloseCheckoutConfirmation,
+    handleConfirmCheckout,
     handleCancelSubscription
   }
 }
