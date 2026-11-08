@@ -125,7 +125,20 @@ Os campos calculados são recalculados a cada alteração de `endsAt` ou `settin
 
 Erros comuns: `400` arquivo/período inválido, `401` token ausente/inválido, `403` fase ou permissão, `404` inexistente, `409` conflito ou limite atingido.
 
-## 8. Estrutura de código
+## 8. Rotas e Telas do Frontend (`ui/`)
+
+O link de acesso dos convidados utiliza exclusivamente o conjunto aleatório de caracteres (`guestToken` de 12 caracteres base64url gerado pela API), nunca o nome do evento:
+
+- **Link do convidado:** `/e/:token` (ex: `/e/k3J9xQ2mZ1aB`)
+
+| Rota | Acesso | Descrição |
+|---|---|---|
+| `/app` | Autenticado | Lista os eventos do usuário (criador/organizador) e modal de criação |
+| `/app/events/:id` | Equipe | Painel do evento: link aleatório + QR Code, álbum pós-evento (com filtro por convidado e remoção de fotos), edição de configurações, gestão da equipe e exclusão (criador) |
+| `/app/events/:id/screen` | Equipe | Telão em tela cheia com rotação automática das fotos, polling incremental (`since`) e QR Code enquanto aguarda fotos |
+| `/e/:token` | Público / Convidado | Página mobile-first do convidado: identificação por nome (gera sessão salva em `localStorage`), envio de fotos respeitando `maxPhotosPerGuest` e janela de upload, feed paginado com curtidas e exclusão da própria foto |
+
+## 9. Estrutura de código
 
 ```
 api/src/domains/events/
@@ -135,9 +148,16 @@ api/src/domains/events/
                 loadGuestContext, loadTeamAccess, purgeEventPhotos
   actions/      event | team | guest | photo | album
 api/src/routines/events/expireGalleries
+
+ui/src/
+  api/actions/  events | guest
+  config/       events.ts, eventPhase.ts
+  components/   eventFormFields
+  pages/app/    home | eventDetails | eventScreen
+  pages/public/ guestEvent
 ```
 
-## 9. Pontos de atenção / pendências
+## 10. Pontos de atenção / pendências
 
 - Limite por convidado é "soft": convidado pode criar outra sessão com novo nome. Para reforçar, associar à sessão do dispositivo/IP.
 - Fotos têm URL pública (não adivinhável). Para privacidade total, migrar para URLs assinadas.
