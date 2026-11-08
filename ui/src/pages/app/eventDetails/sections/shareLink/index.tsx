@@ -1,5 +1,15 @@
 import { useState } from 'react'
-import { Box, Button, Card, Chip, IconButton, TextField, Tooltip, Typography } from '@mui/material'
+import {
+  Box,
+  Button,
+  Card,
+  Chip,
+  CircularProgress,
+  IconButton,
+  TextField,
+  Tooltip,
+  Typography
+} from '@mui/material'
 import {
   AddOutlined as AddIcon,
   CheckOutlined as CheckIcon,
@@ -102,6 +112,7 @@ const ShareLink = ({
   const [isManagingScreen, setIsManagingScreen] = useState(false)
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [screenNameInput, setScreenNameInput] = useState('')
+  const [isRefreshing, setIsRefreshing] = useState(false)
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(link)
@@ -116,6 +127,17 @@ const ShareLink = ({
   const handleCopyScreenPin = async (pin: string) => {
     await navigator.clipboard.writeText(pin)
     toast.success('PIN do telão copiado!')
+  }
+
+  const handleRefresh = async () => {
+    if (!onRefresh) return
+    setIsRefreshing(true)
+    try {
+      await onRefresh()
+      toast.success('Status dos telões atualizado!')
+    } finally {
+      setIsRefreshing(false)
+    }
   }
 
   const handleOpenAddModal = () => {
@@ -364,16 +386,8 @@ const ShareLink = ({
                 color={isScreenLimitReached ? 'warning' : 'default'}
                 label={`${screens.length}/${MAX_EVENT_SCREENS} configurados`}
               />
-              {onRefresh && (
-                <Tooltip title="Atualizar status">
-                  <IconButton
-                    size="small"
-                    onClick={() => onRefresh()}
-                    aria-label="Atualizar status dos telões"
-                  >
-                    <RefreshIcon fontSize="small" />
-                  </IconButton>
-                </Tooltip>
+              {screens.some((slot) => !slot.activatedAt) && (
+                <Chip size="small" variant="outlined" color="info" label="Sincronizando em tempo real" />
               )}
             </Box>
             <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
@@ -381,15 +395,35 @@ const ShareLink = ({
             </Typography>
           </Box>
 
-          <Button
-            variant="contained"
-            startIcon={<AddIcon fontSize="small" />}
-            onClick={handleOpenAddModal}
-            disabled={isManagingScreen || isScreenLimitReached}
-            sx={shareButtonStyles}
-          >
-            Gerar PIN de telão
-          </Button>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+            {onRefresh && (
+              <Button
+                variant="outlined"
+                startIcon={
+                  isRefreshing ? (
+                    <CircularProgress size={16} color="inherit" />
+                  ) : (
+                    <RefreshIcon fontSize="small" />
+                  )
+                }
+                onClick={handleRefresh}
+                disabled={isRefreshing}
+                sx={shareButtonStyles}
+              >
+                Atualizar status
+              </Button>
+            )}
+
+            <Button
+              variant="contained"
+              startIcon={<AddIcon fontSize="small" />}
+              onClick={handleOpenAddModal}
+              disabled={isManagingScreen || isScreenLimitReached}
+              sx={shareButtonStyles}
+            >
+              Gerar PIN de telão
+            </Button>
+          </Box>
         </Box>
 
         <Box sx={linkFieldBoxStyles}>

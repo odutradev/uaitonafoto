@@ -84,13 +84,18 @@ const useEventDetails = (eventId: string) => {
   }, [eventId])
 
   useEffect(() => {
-    if (!event?.screens?.some((screen) => screen.activatedAt)) return undefined
+    const screens = event?.screens ?? []
+    if (screens.length === 0) return undefined
+
+    const hasPendingScreen = screens.some((screen) => !screen.activatedAt)
+    const intervalMs = hasPendingScreen ? 4_000 : 10_000
 
     const intervalId = window.setInterval(() => {
+      if (document.hidden) return
       getEvent(eventId)
         .then(setEvent)
         .catch(() => undefined)
-    }, 10_000)
+    }, intervalMs)
 
     return () => window.clearInterval(intervalId)
   }, [eventId, event?.screens])
