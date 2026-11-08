@@ -16,6 +16,7 @@ const LandingPage = () => {
     upsell,
     isLoadingPlans,
     data,
+    user,
     onSelectPlan,
     onSelectUpsell
   } = useLandingPage()
@@ -31,7 +32,7 @@ const LandingPage = () => {
         width: '100%'
       }}
     >
-      <Navbar data={data.header} isDark={isDark} />
+      <Navbar data={data.header} isDark={isDark} user={user} />
       <Hero data={data.hero} isDark={isDark} />
       <HowItWorks data={data.howItWorks} isDark={isDark} />
       <InteractiveDemo

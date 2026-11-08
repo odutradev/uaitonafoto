@@ -3,6 +3,7 @@ import { useTheme } from '@mui/material/styles'
 
 import { getPlans } from '@actions/payments'
 import { trackEvent } from '@actions/auth/firebase'
+import useAuth from '@hooks/useAuth'
 import type { PlanApiItem } from '@actions/payments/types'
 
 import landingPageData from '../data'
@@ -13,6 +14,7 @@ import type { UseLandingPageReturn } from './types'
 export const useLandingPage = (): UseLandingPageReturn => {
   const theme = useTheme()
   const isDark = theme.palette.mode === 'dark'
+  const { user } = useAuth()
 
   const [isLoadingPlans, setIsLoadingPlans] = useState(true)
   const [plans, setPlans] = useState<PlanCardData[]>([])
@@ -91,6 +93,7 @@ export const useLandingPage = (): UseLandingPageReturn => {
     upsell,
     isLoadingPlans,
     data: landingPageData,
+    user,
     onSelectPlan,
     onSelectUpsell
   }
