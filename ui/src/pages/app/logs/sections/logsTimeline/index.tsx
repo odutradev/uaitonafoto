@@ -11,7 +11,6 @@ import {
 import { VisibilityOutlined as InspectIcon } from '@mui/icons-material'
 
 import {
-  actionCodeChipStyles,
   detailsBtnStyles,
   emptyPaperStyles,
   getLogsStackStyles,
@@ -104,13 +103,9 @@ const LogsTimeline = ({
                     <Typography variant="subtitle1" fontWeight={700}>
                       {entry.title}
                     </Typography>
-                    <Chip
-                      size="small"
-                      variant="outlined"
-                      label={entry.action}
-                      sx={actionCodeChipStyles}
-                    />
-                    <Chip size="small" variant="outlined" label={getCategoryLabel(entry.category)} />
+                    {showUserBadge && (
+                      <Chip size="small" variant="outlined" label={getCategoryLabel(entry.category)} />
+                    )}
                   </Box>
 
                   {entry.description && (

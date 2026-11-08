@@ -39,11 +39,6 @@ export const logBadgesRowStyles: SxProps<Theme> = {
   gap: 1
 }
 
-export const actionCodeChipStyles: SxProps<Theme> = {
-  fontFamily: 'monospace',
-  fontSize: '0.72rem'
-}
-
 export const detailsBtnStyles: SxProps<Theme> = {
   minHeight: 44,
   width: { xs: '100%', md: 'auto' },
