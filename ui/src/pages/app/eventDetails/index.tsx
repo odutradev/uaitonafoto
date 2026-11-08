@@ -1,4 +1,4 @@
-import { Box, Button, Chip, Skeleton, Tab, Tabs, Typography } from '@mui/material'
+import { Box, Button, Skeleton, Tab, Tabs } from '@mui/material'
 import {
   ArrowBack as BackIcon,
   CollectionsOutlined as AlbumIcon,
@@ -7,11 +7,8 @@ import {
   QrCode2Outlined as QrIcon,
   SettingsOutlined as SettingsIcon
 } from '@mui/icons-material'
-import dayjs from 'dayjs'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 
-import { getEventPhase } from '@config/eventPhase'
-import { eventPhaseLabels, eventTypeLabels } from '@config/events'
 import useAuth from '@hooks/useAuth'
 
 import useEventDetails from './hooks/useEventDetails'
@@ -22,16 +19,10 @@ import EventTeam from './sections/eventTeam'
 import ShareLink from './sections/shareLink'
 import {
   backButtonStyles,
-  chipsStyles,
-  headerActionButtonStyles,
-  headerRowStyles,
-  headerTitleBlockStyles,
   pageStyles,
   tabItemStyles,
   tabsContainerStyles,
-  tabsStyles,
-  titleAndChipsRowStyles,
-  titleStyles
+  tabsStyles
 } from './styles'
 import type { EventDetailsTab } from './types'
 
@@ -70,14 +61,12 @@ const EventDetails = () => {
     return (
       <Box sx={pageStyles}>
         <Skeleton variant="rounded" width={140} height={36} />
-        <Skeleton variant="rounded" height={72} />
         <Skeleton variant="rounded" height={44} />
         <Skeleton variant="rounded" height={280} sx={{ borderRadius: '24px' }} />
       </Box>
     )
   }
 
-  const phase = getEventPhase(event)
   const openScreen = () => navigate(`/e/${event.guestToken}/screen`)
 
   return (
@@ -91,40 +80,6 @@ const EventDetails = () => {
       >
         Voltar para eventos
       </Button>
-
-      <Box component="header" sx={headerRowStyles}>
-        <Box sx={headerTitleBlockStyles}>
-          <Box sx={titleAndChipsRowStyles}>
-            <Typography variant="h4" component="h1" sx={titleStyles}>
-              {event.name}
-            </Typography>
-            <Box sx={chipsStyles}>
-              <Chip size="small" label={eventTypeLabels[event.type]} sx={{ fontWeight: 700 }} />
-              <Chip
-                size="small"
-                color={phase === 'open' ? 'success' : 'primary'}
-                variant={phase === 'open' ? 'filled' : 'outlined'}
-                label={eventPhaseLabels[phase]}
-                sx={{ fontWeight: 700 }}
-              />
-            </Box>
-          </Box>
-
-          <Typography variant="body2" color="text.secondary">
-            {dayjs(event.startsAt).format('DD/MM/YYYY [às] HH:mm')} até{' '}
-            {dayjs(event.endsAt).format('DD/MM/YYYY [às] HH:mm')}
-          </Typography>
-        </Box>
-
-        <Button
-          variant="outlined"
-          startIcon={<ScreenIcon fontSize="small" />}
-          onClick={openScreen}
-          sx={headerActionButtonStyles}
-        >
-          Abrir telão
-        </Button>
-      </Box>
 
       <Box sx={tabsContainerStyles}>
         <Tabs

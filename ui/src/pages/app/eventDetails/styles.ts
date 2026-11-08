@@ -17,48 +17,6 @@ export const backButtonStyles: SxProps<Theme> = {
   color: 'text.secondary'
 }
 
-export const headerRowStyles: SxProps<Theme> = {
-  display: 'flex',
-  flexDirection: { xs: 'column', sm: 'row' },
-  alignItems: { xs: 'stretch', sm: 'flex-start' },
-  justifyContent: 'space-between',
-  gap: 2
-}
-
-export const headerTitleBlockStyles: SxProps<Theme> = {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 0.75,
-  minWidth: 0
-}
-
-export const titleAndChipsRowStyles: SxProps<Theme> = {
-  display: 'flex',
-  alignItems: 'center',
-  flexWrap: 'wrap',
-  gap: 1.25
-}
-
-export const titleStyles: SxProps<Theme> = {
-  fontWeight: 800,
-  fontSize: { xs: '1.5rem', sm: '1.85rem' },
-  overflowWrap: 'anywhere'
-}
-
-export const chipsStyles: SxProps<Theme> = {
-  display: 'flex',
-  flexWrap: 'wrap',
-  gap: 0.75
-}
-
-export const headerActionButtonStyles: SxProps<Theme> = {
-  minHeight: 42,
-  px: 2.25,
-  fontSize: '0.875rem',
-  width: { xs: '100%', sm: 'auto' },
-  flexShrink: 0
-}
-
 export const tabsContainerStyles: SxProps<Theme> = {
   borderBottom: 1,
   borderColor: 'divider'
