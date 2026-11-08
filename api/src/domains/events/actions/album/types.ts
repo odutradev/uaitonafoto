@@ -11,7 +11,8 @@ import type {
   eventScreenParamsSchema,
   screenQuerySchema,
   screenResponseSchema,
-  screenSlotListResponseSchema
+  screenSlotListResponseSchema,
+  updateScreenSlotSchema
 } from './schemas'
 
 export type EventIdRequest = { params: z.infer<typeof eventIdParamsSchema> }
@@ -24,6 +25,11 @@ export type CreateScreenSlotRequest = {
 export type EventPhotoRequest = { params: z.infer<typeof eventPhotoParamsSchema> }
 
 export type EventScreenRequest = { params: z.infer<typeof eventScreenParamsSchema> }
+
+export type UpdateScreenSlotRequest = {
+  params: z.infer<typeof eventScreenParamsSchema>
+  body?: z.infer<typeof updateScreenSlotSchema>
+}
 
 export type ActivateScreenRequest = {
   params: z.infer<typeof eventIdParamsSchema>

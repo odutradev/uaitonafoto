@@ -33,6 +33,12 @@ export const createScreenSlotSchema = z
   })
   .openapi('CreateScreenSlot')
 
+export const updateScreenSlotSchema = z
+  .object({
+    name: z.string().trim().max(60).optional().openapi({ example: 'Área VIP', description: 'Novo apelido ou local do telão' })
+  })
+  .openapi('UpdateScreenSlot')
+
 export const screenSlotListResponseSchema = z.array(eventScreenSlotSchema).openapi('ScreenSlotListResponse')
 
 export const activateScreenSchema = z

@@ -24,7 +24,8 @@ import {
   eventScreenParamsSchema,
   screenQuerySchema,
   screenResponseSchema,
-  screenSlotListResponseSchema
+  screenSlotListResponseSchema,
+  updateScreenSlotSchema
 } from './schemas'
 import { photoSchema } from '../photo/schemas'
 
@@ -42,7 +43,8 @@ import type {
   EventScreenRequest,
   ScreenRequest,
   ScreenResponse,
-  ScreenSlotListResponse
+  ScreenSlotListResponse,
+  UpdateScreenSlotRequest
 } from './types'
 
 const SCREEN_DEFAULT_LIMIT = 50
@@ -118,6 +120,34 @@ export const removeScreenSlot = defineAction(
     if ('error' in access) return manageError({ code: access.error })
 
     const updated = await eventRepository.removeScreenSlot(access.event.id, params.screenId)
+    if (!updated) return manageError({ code: 'not_found' })
+
+    return updated.screens
+  }
+)
+
+export const updateScreenSlot = defineAction(
+  {
+    method: 'patch',
+    path: '/events/:id/screens/:screenId',
+    summary: 'Atualizar apelido ou identificação de um telão do evento',
+    tags: ['Álbum e Telão'],
+    authenticate: true,
+    schema: { params: eventScreenParamsSchema, body: updateScreenSlotSchema },
+    responses: {
+      200: { description: 'Lista atualizada de telões do evento', schema: screenSlotListResponseSchema },
+      403: { description: 'Usuário não pertence à equipe do evento' },
+      404: { description: 'Evento ou telão não encontrado' }
+    }
+  },
+  async ({ ids, params, data, manageError }: ManageRequestBody<UpdateScreenSlotRequest>): ManageRequestResponse<ScreenSlotListResponse> => {
+    if (!ids.userId) return manageError({ code: 'unauthorized' })
+
+    const access = await loadTeamAccess(params.id, ids.userId)
+    if ('error' in access) return manageError({ code: access.error })
+
+    const trimmedName = data?.name?.trim()
+    const updated = await eventRepository.updateScreenSlotName(access.event.id, params.screenId, trimmedName || undefined)
     if (!updated) return manageError({ code: 'not_found' })
 
     return updated.screens
