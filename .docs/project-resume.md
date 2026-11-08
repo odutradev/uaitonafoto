@@ -34,7 +34,7 @@ Focado em profissionais de eventos com demanda recorrente, ancorado em desconto 
 | Plano Mensal | Preço | Franquia Inclusa | Custo Efetivo / Evento | Crédito Extra Avulso |
 | :--- | :--- | :--- | :--- | :--- |
 | **Agência Essencial** | R\$ 247,00/mês | 4 eventos/mês | R\$ 61,75 ($58\%$ OFF) | R\$ 69,00 |
-| **Agência Pro** | R\$ 447,00/mês | 10 eventos/mês | R\$ 44,70 ($70\%$ OFF) | R\$ 49,00 |
+| **Agência Pro** | R\$ 447,00/mês | 10 eventos/mês | R\$ 44,70 ($70\%$ OFF) | R\$ 69,00 |
 
 **Diferenciais Exclusivos do Plano Agência:**
 * **Selo White-Label Gerador de Leads:** Exibição da marca da assessoria no telão e no topo do app mobile (*"Experiência oferecida por [Logo da Agência]"*) com botão clicável para WhatsApp/Instagram da cerimonialista.

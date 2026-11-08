@@ -121,10 +121,10 @@ export const plansConfig: PlanConfig[] = [
       'Botão direto para seu WhatsApp no mural de fotos',
       'Créditos acumulativos enquanto o plano estiver ativo',
       'Painel de moderação para recepcionistas na festa',
-      'Crédito extra avulso por apenas R$ 49,00',
+      'Crédito extra avulso por R$ 69,00',
       'Suporte prioritário via WhatsApp'
     ],
-    ctaText: 'Assinar Agência Pro',
+    ctaText: 'Assinar Pro',
     ctaHref: 'prod_agency_pro',
     highlighted: true
   },
