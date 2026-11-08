@@ -11,6 +11,7 @@ import AuthPage from '@pages/auth/authPage'
 import AuthRoute from '@components/authRoute'
 import DashboardLayout from '@components/dashboardLayout'
 import Billing from '@pages/app/billing'
+import EventDetails from '@pages/app/eventDetails'
 import Home from '@pages/app/home'
 import Logs from '@pages/app/logs'
 import Profile from '@pages/app/profile'
@@ -34,6 +35,7 @@ const appRouter = createBrowserRouter([
             element: createElement(DashboardLayout),
             children: [
               { index: true, element: createElement(Home) },
+              { path: 'events/:id', element: createElement(EventDetails) },
               { path: 'billing', element: createElement(Billing) },
               { path: 'profile', element: createElement(Profile) },
               { path: 'logs', element: createElement(Logs) }
