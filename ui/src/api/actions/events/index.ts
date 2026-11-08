@@ -1,0 +1,74 @@
+﻿import api from '@interceptor'
+import type {
+  AlbumParams,
+  CreateEventPayload,
+  EventGuest,
+  EventItem,
+  EventPhoto,
+  Paginated,
+  PaginationParams,
+  ScreenParams,
+  ScreenResponse,
+  TeamMember,
+  UpdateEventPayload
+} from './types'
+
+export const createEvent = async (payload: CreateEventPayload): Promise<EventItem> => {
+  const response = await api.post<EventItem>('/events', payload)
+  return response.data
+}
+
+export const getMyEvents = async (params?: PaginationParams): Promise<Paginated<EventItem>> => {
+  const response = await api.get<Paginated<EventItem>>('/events', { params })
+  return response.data
+}
+
+export const getEvent = async (id: string): Promise<EventItem> => {
+  const response = await api.get<EventItem>(`/events/${id}`)
+  return response.data
+}
+
+export const updateEvent = async (id: string, payload: UpdateEventPayload): Promise<EventItem> => {
+  const response = await api.put<EventItem>(`/events/${id}`, payload)
+  return response.data
+}
+
+export const deleteEvent = async (id: string): Promise<EventItem> => {
+  const response = await api.delete<EventItem>(`/events/${id}`)
+  return response.data
+}
+
+export const getEventTeam = async (id: string): Promise<TeamMember[]> => {
+  const response = await api.get<TeamMember[]>(`/events/${id}/team`)
+  return response.data
+}
+
+export const addOrganizer = async (id: string, email: string): Promise<TeamMember[]> => {
+  const response = await api.post<TeamMember[]>(`/events/${id}/team`, { email })
+  return response.data
+}
+
+export const removeTeamMember = async (id: string, userId: string): Promise<TeamMember[]> => {
+  const response = await api.delete<TeamMember[]>(`/events/${id}/team/${userId}`)
+  return response.data
+}
+
+export const getEventGuests = async (id: string): Promise<EventGuest[]> => {
+  const response = await api.get<EventGuest[]>(`/events/${id}/guests`)
+  return response.data
+}
+
+export const getEventScreen = async (id: string, params?: ScreenParams): Promise<ScreenResponse> => {
+  const response = await api.get<ScreenResponse>(`/events/${id}/screen`, { params })
+  return response.data
+}
+
+export const getEventAlbum = async (id: string, params?: AlbumParams): Promise<Paginated<EventPhoto>> => {
+  const response = await api.get<Paginated<EventPhoto>>(`/events/${id}/album`, { params })
+  return response.data
+}
+
+export const deleteEventPhoto = async (id: string, photoId: string): Promise<EventPhoto> => {
+  const response = await api.delete<EventPhoto>(`/events/${id}/photos/${photoId}`)
+  return response.data
+}

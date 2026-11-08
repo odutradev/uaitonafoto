@@ -1,0 +1,39 @@
+﻿import type { EventPhoto, EventPhase, EventType, PhotoVisibility } from '@actions/events/types'
+
+export interface GuestEventInfo {
+  name: string
+  description?: string
+  type: EventType
+  startsAt: string
+  endsAt: string
+  uploadsCloseAt: string
+  galleryExpiresAt: string
+  maxPhotosPerGuest: number
+  photoVisibility: PhotoVisibility
+  phase: EventPhase
+}
+
+export interface GuestProfile {
+  id: string
+  name: string
+}
+
+export interface JoinEventResponse {
+  guestToken: string
+  guest: GuestProfile
+  event: GuestEventInfo
+}
+
+export interface GuestSession {
+  guest: GuestProfile
+  event: GuestEventInfo
+  photosSent: number
+  photosRemaining: number
+}
+
+export interface LikeResult {
+  liked: boolean
+  likesCount: number
+}
+
+export type GuestPhoto = EventPhoto
