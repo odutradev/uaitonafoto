@@ -95,9 +95,3 @@ export const emptyBoxStyles: SxProps<Theme> = {
   alignItems: 'center',
   gap: 0.5
 }
-
-export const paginationRowStyles: SxProps<Theme> = {
-  display: 'flex',
-  justifyContent: 'center',
-  pt: 0.5
-}

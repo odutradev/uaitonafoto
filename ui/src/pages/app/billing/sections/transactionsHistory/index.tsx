@@ -7,13 +7,14 @@ import {
   FormControl,
   InputLabel,
   MenuItem,
-  Pagination,
   Paper,
   Select,
   Skeleton,
   Typography
 } from '@mui/material'
 import { OpenInNew as PayNowIcon } from '@mui/icons-material'
+
+import Pagination from '@components/pagination'
 
 import { formatPriceInBrl } from '@pages/public/landingPage/sections/plans/utils'
 
@@ -26,7 +27,6 @@ import {
   getTransactionRowStyles,
   headerFilterBarStyles,
   historyWrapperStyles,
-  paginationRowStyles,
   rowActionsStyles,
   rowButtonStyles,
   rowMainInfoStyles,
@@ -393,19 +393,12 @@ const TransactionsHistory = ({
         </Card>
       )}
 
-      {totalPages > 1 && (
-        <Box sx={paginationRowStyles}>
-          <Pagination
-            count={totalPages}
-            page={page}
-            disabled={isLoading}
-            color="primary"
-            size="small"
-            shape="rounded"
-            onChange={(_e, nextPage) => onPageChange(nextPage)}
-          />
-        </Box>
-      )}
+      <Pagination
+        page={page}
+        totalPages={totalPages}
+        isLoading={isLoading}
+        onPageChange={onPageChange}
+      />
     </Box>
   )
 }
