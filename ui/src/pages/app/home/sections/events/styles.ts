@@ -41,3 +41,36 @@ export const emptyButtonStyles: SxProps<Theme> = {
   minHeight: 48
 }
 
+
+export const eventsGridStyles: SxProps<Theme> = {
+  display: 'grid',
+  gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', lg: 'repeat(3, 1fr)' },
+  gap: 2
+}
+
+export const eventCardStyles: SxProps<Theme> = {
+  p: 0,
+  overflow: 'hidden'
+}
+
+export const eventCardActionStyles: SxProps<Theme> = {
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'stretch',
+  gap: 1.25,
+  p: 2.5,
+  minHeight: 48,
+  textAlign: 'left',
+  minWidth: 0
+}
+
+export const eventCardChipsStyles: SxProps<Theme> = {
+  display: 'flex',
+  flexWrap: 'wrap',
+  gap: 1
+}
+
+export const eventCardNameStyles: SxProps<Theme> = {
+  fontWeight: 700,
+  overflowWrap: 'anywhere'
+}

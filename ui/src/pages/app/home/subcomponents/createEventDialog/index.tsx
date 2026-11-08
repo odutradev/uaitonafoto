@@ -1,19 +1,19 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import {
-  Alert,
   Box,
   Button,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
-  FormControl,
-  InputLabel,
   MenuItem,
-  Select,
   TextField
 } from '@mui/material'
+import dayjs from 'dayjs'
 import { toast } from 'react-toastify'
+
+import { createEvent } from '@actions/events'
+import { eventTypeLabels, getErrorMessage, photoVisibilityLabels } from '@config/events'
 
 import {
   dialogActionsStyles,
@@ -23,56 +23,62 @@ import {
   twoColsRowStyles
 } from './styles'
 import type { FormEvent } from 'react'
-import type { CreateEventDialogProps, EventModerationOption, EventTierOption } from './types'
+import type { EventType, PhotoVisibility } from '@actions/events/types'
+import type { CreateEventDialogProps, CreateEventFormState } from './types'
 
-const toSlug = (text: string): string =>
-  text
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/(^-|-$)/g, '')
+const DATETIME_INPUT_FORMAT = 'YYYY-MM-DDTHH:mm'
 
-const CreateEventDialog = ({
-  open,
-  paidCredits,
-  freeCredits,
-  onClose,
-  onGoToBilling
-}: CreateEventDialogProps) => {
-  const defaultTier: EventTierOption = paidCredits > 0 ? 'PRO_UNLOCKED' : 'FREE_TRIAL'
-
-  const [title, setTitle] = useState('')
-  const [slug, setSlug] = useState('')
-  const [slugTouched, setSlugTouched] = useState(false)
-  const [eventDate, setEventDate] = useState('')
-  const [moderationMode, setModerationMode] = useState<EventModerationOption>('AUTO')
-  const [tier, setTier] = useState<EventTierOption>(defaultTier)
-
-  const hasAnyCredit = paidCredits > 0 || freeCredits > 0
-
-  const handleTitleChange = (nextTitle: string) => {
-    setTitle(nextTitle)
-    if (!slugTouched) {
-      setSlug(toSlug(nextTitle))
-    }
+const buildInitialState = (): CreateEventFormState => {
+  const start = dayjs().add(1, 'hour').startOf('hour')
+  return {
+    name: '',
+    type: 'wedding',
+    startsAt: start.format(DATETIME_INPUT_FORMAT),
+    endsAt: start.add(6, 'hour').format(DATETIME_INPUT_FORMAT),
+    maxPhotosPerGuest: 10,
+    photoVisibility: 'during_event',
+    uploadWindowHours: 24,
+    galleryDurationDays: 30
   }
+}
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+const CreateEventDialog = ({ open, onClose, onCreated }: CreateEventDialogProps) => {
+  const [form, setForm] = useState<CreateEventFormState>(buildInitialState)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const setField = <K extends keyof CreateEventFormState>(key: K, value: CreateEventFormState[K]) =>
+    setForm((current) => ({ ...current, [key]: value }))
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
 
-    if (!title.trim() || !eventDate) {
-      toast.error('Informe o nome e a data do evento.')
+    if (!dayjs(form.endsAt).isAfter(dayjs(form.startsAt))) {
+      toast.error('O término do evento deve ser depois do início.')
       return
     }
 
-    if (!hasAnyCredit) {
-      toast.info('Adquira ou resgate um crédito antes de ativar o evento.')
-      return
+    setIsSubmitting(true)
+    try {
+      const created = await createEvent({
+        name: form.name.trim(),
+        type: form.type,
+        startsAt: dayjs(form.startsAt).toISOString(),
+        endsAt: dayjs(form.endsAt).toISOString(),
+        settings: {
+          maxPhotosPerGuest: form.maxPhotosPerGuest,
+          photoVisibility: form.photoVisibility,
+          uploadWindowHours: form.uploadWindowHours,
+          galleryDurationDays: form.galleryDurationDays
+        }
+      })
+      toast.success('Evento criado!')
+      setForm(buildInitialState())
+      onCreated(created)
+    } catch (error) {
+      toast.error(getErrorMessage(error, 'Não foi possível criar o evento.'))
+    } finally {
+      setIsSubmitting(false)
     }
-
-    toast.info('A ativação de eventos ao vivo será liberada em breve!')
-    onClose()
   }
 
   return (
@@ -82,82 +88,93 @@ const CreateEventDialog = ({
 
         <DialogContent>
           <Box sx={formFieldsStackStyles}>
-            {!hasAnyCredit && (
-              <Alert
-                severity="info"
-                sx={{ borderRadius: '14px' }}
-                action={
-                  <Button color="inherit" size="small" onClick={onGoToBilling}>
-                    Ver créditos
-                  </Button>
-                }
-              >
-                Você não possui créditos ativos no momento. Resgate seu teste grátis ou adquira um passe na aba de planos.
-              </Alert>
-            )}
-
             <TextField
               label="Nome do evento"
               placeholder="Ex: Casamento Marina & Pedro"
-              value={title}
-              onChange={(e) => handleTitleChange(e.target.value)}
+              value={form.name}
+              onChange={(e) => setField('name', e.target.value)}
+              slotProps={{ htmlInput: { maxLength: 120 } }}
               required
               fullWidth
             />
 
             <TextField
-              label="Identificador do link (QR Code)"
-              placeholder="casamento-marina-e-pedro"
-              value={slug}
-              onChange={(e) => {
-                setSlugTouched(true)
-                setSlug(toSlug(e.target.value))
-              }}
-              helperText={slug ? `Link dos convidados: /e/${slug}` : 'Gerado automaticamente a partir do nome.'}
+              select
+              label="Tipo de evento"
+              value={form.type}
+              onChange={(e) => setField('type', e.target.value as EventType)}
               fullWidth
-            />
+            >
+              {Object.entries(eventTypeLabels).map(([value, label]) => (
+                <MenuItem key={value} value={value}>
+                  {label}
+                </MenuItem>
+              ))}
+            </TextField>
 
             <Box sx={twoColsRowStyles}>
               <TextField
-                label="Data do evento"
-                type="date"
-                value={eventDate}
-                onChange={(e) => setEventDate(e.target.value)}
+                label="Início"
+                type="datetime-local"
+                value={form.startsAt}
+                onChange={(e) => setField('startsAt', e.target.value)}
                 slotProps={{ inputLabel: { shrink: true } }}
                 required
                 fullWidth
               />
-
-              <FormControl fullWidth>
-                <InputLabel id="event-moderation-label">Moderação do telão</InputLabel>
-                <Select
-                  labelId="event-moderation-label"
-                  label="Moderação do telão"
-                  value={moderationMode}
-                  onChange={(e) => setModerationMode(e.target.value as EventModerationOption)}
-                >
-                  <MenuItem value="AUTO">Automática inteligente</MenuItem>
-                  <MenuItem value="MANUAL_PIN">Manual com PIN de equipe</MenuItem>
-                </Select>
-              </FormControl>
+              <TextField
+                label="Término"
+                type="datetime-local"
+                value={form.endsAt}
+                onChange={(e) => setField('endsAt', e.target.value)}
+                slotProps={{ inputLabel: { shrink: true } }}
+                required
+                fullWidth
+              />
             </Box>
 
-            <FormControl fullWidth>
-              <InputLabel id="event-tier-label">Tipo de crédito a utilizar</InputLabel>
-              <Select
-                labelId="event-tier-label"
-                label="Tipo de crédito a utilizar"
-                value={tier}
-                onChange={(e) => setTier(e.target.value as EventTierOption)}
-              >
-                <MenuItem value="PRO_UNLOCKED" disabled={paidCredits === 0}>
-                  Passe Completo ({paidCredits} {paidCredits === 1 ? 'disponível' : 'disponíveis'})
+            <TextField
+              select
+              label="Fotos visíveis"
+              value={form.photoVisibility}
+              onChange={(e) => setField('photoVisibility', e.target.value as PhotoVisibility)}
+              helperText="Quando as fotos aparecem no telão e no feed."
+              fullWidth
+            >
+              {Object.entries(photoVisibilityLabels).map(([value, label]) => (
+                <MenuItem key={value} value={value}>
+                  {label}
                 </MenuItem>
-                <MenuItem value="FREE_TRIAL" disabled={freeCredits === 0}>
-                  Teste Grátis — até 25 fotos ({freeCredits} {freeCredits === 1 ? 'disponível' : 'disponíveis'})
-                </MenuItem>
-              </Select>
-            </FormControl>
+              ))}
+            </TextField>
+
+            <Box sx={twoColsRowStyles}>
+              <TextField
+                label="Fotos por convidado"
+                type="number"
+                value={form.maxPhotosPerGuest}
+                onChange={(e) => setField('maxPhotosPerGuest', Number(e.target.value))}
+                slotProps={{ htmlInput: { min: 1, max: 100 } }}
+                fullWidth
+              />
+              <TextField
+                label="Envio após o fim (horas)"
+                type="number"
+                value={form.uploadWindowHours}
+                onChange={(e) => setField('uploadWindowHours', Number(e.target.value))}
+                slotProps={{ htmlInput: { min: 0, max: 168 } }}
+                fullWidth
+              />
+            </Box>
+
+            <TextField
+              label="Galeria disponível por (dias após o fim)"
+              type="number"
+              value={form.galleryDurationDays}
+              onChange={(e) => setField('galleryDurationDays', Number(e.target.value))}
+              slotProps={{ htmlInput: { min: 1, max: 365 } }}
+              fullWidth
+            />
           </Box>
         </DialogContent>
 
@@ -165,14 +182,8 @@ const CreateEventDialog = ({
           <Button type="button" variant="outlined" onClick={onClose} sx={dialogButtonStyles}>
             Cancelar
           </Button>
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            disabled={!hasAnyCredit}
-            sx={dialogButtonStyles}
-          >
-            Criar evento
+          <Button type="submit" variant="contained" color="primary" disabled={isSubmitting} sx={dialogButtonStyles}>
+            {isSubmitting ? 'Criando...' : 'Criar evento'}
           </Button>
         </DialogActions>
       </Box>

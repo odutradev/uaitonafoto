@@ -10,6 +10,7 @@ import Events from './sections/events'
 import EventsOverview from './sections/eventsOverview'
 import Welcome from './sections/welcome'
 import CreateEventDialog from './subcomponents/createEventDialog'
+import useEvents from './hooks/useEvents'
 import { homeContentStyles } from './styles'
 
 const Home = () => {
@@ -17,6 +18,7 @@ const Home = () => {
   const { user } = useAuth()
   const updateUser = useAuthStore((state) => state.updateUser)
   const [isCreateOpen, setIsCreateOpen] = useState(false)
+  const { events, isLoading } = useEvents()
 
   useEffect(() => {
     getMeData().then(updateUser).catch(() => undefined)
@@ -42,14 +44,17 @@ const Home = () => {
         onGoToBilling={handleGoToBilling}
       />
 
-      <Events onCreateEvent={() => setIsCreateOpen(true)} />
+      <Events
+        events={events}
+        isLoading={isLoading}
+        onCreateEvent={() => setIsCreateOpen(true)}
+        onOpenEvent={(eventId) => navigate(`/app/events/${eventId}`)}
+      />
 
       <CreateEventDialog
         open={isCreateOpen}
-        paidCredits={user.paidCredits}
-        freeCredits={user.freeCredits}
         onClose={() => setIsCreateOpen(false)}
-        onGoToBilling={handleGoToBilling}
+        onCreated={(event) => navigate(`/app/events/${event.id}`)}
       />
     </Box>
   )
