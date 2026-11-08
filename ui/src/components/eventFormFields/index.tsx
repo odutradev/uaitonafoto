@@ -18,98 +18,158 @@ import {
 } from '@config/events'
 
 import { formFieldsStackStyles, pinCardBoxStyles, pinToggleRowStyles, twoColsRowStyles } from './styles'
-import type { EventType, PhotoVisibility, PinRotationMinutes } from '@actions/events/types'
+import type { EventCreditType, EventType, PhotoVisibility, PinRotationMinutes } from '@actions/events/types'
 import type { EventFormFieldsProps } from './types'
 
-const EventFormFields = ({ form, onChange }: EventFormFieldsProps) => (
-  <Box sx={formFieldsStackStyles}>
-    <TextField
-      label="Nome do evento"
-      placeholder="Ex: Casamento Marina & Pedro"
-      value={form.name}
-      onChange={(e) => onChange('name', e.target.value)}
-      slotProps={{ htmlInput: { maxLength: 120 } }}
-      required
-      fullWidth
-    />
+const EventFormFields = ({
+  form,
+  onChange,
+  isCreate = false,
+  paidCredits = 0,
+  freeCredits = 0
+}: EventFormFieldsProps) => {
+  const handleCreditChange = (creditType: EventCreditType) => {
+    onChange('creditType', creditType)
+    onChange('galleryDurationDays', creditType === 'free' ? 14 : 90)
+    onChange('uploadWindowHours', 0)
+  }
 
-    <TextField
-      select
-      label="Tipo de evento"
-      value={form.type}
-      onChange={(e) => onChange('type', e.target.value as EventType)}
-      fullWidth
-    >
-      {Object.entries(eventTypeLabels).map(([value, label]) => (
-        <MenuItem key={value} value={value}>
-          {label}
-        </MenuItem>
-      ))}
-    </TextField>
+  return (
+    <Box sx={formFieldsStackStyles}>
+      {isCreate && (
+        <TextField
+          select
+          label="Crédito a debitar"
+          value={form.creditType}
+          onChange={(e) => handleCreditChange(e.target.value as EventCreditType)}
+          helperText={
+            form.creditType === 'paid'
+              ? 'Duração: 8h de evento ao vivo • Galeria ativa por 90 dias'
+              : 'Duração: 4h de evento ao vivo • Galeria ativa por 14 dias'
+          }
+          fullWidth
+        >
+          <MenuItem value="paid" disabled={paidCredits <= 0}>
+            Crédito Normal (8h de evento • 90 dias de galeria) — {paidCredits} {paidCredits === 1 ? 'disponível' : 'disponíveis'}
+          </MenuItem>
+          <MenuItem value="free" disabled={freeCredits <= 0}>
+            Teste Grátis (4h de evento • 14 dias de galeria) — {freeCredits} {freeCredits === 1 ? 'disponível' : 'disponíveis'}
+          </MenuItem>
+        </TextField>
+      )}
 
-    <Box sx={twoColsRowStyles}>
       <TextField
-        label="Início"
-        type="datetime-local"
-        value={form.startsAt}
-        onChange={(e) => onChange('startsAt', e.target.value)}
-        slotProps={{ inputLabel: { shrink: true } }}
+        label="Nome do evento"
+        placeholder="Ex: Casamento Marina & Pedro"
+        value={form.name}
+        onChange={(e) => onChange('name', e.target.value)}
+        slotProps={{ htmlInput: { maxLength: 120 } }}
         required
         fullWidth
       />
-      <TextField
-        label="Término"
-        type="datetime-local"
-        value={form.endsAt}
-        onChange={(e) => onChange('endsAt', e.target.value)}
-        slotProps={{ inputLabel: { shrink: true } }}
-        required
-        fullWidth
-      />
-    </Box>
 
-    <TextField
-      select
-      label="Fotos visíveis"
-      value={form.photoVisibility}
-      onChange={(e) => onChange('photoVisibility', e.target.value as PhotoVisibility)}
-      helperText="Quando as fotos aparecem no telão e no feed."
-      fullWidth
-    >
-      {Object.entries(photoVisibilityLabels).map(([value, label]) => (
-        <MenuItem key={value} value={value}>
-          {label}
-        </MenuItem>
-      ))}
-    </TextField>
-
-    <Box sx={twoColsRowStyles}>
       <TextField
-        label="Fotos por convidado"
-        type="number"
-        value={form.maxPhotosPerGuest}
-        onChange={(e) => onChange('maxPhotosPerGuest', Number(e.target.value))}
-        slotProps={{ htmlInput: { min: 1, max: 100 } }}
+        select
+        label="Tipo de evento"
+        value={form.type}
+        onChange={(e) => onChange('type', e.target.value as EventType)}
         fullWidth
-      />
-      <TextField
-        label="Envio após o fim (horas)"
-        type="number"
-        value={form.uploadWindowHours}
-        onChange={(e) => onChange('uploadWindowHours', Number(e.target.value))}
-        slotProps={{ htmlInput: { min: 0, max: 168 } }}
-        fullWidth
-      />
-    </Box>
+      >
+        {Object.entries(eventTypeLabels).map(([value, label]) => (
+          <MenuItem key={value} value={value}>
+            {label}
+          </MenuItem>
+        ))}
+      </TextField>
 
-    <TextField
-      label="Galeria disponível por (dias após o fim)"
-      type="number"
-      value={form.galleryDurationDays}
-      onChange={(e) => onChange('galleryDurationDays', Number(e.target.value))}
-      slotProps={{ htmlInput: { min: 1, max: 365 } }}
-      fullWidth
-    />
+      {isCreate ? (
+        <TextField
+          label="Início do evento"
+          type="datetime-local"
+          value={form.startsAt}
+          onChange={(e) => onChange('startsAt', e.target.value)}
+          slotProps={{ inputLabel: { shrink: true } }}
+          helperText={`O sistema e telão ficarão abertos por ${form.creditType === 'free' ? '4' : '8'} horas a partir do início.`}
+          required
+          fullWidth
+        />
+      ) : (
+        <Box sx={twoColsRowStyles}>
+          <TextField
+            label="Início"
+            type="datetime-local"
+            value={form.startsAt}
+            onChange={(e) => onChange('startsAt', e.target.value)}
+            slotProps={{ inputLabel: { shrink: true } }}
+            required
+            fullWidth
+          />
+          <TextField
+            label="Término"
+            type="datetime-local"
+            value={form.endsAt}
+            onChange={(e) => onChange('endsAt', e.target.value)}
+            slotProps={{ inputLabel: { shrink: true } }}
+            required
+            fullWidth
+          />
+        </Box>
+      )}
+
+      <TextField
+        select
+        label="Fotos visíveis"
+        value={form.photoVisibility}
+        onChange={(e) => onChange('photoVisibility', e.target.value as PhotoVisibility)}
+        helperText="Quando as fotos aparecem no telão e no feed."
+        fullWidth
+      >
+        {Object.entries(photoVisibilityLabels).map(([value, label]) => (
+          <MenuItem key={value} value={value}>
+            {label}
+          </MenuItem>
+        ))}
+      </TextField>
+
+      <Box sx={twoColsRowStyles}>
+        <TextField
+          label="Fotos por convidado"
+          type="number"
+          value={form.maxPhotosPerGuest}
+          onChange={(e) => onChange('maxPhotosPerGuest', Number(e.target.value))}
+          slotProps={{ htmlInput: { min: 1, max: 100 } }}
+          fullWidth
+        />
+        {!isCreate ? (
+          <TextField
+            label="Envio após o fim (horas)"
+            type="number"
+            value={form.uploadWindowHours}
+            onChange={(e) => onChange('uploadWindowHours', Number(e.target.value))}
+            slotProps={{ htmlInput: { min: 0, max: 168 } }}
+            fullWidth
+          />
+        ) : (
+          <TextField
+            label="Galeria disponível por"
+            value={`${form.galleryDurationDays} dias`}
+            slotProps={{ htmlInput: { readOnly: true } }}
+            helperText={`Regra do crédito: ${form.creditType === 'free' ? '14 dias' : '90 dias'}`}
+            fullWidth
+          />
+        )}
+      </Box>
+
+      {!isCreate && (
+        <TextField
+          label="Galeria disponível por (dias após o fim)"
+          type="number"
+          value={form.galleryDurationDays}
+          onChange={(e) => onChange('galleryDurationDays', Number(e.target.value))}
+          slotProps={{ htmlInput: { min: 1, max: 365 } }}
+          fullWidth
+        />
+      )}
 
     <Box sx={pinCardBoxStyles}>
       <Box sx={pinToggleRowStyles}>
@@ -204,5 +264,6 @@ const EventFormFields = ({ form, onChange }: EventFormFieldsProps) => (
     </Box>
   </Box>
 )
+}
 
 export default EventFormFields

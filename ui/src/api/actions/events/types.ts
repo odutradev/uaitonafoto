@@ -1,4 +1,5 @@
 export type EventType = 'birthday' | 'wedding' | 'corporate' | 'other'
+export type EventCreditType = 'free' | 'paid'
 export type EventMemberRole = 'creator' | 'organizer'
 export type PhotoVisibility = 'during_event' | 'after_event'
 export type EventPhase = 'upcoming' | 'open' | 'closed' | 'expired'
@@ -36,6 +37,7 @@ export interface EventItem {
   name: string
   description?: string
   type: EventType
+  creditType?: EventCreditType
   startsAt: string
   endsAt: string
   guestToken: string
@@ -53,8 +55,9 @@ export interface CreateEventPayload {
   name: string
   description?: string
   type: EventType
+  creditType?: EventCreditType
   startsAt: string
-  endsAt: string
+  endsAt?: string
   settings?: Partial<EventSettings>
 }
 

@@ -1,8 +1,9 @@
-import type { EventItem, PinRotationMinutes } from '@actions/events/types'
+import type { EventCreditType, EventItem, PinRotationMinutes } from '@actions/events/types'
 
 export interface EventFormState {
   name: string
   type: EventItem['type']
+  creditType: EventCreditType
   startsAt: string
   endsAt: string
   maxPhotosPerGuest: number
@@ -18,4 +19,7 @@ export interface EventFormState {
 export interface EventFormFieldsProps {
   form: EventFormState
   onChange: <K extends keyof EventFormState>(key: K, value: EventFormState[K]) => void
+  isCreate?: boolean
+  paidCredits?: number
+  freeCredits?: number
 }
