@@ -1,6 +1,8 @@
 import defineAction from '@factories/defineAction'
 import { buildPaginatedResponse, getPaginationOptions } from '@factories/pagination/utils'
 import eventRepository from '../../repositories/events'
+import guestRepository from '../../repositories/guests'
+import { purgeEventPhotos } from '../../utils/purgeEventPhotos'
 import defaultEventSettings from './utils/defaultEventSettings'
 import findMemberRole from './utils/findMemberRole'
 import isValidEventPeriod from './utils/isValidEventPeriod'
@@ -170,6 +172,9 @@ export const deleteEvent = defineAction(
     const event = await eventRepository.findById(params.id)
     if (!event) return manageError({ code: 'not_found' })
     if (findMemberRole(event, ids.userId) !== 'creator') return manageError({ code: 'forbidden' })
+
+    await purgeEventPhotos(event.id)
+    await guestRepository.deleteByEvent(event.id)
 
     const deleted = await eventRepository.delete(event.id)
     if (!deleted) return manageError({ code: 'not_found' })
