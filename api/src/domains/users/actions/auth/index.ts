@@ -56,6 +56,7 @@ export const syncAuthUser = defineAction(
     try {
       const payload = {
         name: data.name,
+        fullName: data.fullName ?? (data.name && data.name.trim().toLowerCase() !== 'unknown' ? data.name : undefined),
         email: data.email,
         photoUrl: data.photoUrl ?? '',
         authProviderId: data.authProviderId ?? 'google'

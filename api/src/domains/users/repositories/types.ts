@@ -21,6 +21,7 @@ export type CreditType = 'free' | 'paid'
 export interface UpsertUserPayload {
   name: string
   email: string
+  fullName?: string
   photoUrl?: string
   authProviderId?: string
 }

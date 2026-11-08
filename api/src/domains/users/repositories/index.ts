@@ -37,8 +37,29 @@ export const userRepository = {
     const now = new Date().toISOString()
     const normalizedEmail = payload.email.trim().toLowerCase()
 
+    const isValidName = (value?: string | null): boolean => {
+      if (!value) return false
+      const trimmed = value.trim().toLowerCase()
+      return trimmed.length > 0 && trimmed !== 'unknown'
+    }
+
+    const resolvedName = isValidName(payload.name)
+      ? payload.name.trim()
+      : isValidName(existing?.name)
+        ? existing!.name.trim()
+        : normalizedEmail.split('@')[0] || 'Usuário'
+
+    const resolvedFullName = isValidName(payload.fullName)
+      ? payload.fullName!.trim()
+      : isValidName(existing?.fullName)
+        ? existing!.fullName!.trim()
+        : resolvedName !== 'Usuário'
+          ? resolvedName
+          : undefined
+
     const updateData = removeUndefined({
-      name: existing?.name || payload.name,
+      name: resolvedName,
+      fullName: resolvedFullName,
       email: normalizedEmail,
       photoUrl: existing?.photoUrl || payload.photoUrl || '',
       authProviderId: payload.authProviderId ?? existing?.authProviderId ?? 'google',

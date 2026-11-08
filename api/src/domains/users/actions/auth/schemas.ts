@@ -23,6 +23,7 @@ export const syncUserSchema = z.object({
   id: z.string().min(1).openapi({ example: 'firebase-uid' }),
   name: z.string().min(1).openapi({ example: 'John Doe' }),
   email: z.string().email().openapi({ example: 'john@uaitonafoto.odutra.com' }),
+  fullName: z.string().optional().openapi({ example: 'Johnathan Doe Smith' }),
   photoUrl: z.string().optional().openapi({ example: 'https://uaitonafoto.odutra.com/photo.webp' }),
   authProviderId: z.string().optional().openapi({ example: 'google.com' })
 }).openapi('SyncUserRequest')
