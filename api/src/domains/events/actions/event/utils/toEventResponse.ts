@@ -1,4 +1,4 @@
-﻿import type { EventEntity, EventMemberRole } from '../../../repositories/types'
+import type { EventEntity, EventMemberRole } from '../../../repositories/events/types'
 import type { EventResponse } from '../types'
 
 export const toEventResponse = (entity: EventEntity, myRole: EventMemberRole): EventResponse => ({

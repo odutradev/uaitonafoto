@@ -1,4 +1,4 @@
-﻿import type { EventSettings } from '../../../repositories/types'
+import type { EventSettings } from '../../../repositories/events/types'
 
 export const defaultEventSettings: EventSettings = {
   uploadWindowHours: 24,

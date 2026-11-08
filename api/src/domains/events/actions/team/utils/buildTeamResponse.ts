@@ -1,6 +1,6 @@
-﻿import userRepository from '@domains/users/repositories'
+import userRepository from '@domains/users/repositories'
 
-import type { EventEntity } from '../../../repositories/types'
+import type { EventEntity } from '../../../repositories/events/types'
 import type { TeamListResponse } from '../types'
 
 export const buildTeamResponse = async (event: EventEntity): Promise<TeamListResponse> => {

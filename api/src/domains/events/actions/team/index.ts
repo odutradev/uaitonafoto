@@ -1,6 +1,6 @@
-﻿import defineAction from '@factories/defineAction'
+import defineAction from '@factories/defineAction'
 import userRepository from '@domains/users/repositories'
-import eventRepository from '../../repositories'
+import eventRepository from '../../repositories/events'
 import findMemberRole from '../event/utils/findMemberRole'
 import buildTeamResponse from './utils/buildTeamResponse'
 import {

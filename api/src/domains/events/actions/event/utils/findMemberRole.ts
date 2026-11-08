@@ -1,4 +1,4 @@
-﻿import type { EventEntity, EventMemberRole } from '../../../repositories/types'
+import type { EventEntity, EventMemberRole } from '../../../repositories/events/types'
 
 export const findMemberRole = (event: EventEntity, userId: string): EventMemberRole | undefined =>
   event.members.find((member) => member.userId === userId)?.role

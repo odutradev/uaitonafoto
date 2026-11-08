@@ -1,6 +1,6 @@
-﻿import defineAction from '@factories/defineAction'
+import defineAction from '@factories/defineAction'
 import { buildPaginatedResponse, getPaginationOptions } from '@factories/pagination/utils'
-import eventRepository from '../../repositories'
+import eventRepository from '../../repositories/events'
 import defaultEventSettings from './utils/defaultEventSettings'
 import findMemberRole from './utils/findMemberRole'
 import isValidEventPeriod from './utils/isValidEventPeriod'
