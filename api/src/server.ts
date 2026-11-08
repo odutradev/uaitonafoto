@@ -6,17 +6,11 @@ suppressPunycodeWarning()
 import env from '@config/env'
 import { resolveAppVersion } from '@config/version'
 import { registerDomains } from '@config/domain'
+import { registerRoutines, startRoutines, stopRoutines } from '@config/routine'
 import usersDomain from '@domains/users'
 import systemDomain from '@domains/system'
 import paymentsDomain from '@domains/payments'
-import {
-  startSubscriptionReconciliationRoutine,
-  stopSubscriptionReconciliationRoutine
-} from '@domains/payments/routines/reconcileSubscriptions'
-import {
-  startExpirePendingTransactionsRoutine,
-  stopExpirePendingTransactionsRoutine
-} from '@domains/payments/routines/expirePendingTransactions'
+import paymentsRoutines from '@routines/payments'
 import { connectDatabase, disconnectDatabase } from '@database'
 import { connectEmail } from '@email'
 import { connectFirebase } from '@firebase'
@@ -36,8 +30,7 @@ const setupGracefulShutdown = (server: Server): void => {
     isShuttingDown = true
 
     logger.info(`Received ${signal}. Starting graceful shutdown...`)
-    stopSubscriptionReconciliationRoutine()
-    stopExpirePendingTransactionsRoutine()
+    stopRoutines()
 
     const forceExitTimer = setTimeout(() => {
       logger.error('Graceful shutdown timed out. Forcing exit...')
@@ -77,6 +70,7 @@ const setupGracefulShutdown = (server: Server): void => {
 const startServer = async (): Promise<void> => {
   const version = resolveAppVersion()
   registerDomains([usersDomain, systemDomain, paymentsDomain])
+  registerRoutines([paymentsRoutines])
 
   const app = buildApp()
   const port = env.PORT
@@ -91,8 +85,7 @@ const startServer = async (): Promise<void> => {
       connectPayment()
     ])
 
-    startSubscriptionReconciliationRoutine()
-    startExpirePendingTransactionsRoutine()
+    startRoutines()
   })
 
   setupGracefulShutdown(server)
