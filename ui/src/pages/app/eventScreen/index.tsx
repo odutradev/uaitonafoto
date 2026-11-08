@@ -109,7 +109,7 @@ const EventScreen = () => {
 
           <Box sx={controlsRowStyles}>
             <Tooltip title="Voltar para o painel">
-              <IconButton aria-label="Voltar" onClick={() => navigate(`/app/events/${id}`)} sx={iconButtonStyles} size="small">
+              <IconButton aria-label="Voltar" onClick={() => navigate(`/app/events/${id}?tab=screens`)} sx={iconButtonStyles} size="small">
                 <BackIcon fontSize="small" />
               </IconButton>
             </Tooltip>

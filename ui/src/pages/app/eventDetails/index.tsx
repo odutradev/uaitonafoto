@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { Box, Button, Chip, Skeleton, Tab, Tabs, Typography } from '@mui/material'
 import {
   ArrowBack as BackIcon,
@@ -9,7 +8,7 @@ import {
   SettingsOutlined as SettingsIcon
 } from '@mui/icons-material'
 import dayjs from 'dayjs'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 
 import { getEventPhase } from '@config/eventPhase'
 import { eventPhaseLabels, eventTypeLabels } from '@config/events'
@@ -36,12 +35,36 @@ import {
 } from './styles'
 import type { EventDetailsTab } from './types'
 
+const VALID_TABS: readonly EventDetailsTab[] = ['access', 'screens', 'album', 'team', 'settings']
+
+const isValidTab = (tab: string | null): tab is EventDetailsTab => {
+  return tab !== null && (VALID_TABS as readonly string[]).includes(tab)
+}
+
 const EventDetails = () => {
   const { id = '' } = useParams()
   const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
   const { user } = useAuth()
   const { event, isLoading, save, remove, addScreen, disconnectScreen, refresh } = useEventDetails(id)
-  const [activeTab, setActiveTab] = useState<EventDetailsTab>('access')
+
+  const rawTab = searchParams.get('tab')
+  const activeTab: EventDetailsTab = isValidTab(rawTab) ? rawTab : 'access'
+
+  const handleTabChange = (_: unknown, nextTab: EventDetailsTab) => {
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev)
+        if (nextTab === 'access') {
+          next.delete('tab')
+        } else {
+          next.set('tab', nextTab)
+        }
+        return next
+      },
+      { replace: true }
+    )
+  }
 
   if (isLoading || !event || !user) {
     return (
@@ -106,7 +129,7 @@ const EventDetails = () => {
       <Box sx={tabsContainerStyles}>
         <Tabs
           value={activeTab}
-          onChange={(_, nextValue: EventDetailsTab) => setActiveTab(nextValue)}
+          onChange={handleTabChange}
           variant="scrollable"
           scrollButtons="auto"
           allowScrollButtonsMobile

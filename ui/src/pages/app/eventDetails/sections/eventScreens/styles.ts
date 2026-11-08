@@ -102,3 +102,4 @@ export const screenSlotFooterStyles: SxProps<Theme> = {
   mt: 'auto',
   pt: 1
 }
+
