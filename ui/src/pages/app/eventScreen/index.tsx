@@ -19,6 +19,7 @@ import { QRCodeSVG } from 'qrcode.react'
 import { useParams } from 'react-router-dom'
 
 import Logo from '@components/logo'
+import Modal from '@components/modal'
 import PinInput from '@components/pinInput'
 import ThemeToggle from '@components/themeToggle'
 import { buildGuestLink } from '@config/events'
@@ -77,6 +78,7 @@ const EventScreen = () => {
     currentPhoto
   } = useEventScreen(eventIdentifier)
   const [pinInput, setPinInput] = useState('')
+  const [isDisconnectModalOpen, setIsDisconnectModalOpen] = useState(false)
   const [showPin, setShowPin] = useState<boolean>(() => {
     const stored = localStorage.getItem(SCREEN_SHOW_PIN_STORAGE_KEY)
     return stored !== null ? stored === 'true' : true
@@ -136,7 +138,7 @@ const EventScreen = () => {
             <Tooltip title="Desconectar telão">
               <IconButton
                 aria-label="Desconectar telão"
-                onClick={disconnect}
+                onClick={() => setIsDisconnectModalOpen(true)}
                 sx={iconButtonStyles}
                 size="small"
               >
@@ -359,6 +361,26 @@ const EventScreen = () => {
           </Box>
         </Box>
       )}
+
+      <Modal
+        open={isDisconnectModalOpen}
+        onClose={() => setIsDisconnectModalOpen(false)}
+        variant="warning"
+        title="Desconectar este telão?"
+        description="Este dispositivo deixará de exibir as fotos ao vivo. Para reconectá-lo, será necessário inserir o PIN novamente."
+        primaryAction={{
+          label: 'Desconectar',
+          color: 'error',
+          onClick: () => {
+            setIsDisconnectModalOpen(false)
+            disconnect()
+          }
+        }}
+        secondaryAction={{
+          label: 'Cancelar',
+          onClick: () => setIsDisconnectModalOpen(false)
+        }}
+      />
     </Box>
   )
 }
