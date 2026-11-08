@@ -20,8 +20,9 @@ export const screenSessionMiddleware = async (req: Request, res: Response, next:
     return
   }
 
-  const event = req.params.id
-    ? await eventRepository.findByIdOrGuestToken(req.params.id)
+  const paramId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id
+  const event = paramId
+    ? await eventRepository.findByIdOrGuestToken(paramId)
     : await eventRepository.findById(payload.eventId)
 
   if (!event || payload.eventId !== event.id) {
