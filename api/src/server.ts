@@ -10,6 +10,7 @@ import { registerRoutines, startRoutines, stopRoutines } from '@config/routine'
 import usersDomain from '@domains/users'
 import systemDomain from '@domains/system'
 import paymentsDomain from '@domains/payments'
+import eventsDomain from '@domains/events'
 import paymentsRoutines from '@routines/payments'
 import { connectDatabase, disconnectDatabase } from '@database'
 import { connectEmail } from '@email'
@@ -69,7 +70,7 @@ const setupGracefulShutdown = (server: Server): void => {
 
 const startServer = async (): Promise<void> => {
   const version = resolveAppVersion()
-  registerDomains([usersDomain, systemDomain, paymentsDomain])
+  registerDomains([usersDomain, systemDomain, paymentsDomain, eventsDomain])
   registerRoutines([paymentsRoutines])
 
   const app = buildApp()
