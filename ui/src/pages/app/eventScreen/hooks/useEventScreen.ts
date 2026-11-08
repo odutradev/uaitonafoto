@@ -122,6 +122,9 @@ const useEventScreen = (eventId: string) => {
     activate,
     event,
     pin,
+    photos,
+    currentIndex,
+    selectPhoto: setCurrentIndex,
     currentPhoto: photos[currentIndex],
     photosCount: photos.length,
     message
