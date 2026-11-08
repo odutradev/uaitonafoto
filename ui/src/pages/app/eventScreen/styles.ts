@@ -176,8 +176,8 @@ export const thumbnailImgStyles: SxProps<Theme> = {
 
 export const rightCardStyles: SxProps<Theme> = (theme) => ({
   width: { xs: '100%', md: 330, lg: 380 },
-  bgcolor: '#FFFFFF',
-  color: brandColors.ink,
+  bgcolor: theme.palette.mode === 'dark' ? brandColors.darkPaper : '#FFFFFF',
+  color: theme.palette.mode === 'dark' ? brandColors.darkTextPrimary : brandColors.ink,
   borderRadius: '28px',
   border: `1px solid ${theme.palette.divider}`,
   p: { xs: 2.5, md: 3.5 },
@@ -187,11 +187,11 @@ export const rightCardStyles: SxProps<Theme> = (theme) => ({
   justifyContent: 'space-between',
   gap: 2.5,
   flexShrink: 0,
-  boxShadow: theme.palette.mode === 'dark' ? '0 8px 32px rgba(0, 0, 0, 0.45)' : '0 8px 30px rgba(0, 0, 0, 0.08)'
+  boxShadow: theme.palette.mode === 'dark' ? 'none' : '0 8px 30px rgba(0, 0, 0, 0.08)'
 })
 
-export const qrFrameStyles: SxProps<Theme> = {
-  border: `2px solid ${brandColors.ink}`,
+export const qrFrameStyles: SxProps<Theme> = (theme) => ({
+  border: `2px solid ${theme.palette.mode === 'dark' ? 'transparent' : brandColors.ink}`,
   borderRadius: '24px',
   p: { xs: 1.5, md: 2.5 },
   width: '100%',
@@ -199,60 +199,60 @@ export const qrFrameStyles: SxProps<Theme> = {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  bgcolor: 'transparent'
-}
+  bgcolor: '#FFFFFF'
+})
 
 export const qrTextContainerStyles: SxProps<Theme> = {
   width: '100%',
   textAlign: 'left'
 }
 
-export const qrTitleStyles: SxProps<Theme> = {
+export const qrTitleStyles: SxProps<Theme> = (theme) => ({
   fontFamily: "'Bricolage Grotesque', sans-serif",
   fontWeight: 900,
   fontSize: { xs: '1.65rem', md: '2.1rem' },
   lineHeight: 1.05,
   letterSpacing: '-0.04em',
-  color: brandColors.ink
-}
+  color: theme.palette.mode === 'dark' ? brandColors.darkTextPrimary : brandColors.ink
+})
 
-export const qrSubtitleStyles: SxProps<Theme> = {
+export const qrSubtitleStyles: SxProps<Theme> = (theme) => ({
   fontFamily: "'DM Sans', sans-serif",
-  color: brandColors.textGray,
+  color: theme.palette.mode === 'dark' ? brandColors.darkTextSecondary : brandColors.textGray,
   fontSize: { xs: '0.95rem', md: '1.1rem' },
   fontWeight: 600,
   mt: 0.75
-}
+})
 
-export const qrPinBadgeStyles: SxProps<Theme> = {
+export const qrPinBadgeStyles: SxProps<Theme> = (theme) => ({
   mt: 1.75,
   px: 2,
   py: 0.75,
   borderRadius: '12px',
-  bgcolor: brandColors.sand,
-  border: `1px solid ${brandColors.sandDark}`,
+  bgcolor: theme.palette.mode === 'dark' ? brandColors.darkSurface : brandColors.sand,
+  border: `1px solid ${theme.palette.mode === 'dark' ? brandColors.darkBorder : brandColors.sandDark}`,
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
   width: '100%'
-}
+})
 
-export const qrPinLabelStyles: SxProps<Theme> = {
+export const qrPinLabelStyles: SxProps<Theme> = (theme) => ({
   fontFamily: "'DM Sans', sans-serif",
   fontSize: '0.85rem',
   fontWeight: 700,
-  color: brandColors.textGray,
+  color: theme.palette.mode === 'dark' ? brandColors.darkTextSecondary : brandColors.textGray,
   textTransform: 'uppercase',
   letterSpacing: '0.05em'
-}
+})
 
-export const qrPinCodeStyles: SxProps<Theme> = {
+export const qrPinCodeStyles: SxProps<Theme> = (theme) => ({
   fontFamily: 'monospace',
   fontSize: '1.25rem',
   fontWeight: 900,
   letterSpacing: '0.2em',
-  color: brandColors.ink
-}
+  color: theme.palette.mode === 'dark' ? brandColors.darkTextPrimary : brandColors.ink
+})
 
 export const waitingEmptyStyles: SxProps<Theme> = {
   flex: 1,

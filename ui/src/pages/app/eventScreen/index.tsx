@@ -345,11 +345,13 @@ const EventScreen = () => {
                         size="small"
                         onClick={handleTogglePinVisibility}
                         aria-label="Ocultar PIN"
-                        sx={{
+                        sx={(theme) => ({
                           p: 0.5,
-                          color: brandColors.textGray,
-                          '&:hover': { color: brandColors.ink }
-                        }}
+                          color: theme.palette.mode === 'dark' ? brandColors.darkTextSecondary : brandColors.textGray,
+                          '&:hover': {
+                            color: theme.palette.mode === 'dark' ? brandColors.darkTextPrimary : brandColors.ink
+                          }
+                        })}
                       >
                         <VisibilityOffIcon sx={{ fontSize: 18 }} />
                       </IconButton>
