@@ -11,7 +11,9 @@ import {
   ArrowBack as BackIcon,
   Favorite as LikeIcon,
   Fullscreen as FullscreenIcon,
-  PhotoCameraOutlined as CameraIcon
+  PhotoCameraOutlined as CameraIcon,
+  Visibility as VisibilityIcon,
+  VisibilityOff as VisibilityOffIcon
 } from '@mui/icons-material'
 import { QRCodeSVG } from 'qrcode.react'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -58,6 +60,7 @@ import {
 import type { FormEvent } from 'react'
 
 const THUMBNAIL_SLOTS_COUNT = 6
+const SCREEN_SHOW_PIN_STORAGE_KEY = 'uaitonafoto:screen:show_pin'
 
 const EventScreen = () => {
   const { id = '' } = useParams()
@@ -75,6 +78,18 @@ const EventScreen = () => {
     currentPhoto
   } = useEventScreen(id)
   const [pinInput, setPinInput] = useState('')
+  const [showPin, setShowPin] = useState<boolean>(() => {
+    const stored = localStorage.getItem(SCREEN_SHOW_PIN_STORAGE_KEY)
+    return stored !== null ? stored === 'true' : true
+  })
+
+  const handleTogglePinVisibility = () => {
+    setShowPin((prev) => {
+      const next = !prev
+      localStorage.setItem(SCREEN_SHOW_PIN_STORAGE_KEY, String(next))
+      return next
+    })
+  }
 
   const handleFullscreen = () => {
     if (!document.fullscreenElement) {
@@ -113,6 +128,18 @@ const EventScreen = () => {
                 <BackIcon fontSize="small" />
               </IconButton>
             </Tooltip>
+            {pin && (
+              <Tooltip title={showPin ? 'Ocultar PIN' : 'Mostrar PIN'}>
+                <IconButton
+                  aria-label={showPin ? 'Ocultar PIN' : 'Mostrar PIN'}
+                  onClick={handleTogglePinVisibility}
+                  sx={iconButtonStyles}
+                  size="small"
+                >
+                  {showPin ? <VisibilityOffIcon fontSize="small" /> : <VisibilityIcon fontSize="small" />}
+                </IconButton>
+              </Tooltip>
+            )}
             <Tooltip title="Alternar tela cheia">
               <IconButton aria-label="Tela cheia" onClick={handleFullscreen} sx={iconButtonStyles} size="small">
                 <FullscreenIcon fontSize="small" />
@@ -302,14 +329,30 @@ const EventScreen = () => {
                 sem app, sem cadastro
               </Typography>
 
-              {pin && (
+              {pin && showPin && (
                 <Box sx={qrPinBadgeStyles}>
                   <Typography component="span" sx={qrPinLabelStyles}>
                     PIN de acesso
                   </Typography>
-                  <Typography component="span" sx={qrPinCodeStyles}>
-                    {pin}
-                  </Typography>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography component="span" sx={qrPinCodeStyles}>
+                      {pin}
+                    </Typography>
+                    <Tooltip title="Ocultar PIN">
+                      <IconButton
+                        size="small"
+                        onClick={handleTogglePinVisibility}
+                        aria-label="Ocultar PIN"
+                        sx={{
+                          p: 0.5,
+                          color: brandColors.textGray,
+                          '&:hover': { color: brandColors.ink }
+                        }}
+                      >
+                        <VisibilityOffIcon sx={{ fontSize: 18 }} />
+                      </IconButton>
+                    </Tooltip>
+                  </Box>
                 </Box>
               )}
             </Box>
