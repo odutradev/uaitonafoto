@@ -85,9 +85,7 @@ const EventDetails = () => {
         <Tabs
           value={activeTab}
           onChange={handleTabChange}
-          variant="scrollable"
-          scrollButtons="auto"
-          allowScrollButtonsMobile
+          variant="fullWidth"
           aria-label="Seções de gestão do evento"
           sx={tabsStyles}
         >

@@ -18,12 +18,17 @@ export const backButtonStyles: SxProps<Theme> = {
 }
 
 export const tabsContainerStyles: SxProps<Theme> = {
+  width: '100%',
   borderBottom: 1,
   borderColor: 'divider'
 }
 
 export const tabsStyles: SxProps<Theme> = {
+  width: '100%',
   minHeight: 44,
+  '& .MuiTabs-flexContainer': {
+    width: '100%'
+  },
   '& .MuiTabs-indicator': {
     height: 3,
     borderRadius: '3px 3px 0 0'
@@ -31,6 +36,8 @@ export const tabsStyles: SxProps<Theme> = {
 }
 
 export const tabItemStyles: SxProps<Theme> = {
+  flex: 1,
+  maxWidth: 'none',
   minHeight: 44,
   py: 1,
   px: 2,
