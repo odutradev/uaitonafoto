@@ -13,6 +13,10 @@ import {
   startSubscriptionReconciliationRoutine,
   stopSubscriptionReconciliationRoutine
 } from '@domains/payments/routines/reconcileSubscriptions'
+import {
+  startExpirePendingTransactionsRoutine,
+  stopExpirePendingTransactionsRoutine
+} from '@domains/payments/routines/expirePendingTransactions'
 import { connectDatabase, disconnectDatabase } from '@database'
 import { connectEmail } from '@email'
 import { connectFirebase } from '@firebase'
@@ -33,6 +37,7 @@ const setupGracefulShutdown = (server: Server): void => {
 
     logger.info(`Received ${signal}. Starting graceful shutdown...`)
     stopSubscriptionReconciliationRoutine()
+    stopExpirePendingTransactionsRoutine()
 
     const forceExitTimer = setTimeout(() => {
       logger.error('Graceful shutdown timed out. Forcing exit...')
@@ -87,6 +92,7 @@ const startServer = async (): Promise<void> => {
     ])
 
     startSubscriptionReconciliationRoutine()
+    startExpirePendingTransactionsRoutine()
   })
 
   setupGracefulShutdown(server)
