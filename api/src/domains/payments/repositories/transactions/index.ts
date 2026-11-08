@@ -126,6 +126,31 @@ export const transactionRepository = {
       { new: true, lean: true }
     )
     return doc ? toTransactionEntity(doc) : null
+  },
+
+  listPending: async (userId?: string): Promise<TransactionEntity[]> => {
+    const filter: Record<string, unknown> = { status: 'PENDING' }
+    if (userId) filter.userId = userId
+    const docs = await TransactionModel.find(filter).sort({ createdAt: -1 }).lean()
+    return docs.map(toTransactionEntity)
+  },
+
+  expirePendingOlderThan: async (cutoffIsoDate: string, userId?: string): Promise<number> => {
+    const filter: Record<string, unknown> = {
+      status: 'PENDING',
+      createdAt: { $lte: cutoffIsoDate }
+    }
+    if (userId) filter.userId = userId
+
+    const result = await TransactionModel.updateMany(filter, {
+      $set: {
+        status: 'EXPIRED' as const,
+        cancelReason: 'checkout_expired',
+        updatedAt: new Date().toISOString()
+      }
+    })
+
+    return result.modifiedCount ?? 0
   }
 }
 
