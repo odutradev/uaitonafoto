@@ -98,7 +98,8 @@ export const pinCodeTextStyles: SxProps<Theme> = {
 export const screenSlotFooterStyles: SxProps<Theme> = {
   display: 'flex',
   alignItems: 'center',
-  gap: 1.25,
+  flexWrap: 'wrap',
+  gap: 1,
   mt: 'auto',
   pt: 1
 }

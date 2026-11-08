@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 
-import { createEventScreen, deleteEvent, getEvent, removeEventScreen, updateEvent } from '@actions/events'
+import { createEventScreen, deleteEvent, getEvent, removeEventScreen, updateEvent, updateEventScreen } from '@actions/events'
 import { getErrorMessage } from '@config/events'
 
 import type { EventItem, UpdateEventPayload } from '@actions/events/types'
@@ -126,7 +126,20 @@ const useEventDetails = (eventId: string) => {
     [eventId]
   )
 
-  return { event, isLoading, save, remove, addScreen, disconnectScreen, refresh }
+  const updateScreen = useCallback(
+    async (screenId: string, name?: string) => {
+      try {
+        const screens = await updateEventScreen(eventId, screenId, name)
+        setEvent((prev) => (prev ? { ...prev, screens } : prev))
+        toast.success('Identificação do telão atualizada!')
+      } catch (error) {
+        toast.error(getErrorMessage(error, 'Não foi possível atualizar o telão.'))
+      }
+    },
+    [eventId]
+  )
+
+  return { event, isLoading, save, remove, addScreen, disconnectScreen, updateScreen, refresh }
 }
 
 export default useEventDetails

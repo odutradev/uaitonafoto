@@ -14,6 +14,7 @@ import {
   AddOutlined as AddIcon,
   ContentCopyOutlined as CopyIcon,
   DeleteOutline as DeleteIcon,
+  EditOutlined as EditIcon,
   LiveTvOutlined as ScreenIcon,
   OpenInNewOutlined as OpenIcon,
   RefreshOutlined as RefreshIcon
@@ -80,6 +81,7 @@ const EventScreens = ({
   onOpenScreen,
   onAddScreen,
   onDisconnectScreen,
+  onUpdateScreen,
   onRefresh
 }: EventScreensProps) => {
   const screenLink = buildScreenLink(event.id)
@@ -89,6 +91,8 @@ const EventScreens = ({
   const [isManagingScreen, setIsManagingScreen] = useState(false)
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [screenNameInput, setScreenNameInput] = useState('')
+  const [editingSlot, setEditingSlot] = useState<EventScreenSlot | null>(null)
+  const [editNameInput, setEditNameInput] = useState('')
   const [isRefreshing, setIsRefreshing] = useState(false)
 
   const handleCopyScreenLink = async () => {
@@ -128,6 +132,19 @@ const EventScreens = ({
     setIsManagingScreen(true)
     await onDisconnectScreen(screenId)
     setIsManagingScreen(false)
+  }
+
+  const handleOpenRenameModal = (slot: EventScreenSlot) => {
+    setEditingSlot(slot)
+    setEditNameInput(slot.name ?? '')
+  }
+
+  const handleConfirmRename = async () => {
+    if (!editingSlot) return
+    setIsManagingScreen(true)
+    await onUpdateScreen(editingSlot.id, editNameInput.trim() || undefined)
+    setIsManagingScreen(false)
+    setEditingSlot(null)
   }
 
   return (
@@ -219,9 +236,21 @@ const EventScreens = ({
                 <Box key={slot.id} sx={screenSlotCardStyles}>
                   <Box sx={screenSlotHeaderStyles}>
                     <Box sx={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-                      <Typography variant="subtitle2" fontWeight={700} noWrap>
-                        {slot.name || `Telão ${index + 1}`}
-                      </Typography>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, minWidth: 0 }}>
+                        <Typography variant="subtitle2" fontWeight={700} noWrap>
+                          {slot.name || `Telão ${index + 1}`}
+                        </Typography>
+                        <Tooltip title="Renomear telão">
+                          <IconButton
+                            size="small"
+                            onClick={() => handleOpenRenameModal(slot)}
+                            aria-label="Renomear telão"
+                            sx={{ p: 0.25, opacity: 0.7, '&:hover': { opacity: 1 } }}
+                          >
+                            <EditIcon sx={{ fontSize: 16 }} />
+                          </IconButton>
+                        </Tooltip>
+                      </Box>
                       {slot.name && (
                         <Typography variant="caption" color="text.secondary">
                           Telão {index + 1}
@@ -256,6 +285,15 @@ const EventScreens = ({
                       disabled={isManagingScreen}
                     >
                       Copiar PIN
+                    </Button>
+                    <Button
+                      size="small"
+                      variant="outlined"
+                      startIcon={<EditIcon fontSize="small" />}
+                      onClick={() => handleOpenRenameModal(slot)}
+                      disabled={isManagingScreen}
+                    >
+                      Renomear
                     </Button>
                     <Button
                       size="small"
@@ -304,6 +342,40 @@ const EventScreens = ({
             if (e.key === 'Enter') {
               e.preventDefault()
               handleConfirmAddScreen()
+            }
+          }}
+        />
+      </Modal>
+
+      <Modal
+        open={Boolean(editingSlot)}
+        onClose={() => setEditingSlot(null)}
+        title="Renomear telão"
+        description="Altere a identificação ou local deste telão (ex: Palco Principal, Área VIP). Deixe em branco para restaurar a identificação padrão."
+        primaryAction={{
+          label: 'Salvar',
+          onClick: handleConfirmRename,
+          loading: isManagingScreen
+        }}
+        secondaryAction={{
+          label: 'Cancelar',
+          onClick: () => setEditingSlot(null),
+          disabled: isManagingScreen
+        }}
+      >
+        <TextField
+          label="Identificação do telão"
+          placeholder="Ex: Área VIP"
+          value={editNameInput}
+          onChange={(e) => setEditNameInput(e.target.value)}
+          slotProps={{ htmlInput: { maxLength: 60 } }}
+          fullWidth
+          autoFocus
+          disabled={isManagingScreen}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault()
+              handleConfirmRename()
             }
           }}
         />

@@ -46,7 +46,7 @@ const EventDetails = () => {
   const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
   const { user } = useAuth()
-  const { event, isLoading, save, remove, addScreen, disconnectScreen, refresh } = useEventDetails(id)
+  const { event, isLoading, save, remove, addScreen, disconnectScreen, updateScreen, refresh } = useEventDetails(id)
 
   const rawTab = searchParams.get('tab')
   const activeTab: EventDetailsTab = isValidTab(rawTab) ? rawTab : 'access'
@@ -187,6 +187,7 @@ const EventDetails = () => {
           onOpenScreen={openScreen}
           onAddScreen={addScreen}
           onDisconnectScreen={disconnectScreen}
+          onUpdateScreen={updateScreen}
           onRefresh={refresh}
         />
       )}
