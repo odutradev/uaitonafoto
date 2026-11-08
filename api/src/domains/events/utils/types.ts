@@ -1,4 +1,4 @@
-import type { EventEntity, EventSettings } from '../repositories/events/types'
+import type { EventEntity, EventMemberRole, EventSettings } from '../repositories/events/types'
 import type { GuestEntity } from '../repositories/guests/types'
 
 export type EventPhase = 'upcoming' | 'open' | 'closed' | 'expired'
@@ -36,3 +36,7 @@ export interface GuestContext {
   guest: GuestEntity
   event: EventEntity
 }
+
+export type TeamAccess =
+  | { event: EventEntity; role: EventMemberRole }
+  | { error: 'not_found' | 'forbidden' }
