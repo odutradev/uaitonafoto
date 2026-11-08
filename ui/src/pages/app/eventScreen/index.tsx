@@ -8,7 +8,6 @@ import {
   Typography
 } from '@mui/material'
 import {
-  ArrowBack as BackIcon,
   Favorite as LikeIcon,
   Fullscreen as FullscreenIcon,
   PhotoCameraOutlined as CameraIcon,
@@ -16,7 +15,7 @@ import {
   VisibilityOff as VisibilityOffIcon
 } from '@mui/icons-material'
 import { QRCodeSVG } from 'qrcode.react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 
 import Logo from '@components/logo'
 import PinInput from '@components/pinInput'
@@ -33,12 +32,9 @@ import {
   bannerTextRowStyles,
   bannerTextStyles,
   contentGridStyles,
-  controlsRowStyles,
+  controlsChipStyles,
   iconButtonStyles,
   leftColumnStyles,
-  liveBadgeWrapperStyles,
-  liveDotStyles,
-  liveTextStyles,
   mainCardStyles,
   photoContainerStyles,
   photoStyles,
@@ -66,7 +62,6 @@ const SCREEN_SHOW_PIN_STORAGE_KEY = 'uaitonafoto:screen:show_pin'
 const EventScreen = () => {
   const { token, id } = useParams()
   const eventIdentifier = token || id || ''
-  const navigate = useNavigate()
   const {
     isActivated,
     isActivating,
@@ -109,15 +104,6 @@ const EventScreen = () => {
 
   const guestLink = event ? buildGuestLink(event.guestToken) : token ? buildGuestLink(token) : ''
 
-  const handleBack = () => {
-    const targetEventId = event?.id || id
-    if (targetEventId) {
-      navigate(`/app/events/${targetEventId}?tab=screens`)
-    } else {
-      navigate(-1)
-    }
-  }
-
   return (
     <Box sx={screenRootStyles}>
       <Box component="header" sx={topBarStyles}>
@@ -125,39 +111,25 @@ const EventScreen = () => {
           <Logo variant="auto" size="small" />
         </Box>
 
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2.5 }}>
-          <Box sx={liveBadgeWrapperStyles}>
-            <Box sx={liveDotStyles} />
-            <Typography component="span" sx={liveTextStyles}>
-              AO VIVO
-            </Typography>
-          </Box>
-
-          <Box sx={controlsRowStyles}>
-            <Tooltip title="Voltar para o painel">
-              <IconButton aria-label="Voltar" onClick={handleBack} sx={iconButtonStyles} size="small">
-                <BackIcon fontSize="small" />
+        <Box sx={controlsChipStyles}>
+          {pin && (
+            <Tooltip title={showPin ? 'Ocultar PIN' : 'Mostrar PIN'}>
+              <IconButton
+                aria-label={showPin ? 'Ocultar PIN' : 'Mostrar PIN'}
+                onClick={handleTogglePinVisibility}
+                sx={iconButtonStyles}
+                size="small"
+              >
+                {showPin ? <VisibilityOffIcon fontSize="small" /> : <VisibilityIcon fontSize="small" />}
               </IconButton>
             </Tooltip>
-            {pin && (
-              <Tooltip title={showPin ? 'Ocultar PIN' : 'Mostrar PIN'}>
-                <IconButton
-                  aria-label={showPin ? 'Ocultar PIN' : 'Mostrar PIN'}
-                  onClick={handleTogglePinVisibility}
-                  sx={iconButtonStyles}
-                  size="small"
-                >
-                  {showPin ? <VisibilityOffIcon fontSize="small" /> : <VisibilityIcon fontSize="small" />}
-                </IconButton>
-              </Tooltip>
-            )}
-            <ThemeToggle sx={iconButtonStyles} size="small" />
-            <Tooltip title="Alternar tela cheia">
-              <IconButton aria-label="Tela cheia" onClick={handleFullscreen} sx={iconButtonStyles} size="small">
-                <FullscreenIcon fontSize="small" />
-              </IconButton>
-            </Tooltip>
-          </Box>
+          )}
+          <ThemeToggle sx={iconButtonStyles} size="small" />
+          <Tooltip title="Alternar tela cheia">
+            <IconButton aria-label="Tela cheia" onClick={handleFullscreen} sx={iconButtonStyles} size="small">
+              <FullscreenIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
         </Box>
       </Box>
 

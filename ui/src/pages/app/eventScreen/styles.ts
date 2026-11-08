@@ -22,56 +22,31 @@ export const topBarStyles: SxProps<Theme> = {
   flexShrink: 0
 }
 
-export const liveBadgeWrapperStyles: SxProps<Theme> = {
-  display: 'flex',
+export const controlsChipStyles: SxProps<Theme> = (theme) => ({
+  display: 'inline-flex',
   alignItems: 'center',
-  gap: 1.5
-}
-
-export const liveDotStyles: SxProps<Theme> = {
-  width: 12,
-  height: 12,
-  borderRadius: '50%',
-  bgcolor: brandColors.flashYellow,
-  boxShadow: `0 0 14px ${brandColors.flashYellow}`,
-  animation: 'pulseLive 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-  '@keyframes pulseLive': {
-    '0%, 100%': {
-      opacity: 1,
-      transform: 'scale(1)'
-    },
-    '50%': {
-      opacity: 0.5,
-      transform: 'scale(0.85)'
-    }
-  }
-}
-
-export const liveTextStyles: SxProps<Theme> = {
-  fontFamily: "'Bricolage Grotesque', sans-serif",
-  fontWeight: 900,
-  fontSize: { xs: '1rem', md: '1.25rem' },
-  letterSpacing: '0.06em',
-  color: 'text.primary'
-}
-
-export const controlsRowStyles: SxProps<Theme> = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: 1,
-  opacity: 0.7,
+  p: '4px',
+  gap: 0.5,
+  borderRadius: '9999px',
+  bgcolor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.04)',
+  border: `1px solid ${theme.palette.divider}`,
+  backdropFilter: 'blur(8px)',
   transition: 'opacity 0.2s ease',
+  opacity: 0.75,
   '&:hover': {
     opacity: 1
   }
-}
+})
 
 export const iconButtonStyles: SxProps<Theme> = (theme) => ({
   color: 'text.primary',
-  bgcolor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.05)',
-  border: `1px solid ${theme.palette.divider}`,
+  width: 34,
+  height: 34,
+  p: 0,
+  borderRadius: '9999px',
+  transition: 'all 0.15s ease',
   '&:hover': {
-    bgcolor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.16)' : 'rgba(0, 0, 0, 0.1)'
+    bgcolor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.08)'
   }
 })
 
