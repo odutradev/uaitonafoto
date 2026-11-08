@@ -200,3 +200,52 @@ export const checkIconStyles: SxProps<Theme> = {
   flexShrink: 0,
   mt: 0.25
 }
+
+export const getPlanCtaButtonStyles = (highlighted: boolean, isDark: boolean): SxProps<Theme> => ({
+  mt: 'auto',
+  width: '100%',
+  height: { xs: 46, sm: 50 },
+  borderRadius: '14px',
+  fontSize: { xs: '0.875rem', sm: '0.9375rem' },
+  fontWeight: 800,
+  letterSpacing: '-0.01em',
+  whiteSpace: 'nowrap',
+  textTransform: 'none',
+  transition: 'all 0.25s ease',
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  ...(highlighted
+    ? {
+        bgcolor: brandColors.flashYellow,
+        color: brandColors.ink,
+        boxShadow: '0 6px 20px rgba(255, 207, 31, 0.35)',
+        border: 'none',
+        '&:hover': {
+          bgcolor: '#EAB308',
+          boxShadow: '0 8px 24px rgba(255, 207, 31, 0.45)',
+          transform: 'translateY(-2px)'
+        }
+      }
+    : {
+        bgcolor: 'transparent',
+        color: 'text.primary',
+        border: '1.5px solid',
+        borderColor: isDark ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.16)',
+        '&:hover': {
+          borderColor: brandColors.flashYellow,
+          bgcolor: isDark ? 'rgba(255, 207, 31, 0.08)' : 'rgba(255, 207, 31, 0.12)',
+          transform: 'translateY(-2px)'
+        }
+      }),
+  '& .MuiButton-endIcon': {
+    transition: 'transform 0.2s ease',
+    ml: 1,
+    '& svg': {
+      fontSize: 18
+    }
+  },
+  '&:hover .MuiButton-endIcon': {
+    transform: 'translateX(3px)'
+  }
+})

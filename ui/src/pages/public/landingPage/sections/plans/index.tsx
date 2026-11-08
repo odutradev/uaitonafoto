@@ -12,6 +12,7 @@ import {
   costPerEventBadgeStyles,
   featureItemStyles,
   getPlanCardStyles,
+  getPlanCtaButtonStyles,
   getSectionBoxStyles,
   periodTextStyles,
   planDescriptionStyles,
@@ -112,15 +113,10 @@ export const Plans = ({
                 to={`/signin?planId=${encodeURIComponent(plan.ctaHref)}`}
                 onClick={() => onSelectPlan?.(plan)}
                 variant={plan.highlighted ? 'contained' : 'outlined'}
-                color={plan.highlighted ? 'primary' : 'inherit'}
+                disableElevation
                 fullWidth
-                size="large"
                 endIcon={<ArrowForwardIcon />}
-                sx={{
-                  py: 1.5,
-                  fontSize: '1rem',
-                  fontWeight: 700
-                }}
+                sx={getPlanCtaButtonStyles(plan.highlighted, isDark)}
               >
                 {plan.ctaText}
               </Button>
