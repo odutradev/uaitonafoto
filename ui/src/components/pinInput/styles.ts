@@ -32,3 +32,23 @@ export const pinSlotInputStyles: SxProps<Theme> = {
   }
 }
 
+export const pinToggleMaskRowStyles: SxProps<Theme> = {
+  display: 'flex',
+  justifyContent: 'center',
+  mt: 0.5
+}
+
+export const pinToggleMaskButtonStyles: SxProps<Theme> = {
+  fontSize: '0.8rem',
+  fontWeight: 600,
+  textTransform: 'none',
+  color: 'text.secondary',
+  py: 0.5,
+  px: 1,
+  borderRadius: '8px',
+  '&:hover': {
+    color: 'text.primary',
+    bgcolor: 'action.hover'
+  }
+}
+

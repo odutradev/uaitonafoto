@@ -7,6 +7,7 @@ export interface PinInputProps {
   autoFocus?: boolean
   disabled?: boolean
   mask?: boolean
+  showMaskToggle?: boolean
   label?: string
   helperText?: string
   ariaLabelPrefix?: string

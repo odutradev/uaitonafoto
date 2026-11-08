@@ -1,11 +1,17 @@
-import { useEffect, useRef } from 'react'
-import { Box, TextField, Typography } from '@mui/material'
+import { useEffect, useRef, useState } from 'react'
+import { Box, Button, TextField, Typography } from '@mui/material'
+import {
+  VisibilityOffOutlined as VisibilityOffIcon,
+  VisibilityOutlined as VisibilityIcon
+} from '@mui/icons-material'
 
 import {
   pinContainerStyles,
   pinLabelStyles,
   pinSlotInputStyles,
-  pinSlotsRowStyles
+  pinSlotsRowStyles,
+  pinToggleMaskButtonStyles,
+  pinToggleMaskRowStyles
 } from './styles'
 import type { ClipboardEvent, KeyboardEvent } from 'react'
 import type { PinInputProps } from './types'
@@ -17,6 +23,7 @@ const PinInput = ({
   autoFocus = false,
   disabled = false,
   mask = false,
+  showMaskToggle = false,
   label,
   helperText,
   ariaLabelPrefix = 'Dígito',
@@ -24,8 +31,13 @@ const PinInput = ({
   slotSx,
   onComplete
 }: PinInputProps) => {
+  const [isMasked, setIsMasked] = useState(Boolean(mask))
   const slotRefs = useRef<Array<HTMLInputElement | null>>([])
   const digits = Array.from({ length }, (_, index) => value[index] ?? '')
+
+  useEffect(() => {
+    setIsMasked(Boolean(mask))
+  }, [mask])
 
   const focusSlot = (index: number) => {
     slotRefs.current[index]?.focus()
@@ -115,7 +127,7 @@ const PinInput = ({
         {digits.map((digit, index) => (
           <TextField
             key={index}
-            value={mask && digit ? '●' : digit}
+            value={isMasked && digit ? '●' : digit}
             disabled={disabled}
             placeholder="•"
             onChange={(e) => handleDigitChange(index, e.target.value)}
@@ -137,6 +149,22 @@ const PinInput = ({
           />
         ))}
       </Box>
+
+      {showMaskToggle && (
+        <Box sx={pinToggleMaskRowStyles}>
+          <Button
+            type="button"
+            size="small"
+            variant="text"
+            startIcon={isMasked ? <VisibilityIcon fontSize="small" /> : <VisibilityOffIcon fontSize="small" />}
+            onClick={() => setIsMasked((prev) => !prev)}
+            disabled={disabled}
+            sx={pinToggleMaskButtonStyles}
+          >
+            {isMasked ? 'Mostrar dígitos' : 'Ocultar dígitos'}
+          </Button>
+        </Box>
+      )}
 
       {helperText && (
         <Typography variant="caption" color="text.secondary">
