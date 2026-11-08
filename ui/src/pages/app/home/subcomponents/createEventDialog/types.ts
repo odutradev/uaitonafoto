@@ -5,14 +5,3 @@ export interface CreateEventDialogProps {
   onClose: () => void
   onCreated: (event: EventItem) => void
 }
-
-export interface CreateEventFormState {
-  name: string
-  type: EventItem['type']
-  startsAt: string
-  endsAt: string
-  maxPhotosPerGuest: number
-  photoVisibility: EventItem['settings']['photoVisibility']
-  uploadWindowHours: number
-  galleryDurationDays: number
-}
