@@ -1,5 +1,6 @@
-﻿import dayjs from 'dayjs'
+import dayjs from 'dayjs'
 
+import { generateRandomPin } from '@config/events'
 import type { CreateEventPayload, EventItem } from '@actions/events/types'
 import type { EventFormState } from './types'
 
@@ -15,7 +16,11 @@ export const buildInitialEventForm = (): EventFormState => {
     maxPhotosPerGuest: 10,
     photoVisibility: 'during_event',
     uploadWindowHours: 24,
-    galleryDurationDays: 30
+    galleryDurationDays: 30,
+    pinEnabled: true,
+    pin: generateRandomPin(),
+    pinRotate: true,
+    pinRotationMinutes: 15
   }
 }
 
@@ -24,11 +29,21 @@ export const toEventForm = (event: EventItem): EventFormState => ({
   type: event.type,
   startsAt: dayjs(event.startsAt).format(DATETIME_INPUT_FORMAT),
   endsAt: dayjs(event.endsAt).format(DATETIME_INPUT_FORMAT),
-  ...event.settings
+  maxPhotosPerGuest: event.settings.maxPhotosPerGuest,
+  photoVisibility: event.settings.photoVisibility,
+  uploadWindowHours: event.settings.uploadWindowHours,
+  galleryDurationDays: event.settings.galleryDurationDays,
+  pinEnabled: event.settings.pinEnabled,
+  pin: event.settings.pin,
+  pinRotate: event.settings.pinRotate,
+  pinRotationMinutes: event.settings.pinRotationMinutes
 })
 
 export const isValidEventPeriod = (form: EventFormState): boolean =>
   dayjs(form.endsAt).isAfter(dayjs(form.startsAt))
+
+export const isValidEventPin = (form: EventFormState): boolean =>
+  !form.pinEnabled || /^\d{4}$/.test(form.pin)
 
 export const toEventPayload = (form: EventFormState): CreateEventPayload => ({
   name: form.name.trim(),
@@ -39,6 +54,10 @@ export const toEventPayload = (form: EventFormState): CreateEventPayload => ({
     maxPhotosPerGuest: form.maxPhotosPerGuest,
     photoVisibility: form.photoVisibility,
     uploadWindowHours: form.uploadWindowHours,
-    galleryDurationDays: form.galleryDurationDays
+    galleryDurationDays: form.galleryDurationDays,
+    pinEnabled: form.pinEnabled,
+    pin: form.pin,
+    pinRotate: form.pinRotate,
+    pinRotationMinutes: form.pinRotationMinutes
   }
 })

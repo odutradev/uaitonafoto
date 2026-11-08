@@ -1,4 +1,4 @@
-﻿import type { EventItem } from '@actions/events/types'
+import type { EventItem, PinRotationMinutes } from '@actions/events/types'
 
 export interface EventFormState {
   name: string
@@ -9,6 +9,10 @@ export interface EventFormState {
   photoVisibility: EventItem['settings']['photoVisibility']
   uploadWindowHours: number
   galleryDurationDays: number
+  pinEnabled: boolean
+  pin: string
+  pinRotate: boolean
+  pinRotationMinutes: PinRotationMinutes
 }
 
 export interface EventFormFieldsProps {

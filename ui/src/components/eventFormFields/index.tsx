@@ -1,9 +1,24 @@
-﻿import { Box, MenuItem, TextField } from '@mui/material'
+import {
+  Box,
+  IconButton,
+  InputAdornment,
+  MenuItem,
+  Switch,
+  TextField,
+  Tooltip,
+  Typography
+} from '@mui/material'
+import { RefreshOutlined as RefreshIcon } from '@mui/icons-material'
 
-import { eventTypeLabels, photoVisibilityLabels } from '@config/events'
+import {
+  eventTypeLabels,
+  generateRandomPin,
+  photoVisibilityLabels,
+  pinRotationLabels
+} from '@config/events'
 
-import { formFieldsStackStyles, twoColsRowStyles } from './styles'
-import type { EventType, PhotoVisibility } from '@actions/events/types'
+import { formFieldsStackStyles, pinCardBoxStyles, pinToggleRowStyles, twoColsRowStyles } from './styles'
+import type { EventType, PhotoVisibility, PinRotationMinutes } from '@actions/events/types'
 import type { EventFormFieldsProps } from './types'
 
 const EventFormFields = ({ form, onChange }: EventFormFieldsProps) => (
@@ -95,6 +110,98 @@ const EventFormFields = ({ form, onChange }: EventFormFieldsProps) => (
       slotProps={{ htmlInput: { min: 1, max: 365 } }}
       fullWidth
     />
+
+    <Box sx={pinCardBoxStyles}>
+      <Box sx={pinToggleRowStyles}>
+        <Box>
+          <Typography variant="subtitle2" fontWeight={700}>
+            Senha de acesso (PIN de 4 dígitos)
+          </Typography>
+          <Typography variant="caption" color="text.secondary">
+            Solicita um PIN numérico para os convidados entrarem no evento.
+          </Typography>
+        </Box>
+        <Switch
+          checked={form.pinEnabled}
+          onChange={(e) => onChange('pinEnabled', e.target.checked)}
+          inputProps={{ 'aria-label': 'Exigir PIN de acesso' }}
+        />
+      </Box>
+
+      {form.pinEnabled && (
+        <>
+          <Box sx={twoColsRowStyles}>
+            <TextField
+              label="PIN de 4 dígitos"
+              placeholder="0000"
+              value={form.pin}
+              onChange={(e) => onChange('pin', e.target.value.replace(/\D/g, '').slice(0, 4))}
+              slotProps={{
+                htmlInput: {
+                  inputMode: 'numeric',
+                  pattern: '\\d{4}',
+                  maxLength: 4
+                },
+                input: {
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <Tooltip title="Gerar novo PIN aleatório">
+                        <IconButton
+                          size="small"
+                          edge="end"
+                          onClick={() => onChange('pin', generateRandomPin(form.pin))}
+                          aria-label="Gerar novo PIN aleatório"
+                        >
+                          <RefreshIcon fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
+                    </InputAdornment>
+                  )
+                }
+              }}
+              helperText="Você pode digitar ou gerar um PIN."
+              required
+              fullWidth
+            />
+
+            {form.pinRotate && (
+              <TextField
+                select
+                label="Tempo de alternância"
+                value={form.pinRotationMinutes}
+                onChange={(e) => onChange('pinRotationMinutes', Number(e.target.value) as PinRotationMinutes)}
+                helperText="Intervalo em que o PIN muda sozinho."
+                fullWidth
+              >
+                {Object.entries(pinRotationLabels).map(([value, label]) => (
+                  <MenuItem key={value} value={Number(value)}>
+                    {label}
+                  </MenuItem>
+                ))}
+              </TextField>
+            )}
+          </Box>
+
+          <Box sx={pinToggleRowStyles}>
+            <Box>
+              <Typography variant="body2" fontWeight={600}>
+                Alternar PIN automaticamente
+              </Typography>
+              <Typography variant="caption" color="text.secondary">
+                {form.pinRotate
+                  ? 'O PIN é renovado periodicamente. Desative para manter um PIN fixo.'
+                  : 'PIN fixo: permanece o mesmo até ser alterado manualmente.'}
+              </Typography>
+            </Box>
+            <Switch
+              checked={form.pinRotate}
+              onChange={(e) => onChange('pinRotate', e.target.checked)}
+              inputProps={{ 'aria-label': 'Alternar PIN automaticamente' }}
+            />
+          </Box>
+        </>
+      )}
+    </Box>
   </Box>
 )
 

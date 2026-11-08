@@ -4,7 +4,7 @@ import { DeleteOutline as DeleteIcon, SaveOutlined as SaveIcon } from '@mui/icon
 import { toast } from 'react-toastify'
 
 import EventFormFields from '@components/eventFormFields'
-import { isValidEventPeriod, toEventForm, toEventPayload } from '@components/eventFormFields/utils'
+import { isValidEventPeriod, isValidEventPin, toEventForm, toEventPayload } from '@components/eventFormFields/utils'
 import Modal from '@components/modal'
 
 import {
@@ -40,6 +40,11 @@ const EventSettings = ({ event, onSave, onDelete }: EventSettingsProps) => {
 
     if (!isValidEventPeriod(form)) {
       toast.error('O término do evento deve ser depois do início.')
+      return
+    }
+
+    if (!isValidEventPin(form)) {
+      toast.error('O PIN de acesso deve ter exatamente 4 dígitos numéricos.')
       return
     }
 

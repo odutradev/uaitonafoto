@@ -1,4 +1,4 @@
-﻿import type { EventPhoto, EventPhase, EventType, PhotoVisibility } from '@actions/events/types'
+import type { EventPhoto, EventPhase, EventType, PhotoVisibility } from '@actions/events/types'
 
 export interface GuestEventInfo {
   name: string
@@ -10,6 +10,7 @@ export interface GuestEventInfo {
   galleryExpiresAt: string
   maxPhotosPerGuest: number
   photoVisibility: PhotoVisibility
+  requiresPin: boolean
   phase: EventPhase
 }
 

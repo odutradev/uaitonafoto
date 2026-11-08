@@ -1,4 +1,4 @@
-﻿import guestApi, { withGuestToken } from './client'
+import guestApi, { withGuestToken } from './client'
 import type { Paginated, PaginationParams } from '@actions/events/types'
 import type { GuestEventInfo, GuestPhoto, GuestSession, JoinEventResponse, LikeResult } from './types'
 
@@ -7,8 +7,11 @@ export const getGuestEvent = async (eventToken: string): Promise<GuestEventInfo>
   return response.data
 }
 
-export const joinEvent = async (eventToken: string, name: string): Promise<JoinEventResponse> => {
-  const response = await guestApi.post<JoinEventResponse>(`/guest/events/${eventToken}/join`, { name })
+export const joinEvent = async (eventToken: string, name: string, pin?: string): Promise<JoinEventResponse> => {
+  const response = await guestApi.post<JoinEventResponse>(`/guest/events/${eventToken}/join`, {
+    name,
+    ...(pin ? { pin } : {})
+  })
   return response.data
 }
 

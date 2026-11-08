@@ -1,10 +1,10 @@
-﻿import { useState } from 'react'
+import { useState } from 'react'
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material'
 import { toast } from 'react-toastify'
 
 import { createEvent } from '@actions/events'
 import EventFormFields from '@components/eventFormFields'
-import { buildInitialEventForm, isValidEventPeriod, toEventPayload } from '@components/eventFormFields/utils'
+import { buildInitialEventForm, isValidEventPeriod, isValidEventPin, toEventPayload } from '@components/eventFormFields/utils'
 import { getErrorMessage } from '@config/events'
 
 import { dialogActionsStyles, dialogButtonStyles, dialogPaperStyles } from './styles'
@@ -24,6 +24,11 @@ const CreateEventDialog = ({ open, onClose, onCreated }: CreateEventDialogProps)
 
     if (!isValidEventPeriod(form)) {
       toast.error('O término do evento deve ser depois do início.')
+      return
+    }
+
+    if (!isValidEventPin(form)) {
+      toast.error('O PIN de acesso deve ter exatamente 4 dígitos numéricos.')
       return
     }
 
