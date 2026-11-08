@@ -84,7 +84,7 @@ const EventScreens = ({
   onUpdateScreen,
   onRefresh
 }: EventScreensProps) => {
-  const screenLink = buildScreenLink(event.id)
+  const screenLink = buildScreenLink(event.guestToken)
   const screens = event.screens ?? []
   const isScreenLimitReached = screens.length >= MAX_EVENT_SCREENS
 

@@ -64,7 +64,8 @@ const THUMBNAIL_SLOTS_COUNT = 6
 const SCREEN_SHOW_PIN_STORAGE_KEY = 'uaitonafoto:screen:show_pin'
 
 const EventScreen = () => {
-  const { id = '' } = useParams()
+  const { token, id } = useParams()
+  const eventIdentifier = token || id || ''
   const navigate = useNavigate()
   const {
     isActivated,
@@ -77,7 +78,7 @@ const EventScreen = () => {
     currentIndex,
     selectPhoto,
     currentPhoto
-  } = useEventScreen(id)
+  } = useEventScreen(eventIdentifier)
   const [pinInput, setPinInput] = useState('')
   const [showPin, setShowPin] = useState<boolean>(() => {
     const stored = localStorage.getItem(SCREEN_SHOW_PIN_STORAGE_KEY)
@@ -106,7 +107,16 @@ const EventScreen = () => {
     await activate(pinInput)
   }
 
-  const guestLink = event ? buildGuestLink(event.guestToken) : ''
+  const guestLink = event ? buildGuestLink(event.guestToken) : token ? buildGuestLink(token) : ''
+
+  const handleBack = () => {
+    const targetEventId = event?.id || id
+    if (targetEventId) {
+      navigate(`/app/events/${targetEventId}?tab=screens`)
+    } else {
+      navigate(-1)
+    }
+  }
 
   return (
     <Box sx={screenRootStyles}>
@@ -125,7 +135,7 @@ const EventScreen = () => {
 
           <Box sx={controlsRowStyles}>
             <Tooltip title="Voltar para o painel">
-              <IconButton aria-label="Voltar" onClick={() => navigate(`/app/events/${id}?tab=screens`)} sx={iconButtonStyles} size="small">
+              <IconButton aria-label="Voltar" onClick={handleBack} sx={iconButtonStyles} size="small">
                 <BackIcon fontSize="small" />
               </IconButton>
             </Tooltip>

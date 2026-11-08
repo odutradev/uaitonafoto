@@ -15,13 +15,21 @@ export const screenSessionMiddleware = async (req: Request, res: Response, next:
   }
 
   const payload = verifyScreenToken(authHeader.split('Bearer ')[1])
-  if (!payload || (req.params.id && payload.eventId !== req.params.id)) {
+  if (!payload) {
     sendError({ code: 'token_is_not_valid', res, local: 'screenSessionMiddleware' })
     return
   }
 
-  const event = await eventRepository.findById(payload.eventId)
-  const slot = event?.screens.find((item) => item.id === payload.screenId)
+  const event = req.params.id
+    ? await eventRepository.findByIdOrGuestToken(req.params.id)
+    : await eventRepository.findById(payload.eventId)
+
+  if (!event || payload.eventId !== event.id) {
+    sendError({ code: 'token_is_not_valid', res, local: 'screenSessionMiddleware' })
+    return
+  }
+
+  const slot = event.screens.find((item) => item.id === payload.screenId)
 
   if (!event || !slot) {
     sendError({ code: 'token_is_not_valid', res, local: 'screenSessionMiddleware' })

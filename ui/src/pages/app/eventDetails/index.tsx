@@ -78,7 +78,7 @@ const EventDetails = () => {
   }
 
   const phase = getEventPhase(event)
-  const openScreen = () => navigate(`/app/events/${event.id}/screen`)
+  const openScreen = () => navigate(`/e/${event.guestToken}/screen`)
 
   return (
     <Box sx={pageStyles}>

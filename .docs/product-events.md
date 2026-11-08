@@ -135,12 +135,13 @@ Erros comuns: `400` arquivo/período inválido, `401` token ausente/inválido, `
 O link de acesso dos convidados utiliza exclusivamente o conjunto aleatório de caracteres (`guestToken` de 12 caracteres base64url gerado pela API), nunca o nome do evento:
 
 - **Link do convidado:** `/e/:token` (ex: `/e/k3J9xQ2mZ1aB`)
+- **Link do telão:** `/e/:token/screen` (ex: `/e/k3J9xQ2mZ1aB/screen`)
 
 | Rota | Acesso | Descrição |
 |---|---|---|
 | `/app` | Autenticado | Lista os eventos do usuário (criador/organizador) e modal de criação |
 | `/app/events/:id` | Equipe | Painel do evento: link aleatório + QR Code, álbum pós-evento (com filtro por convidado e remoção de fotos), edição de configurações, gestão da equipe e exclusão (criador) |
-| `/app/events/:id/screen` | Equipe | Telão em tela cheia com rotação automática das fotos, polling incremental (`since`) e QR Code enquanto aguarda fotos |
+| `/e/:token/screen` | Público / Telão | Telão em tela cheia com rotação automática das fotos, polling incremental (`since`) e QR Code enquanto aguarda fotos |
 | `/e/:token` | Público / Convidado | Página mobile-first do convidado: identificação por nome (gera sessão salva em `localStorage`), envio de fotos respeitando `maxPhotosPerGuest` e janela de upload, feed paginado com curtidas e exclusão da própria foto |
 
 ## 9. Estrutura de código

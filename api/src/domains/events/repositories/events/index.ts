@@ -1,3 +1,4 @@
+import { isValidObjectId } from 'mongoose'
 import { removeUndefined } from '@utils/object'
 import EventModel from './model'
 import type {
@@ -52,6 +53,15 @@ export const eventRepository = {
 
   findByGuestToken: async (guestToken: string): Promise<EventEntity | null> => {
     const doc = await EventModel.findOne({ guestToken }).lean()
+    return doc ? toEventEntity(doc) : null
+  },
+
+  findByIdOrGuestToken: async (identifier: string): Promise<EventEntity | null> => {
+    if (isValidObjectId(identifier)) {
+      const doc = await EventModel.findById(identifier).lean()
+      if (doc) return toEventEntity(doc)
+    }
+    const doc = await EventModel.findOne({ guestToken: identifier }).lean()
     return doc ? toEventEntity(doc) : null
   },
 

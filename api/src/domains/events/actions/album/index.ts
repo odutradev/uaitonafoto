@@ -170,7 +170,7 @@ export const activateScreen = defineAction(
     }
   },
   async ({ params, data, manageError }: ManageRequestBody<ActivateScreenRequest>): ManageRequestResponse<ActivateScreenResponse> => {
-    const foundEvent = await eventRepository.findById(params.id)
+    const foundEvent = await eventRepository.findByIdOrGuestToken(params.id)
     if (!foundEvent) return manageError({ code: 'not_found' })
     if (getEventPhase(foundEvent) === 'expired') {
       return manageError({ code: 'forbidden', details: 'A galeria deste evento já foi encerrada.' })
@@ -220,7 +220,7 @@ export const getScreen = defineAction(
   async ({ ids, params, query, manageError }: ManageRequestBody<ScreenRequest>): ManageRequestResponse<ScreenResponse> => {
     if (!ids.screenId) return manageError({ code: 'unauthorized' })
 
-    const foundEvent = await eventRepository.findById(params.id)
+    const foundEvent = await eventRepository.findByIdOrGuestToken(params.id)
     if (!foundEvent) return manageError({ code: 'not_found' })
     if (!arePhotosVisible(foundEvent)) return manageError({ code: 'forbidden', details: 'Fotos ainda não liberadas' })
 

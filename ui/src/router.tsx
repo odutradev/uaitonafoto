@@ -46,6 +46,7 @@ const appRouter = createBrowserRouter([
         ]
       },
       { path: '/app/events/:id/screen', element: createElement(EventScreen) },
+      { path: '/e/:token/screen', element: createElement(EventScreen) },
       { path: '/e/:token', element: createElement(GuestEvent) },
       { path: '/reset-password', element: createElement(ResetPassword) },
       { path: '/termos-de-uso', element: createElement(TermsOfUse) },
