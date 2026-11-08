@@ -7,15 +7,17 @@ import type { GuestJoinProps } from './types'
 
 const GuestJoin = ({ event, onJoin }: GuestJoinProps) => {
   const [name, setName] = useState('')
+  const [pin, setPin] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const isExpired = event.phase === 'expired'
+  const canSubmit = Boolean(name.trim()) && (!event.requiresPin || /^\d{4}$/.test(pin))
 
   const handleSubmit = async (submitEvent: FormEvent<HTMLFormElement>) => {
     submitEvent.preventDefault()
-    if (!name.trim()) return
+    if (!canSubmit) return
 
     setIsSubmitting(true)
-    await onJoin(name.trim())
+    await onJoin(name.trim(), event.requiresPin ? pin : undefined)
     setIsSubmitting(false)
   }
 
@@ -41,7 +43,31 @@ const GuestJoin = ({ event, onJoin }: GuestJoinProps) => {
             required
             fullWidth
           />
-          <Button type="submit" variant="contained" size="large" disabled={isSubmitting} sx={joinButtonStyles}>
+          {event.requiresPin && (
+            <TextField
+              label="PIN do evento (4 dígitos)"
+              placeholder="0000"
+              value={pin}
+              onChange={(e) => setPin(e.target.value.replace(/\D/g, '').slice(0, 4))}
+              helperText="Informe o código de 4 dígitos exibido no telão ou com o organizador."
+              slotProps={{
+                htmlInput: {
+                  inputMode: 'numeric',
+                  pattern: '\\d{4}',
+                  maxLength: 4
+                }
+              }}
+              required
+              fullWidth
+            />
+          )}
+          <Button
+            type="submit"
+            variant="contained"
+            size="large"
+            disabled={isSubmitting || !canSubmit}
+            sx={joinButtonStyles}
+          >
             {isSubmitting ? 'Entrando...' : 'Entrar no evento'}
           </Button>
         </>

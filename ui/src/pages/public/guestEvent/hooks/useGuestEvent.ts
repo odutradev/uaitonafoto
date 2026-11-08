@@ -90,9 +90,9 @@ const useGuestEvent = (eventToken: string) => {
     if (guestToken) loadFeed(guestToken, page)
   }, [guestToken, page, loadFeed])
 
-  const join = async (name: string) => {
+  const join = async (name: string, pin?: string) => {
     try {
-      const response = await joinEvent(eventToken, name)
+      const response = await joinEvent(eventToken, name, pin)
       storeGuestToken(eventToken, response.guestToken)
       setGuestToken(response.guestToken)
       setGuest(response.guest)

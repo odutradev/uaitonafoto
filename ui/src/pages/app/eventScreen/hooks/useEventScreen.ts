@@ -1,4 +1,4 @@
-﻿import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { getEvent, getEventScreen } from '@actions/events'
 import { getErrorMessage } from '@config/events'
@@ -10,6 +10,7 @@ const ROTATE_INTERVAL_MS = 6000
 
 const useEventScreen = (eventId: string) => {
   const [event, setEvent] = useState<EventItem | null>(null)
+  const [pin, setPin] = useState<string | null>(null)
   const [photos, setPhotos] = useState<EventPhoto[]>([])
   const [currentIndex, setCurrentIndex] = useState(0)
   const [message, setMessage] = useState<string | null>(null)
@@ -17,7 +18,12 @@ const useEventScreen = (eventId: string) => {
   const seenIdsRef = useRef<Set<string>>(new Set())
 
   useEffect(() => {
-    getEvent(eventId).then(setEvent).catch((error) => setMessage(getErrorMessage(error, 'Evento não encontrado.')))
+    getEvent(eventId)
+      .then((loaded) => {
+        setEvent(loaded)
+        setPin(loaded.settings.pinEnabled ? loaded.settings.pin : null)
+      })
+      .catch((error) => setMessage(getErrorMessage(error, 'Evento não encontrado.')))
   }, [eventId])
 
   useEffect(() => {
@@ -29,6 +35,7 @@ const useEventScreen = (eventId: string) => {
         if (!isActive) return
 
         cursorRef.current = result.nextSince
+        setPin(result.pin)
         setMessage(null)
 
         const fresh = result.photos.filter((photo) => !seenIdsRef.current.has(photo.id))
@@ -63,7 +70,7 @@ const useEventScreen = (eventId: string) => {
     return () => window.clearInterval(intervalId)
   }, [photos.length, currentIndex])
 
-  return { event, currentPhoto: photos[currentIndex], photosCount: photos.length, message }
+  return { event, pin, currentPhoto: photos[currentIndex], photosCount: photos.length, message }
 }
 
 export default useEventScreen

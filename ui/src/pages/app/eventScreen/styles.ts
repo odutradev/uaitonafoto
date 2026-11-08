@@ -1,4 +1,4 @@
-﻿import type { SxProps, Theme } from '@mui/material'
+import type { SxProps, Theme } from '@mui/material'
 
 export const screenRootStyles: SxProps<Theme> = {
   position: 'fixed',
@@ -66,4 +66,16 @@ export const qrBoxStyles: SxProps<Theme> = {
   p: 1.5,
   borderRadius: '16px',
   lineHeight: 0
+}
+
+export const pinBadgeStyles: SxProps<Theme> = {
+  px: 2,
+  py: 0.75,
+  borderRadius: '999px',
+  bgcolor: 'rgba(255,255,255,0.14)',
+  backdropFilter: 'blur(8px)',
+  fontFamily: 'monospace',
+  fontWeight: 800,
+  fontSize: { xs: '0.95rem', md: '1.35rem' },
+  letterSpacing: '0.12em'
 }

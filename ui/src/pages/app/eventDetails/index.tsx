@@ -143,7 +143,7 @@ const EventDetails = () => {
         </Tabs>
       </Box>
 
-      {activeTab === 'access' && <ShareLink event={event} onOpenScreen={openScreen} />}
+      {activeTab === 'access' && <ShareLink event={event} onOpenScreen={openScreen} onSave={save} />}
       {activeTab === 'album' && <EventAlbum event={event} />}
       {activeTab === 'team' && <EventTeam event={event} currentUserId={user.id} />}
       {activeTab === 'settings' && <EventSettings event={event} onSave={save} onDelete={remove} />}

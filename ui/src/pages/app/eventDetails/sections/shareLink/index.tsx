@@ -1,18 +1,27 @@
-import { Box, Button, Card, IconButton, Tooltip, Typography } from '@mui/material'
+import { useState } from 'react'
+import { Box, Button, Card, Chip, IconButton, TextField, Tooltip, Typography } from '@mui/material'
 import {
+  CheckOutlined as CheckIcon,
+  CloseOutlined as CloseIcon,
   ContentCopyOutlined as CopyIcon,
+  EditOutlined as EditIcon,
   LiveTvOutlined as ScreenIcon,
-  OpenInNewOutlined as OpenIcon
+  LockOutlined as LockIcon,
+  OpenInNewOutlined as OpenIcon,
+  RefreshOutlined as RefreshIcon
 } from '@mui/icons-material'
 import dayjs from 'dayjs'
 import { QRCodeSVG } from 'qrcode.react'
 import { toast } from 'react-toastify'
 
-import { buildGuestLink, photoVisibilityLabels } from '@config/events'
+import { buildGuestLink, generateRandomPin, photoVisibilityLabels, pinRotationLabels } from '@config/events'
 
 import {
   linkFieldBoxStyles,
   linkTextStyles,
+  pinActionsRowStyles,
+  pinBannerStyles,
+  pinCodeTextStyles,
   qrBoxStyles,
   shareActionsRowStyles,
   shareButtonStyles,
@@ -25,12 +34,39 @@ import {
 } from './styles'
 import type { ShareLinkProps } from './types'
 
-const ShareLink = ({ event, onOpenScreen }: ShareLinkProps) => {
+const ShareLink = ({ event, onOpenScreen, onSave }: ShareLinkProps) => {
   const link = buildGuestLink(event.guestToken)
+  const [isEditingPin, setIsEditingPin] = useState(false)
+  const [customPin, setCustomPin] = useState(event.settings.pin)
+  const [isUpdatingPin, setIsUpdatingPin] = useState(false)
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(link)
     toast.success('Link copiado!')
+  }
+
+  const handleCopyPin = async () => {
+    await navigator.clipboard.writeText(event.settings.pin)
+    toast.success('PIN copiado!')
+  }
+
+  const handleRegeneratePin = async () => {
+    setIsUpdatingPin(true)
+    const nextPin = generateRandomPin(event.settings.pin)
+    await onSave({ settings: { pin: nextPin } })
+    setCustomPin(nextPin)
+    setIsUpdatingPin(false)
+  }
+
+  const handleSaveCustomPin = async () => {
+    if (!/^\d{4}$/.test(customPin)) {
+      toast.error('O PIN deve conter exatamente 4 dígitos numéricos.')
+      return
+    }
+    setIsUpdatingPin(true)
+    await onSave({ settings: { pin: customPin } })
+    setIsEditingPin(false)
+    setIsUpdatingPin(false)
   }
 
   return (
@@ -86,6 +122,103 @@ const ShareLink = ({ event, onOpenScreen }: ShareLinkProps) => {
             </Box>
           </Box>
         </Box>
+
+        {event.settings.pinEnabled && (
+          <Box sx={pinBannerStyles}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+                <LockIcon fontSize="small" color="primary" />
+                <Typography variant="caption" color="text.secondary" fontWeight={700}>
+                  PIN DE ACESSO DOS CONVIDADOS
+                </Typography>
+                <Chip
+                  size="small"
+                  variant="outlined"
+                  label={
+                    event.settings.pinRotate
+                      ? pinRotationLabels[event.settings.pinRotationMinutes]
+                      : 'PIN fixo'
+                  }
+                />
+              </Box>
+
+              {isEditingPin ? (
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 0.5 }}>
+                  <TextField
+                    size="small"
+                    value={customPin}
+                    onChange={(e) => setCustomPin(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                    placeholder="0000"
+                    slotProps={{
+                      htmlInput: {
+                        inputMode: 'numeric',
+                        maxLength: 4,
+                        style: { width: 84, fontFamily: 'monospace', fontWeight: 700, letterSpacing: '0.2em' }
+                      }
+                    }}
+                  />
+                  <IconButton
+                    size="small"
+                    color="primary"
+                    disabled={isUpdatingPin}
+                    onClick={handleSaveCustomPin}
+                    aria-label="Salvar novo PIN"
+                  >
+                    <CheckIcon fontSize="small" />
+                  </IconButton>
+                  <IconButton
+                    size="small"
+                    disabled={isUpdatingPin}
+                    onClick={() => {
+                      setCustomPin(event.settings.pin)
+                      setIsEditingPin(false)
+                    }}
+                    aria-label="Cancelar edição do PIN"
+                  >
+                    <CloseIcon fontSize="small" />
+                  </IconButton>
+                </Box>
+              ) : (
+                <Typography sx={pinCodeTextStyles}>{event.settings.pin}</Typography>
+              )}
+            </Box>
+
+            <Box sx={pinActionsRowStyles}>
+              <Tooltip title="Copiar PIN">
+                <Button
+                  size="small"
+                  variant="outlined"
+                  startIcon={<CopyIcon fontSize="small" />}
+                  onClick={handleCopyPin}
+                  disabled={isUpdatingPin}
+                >
+                  Copiar PIN
+                </Button>
+              </Tooltip>
+              <Button
+                size="small"
+                variant="outlined"
+                startIcon={<EditIcon fontSize="small" />}
+                onClick={() => {
+                  setCustomPin(event.settings.pin)
+                  setIsEditingPin(true)
+                }}
+                disabled={isUpdatingPin || isEditingPin}
+              >
+                Alterar PIN
+              </Button>
+              <Button
+                size="small"
+                variant="outlined"
+                startIcon={<RefreshIcon fontSize="small" />}
+                onClick={handleRegeneratePin}
+                disabled={isUpdatingPin}
+              >
+                Novo PIN
+              </Button>
+            </Box>
+          </Box>
+        )}
 
         <Box sx={summaryGridStyles}>
           <Box sx={summaryItemStyles}>

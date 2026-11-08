@@ -1,4 +1,4 @@
-﻿import { Box, IconButton, Typography } from '@mui/material'
+import { Box, IconButton, Typography } from '@mui/material'
 import {
   ArrowBack as BackIcon,
   Favorite as LikeIcon,
@@ -15,6 +15,7 @@ import {
   eventNameStyles,
   iconButtonStyles,
   photoStyles,
+  pinBadgeStyles,
   qrBoxStyles,
   screenRootStyles,
   topBarStyles,
@@ -24,7 +25,7 @@ import {
 const EventScreen = () => {
   const { id = '' } = useParams()
   const navigate = useNavigate()
-  const { event, currentPhoto, message } = useEventScreen(id)
+  const { event, pin, currentPhoto, message } = useEventScreen(id)
 
   const handleFullscreen = () => document.documentElement.requestFullscreen?.()
 
@@ -37,9 +38,12 @@ const EventScreen = () => {
         <Typography component="h1" sx={eventNameStyles}>
           {event?.name}
         </Typography>
-        <IconButton aria-label="Tela cheia" onClick={handleFullscreen} sx={iconButtonStyles}>
-          <FullscreenIcon />
-        </IconButton>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+          {pin && <Typography sx={pinBadgeStyles}>PIN: {pin}</Typography>}
+          <IconButton aria-label="Tela cheia" onClick={handleFullscreen} sx={iconButtonStyles}>
+            <FullscreenIcon />
+          </IconButton>
+        </Box>
       </Box>
 
       {currentPhoto ? (
@@ -68,6 +72,7 @@ const EventScreen = () => {
               <QRCodeSVG value={buildGuestLink(event.guestToken)} size={200} />
             </Box>
           )}
+          {pin && <Typography sx={pinBadgeStyles}>PIN de acesso: {pin}</Typography>}
           <Typography variant="h5">{message ?? 'Aguardando as primeiras fotos...'}</Typography>
           <Typography variant="body1" color="grey.400">
             Escaneie o QR Code para enviar suas fotos

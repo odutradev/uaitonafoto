@@ -104,3 +104,31 @@ export const summaryItemStyles: SxProps<Theme> = {
   gap: 0.5,
   minWidth: 0
 }
+
+export const pinBannerStyles: SxProps<Theme> = {
+  display: 'flex',
+  flexDirection: { xs: 'column', sm: 'row' },
+  alignItems: { xs: 'flex-start', sm: 'center' },
+  justifyContent: 'space-between',
+  gap: 2,
+  p: 2,
+  borderRadius: '16px',
+  bgcolor: 'action.hover',
+  border: 1,
+  borderColor: 'divider'
+}
+
+export const pinCodeTextStyles: SxProps<Theme> = {
+  fontFamily: 'monospace',
+  fontWeight: 800,
+  fontSize: '1.5rem',
+  letterSpacing: '0.25em',
+  lineHeight: 1.2
+}
+
+export const pinActionsRowStyles: SxProps<Theme> = {
+  display: 'flex',
+  alignItems: 'center',
+  flexWrap: 'wrap',
+  gap: 1
+}

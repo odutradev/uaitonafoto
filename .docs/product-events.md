@@ -57,6 +57,11 @@ Os campos calculados são recalculados a cada alteração de `endsAt` ou `settin
 | `galleryDurationDays` | Dias de disponibilidade da galeria após `endsAt` (1–365) | 30 |
 | `maxPhotosPerGuest` | Máximo de fotos por convidado (1–100) | 10 |
 | `photoVisibility` | `during_event`: fotos visíveis (telão/feed) já durante o evento · `after_event`: visíveis só após `endsAt` | `during_event` |
+| `pinEnabled` | Se os convidados precisam informar um PIN numérico de 4 dígitos ao entrar | `true` |
+| `pin` | PIN numérico de 4 dígitos (`/^\d{4}$/`), editável pela equipe | Aleatório de 4 dígitos |
+| `pinRotate` | Se o PIN alterna automaticamente a cada intervalo configurado (`false` = PIN fixo) | `true` |
+| `pinRotationMinutes` | Intervalo em minutos para rotação automática do PIN (`5`, `15`, `30` ou `60`) | `15` |
+| `pinUpdatedAt` | Data/hora (ISO 8601) da última geração ou alteração do PIN | Instante atual |
 
 ## 4. Fases do evento
 
