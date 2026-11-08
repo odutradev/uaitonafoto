@@ -16,6 +16,7 @@ import dayjs from 'dayjs'
 import { QRCodeSVG } from 'qrcode.react'
 import { toast } from 'react-toastify'
 
+import Modal from '@components/modal'
 import {
   buildGuestLink,
   buildScreenLink,
@@ -57,6 +58,8 @@ const ShareLink = ({ event, onOpenScreen, onSave, onAddScreen, onDisconnectScree
   const [customPin, setCustomPin] = useState(event.settings.pin)
   const [isUpdatingPin, setIsUpdatingPin] = useState(false)
   const [isManagingScreen, setIsManagingScreen] = useState(false)
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false)
+  const [screenNameInput, setScreenNameInput] = useState('')
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(link)
@@ -73,10 +76,16 @@ const ShareLink = ({ event, onOpenScreen, onSave, onAddScreen, onDisconnectScree
     toast.success('PIN do telão copiado!')
   }
 
-  const handleAddScreen = async () => {
+  const handleOpenAddModal = () => {
+    setScreenNameInput('')
+    setIsAddModalOpen(true)
+  }
+
+  const handleConfirmAddScreen = async () => {
     setIsManagingScreen(true)
-    await onAddScreen()
+    await onAddScreen(screenNameInput.trim() || undefined)
     setIsManagingScreen(false)
+    setIsAddModalOpen(false)
   }
 
   const handleDisconnectScreen = async (screenId: string) => {
@@ -322,7 +331,7 @@ const ShareLink = ({ event, onOpenScreen, onSave, onAddScreen, onDisconnectScree
           <Button
             variant="contained"
             startIcon={<AddIcon fontSize="small" />}
-            onClick={handleAddScreen}
+            onClick={handleOpenAddModal}
             disabled={isManagingScreen || isScreenLimitReached}
             sx={shareButtonStyles}
           >
@@ -350,9 +359,16 @@ const ShareLink = ({ event, onOpenScreen, onSave, onAddScreen, onDisconnectScree
             {screens.map((slot, index) => (
               <Box key={slot.id} sx={screenSlotCardStyles}>
                 <Box sx={screenSlotHeaderStyles}>
-                  <Typography variant="subtitle2" fontWeight={700}>
-                    Telão {index + 1}
-                  </Typography>
+                  <Box sx={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+                    <Typography variant="subtitle2" fontWeight={700} noWrap>
+                      {slot.name || `Telão ${index + 1}`}
+                    </Typography>
+                    {slot.name && (
+                      <Typography variant="caption" color="text.secondary">
+                        Telão {index + 1}
+                      </Typography>
+                    )}
+                  </Box>
                   <Chip
                     size="small"
                     color={slot.activatedAt ? 'success' : 'default'}
@@ -394,6 +410,40 @@ const ShareLink = ({ event, onOpenScreen, onSave, onAddScreen, onDisconnectScree
           </Box>
         )}
       </Card>
+
+      <Modal
+        open={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        title="Gerar PIN de telão"
+        description="Defina opcionalmente um nome ou local para identificar este dispositivo (ex: Telão Entrada, Palco Principal)."
+        primaryAction={{
+          label: 'Gerar PIN',
+          onClick: handleConfirmAddScreen,
+          loading: isManagingScreen
+        }}
+        secondaryAction={{
+          label: 'Cancelar',
+          onClick: () => setIsAddModalOpen(false),
+          disabled: isManagingScreen
+        }}
+      >
+        <TextField
+          label="Identificação do telão (opcional)"
+          placeholder="Ex: Telão Entrada"
+          value={screenNameInput}
+          onChange={(e) => setScreenNameInput(e.target.value)}
+          slotProps={{ htmlInput: { maxLength: 60 } }}
+          fullWidth
+          autoFocus
+          disabled={isManagingScreen}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault()
+              handleConfirmAddScreen()
+            }
+          }}
+        />
+      </Modal>
     </Box>
   )
 }

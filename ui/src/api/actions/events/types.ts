@@ -24,6 +24,7 @@ export interface EventMember {
 
 export interface EventScreenSlot {
   id: string
+  name?: string
   pin: string
   createdAt: string
   activatedAt?: string

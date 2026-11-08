@@ -74,15 +74,18 @@ const useEventDetails = (eventId: string) => {
     }
   }, [eventId, navigate])
 
-  const addScreen = useCallback(async () => {
-    try {
-      const screens = await createEventScreen(eventId)
-      setEvent((prev) => (prev ? { ...prev, screens } : prev))
-      toast.success('PIN do telão gerado!')
-    } catch (error) {
-      toast.error(getErrorMessage(error, 'Não foi possível gerar o PIN do telão.'))
-    }
-  }, [eventId])
+  const addScreen = useCallback(
+    async (name?: string) => {
+      try {
+        const screens = await createEventScreen(eventId, name)
+        setEvent((prev) => (prev ? { ...prev, screens } : prev))
+        toast.success('PIN do telão gerado!')
+      } catch (error) {
+        toast.error(getErrorMessage(error, 'Não foi possível gerar o PIN do telão.'))
+      }
+    },
+    [eventId]
+  )
 
   const disconnectScreen = useCallback(
     async (screenId: string) => {

@@ -78,8 +78,10 @@ export const getEventScreen = async (
   return response.data
 }
 
-export const createEventScreen = async (id: string): Promise<EventScreenSlot[]> => {
-  const response = await api.post<EventScreenSlot[]>(`/events/${id}/screens`)
+export const createEventScreen = async (id: string, name?: string): Promise<EventScreenSlot[]> => {
+  const response = await api.post<EventScreenSlot[]>(`/events/${id}/screens`, {
+    ...(name?.trim() ? { name: name.trim() } : {})
+  })
   return response.data
 }
 

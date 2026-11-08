@@ -4,6 +4,6 @@ export interface ShareLinkProps {
   event: EventItem
   onOpenScreen: () => void
   onSave: (payload: UpdateEventPayload) => Promise<void>
-  onAddScreen: () => Promise<void>
+  onAddScreen: (name?: string) => Promise<void>
   onDisconnectScreen: (screenId: string) => Promise<void>
 }
