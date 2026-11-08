@@ -78,14 +78,28 @@ export const dialogActionsStyles: SxProps<Theme> = {
   px: 3,
   pb: 3,
   pt: 1,
+  display: 'grid',
+  gridTemplateColumns: { xs: '1fr', sm: '140px 1fr' },
   gap: 1.5,
-  flexDirection: { xs: 'column-reverse', sm: 'row' }
+  width: '100%',
+  boxSizing: 'border-box'
 }
 
-export const dialogButtonStyles: SxProps<Theme> = {
-  minHeight: 46,
+export const cancelButtonStyles: SxProps<Theme> = {
+  minHeight: 48,
   borderRadius: '12px',
   fontWeight: 700,
   textTransform: 'none',
-  width: { xs: '100%', sm: 'auto' }
+  order: { xs: 2, sm: 1 },
+  width: '100%'
+}
+
+export const confirmButtonStyles: SxProps<Theme> = {
+  minHeight: 48,
+  borderRadius: '12px',
+  fontWeight: 700,
+  textTransform: 'none',
+  order: { xs: 1, sm: 2 },
+  width: '100%',
+  whiteSpace: 'nowrap'
 }

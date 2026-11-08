@@ -18,10 +18,11 @@ import {
 import { formatPriceInBrl } from '@pages/public/landingPage/sections/plans/utils'
 
 import {
+  cancelButtonStyles,
   checkIconStyles,
+  confirmButtonStyles,
   confirmationDialogPaperStyles,
   dialogActionsStyles,
-  dialogButtonStyles,
   dialogContentBoxStyles,
   featureRowStyles,
   featuresContainerStyles,
@@ -137,13 +138,13 @@ export const CheckoutConfirmationDialog = ({
         </Box>
       </DialogContent>
 
-      <DialogActions sx={dialogActionsStyles}>
+      <DialogActions disableSpacing sx={dialogActionsStyles}>
         <Button
           variant="outlined"
           color="inherit"
           disabled={isLoading}
           onClick={onClose}
-          sx={dialogButtonStyles}
+          sx={cancelButtonStyles}
         >
           Cancelar
         </Button>
@@ -154,7 +155,7 @@ export const CheckoutConfirmationDialog = ({
           disabled={isLoading}
           onClick={onConfirm}
           startIcon={isLoading ? <CircularProgress size={18} color="inherit" /> : <LockIcon fontSize="small" />}
-          sx={dialogButtonStyles}
+          sx={confirmButtonStyles}
         >
           {isLoading ? 'Gerando checkout...' : 'Confirmar e ir para pagamento'}
         </Button>
