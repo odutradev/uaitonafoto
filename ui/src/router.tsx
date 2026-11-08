@@ -12,6 +12,7 @@ import AuthRoute from '@components/authRoute'
 import DashboardLayout from '@components/dashboardLayout'
 import Billing from '@pages/app/billing'
 import EventDetails from '@pages/app/eventDetails'
+import EventScreen from '@pages/app/eventScreen'
 import Home from '@pages/app/home'
 import Logs from '@pages/app/logs'
 import Profile from '@pages/app/profile'
@@ -42,6 +43,10 @@ const appRouter = createBrowserRouter([
             ]
           }
         ]
+      },
+      {
+        element: createElement(AuthRoute, { access: 'private' }),
+        children: [{ path: '/app/events/:id/screen', element: createElement(EventScreen) }]
       },
       { path: '/reset-password', element: createElement(ResetPassword) },
       { path: '/termos-de-uso', element: createElement(TermsOfUse) },
