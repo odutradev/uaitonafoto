@@ -3,6 +3,7 @@ import eventRepository from '../../repositories/events'
 import guestRepository from '../../repositories/guests'
 import photoRepository from '../../repositories/photos'
 import guestSessionMiddleware from '../../middlewares/guestSession'
+import { ensureCurrentEventPin } from '../../utils/eventPin'
 import { loadGuestContext } from '../../utils/loadGuestContext'
 import { getEventPhase } from '../../utils/eventWindows'
 import { signGuestToken } from '../../utils/guestToken'
@@ -54,14 +55,19 @@ export const joinEvent = defineAction(
     schema: { params: guestTokenParamsSchema, body: joinEventSchema },
     responses: {
       200: { description: 'Sessão do convidado criada', schema: joinEventResponseSchema },
-      403: { description: 'A galeria do evento já foi encerrada' },
+      403: { description: 'PIN inválido ou galeria encerrada' },
       404: { description: 'Link do evento inválido' }
     }
   },
   async ({ params, data, manageError }: ManageRequestBody<JoinEventRequest>): ManageRequestResponse<JoinEventResponse> => {
-    const event = await eventRepository.findByGuestToken(params.token)
-    if (!event) return manageError({ code: 'not_found' })
-    if (getEventPhase(event) === 'expired') return manageError({ code: 'forbidden' })
+    const foundEvent = await eventRepository.findByGuestToken(params.token)
+    if (!foundEvent) return manageError({ code: 'not_found' })
+    if (getEventPhase(foundEvent) === 'expired') return manageError({ code: 'forbidden' })
+
+    const event = await ensureCurrentEventPin(foundEvent)
+    if (event.settings.pinEnabled && data.pin !== event.settings.pin) {
+      return manageError({ code: 'forbidden', details: 'PIN de acesso incorreto.' })
+    }
 
     const guest = await guestRepository.create({ eventId: event.id, name: data.name })
 

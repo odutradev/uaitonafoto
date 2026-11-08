@@ -1,7 +1,7 @@
 import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi'
 import { z } from 'zod'
 
-import { eventTypeSchema } from '../event/schemas'
+import { eventPinSchema, eventTypeSchema } from '../event/schemas'
 
 extendZodWithOpenApi(z)
 
@@ -21,6 +21,10 @@ export const guestEventInfoSchema = z
     galleryExpiresAt: z.string().openapi({ example: '2027-01-20T05:00:00.000Z' }),
     maxPhotosPerGuest: z.number().openapi({ example: 10 }),
     photoVisibility: z.enum(['during_event', 'after_event']),
+    requiresPin: z.boolean().openapi({
+      example: true,
+      description: 'Indica se é necessário informar o PIN numérico de 4 dígitos para entrar no evento'
+    }),
     phase: eventPhaseSchema
   })
   .openapi('GuestEventInfo')
@@ -40,7 +44,8 @@ export const guestTokenParamsSchema = z
 
 export const joinEventSchema = z
   .object({
-    name: z.string().trim().min(1).max(60).openapi({ example: 'Maria' })
+    name: z.string().trim().min(1).max(60).openapi({ example: 'Maria' }),
+    pin: eventPinSchema.optional()
   })
   .openapi('JoinEvent')
 

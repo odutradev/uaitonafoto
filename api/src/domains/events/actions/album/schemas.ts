@@ -1,4 +1,4 @@
-﻿import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi'
+import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi'
 import { z } from 'zod'
 
 import { createPaginatedSchema, paginationQuerySchema } from '@factories/pagination/schemas'
@@ -32,7 +32,8 @@ export const screenQuerySchema = z
 export const screenResponseSchema = z
   .object({
     photos: z.array(photoSchema).openapi({ description: 'Fotos em ordem cronológica (mais antigas primeiro)' }),
-    nextSince: z.string().optional().openapi({ description: 'Cursor para a próxima chamada' })
+    nextSince: z.string().optional().openapi({ description: 'Cursor para a próxima chamada' }),
+    pin: z.string().nullable().openapi({ example: '4829', description: 'PIN atual de acesso do evento (null se desativado)' })
   })
   .openapi('ScreenResponse')
 

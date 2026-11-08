@@ -4,11 +4,18 @@ export type EventMemberRole = 'creator' | 'organizer'
 
 export type PhotoVisibility = 'during_event' | 'after_event'
 
+export type PinRotationMinutes = 5 | 15 | 30 | 60
+
 export interface EventSettings {
   uploadWindowHours: number
   galleryDurationDays: number
   maxPhotosPerGuest: number
   photoVisibility: PhotoVisibility
+  pinEnabled: boolean
+  pin: string
+  pinRotate: boolean
+  pinRotationMinutes: PinRotationMinutes
+  pinUpdatedAt: string
 }
 
 export interface EventMember {

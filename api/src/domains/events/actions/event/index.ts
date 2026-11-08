@@ -2,8 +2,9 @@ import defineAction from '@factories/defineAction'
 import { buildPaginatedResponse, getPaginationOptions } from '@factories/pagination/utils'
 import eventRepository from '../../repositories/events'
 import guestRepository from '../../repositories/guests'
+import { ensureCurrentEventPin } from '../../utils/eventPin'
 import { purgeEventPhotos } from '../../utils/purgeEventPhotos'
-import defaultEventSettings from './utils/defaultEventSettings'
+import buildDefaultEventSettings from './utils/defaultEventSettings'
 import findMemberRole from './utils/findMemberRole'
 import isValidEventPeriod from './utils/isValidEventPeriod'
 import toEventResponse from './utils/toEventResponse'
@@ -45,7 +46,7 @@ export const createEvent = defineAction(
       return manageError({ code: 'bad_request', details: 'endsAt must be after startsAt' })
     }
 
-    const settings = { ...defaultEventSettings, ...data.settings }
+    const settings = { ...buildDefaultEventSettings(), ...data.settings }
 
     const event = await eventRepository.create({
       ...data,
@@ -76,11 +77,12 @@ export const listMyEvents = defineAction(
 
     const { page, limit, offset } = getPaginationOptions(query)
     const result = await eventRepository.listByMember({ userId, limit, offset })
+    const rows = await Promise.all(result.rows.map((event) => ensureCurrentEventPin(event)))
 
     return buildPaginatedResponse(
       {
         count: result.count,
-        rows: result.rows.map((event) => toEventResponse(event, findMemberRole(event, userId)!))
+        rows: rows.map((event) => toEventResponse(event, findMemberRole(event, userId)!))
       },
       page,
       limit
@@ -111,7 +113,8 @@ export const getEvent = defineAction(
     const role = findMemberRole(event, ids.userId)
     if (!role) return manageError({ code: 'forbidden' })
 
-    return toEventResponse(event, role)
+    const currentEvent = await ensureCurrentEventPin(event)
+    return toEventResponse(currentEvent, role)
   }
 )
 
@@ -144,11 +147,29 @@ export const updateEvent = defineAction(
       return manageError({ code: 'bad_request', details: 'endsAt must be after startsAt' })
     }
 
-    const windows = computeEventWindows(endsAt, { ...event.settings, ...data.settings })
-    const updated = await eventRepository.update(event.id, { ...data, ...windows })
+    const shouldResetPinTimer =
+      data.settings?.pin !== undefined ||
+      data.settings?.pinRotate !== undefined ||
+      data.settings?.pinEnabled !== undefined ||
+      data.settings?.pinRotationMinutes !== undefined
+
+    const nextSettings = data.settings
+      ? {
+          ...data.settings,
+          ...(shouldResetPinTimer ? { pinUpdatedAt: new Date().toISOString() } : {})
+        }
+      : undefined
+
+    const windows = computeEventWindows(endsAt, { ...event.settings, ...nextSettings })
+    const updated = await eventRepository.update(event.id, {
+      ...data,
+      settings: nextSettings,
+      ...windows
+    })
     if (!updated) return manageError({ code: 'not_found' })
 
-    return toEventResponse(updated, role)
+    const currentEvent = await ensureCurrentEventPin(updated)
+    return toEventResponse(currentEvent, role)
   }
 )
 

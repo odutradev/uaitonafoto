@@ -9,6 +9,16 @@ export const eventTypeSchema = z.enum(['birthday', 'wedding', 'corporate', 'othe
 
 export const eventMemberRoleSchema = z.enum(['creator', 'organizer']).openapi({ example: 'creator' })
 
+export const pinRotationMinutesSchema = z
+  .union([z.literal(5), z.literal(15), z.literal(30), z.literal(60)])
+  .openapi({ example: 15, description: 'Intervalo em minutos para rotação automática do PIN (5, 15, 30 ou 60)' })
+
+export const eventPinSchema = z
+  .string()
+  .trim()
+  .regex(/^\d{4}$/, 'O PIN deve conter exatamente 4 dígitos numéricos')
+  .openapi({ example: '4829', description: 'PIN numérico de 4 dígitos para acesso dos convidados' })
+
 export const eventSettingsSchema = z
   .object({
     uploadWindowHours: z.number().int().min(0).max(168).openapi({
@@ -26,9 +36,28 @@ export const eventSettingsSchema = z
     photoVisibility: z.enum(['during_event', 'after_event']).openapi({
       example: 'during_event',
       description: 'Fotos visíveis durante o evento (telão/feed) ou apenas após o término'
+    }),
+    pinEnabled: z.boolean().openapi({
+      example: true,
+      description: 'Indica se os convidados precisam informar o PIN para entrar no evento'
+    }),
+    pin: eventPinSchema,
+    pinRotate: z.boolean().openapi({
+      example: true,
+      description: 'Indica se o PIN deve alternar automaticamente a cada intervalo configurado'
+    }),
+    pinRotationMinutes: pinRotationMinutesSchema,
+    pinUpdatedAt: z.string().openapi({
+      example: '2026-11-08T17:00:00.000Z',
+      description: 'Instante da última geração/alteração do PIN'
     })
   })
   .openapi('EventSettings')
+
+export const eventSettingsInputSchema = eventSettingsSchema
+  .omit({ pinUpdatedAt: true })
+  .partial()
+  .openapi('EventSettingsInput')
 
 export const eventMemberSchema = z
   .object({
@@ -64,7 +93,7 @@ export const createEventSchema = z
     type: eventTypeSchema,
     startsAt: z.string().datetime().openapi({ example: '2026-12-20T21:00:00.000Z' }),
     endsAt: z.string().datetime().openapi({ example: '2026-12-21T05:00:00.000Z' }),
-    settings: eventSettingsSchema.partial().optional()
+    settings: eventSettingsInputSchema.optional()
   })
   .openapi('CreateEvent')
 

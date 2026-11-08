@@ -1,4 +1,4 @@
-﻿import { getEventPhase } from '../../../utils/eventWindows'
+import { getEventPhase } from '../../../utils/eventWindows'
 
 import type { EventEntity } from '../../../repositories/events/types'
 import type { GuestEventInfo } from '../types'
@@ -13,6 +13,7 @@ export const toGuestEventInfo = (event: EventEntity): GuestEventInfo => ({
   galleryExpiresAt: event.galleryExpiresAt,
   maxPhotosPerGuest: event.settings.maxPhotosPerGuest,
   photoVisibility: event.settings.photoVisibility,
+  requiresPin: event.settings.pinEnabled,
   phase: getEventPhase(event)
 })
 

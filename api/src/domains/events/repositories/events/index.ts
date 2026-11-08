@@ -9,8 +9,22 @@ import type {
 } from './types'
 
 const toEventEntity = (doc: any): EventEntity => {
-  const { _id, ...rest } = doc
-  return { ...rest, id: String(_id) }
+  const { _id, settings = {}, ...rest } = doc
+  return {
+    ...rest,
+    id: String(_id),
+    settings: {
+      uploadWindowHours: settings.uploadWindowHours ?? 24,
+      galleryDurationDays: settings.galleryDurationDays ?? 30,
+      maxPhotosPerGuest: settings.maxPhotosPerGuest ?? 10,
+      photoVisibility: settings.photoVisibility ?? 'during_event',
+      pinEnabled: settings.pinEnabled ?? false,
+      pin: settings.pin ?? '0000',
+      pinRotate: settings.pinRotate ?? true,
+      pinRotationMinutes: settings.pinRotationMinutes ?? 15,
+      pinUpdatedAt: settings.pinUpdatedAt ?? rest.createdAt ?? new Date().toISOString()
+    }
+  }
 }
 
 const flattenSettings = (settings: UpdateEventPayload['settings']): Record<string, unknown> =>

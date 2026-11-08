@@ -1,9 +1,10 @@
-﻿import defineAction from '@factories/defineAction'
+import defineAction from '@factories/defineAction'
 import { buildPaginatedResponse, getPaginationOptions } from '@factories/pagination/utils'
 import guestRepository from '../../repositories/guests'
 import likeRepository from '../../repositories/likes'
 import photoRepository from '../../repositories/photos'
 import { arePhotosVisible, hasEventEnded } from '../../utils/eventWindows'
+import { ensureCurrentEventPin } from '../../utils/eventPin'
 import { loadTeamAccess } from '../../utils/loadTeamAccess'
 import { removePhotoFile } from '../../utils/photoStorage'
 import toPhotoResponses from '../photo/utils/toPhotoResponses'
@@ -53,15 +54,18 @@ export const getScreen = defineAction(
     if ('error' in access) return manageError({ code: access.error })
     if (!arePhotosVisible(access.event)) return manageError({ code: 'forbidden', details: 'Fotos ainda não liberadas' })
 
+    const event = await ensureCurrentEventPin(access.event)
+
     const photos = await photoRepository.listSince({
-      eventId: access.event.id,
+      eventId: event.id,
       since: query?.since,
       limit: query?.limit ?? SCREEN_DEFAULT_LIMIT
     })
 
     return {
       photos: await toPhotoResponses(photos),
-      nextSince: photos.at(-1)?.createdAt ?? query?.since
+      nextSince: photos.at(-1)?.createdAt ?? query?.since,
+      pin: event.settings.pinEnabled ? event.settings.pin : null
     }
   }
 )
