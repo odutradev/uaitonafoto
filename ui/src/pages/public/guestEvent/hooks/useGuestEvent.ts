@@ -1,0 +1,171 @@
+import { useCallback, useEffect, useState } from 'react'
+import { toast } from 'react-toastify'
+
+import {
+  deleteGuestPhoto,
+  getGuestEvent,
+  getGuestFeed,
+  getGuestSession,
+  joinEvent,
+  toggleGuestPhotoLike,
+  uploadGuestPhoto
+} from '@actions/guest'
+import { clearGuestToken, getStoredGuestToken, storeGuestToken } from '@actions/guest/client'
+import { getErrorMessage } from '@config/events'
+
+import type { PaginationMeta } from '@actions/events/types'
+import type { GuestEventInfo, GuestPhoto, GuestProfile } from '@actions/guest/types'
+
+const FEED_PAGE_SIZE = 24
+
+const useGuestEvent = (eventToken: string) => {
+  const [event, setEvent] = useState<GuestEventInfo | null>(null)
+  const [guest, setGuest] = useState<GuestProfile | null>(null)
+  const [guestToken, setGuestToken] = useState<string | null>(() => getStoredGuestToken(eventToken))
+  const [photosSent, setPhotosSent] = useState(0)
+  const [photosRemaining, setPhotosRemaining] = useState(0)
+  const [photos, setPhotos] = useState<GuestPhoto[]>([])
+  const [meta, setMeta] = useState<PaginationMeta | null>(null)
+  const [page, setPage] = useState(1)
+  const [isLoading, setIsLoading] = useState(true)
+  const [isUploading, setIsUploading] = useState(false)
+  const [notFound, setNotFound] = useState(false)
+
+  const loadFeed = useCallback(
+    async (sessionToken: string, targetPage = page) => {
+      try {
+        const result = await getGuestFeed(sessionToken, { page: targetPage, limit: FEED_PAGE_SIZE })
+        setPhotos(result.data)
+        setMeta(result.meta)
+      } catch {
+        setPhotos([])
+        setMeta(null)
+      }
+    },
+    [page]
+  )
+
+  useEffect(() => {
+    let isActive = true
+
+    const init = async () => {
+      setIsLoading(true)
+      const storedToken = getStoredGuestToken(eventToken)
+
+      if (storedToken) {
+        try {
+          const session = await getGuestSession(storedToken)
+          if (!isActive) return
+          setGuest(session.guest)
+          setEvent(session.event)
+          setPhotosSent(session.photosSent)
+          setPhotosRemaining(session.photosRemaining)
+          setGuestToken(storedToken)
+          await loadFeed(storedToken, 1)
+          setIsLoading(false)
+          return
+        } catch {
+          clearGuestToken(eventToken)
+          if (isActive) setGuestToken(null)
+        }
+      }
+
+      try {
+        const info = await getGuestEvent(eventToken)
+        if (isActive) setEvent(info)
+      } catch {
+        if (isActive) setNotFound(true)
+      } finally {
+        if (isActive) setIsLoading(false)
+      }
+    }
+
+    init()
+    return () => {
+      isActive = false
+    }
+  }, [eventToken, loadFeed])
+
+  useEffect(() => {
+    if (guestToken) loadFeed(guestToken, page)
+  }, [guestToken, page, loadFeed])
+
+  const join = async (name: string) => {
+    try {
+      const response = await joinEvent(eventToken, name)
+      storeGuestToken(eventToken, response.guestToken)
+      setGuestToken(response.guestToken)
+      setGuest(response.guest)
+      setEvent(response.event)
+      setPhotosSent(0)
+      setPhotosRemaining(response.event.maxPhotosPerGuest)
+    } catch (error) {
+      toast.error(getErrorMessage(error, 'Não foi possível entrar no evento.'))
+    }
+  }
+
+  const upload = async (file: File) => {
+    if (!guestToken) return
+    setIsUploading(true)
+    try {
+      await uploadGuestPhoto(guestToken, file)
+      setPhotosSent((count) => count + 1)
+      setPhotosRemaining((count) => Math.max(0, count - 1))
+      setPage(1)
+      await loadFeed(guestToken, 1)
+      toast.success('Foto enviada!')
+    } catch (error) {
+      toast.error(getErrorMessage(error, 'Não foi possível enviar a foto.'))
+    } finally {
+      setIsUploading(false)
+    }
+  }
+
+  const toggleLike = async (photoId: string) => {
+    if (!guestToken) return
+    try {
+      const result = await toggleGuestPhotoLike(guestToken, photoId)
+      setPhotos((items) =>
+        items.map((item) =>
+          item.id === photoId ? { ...item, likedByMe: result.liked, likesCount: result.likesCount } : item
+        )
+      )
+    } catch (error) {
+      toast.error(getErrorMessage(error, 'Não foi possível registrar a curtida.'))
+    }
+  }
+
+  const removePhoto = async (photoId: string) => {
+    if (!guestToken) return
+    try {
+      await deleteGuestPhoto(guestToken, photoId)
+      setPhotosSent((count) => Math.max(0, count - 1))
+      setPhotosRemaining((count) => count + 1)
+      await loadFeed(guestToken, page)
+      toast.success('Foto excluída.')
+    } catch (error) {
+      toast.error(getErrorMessage(error, 'Não foi possível excluir a foto.'))
+    }
+  }
+
+  return {
+    event,
+    guest,
+    photosSent,
+    photosRemaining,
+    photos,
+    meta,
+    page,
+    isLoading,
+    isUploading,
+    notFound,
+    setPage,
+    join,
+    upload,
+    toggleLike,
+    removePhoto
+  }
+}
+
+export default useGuestEvent
+

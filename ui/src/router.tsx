@@ -6,6 +6,7 @@ import LandingPage from '@pages/public/landingPage'
 import TermsOfUse from '@pages/public/termsOfUse'
 import RefundPolicy from '@pages/public/refundPolicy'
 import ErrorPage from '@pages/public/errorPage'
+import GuestEvent from '@pages/public/guestEvent'
 import NotFound from '@pages/public/notFound'
 import AuthPage from '@pages/auth/authPage'
 import AuthRoute from '@components/authRoute'
@@ -48,6 +49,7 @@ const appRouter = createBrowserRouter([
         element: createElement(AuthRoute, { access: 'private' }),
         children: [{ path: '/app/events/:id/screen', element: createElement(EventScreen) }]
       },
+      { path: '/e/:token', element: createElement(GuestEvent) },
       { path: '/reset-password', element: createElement(ResetPassword) },
       { path: '/termos-de-uso', element: createElement(TermsOfUse) },
       { path: '/termos', element: createElement(TermsOfUse) },
