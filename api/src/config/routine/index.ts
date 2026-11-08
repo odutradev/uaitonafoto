@@ -1,4 +1,5 @@
 import cron from 'node-cron'
+import env from '@config/env'
 import createLogger from '@utils/logger'
 import type {
   RoutineDefinition,
@@ -82,9 +83,18 @@ export const getActiveScheduledTasks = (): Map<string, ScheduledRoutineEntry> =>
   return activeScheduledTasks
 }
 
+export const areRoutinesEnabled = (): boolean => {
+  return env.ENABLE_ROUTINES !== 'false'
+}
+
 export const startRoutines = (divisions?: RoutineDivisionDefinition[]): void => {
   if (divisions) {
     registerRoutines(divisions)
+  }
+
+  if (!areRoutinesEnabled()) {
+    logger.info('Routine scheduler disabled via ENABLE_ROUTINES=false')
+    return
   }
 
   const targetDivisions = divisions ?? Array.from(registeredRoutines.values())

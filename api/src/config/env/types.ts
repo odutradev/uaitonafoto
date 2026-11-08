@@ -69,6 +69,9 @@ export const serverEnvSchema = z.object({
     .default(24),
   SWAGGER_ENABLED: z
     .enum(['true', 'false'])
+    .optional(),
+  ENABLE_ROUTINES: z
+    .enum(['true', 'false'])
     .optional()
 })
 
