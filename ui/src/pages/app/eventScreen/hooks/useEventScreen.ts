@@ -56,6 +56,19 @@ const useEventScreen = (eventId: string) => {
     [eventId]
   )
 
+  const disconnect = useCallback(() => {
+    clearScreenCredential(eventId)
+    cursorRef.current = undefined
+    seenIdsRef.current.clear()
+    setPhotos([])
+    setCurrentIndex(0)
+    setScreenToken(null)
+    setEvent(null)
+    setPin(null)
+    setMessage(null)
+    setActivationError(null)
+  }, [eventId])
+
   useEffect(() => {
     if (!screenToken) return undefined
 
@@ -120,6 +133,7 @@ const useEventScreen = (eventId: string) => {
     isActivating,
     activationError,
     activate,
+    disconnect,
     event,
     pin,
     photos,

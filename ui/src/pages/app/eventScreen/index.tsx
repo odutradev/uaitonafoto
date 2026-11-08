@@ -11,6 +11,7 @@ import {
   Favorite as LikeIcon,
   Fullscreen as FullscreenIcon,
   PhotoCameraOutlined as CameraIcon,
+  PowerSettingsNew as DisconnectIcon,
   Visibility as VisibilityIcon,
   VisibilityOff as VisibilityOffIcon
 } from '@mui/icons-material'
@@ -67,6 +68,7 @@ const EventScreen = () => {
     isActivating,
     activationError,
     activate,
+    disconnect,
     event,
     pin,
     photos,
@@ -130,6 +132,18 @@ const EventScreen = () => {
               <FullscreenIcon fontSize="small" />
             </IconButton>
           </Tooltip>
+          {isActivated && (
+            <Tooltip title="Desconectar telão">
+              <IconButton
+                aria-label="Desconectar telão"
+                onClick={disconnect}
+                sx={iconButtonStyles}
+                size="small"
+              >
+                <DisconnectIcon fontSize="small" />
+              </IconButton>
+            </Tooltip>
+          )}
         </Box>
       </Box>
 
