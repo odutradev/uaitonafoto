@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Alert, Box, Button, IconButton, TextField, Typography } from '@mui/material'
+import { Alert, Box, Button, IconButton, Typography } from '@mui/material'
 import {
   ArrowBack as BackIcon,
   Favorite as LikeIcon,
@@ -9,12 +9,12 @@ import {
 import { QRCodeSVG } from 'qrcode.react'
 import { useNavigate, useParams } from 'react-router-dom'
 
+import PinInput from '@components/pinInput'
 import { buildGuestLink } from '@config/events'
 
 import useEventScreen from './hooks/useEventScreen'
 import {
   activationCardStyles,
-  activationPinInputStyles,
   captionStyles,
   eventNameStyles,
   iconButtonStyles,
@@ -76,18 +76,21 @@ const EventScreen = () => {
             </Alert>
           )}
 
-          <TextField
+          <PinInput
             value={pinInput}
-            onChange={(e) => setPinInput(e.target.value.replace(/\D/g, '').slice(0, 4))}
-            placeholder="0000"
+            onChange={setPinInput}
             autoFocus
-            sx={activationPinInputStyles}
-            slotProps={{
-              htmlInput: {
-                inputMode: 'numeric',
-                pattern: '[0-9]*',
-                maxLength: 4,
-                'aria-label': 'PIN de ativação do telão'
+            disabled={isActivating}
+            slotSx={{
+              '& .MuiOutlinedInput-root': {
+                bgcolor: 'rgba(255,255,255,0.08)',
+                color: '#fff',
+                '& fieldset': {
+                  borderColor: 'rgba(255,255,255,0.24)'
+                },
+                '&:hover fieldset': {
+                  borderColor: 'rgba(255,255,255,0.45)'
+                }
               }
             }}
           />

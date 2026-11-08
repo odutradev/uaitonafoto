@@ -96,26 +96,3 @@ export const activationCardStyles: SxProps<Theme> = {
   gap: 2.5
 }
 
-export const activationPinInputStyles: SxProps<Theme> = {
-  width: '100%',
-  maxWidth: 220,
-  '& .MuiOutlinedInput-root': {
-    color: '#fff',
-    bgcolor: 'rgba(255,255,255,0.08)',
-    borderRadius: '14px',
-    '& fieldset': {
-      borderColor: 'rgba(255,255,255,0.24)'
-    },
-    '&:hover fieldset': {
-      borderColor: 'rgba(255,255,255,0.45)'
-    }
-  },
-  '& input': {
-    textAlign: 'center',
-    fontFamily: 'monospace',
-    fontWeight: 800,
-    fontSize: '1.75rem',
-    letterSpacing: '0.35em',
-    py: 1.5
-  }
-}
