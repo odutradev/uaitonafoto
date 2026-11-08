@@ -190,6 +190,8 @@ const EventScreen = () => {
               onChange={setPinInput}
               autoFocus
               disabled={isActivating}
+              mask
+              showMaskToggle
               slotSx={(theme) => ({
                 '& .MuiOutlinedInput-root': {
                   bgcolor: theme.palette.mode === 'dark' ? brandColors.darkSurface : brandColors.sand,
