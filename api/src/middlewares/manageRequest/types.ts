@@ -33,6 +33,7 @@ export type DefaultExpressContext = {
 export type RequestIdentifiers = {
   userId?: string
   guestId?: string
+  screenId?: string
 }
 
 export type RouteSchema = {

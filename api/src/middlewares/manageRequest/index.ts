@@ -72,7 +72,8 @@ const manageRequest = <T extends ManageRequestSchema = ManageRequestSchema>(
       const manageRequestBody: ManageRequestBody<T> = {
         ids: {
           userId: res.locals?.userId as string | undefined,
-          guestId: res.locals?.guestId as string | undefined
+          guestId: res.locals?.guestId as string | undefined,
+          screenId: res.locals?.screenId as string | undefined
         },
         defaultExpress: { req, res },
         params: req.params as T['params'],

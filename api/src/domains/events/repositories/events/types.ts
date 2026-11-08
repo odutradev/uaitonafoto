@@ -24,6 +24,13 @@ export interface EventMember {
   addedAt: string
 }
 
+export interface EventScreenSlot {
+  id: string
+  pin: string
+  createdAt: string
+  activatedAt?: string
+}
+
 export interface EventEntity {
   id: string
   name: string
@@ -37,6 +44,7 @@ export interface EventEntity {
   galleryExpiresAt: string
   galleryCleanedAt?: string
   members: EventMember[]
+  screens: EventScreenSlot[]
   createdAt: string
   updatedAt: string
 }

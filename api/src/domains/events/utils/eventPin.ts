@@ -2,9 +2,10 @@ import { randomInt } from 'crypto'
 import eventRepository from '../repositories/events'
 import type { EventEntity, EventSettings } from '../repositories/events/types'
 
-export const generatePin = (excludePin?: string): string => {
+export const generatePin = (excludePin?: string | string[]): string => {
+  const excluded = Array.isArray(excludePin) ? excludePin : excludePin ? [excludePin] : []
   let pin = randomInt(0, 10000).toString().padStart(4, '0')
-  while (excludePin && pin === excludePin) {
+  while (excluded.includes(pin)) {
     pin = randomInt(0, 10000).toString().padStart(4, '0')
   }
   return pin

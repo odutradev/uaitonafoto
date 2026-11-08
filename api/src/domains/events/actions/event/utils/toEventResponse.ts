@@ -13,6 +13,7 @@ export const toEventResponse = (entity: EventEntity, myRole: EventMemberRole): E
   uploadsCloseAt: entity.uploadsCloseAt,
   galleryExpiresAt: entity.galleryExpiresAt,
   members: entity.members,
+  screens: entity.screens,
   myRole,
   createdAt: entity.createdAt,
   updatedAt: entity.updatedAt

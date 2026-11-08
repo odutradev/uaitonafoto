@@ -19,6 +19,12 @@ export interface GuestTokenPayload {
   guestId: string
 }
 
+export interface ScreenTokenPayload {
+  purpose: 'screen'
+  eventId: string
+  screenId: string
+}
+
 export interface StoreEventPhotoParams {
   eventId: string
   photoId: string

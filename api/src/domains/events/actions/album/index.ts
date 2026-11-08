@@ -1,45 +1,181 @@
+import mongoose from 'mongoose'
 import defineAction from '@factories/defineAction'
 import { buildPaginatedResponse, getPaginationOptions } from '@factories/pagination/utils'
+import eventRepository from '../../repositories/events'
 import guestRepository from '../../repositories/guests'
 import likeRepository from '../../repositories/likes'
 import photoRepository from '../../repositories/photos'
-import { arePhotosVisible, hasEventEnded } from '../../utils/eventWindows'
-import { ensureCurrentEventPin } from '../../utils/eventPin'
+import screenSessionMiddleware from '../../middlewares/screenSession'
+import { arePhotosVisible, getEventPhase, hasEventEnded } from '../../utils/eventWindows'
+import { ensureCurrentEventPin, generatePin } from '../../utils/eventPin'
 import { loadTeamAccess } from '../../utils/loadTeamAccess'
 import { removePhotoFile } from '../../utils/photoStorage'
+import { signScreenToken } from '../../utils/screenToken'
 import toPhotoResponses from '../photo/utils/toPhotoResponses'
 import {
+  activateScreenResponseSchema,
+  activateScreenSchema,
   albumQuerySchema,
   albumResponseSchema,
   eventGuestListResponseSchema,
   eventIdParamsSchema,
   eventPhotoParamsSchema,
+  eventScreenParamsSchema,
   screenQuerySchema,
-  screenResponseSchema
+  screenResponseSchema,
+  screenSlotListResponseSchema
 } from './schemas'
 import { photoSchema } from '../photo/schemas'
 
 import type { ManageRequestBody, ManageRequestResponse } from '@middlewares/manageRequest/types'
 import type { PhotoResponse } from '../photo/types'
 import type {
+  ActivateScreenRequest,
+  ActivateScreenResponse,
   AlbumRequest,
   AlbumResponse,
   EventGuestListResponse,
   EventIdRequest,
   EventPhotoRequest,
+  EventScreenRequest,
   ScreenRequest,
-  ScreenResponse
+  ScreenResponse,
+  ScreenSlotListResponse
 } from './types'
 
 const SCREEN_DEFAULT_LIMIT = 50
+const MAX_ACTIVE_SCREENS = 2
+
+export const createScreenSlot = defineAction(
+  {
+    method: 'post',
+    path: '/events/:id/screens',
+    summary: 'Gerar um novo PIN de telão para o evento (máximo de 2 telões ativos)',
+    tags: ['Álbum e Telão'],
+    authenticate: true,
+    schema: { params: eventIdParamsSchema },
+    responses: {
+      200: { description: 'Lista atualizada de telões do evento', schema: screenSlotListResponseSchema },
+      403: { description: 'Usuário não pertence à equipe do evento' },
+      404: { description: 'Evento não encontrado' },
+      409: { description: 'Limite máximo de 2 telões atingido' }
+    }
+  },
+  async ({ ids, params, manageError }: ManageRequestBody<EventIdRequest>): ManageRequestResponse<ScreenSlotListResponse> => {
+    if (!ids.userId) return manageError({ code: 'unauthorized' })
+
+    const access = await loadTeamAccess(params.id, ids.userId)
+    if ('error' in access) return manageError({ code: access.error })
+
+    if (access.event.screens.length >= MAX_ACTIVE_SCREENS) {
+      return manageError({
+        code: 'conflict',
+        details: 'Limite de 2 telões atingido. Desconecte um telão para gerar um novo PIN.'
+      })
+    }
+
+    const existingPins = [access.event.settings.pin, ...access.event.screens.map((s) => s.pin)]
+    const slot = {
+      id: new mongoose.Types.ObjectId().toString(),
+      pin: generatePin(existingPins),
+      createdAt: new Date().toISOString()
+    }
+
+    const updated = await eventRepository.addScreenSlot(access.event.id, slot, MAX_ACTIVE_SCREENS)
+    if (!updated) {
+      return manageError({
+        code: 'conflict',
+        details: 'Limite de 2 telões atingido. Desconecte um telão para gerar um novo PIN.'
+      })
+    }
+
+    return updated.screens
+  }
+)
+
+export const removeScreenSlot = defineAction(
+  {
+    method: 'delete',
+    path: '/events/:id/screens/:screenId',
+    summary: 'Desconectar e remover um telão do evento',
+    tags: ['Álbum e Telão'],
+    authenticate: true,
+    schema: { params: eventScreenParamsSchema },
+    responses: {
+      200: { description: 'Lista atualizada de telões do evento', schema: screenSlotListResponseSchema },
+      403: { description: 'Usuário não pertence à equipe do evento' },
+      404: { description: 'Evento ou telão não encontrado' }
+    }
+  },
+  async ({ ids, params, manageError }: ManageRequestBody<EventScreenRequest>): ManageRequestResponse<ScreenSlotListResponse> => {
+    if (!ids.userId) return manageError({ code: 'unauthorized' })
+
+    const access = await loadTeamAccess(params.id, ids.userId)
+    if ('error' in access) return manageError({ code: access.error })
+
+    const updated = await eventRepository.removeScreenSlot(access.event.id, params.screenId)
+    if (!updated) return manageError({ code: 'not_found' })
+
+    return updated.screens
+  }
+)
+
+export const activateScreen = defineAction(
+  {
+    method: 'post',
+    path: '/events/:id/screen/activate',
+    summary: 'Ativar telão do evento informando o PIN gerado no painel e obter credencial de acesso',
+    tags: ['Álbum e Telão'],
+    rateLimit: { limit: 30 },
+    schema: { params: eventIdParamsSchema, body: activateScreenSchema },
+    responses: {
+      200: { description: 'Telão ativado com sucesso', schema: activateScreenResponseSchema },
+      403: { description: 'PIN inválido ou galeria encerrada' },
+      404: { description: 'Evento não encontrado' },
+      409: { description: 'PIN já utilizado em outro telão' }
+    }
+  },
+  async ({ params, data, manageError }: ManageRequestBody<ActivateScreenRequest>): ManageRequestResponse<ActivateScreenResponse> => {
+    const foundEvent = await eventRepository.findById(params.id)
+    if (!foundEvent) return manageError({ code: 'not_found' })
+    if (getEventPhase(foundEvent) === 'expired') {
+      return manageError({ code: 'forbidden', details: 'A galeria deste evento já foi encerrada.' })
+    }
+
+    const slot = foundEvent.screens.find((item) => item.pin === data.pin)
+    if (!slot) {
+      return manageError({ code: 'forbidden', details: 'PIN do telão incorreto.' })
+    }
+
+    if (slot.activatedAt) {
+      return manageError({
+        code: 'conflict',
+        details: 'Este PIN já está ativo em outro telão. Gere outro PIN ou desconecte o telão no painel.'
+      })
+    }
+
+    const activatedEvent = await eventRepository.activateScreenSlot(foundEvent.id, slot.id, new Date().toISOString())
+    const event = await ensureCurrentEventPin(activatedEvent ?? foundEvent)
+
+    return {
+      screenToken: signScreenToken(event.id, slot.id, event.galleryExpiresAt),
+      event: {
+        id: event.id,
+        name: event.name,
+        guestToken: event.guestToken
+      },
+      pin: event.settings.pinEnabled ? event.settings.pin : null
+    }
+  }
+)
 
 export const getScreen = defineAction(
   {
     method: 'get',
     path: '/events/:id/screen',
-    summary: 'Fotos do telão (polling por cursor), respeitando a visibilidade configurada',
+    summary: 'Fotos do telão (polling por cursor), autenticado pela credencial do telão',
     tags: ['Álbum e Telão'],
-    authenticate: true,
+    middlewares: [screenSessionMiddleware],
     schema: { params: eventIdParamsSchema, query: screenQuerySchema },
     responses: {
       200: { description: 'Novas fotos desde o cursor', schema: screenResponseSchema },
@@ -48,13 +184,13 @@ export const getScreen = defineAction(
     }
   },
   async ({ ids, params, query, manageError }: ManageRequestBody<ScreenRequest>): ManageRequestResponse<ScreenResponse> => {
-    if (!ids.userId) return manageError({ code: 'unauthorized' })
+    if (!ids.screenId) return manageError({ code: 'unauthorized' })
 
-    const access = await loadTeamAccess(params.id, ids.userId)
-    if ('error' in access) return manageError({ code: access.error })
-    if (!arePhotosVisible(access.event)) return manageError({ code: 'forbidden', details: 'Fotos ainda não liberadas' })
+    const foundEvent = await eventRepository.findById(params.id)
+    if (!foundEvent) return manageError({ code: 'not_found' })
+    if (!arePhotosVisible(foundEvent)) return manageError({ code: 'forbidden', details: 'Fotos ainda não liberadas' })
 
-    const event = await ensureCurrentEventPin(access.event)
+    const event = await ensureCurrentEventPin(foundEvent)
 
     const photos = await photoRepository.listSince({
       eventId: event.id,
@@ -63,6 +199,11 @@ export const getScreen = defineAction(
     })
 
     return {
+      event: {
+        id: event.id,
+        name: event.name,
+        guestToken: event.guestToken
+      },
       photos: await toPhotoResponses(photos),
       nextSince: photos.at(-1)?.createdAt ?? query?.since,
       pin: event.settings.pinEnabled ? event.settings.pin : null

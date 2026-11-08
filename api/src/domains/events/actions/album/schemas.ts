@@ -2,6 +2,7 @@ import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi'
 import { z } from 'zod'
 
 import { createPaginatedSchema, paginationQuerySchema } from '@factories/pagination/schemas'
+import { eventPinSchema, eventScreenSlotSchema } from '../event/schemas'
 import { photoSchema } from '../photo/schemas'
 
 extendZodWithOpenApi(z)
@@ -19,6 +20,37 @@ export const eventPhotoParamsSchema = z
   })
   .openapi('EventPhotoParams')
 
+export const eventScreenParamsSchema = z
+  .object({
+    id: z.string().min(1).openapi({ example: '665f1c2e9b1e8a001c8e4d30' }),
+    screenId: z.string().min(1).openapi({ example: '665f1c2e9b1e8a001c8e4d99' })
+  })
+  .openapi('EventScreenParams')
+
+export const screenSlotListResponseSchema = z.array(eventScreenSlotSchema).openapi('ScreenSlotListResponse')
+
+export const activateScreenSchema = z
+  .object({
+    pin: eventPinSchema
+  })
+  .openapi('ActivateScreen')
+
+export const screenEventInfoSchema = z
+  .object({
+    id: z.string().openapi({ example: '665f1c2e9b1e8a001c8e4d30' }),
+    name: z.string().openapi({ example: 'Casamento Ana & Pedro' }),
+    guestToken: z.string().openapi({ example: 'k3J9xQ2mZ1aB' })
+  })
+  .openapi('ScreenEventInfo')
+
+export const activateScreenResponseSchema = z
+  .object({
+    screenToken: z.string().openapi({ description: 'Credencial de sessão do telão para salvar no localStorage' }),
+    event: screenEventInfoSchema,
+    pin: z.string().nullable().openapi({ example: '4829', description: 'PIN atual de acesso do evento (null se desativado)' })
+  })
+  .openapi('ActivateScreenResponse')
+
 export const screenQuerySchema = z
   .object({
     since: z.string().datetime().optional().openapi({
@@ -31,6 +63,7 @@ export const screenQuerySchema = z
 
 export const screenResponseSchema = z
   .object({
+    event: screenEventInfoSchema,
     photos: z.array(photoSchema).openapi({ description: 'Fotos em ordem cronológica (mais antigas primeiro)' }),
     nextSince: z.string().optional().openapi({ description: 'Cursor para a próxima chamada' }),
     pin: z.string().nullable().openapi({ example: '4829', description: 'PIN atual de acesso do evento (null se desativado)' })

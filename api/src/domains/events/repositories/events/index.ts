@@ -4,15 +4,17 @@ import type {
   CreateEventPayload,
   EventEntity,
   EventMemberRole,
+  EventScreenSlot,
   ListEventsByMemberParams,
   UpdateEventPayload
 } from './types'
 
 const toEventEntity = (doc: any): EventEntity => {
-  const { _id, settings = {}, ...rest } = doc
+  const { _id, settings = {}, screens = [], ...rest } = doc
   return {
     ...rest,
     id: String(_id),
+    screens,
     settings: {
       uploadWindowHours: settings.uploadWindowHours ?? 24,
       galleryDurationDays: settings.galleryDurationDays ?? 30,
@@ -102,6 +104,44 @@ export const eventRepository = {
     const doc = await EventModel.findOneAndUpdate(
       { _id: id, members: { $elemMatch: { userId, role: { $ne: 'creator' } } } },
       { $pull: { members: { userId } } },
+      { new: true, lean: true }
+    )
+    return doc ? toEventEntity(doc) : null
+  },
+
+  addScreenSlot: async (id: string, slot: EventScreenSlot, maxScreens: number): Promise<EventEntity | null> => {
+    const doc = await EventModel.findOneAndUpdate(
+      { _id: id, [`screens.${maxScreens - 1}`]: { $exists: false } },
+      {
+        $push: { screens: slot },
+        $set: { updatedAt: new Date().toISOString() }
+      },
+      { new: true, lean: true }
+    )
+    return doc ? toEventEntity(doc) : null
+  },
+
+  removeScreenSlot: async (id: string, screenId: string): Promise<EventEntity | null> => {
+    const doc = await EventModel.findOneAndUpdate(
+      { _id: id, 'screens.id': screenId },
+      {
+        $pull: { screens: { id: screenId } },
+        $set: { updatedAt: new Date().toISOString() }
+      },
+      { new: true, lean: true }
+    )
+    return doc ? toEventEntity(doc) : null
+  },
+
+  activateScreenSlot: async (id: string, screenId: string, activatedAt: string): Promise<EventEntity | null> => {
+    const doc = await EventModel.findOneAndUpdate(
+      { _id: id, 'screens.id': screenId },
+      {
+        $set: {
+          'screens.$.activatedAt': activatedAt,
+          updatedAt: activatedAt
+        }
+      },
       { new: true, lean: true }
     )
     return doc ? toEventEntity(doc) : null

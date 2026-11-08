@@ -67,6 +67,15 @@ export const eventMemberSchema = z
   })
   .openapi('EventMember')
 
+export const eventScreenSlotSchema = z
+  .object({
+    id: z.string().openapi({ example: '665f1c2e9b1e8a001c8e4d99' }),
+    pin: eventPinSchema,
+    createdAt: z.string().openapi({ example: '2026-11-08T17:00:00.000Z' }),
+    activatedAt: z.string().optional().openapi({ example: '2026-11-08T17:05:00.000Z' })
+  })
+  .openapi('EventScreenSlot')
+
 export const eventSchema = z
   .object({
     id: z.string().openapi({ example: '665f1c2e9b1e8a001c8e4d30' }),
@@ -80,6 +89,7 @@ export const eventSchema = z
     uploadsCloseAt: z.string().openapi({ example: '2026-12-22T05:00:00.000Z' }),
     galleryExpiresAt: z.string().openapi({ example: '2027-01-20T05:00:00.000Z' }),
     members: z.array(eventMemberSchema),
+    screens: z.array(eventScreenSlotSchema),
     myRole: eventMemberRoleSchema,
     createdAt: z.string().openapi({ example: '2026-11-08T17:00:00.000Z' }),
     updatedAt: z.string().openapi({ example: '2026-11-08T17:00:00.000Z' })

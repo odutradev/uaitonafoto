@@ -13,6 +13,16 @@ const memberSchema = new Schema(
   { _id: false }
 )
 
+const screenSlotSchema = new Schema(
+  {
+    id: { type: String, required: true, default: () => new mongoose.Types.ObjectId().toString() },
+    pin: { type: String, required: true, match: /^\d{4}$/ },
+    createdAt: { type: String, default: () => new Date().toISOString() },
+    activatedAt: { type: String }
+  },
+  { _id: false }
+)
+
 const settingsSchema = new Schema(
   {
     uploadWindowHours: { type: Number, required: true, min: 0 },
@@ -42,6 +52,7 @@ const eventSchema = new Schema<EventDocument>(
     galleryExpiresAt: { type: String, required: true, index: true },
     galleryCleanedAt: { type: String },
     members: { type: [memberSchema], required: true },
+    screens: { type: [screenSlotSchema], default: [] },
     createdAt: { type: String, default: () => new Date().toISOString() },
     updatedAt: { type: String, default: () => new Date().toISOString() }
   },
