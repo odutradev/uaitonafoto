@@ -27,6 +27,7 @@ import LateralLayout from './subcomponents/layouts/lateralLayout'
 import StageLayout from './subcomponents/layouts/stageLayout'
 import MosaicLayout from './subcomponents/layouts/mosaicLayout'
 import DuoLayout from './subcomponents/layouts/duoLayout'
+import StoriesLayout from './subcomponents/layouts/storiesLayout'
 import {
   activationCardStyles,
   activationWrapperStyles,
@@ -70,14 +71,20 @@ const EventScreen = () => {
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false)
   const [layoutMode, setLayoutMode] = useState<ScreenLayoutMode>(() => {
     const stored = localStorage.getItem(SCREEN_LAYOUT_STORAGE_KEY)
-    if (stored === 'lateral' || stored === 'stage' || stored === 'mosaic' || stored === 'duo') {
+    if (
+      stored === 'stories' ||
+      stored === 'lateral' ||
+      stored === 'stage' ||
+      stored === 'mosaic' ||
+      stored === 'duo'
+    ) {
       return stored
     }
     // Compatibilidade com configurações anteriores
     if (stored === 'side-hub') return 'lateral'
     if (stored === 'classic') return 'stage'
-    if (stored === 'social-feed') return 'mosaic'
-    return 'lateral'
+    if (stored === 'social-feed') return 'stories'
+    return 'stories'
   })
   const [photoFit, setPhotoFit] = useState<ScreenPhotoFit>(() => {
     const stored = localStorage.getItem(SCREEN_PHOTO_FIT_STORAGE_KEY) as ScreenPhotoFit | null
@@ -332,7 +339,20 @@ const EventScreen = () => {
               </Tooltip>
             </Box>
 
-            {layoutMode === 'stage' ? (
+            {layoutMode === 'stories' ? (
+              <StoriesLayout
+                currentPhoto={currentPhoto}
+                isNewArrival={isNewArrival}
+                photos={photos}
+                currentIndex={currentIndex}
+                onSelectPhoto={selectPhoto}
+                guestLink={guestLink}
+                pin={pin}
+                showPin={showPin}
+                photoFit={photoFit}
+                customization={event?.customization}
+              />
+            ) : layoutMode === 'stage' ? (
               <StageLayout
                 currentPhoto={currentPhoto}
                 isNewArrival={isNewArrival}

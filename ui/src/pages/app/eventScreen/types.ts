@@ -1,4 +1,4 @@
-export type ScreenLayoutMode = 'lateral' | 'stage' | 'mosaic' | 'duo'
+export type ScreenLayoutMode = 'lateral' | 'stage' | 'mosaic' | 'duo' | 'stories'
 export type ScreenPhotoFit = 'cover' | 'contain'
 
 export interface ScreenLayoutOption {
@@ -15,6 +15,12 @@ export interface ScreenPhotoFitOption {
 }
 
 export const SCREEN_LAYOUT_OPTIONS: ScreenLayoutOption[] = [
+  {
+    id: 'stories',
+    label: 'Stories (3 Destaques)',
+    subtitle: 'Formato carrossel estilo Stories com foto anterior, destaque central e próxima foto.',
+    tag: 'Estilo Instagram'
+  },
   {
     id: 'lateral',
     label: 'Lateral',
