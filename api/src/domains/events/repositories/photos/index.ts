@@ -1,4 +1,4 @@
-﻿import PhotoModel from './model'
+import PhotoModel from './model'
 import type { CreatePhotoPayload, ListPhotosParams, ListPhotosSinceParams, PhotoEntity } from './types'
 
 const toPhotoEntity = (doc: any): PhotoEntity => {
@@ -44,6 +44,11 @@ export const photoRepository = {
   listSince: async ({ eventId, since, limit }: ListPhotosSinceParams): Promise<PhotoEntity[]> => {
     const filter = since ? { eventId, createdAt: { $gt: since } } : { eventId }
     const docs = await PhotoModel.find(filter).sort({ createdAt: 1 }).limit(limit).lean()
+    return docs.map(toPhotoEntity)
+  },
+
+  findAllByEvent: async (eventId: string): Promise<PhotoEntity[]> => {
+    const docs = await PhotoModel.find({ eventId }).sort({ createdAt: 1 }).lean()
     return docs.map(toPhotoEntity)
   },
 

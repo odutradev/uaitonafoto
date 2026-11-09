@@ -1,5 +1,7 @@
 import mongoose from 'mongoose'
+import { ZipArchive } from 'archiver'
 import defineAction from '@factories/defineAction'
+import { getStorageFile } from '@firebase/services/storage'
 import { buildPaginatedResponse, getPaginationOptions } from '@factories/pagination/utils'
 import eventRepository from '../../repositories/events'
 import guestRepository from '../../repositories/guests'
@@ -287,13 +289,13 @@ export const getAlbum = defineAction(
   {
     method: 'get',
     path: '/events/:id/album',
-    summary: 'Álbum do evento para a equipe, disponível após o término (perspectiva dos convidados)',
+    summary: 'Álbum do evento para a equipe (fotos enviadas pelos convidados)',
     tags: ['Álbum e Telão'],
     authenticate: true,
     schema: { params: eventIdParamsSchema, query: albumQuerySchema },
     responses: {
       200: { description: 'Fotos paginadas, mais recentes primeiro', schema: albumResponseSchema },
-      403: { description: 'Sem acesso ou evento ainda não terminou' },
+      403: { description: 'Sem acesso' },
       404: { description: 'Evento não encontrado' }
     }
   },
@@ -302,7 +304,6 @@ export const getAlbum = defineAction(
 
     const access = await loadTeamAccess(params.id, ids.userId)
     if ('error' in access) return manageError({ code: access.error })
-    if (!hasEventEnded(access.event)) return manageError({ code: 'forbidden', details: 'O álbum abre após o término do evento' })
 
     const { page, limit, offset } = getPaginationOptions(query)
     const result = await photoRepository.listByEvent({
@@ -476,5 +477,78 @@ export const resetEventLockouts = defineAction(
       clearedCount,
       message: 'Bloqueios de PIN resetados com sucesso.'
     }
+  }
+)
+
+export const downloadAlbumZip = defineAction(
+  {
+    method: 'get',
+    path: '/events/:id/album/download-zip',
+    summary: 'Baixar todas as fotos do evento compactadas em arquivo .zip (disponível após término)',
+    tags: ['Álbum e Telão'],
+    authenticate: true,
+    schema: { params: eventIdParamsSchema },
+    responses: {
+      200: { description: 'Arquivo .zip com todas as fotos do evento' },
+      400: { description: 'Evento sem fotos' },
+      401: { description: 'Não autorizado' },
+      403: { description: 'Sem acesso ou evento ainda não terminou' },
+      404: { description: 'Evento não encontrado' }
+    }
+  },
+  async ({ defaultExpress, ids, params, manageError }: ManageRequestBody<EventIdRequest>): ManageRequestResponse<void> => {
+    if (!ids.userId) return manageError({ code: 'unauthorized' })
+
+    const access = await loadTeamAccess(params.id, ids.userId)
+    if ('error' in access) return manageError({ code: access.error })
+    if (!hasEventEnded(access.event)) {
+      return manageError({
+        code: 'forbidden',
+        details: 'O download do álbum completo fica disponível após o término do evento.'
+      })
+    }
+
+    const photos = await photoRepository.findAllByEvent(access.event.id)
+    if (photos.length === 0) {
+      return manageError({ code: 'bad_request', details: 'Este evento não possui fotos para download.' })
+    }
+
+    const { res } = defaultExpress
+    const sanitizedName = access.event.name.replace(/[^a-zA-Z0-9_-]/g, '_').slice(0, 40)
+    const filename = `${sanitizedName || 'evento'}_fotos.zip`
+
+    res.setHeader('Content-Type', 'application/zip')
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename="${encodeURIComponent(filename)}"; filename*=UTF-8''${encodeURIComponent(filename)}`
+    )
+
+    const archive = new ZipArchive({ zlib: { level: 5 } })
+
+    archive.on('error', (err: any) => {
+      if (!res.headersSent) {
+        manageError({ code: 'internal_error', error: err })
+      } else {
+        res.end()
+      }
+    })
+
+    archive.pipe(res)
+
+    const guestIds = [...new Set(photos.map((p) => p.guestId))]
+    const guests = await guestRepository.findByIds(guestIds)
+    const guestNames = new Map(guests.map((g) => [g.id, g.name.replace(/[^a-zA-Z0-9_-]/g, '_')]))
+
+    photos.forEach((photo, index) => {
+      const extension = photo.contentType.split('/')[1]?.replace('jpeg', 'jpg') || 'jpg'
+      const guestName = guestNames.get(photo.guestId) || 'Convidado'
+      const paddedIndex = (index + 1).toString().padStart(3, '0')
+      const entryName = `${paddedIndex}_${guestName}_${photo.id}.${extension}`
+
+      const readStream = getStorageFile(photo.storagePath).createReadStream()
+      archive.append(readStream, { name: entryName })
+    })
+
+    await archive.finalize()
   }
 )
