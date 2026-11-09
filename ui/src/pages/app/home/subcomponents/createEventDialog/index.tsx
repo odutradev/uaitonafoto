@@ -18,9 +18,9 @@ import type { EventFormState } from '@components/eventFormFields/types'
 import type { CreateEventDialogProps } from './types'
 
 const STEPS = [
-  { label: 'Básico', description: 'Informações essenciais' },
+  { label: 'Básico', description: 'Dados essenciais' },
   { label: 'Dinâmica', description: 'Fotos e telão' },
-  { label: 'Acesso', description: 'Senha PIN' }
+  { label: 'Acesso', description: 'Senha e PIN' }
 ]
 
 const CreateEventDialog = ({ open, onClose, onCreated }: CreateEventDialogProps) => {

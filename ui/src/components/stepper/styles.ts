@@ -15,6 +15,7 @@ export const stepItemStyles = (isClickable: boolean): SxProps<Theme> => ({
   gap: 1.25,
   cursor: isClickable ? 'pointer' : 'default',
   userSelect: 'none',
+  flexShrink: 0,
   transition: 'opacity 0.2s ease',
   '&:hover': {
     opacity: isClickable ? 0.8 : 1
@@ -53,7 +54,8 @@ export const stepBadgeStyles = (status: 'completed' | 'active' | 'upcoming'): Sx
 export const stepLabelWrapperStyles: SxProps<Theme> = {
   display: 'flex',
   flexDirection: 'column',
-  minWidth: 0
+  minWidth: { xs: 60, sm: 115 },
+  maxWidth: { xs: 80, sm: 130 }
 }
 
 export const stepLabelStyles = (status: 'completed' | 'active' | 'upcoming'): SxProps<Theme> => ({
@@ -65,10 +67,12 @@ export const stepLabelStyles = (status: 'completed' | 'active' | 'upcoming'): Sx
 })
 
 export const stepDescriptionStyles: SxProps<Theme> = {
-  fontSize: '0.7rem',
+  fontSize: '0.725rem',
   color: 'text.secondary',
-  display: { xs: 'none', md: 'block' },
-  whiteSpace: 'nowrap'
+  display: { xs: 'none', sm: 'block' },
+  whiteSpace: 'nowrap',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis'
 }
 
 export const stepConnectorStyles = (isCompleted: boolean): SxProps<Theme> => ({
