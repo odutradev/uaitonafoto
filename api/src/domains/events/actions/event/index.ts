@@ -3,6 +3,7 @@ import { buildPaginatedResponse, getPaginationOptions } from '@factories/paginat
 import logRepository from '@domains/system/repositories'
 import userRepository from '@domains/users/repositories'
 import purchaseRepository from '@domains/payments/repositories/purchases'
+import creditUsageRepository from '@domains/payments/repositories/creditUsages'
 import eventRepository from '../../repositories/events'
 import guestRepository from '../../repositories/guests'
 import { ensureCurrentEventPin } from '../../utils/eventPin'
@@ -94,6 +95,15 @@ export const createEvent = defineAction(
         customization,
         ...computeEventWindows(endsAt, settings),
         creatorId: user.id
+      })
+
+      await creditUsageRepository.create({
+        userId: user.id,
+        eventId: event.id,
+        eventName: event.name,
+        creditType,
+        amount: 1,
+        createdAt: event.createdAt
       })
 
       logRepository.create({
