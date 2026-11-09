@@ -65,9 +65,18 @@ export const getLogoDimensions = (size: LogoSize): LogoDimensions => {
   }
 
   if (typeof size === 'object' && size !== null) {
+    const custom = size as import('./types').LogoCustomDimensions
+    if (custom.symbolSize !== undefined || custom.fontSize !== undefined || custom.gap !== undefined) {
+      return {
+        symbolSize: custom.symbolSize ?? '28px',
+        fontSize: custom.fontSize ?? '1.25rem',
+        gap: custom.gap ?? 1
+      }
+    }
+    const responsive = size as Record<string, number | string>
     return {
-      symbolSize: size,
-      fontSize: size,
+      symbolSize: responsive,
+      fontSize: responsive,
       gap: 1
     }
   }
@@ -135,7 +144,10 @@ export const getLogoTextStyles = (
   whiteSpace: 'nowrap',
   paddingBottom: '2px',
   display: 'inline-flex',
-  overflow: isRevealing ? 'hidden' : 'visible'
+  overflow: isRevealing ? 'hidden' : 'visible',
+  WebkitFontSmoothing: 'antialiased',
+  MozOsxFontSmoothing: 'grayscale',
+  textRendering: 'optimizeLegibility'
 })
 
 export const baseSvgStyles: CSSProperties = {

@@ -12,7 +12,10 @@ export const stageContainerStyles: SxProps<Theme> = (theme) => ({
   bgcolor: theme.palette.mode === 'dark' ? brandColors.darkBg : brandColors.paper,
   color: theme.palette.mode === 'dark' ? brandColors.darkTextPrimary : brandColors.ink,
   overflow: 'hidden',
-  transition: 'background-color 0.25s ease, color 0.25s ease'
+  transition: 'background-color 0.25s ease, color 0.25s ease',
+  WebkitFontSmoothing: 'antialiased',
+  MozOsxFontSmoothing: 'grayscale',
+  textRendering: 'optimizeLegibility'
 })
 
 export const stageFrameStyles: SxProps<Theme> = (theme) => ({

@@ -111,7 +111,10 @@ export const getAppTheme = (mode: 'light' | 'dark'): Theme => {
             scrollbarColor: 'rgba(255, 207, 31, 0.45) transparent',
             overflowX: 'hidden',
             width: '100%',
-            maxWidth: '100%'
+            maxWidth: '100%',
+            WebkitFontSmoothing: 'antialiased',
+            MozOsxFontSmoothing: 'grayscale',
+            textRendering: 'optimizeLegibility'
           },
           body: {
             backgroundColor: isLight ? brandColors.paper : brandColors.darkBg,
@@ -119,7 +122,10 @@ export const getAppTheme = (mode: 'light' | 'dark'): Theme => {
             transition: 'background-color 0.3s ease, color 0.3s ease',
             overflowX: 'hidden',
             width: '100%',
-            maxWidth: '100%'
+            maxWidth: '100%',
+            WebkitFontSmoothing: 'antialiased',
+            MozOsxFontSmoothing: 'grayscale',
+            textRendering: 'optimizeLegibility'
           },
           '#root': {
             overflowX: 'hidden',
