@@ -20,7 +20,7 @@ import { findMemberRole } from '../event'
 import { resolveEventLimits } from '../../utils/eventLimits'
 import challengesData from '../../data/challenges.json'
 import type { TeamAccess } from '../../utils/types'
-import type { EventChallenge, EventScreenHistoryEntry, EventType } from '../../repositories/events/types'
+import type { EventChallenge, EventScreenHistoryEntry, EventScreenSlot, EventType } from '../../repositories/events/types'
 
 const DEFAULT_CHALLENGES_BY_TYPE: Record<EventType, string[]> = challengesData as Record<EventType, string[]>
 
@@ -137,11 +137,12 @@ export const createScreenSlot = defineAction(
 
     const existingPins = [access.event.settings.pin, ...access.event.screens.map((s) => s.pin)]
     const trimmedName = data?.name?.trim()
-    const slot = {
+    const slot: EventScreenSlot = {
       id: new mongoose.Types.ObjectId().toString(),
       ...(trimmedName ? { name: trimmedName } : {}),
       pin: generatePin(existingPins),
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
+      isBlocked: false
     }
 
     const updated = await eventRepository.addScreenSlot(access.event.id, slot, maxScreens)

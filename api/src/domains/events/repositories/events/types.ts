@@ -47,7 +47,7 @@ export interface EventScreenSlot {
   createdAt: string
   activatedAt?: string
   lastSeenAt?: string
-  isBlocked?: boolean
+  isBlocked: boolean
 }
 
 export interface EventScreenHistoryEntry {
