@@ -5,8 +5,10 @@ import {
   buildScreenStreamUrl,
   clearScreenCredential,
   getStoredScreenEvent,
+  getStoredScreenPin,
   getStoredScreenToken,
-  storeScreenCredential
+  storeScreenCredential,
+  storeScreenPin
 } from '@actions/events/screenClient'
 import { getErrorMessage } from '@config/events'
 import usePinLockout from '@hooks/usePinLockout'
@@ -21,7 +23,7 @@ const NEW_ARRIVAL_DURATION_MS = 3500
 const useEventScreen = (eventId: string) => {
   const [screenToken, setScreenToken] = useState<string | null>(() => getStoredScreenToken(eventId))
   const [event, setEvent] = useState<ScreenEventInfo | null>(() => getStoredScreenEvent(eventId))
-  const [pin, setPin] = useState<string | null>(null)
+  const [pin, setPin] = useState<string | null>(() => getStoredScreenPin(eventId))
   const [photos, setPhotos] = useState<EventPhoto[]>([])
   const [currentIndex, setCurrentIndex] = useState(0)
   const [message, setMessage] = useState<string | null>(null)
@@ -47,6 +49,7 @@ const useEventScreen = (eventId: string) => {
     setIsNewArrival(false)
     setScreenToken(getStoredScreenToken(eventId))
     setEvent(getStoredScreenEvent(eventId))
+    setPin(getStoredScreenPin(eventId))
   }, [eventId])
 
   const activate = useCallback(
@@ -57,7 +60,7 @@ const useEventScreen = (eventId: string) => {
       try {
         const result = await activateEventScreen(eventId, inputPin)
         lockout.resetLockout()
-        storeScreenCredential(eventId, result.screenToken, result.event)
+        storeScreenCredential(eventId, result.screenToken, result.event, result.pin)
         setScreenToken(result.screenToken)
         setEvent(result.event)
         setPin(result.pin)
@@ -120,7 +123,7 @@ const useEventScreen = (eventId: string) => {
         if (!isActive) return
 
         cursorRef.current = result.nextSince
-        storeScreenCredential(eventId, screenToken, result.event)
+        storeScreenCredential(eventId, screenToken, result.event, result.pin)
         setEvent(result.event)
         setPin(result.pin)
         setMessage(null)
@@ -219,6 +222,7 @@ const useEventScreen = (eventId: string) => {
         try {
           const { pin: nextPin } = JSON.parse(e.data) as { pin: string | null }
           setPin(nextPin)
+          storeScreenPin(eventId, nextPin)
         } catch {
         }
       })

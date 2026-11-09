@@ -28,6 +28,8 @@ export const StoriesLayout = ({
   photos,
   currentIndex,
   onSelectPhoto,
+  pin,
+  showPin,
   photoFit,
   customization,
   onFullscreen,
@@ -65,6 +67,8 @@ export const StoriesLayout = ({
       >
         <ScreenBrand
           customization={customization}
+          pin={pin}
+          showPin={showPin}
           onFullscreen={onFullscreen}
           onOpenSettings={onOpenSettings}
         />

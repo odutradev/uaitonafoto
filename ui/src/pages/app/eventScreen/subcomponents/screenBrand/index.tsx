@@ -11,6 +11,8 @@ interface ScreenBrandProps {
   customization?: EventCustomization
   compact?: boolean
   hideLiveBadge?: boolean
+  pin?: string | null
+  showPin?: boolean
   onFullscreen?: () => void
   onOpenSettings?: () => void
 }
@@ -18,6 +20,8 @@ interface ScreenBrandProps {
 export const ScreenBrand = ({
   customization,
   hideLiveBadge = false,
+  pin,
+  showPin = true,
   onFullscreen,
   onOpenSettings
 }: ScreenBrandProps) => {
@@ -70,6 +74,40 @@ export const ScreenBrand = ({
             }}
           >
             ao vivo
+          </Box>
+        )}
+
+        {pin && showPin && (
+          <Box
+            component="span"
+            sx={(theme) => ({
+              fontStyle: 'normal',
+              fontSize: '1.9cqh',
+              fontWeight: 800,
+              bgcolor:
+                theme.palette.mode === 'dark'
+                  ? brandColors.darkBg
+                  : brandColors.sand,
+              color:
+                theme.palette.mode === 'dark'
+                  ? brandColors.flashYellow
+                  : brandColors.ink,
+              border: `1px solid ${
+                theme.palette.mode === 'dark'
+                  ? brandColors.darkBorder
+                  : brandColors.sandDark
+              }`,
+              px: '1.4cqh',
+              py: '0.3cqh',
+              borderRadius: '2cqh',
+              letterSpacing: '0.12em',
+              fontFamily: 'monospace',
+              display: 'inline-flex',
+              alignItems: 'center',
+              lineHeight: 1
+            })}
+          >
+            PIN {pin}
           </Box>
         )}
       </Box>

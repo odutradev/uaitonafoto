@@ -124,8 +124,13 @@ const EventSettings = ({ event, onSave, onDelete }: EventSettingsProps) => {
       return
     }
 
+    const payload = toEventPayload(form)
+    if (isEventStarted(event.startsAt)) {
+      payload.startsAt = event.startsAt
+    }
+
     setIsSaving(true)
-    await onSave(toEventPayload(form))
+    await onSave(payload)
     setIsSaving(false)
   }
 
