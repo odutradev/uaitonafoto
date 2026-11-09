@@ -417,3 +417,4 @@ const EventGuests = ({ event }: EventGuestsProps) => {
 }
 
 export default EventGuests
+

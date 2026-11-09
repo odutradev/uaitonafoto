@@ -99,3 +99,4 @@ export const guestStatusPillStyles = (isBlocked: boolean): SxProps<Theme> => ({
         borderColor: 'rgba(34, 197, 94, 0.3)'
       })
 })
+
