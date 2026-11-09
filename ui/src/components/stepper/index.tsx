@@ -26,7 +26,6 @@ export const Stepper = ({
         const step = typeof rawStep === 'string' ? { label: rawStep } : rawStep
         const isCompleted = index < activeStep
         const isActive = index === activeStep
-        const isUpcoming = index > activeStep
 
         const status = isCompleted ? 'completed' : isActive ? 'active' : 'upcoming'
         const isClickable = Boolean(
