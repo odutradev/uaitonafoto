@@ -10,6 +10,8 @@ import {
   Paper,
   Select,
   Skeleton,
+  Tab,
+  Tabs,
   Typography
 } from '@mui/material'
 import { OpenInNew as PayNowIcon } from '@mui/icons-material'
@@ -121,13 +123,15 @@ const TransactionsHistory = ({
   page,
   statusFilter,
   typeFilter,
+  directionFilter = 'ALL',
   isLoading,
   onStatusFilterChange,
   onTypeFilterChange,
+  onDirectionFilterChange,
   onPageChange,
   onSelectTransaction
 }: TransactionsHistoryProps) => {
-  const allEntries = useMemo(() => {
+  const { allEntries, inCount, outCount } = useMemo(() => {
     const matchingPurchases = purchases.filter((item) => {
       const matchesStatus = statusFilter === 'ALL' || statusFilter === 'PAID'
       const matchesType = typeFilter === 'ALL' || item.planType === typeFilter
@@ -148,31 +152,43 @@ const TransactionsHistory = ({
       return matchesStatus && matchesType
     })
 
+    const totalIn = matchingPurchases.length + matchingTransactions.length
+    const totalOut = matchingUsages.length
+
+    const includeInflows = directionFilter === 'ALL' || directionFilter === 'IN'
+    const includeOutflows = directionFilter === 'ALL' || directionFilter === 'OUT'
+
     const combined: UnifiedHistoryEntry[] = [
-      ...matchingTransactions.map(
-        (tx): UnifiedHistoryEntry => ({
-          kind: 'transaction',
-          id: `tx_${tx.id}`,
-          timestamp: tx.paidAt ?? tx.createdAt,
-          transaction: tx
-        })
-      ),
-      ...matchingPurchases.map(
-        (purchase): UnifiedHistoryEntry => ({
-          kind: 'purchase',
-          id: `purchase_${purchase.id}`,
-          timestamp: purchase.createdAt,
-          purchase
-        })
-      ),
-      ...matchingUsages.map(
-        (usage): UnifiedHistoryEntry => ({
-          kind: 'usage',
-          id: `usage_${usage.id}`,
-          timestamp: usage.createdAt,
-          usage
-        })
-      )
+      ...(includeInflows
+        ? matchingTransactions.map(
+            (tx): UnifiedHistoryEntry => ({
+              kind: 'transaction',
+              id: `tx_${tx.id}`,
+              timestamp: tx.paidAt ?? tx.createdAt,
+              transaction: tx
+            })
+          )
+        : []),
+      ...(includeInflows
+        ? matchingPurchases.map(
+            (purchase): UnifiedHistoryEntry => ({
+              kind: 'purchase',
+              id: `purchase_${purchase.id}`,
+              timestamp: purchase.createdAt,
+              purchase
+            })
+          )
+        : []),
+      ...(includeOutflows
+        ? matchingUsages.map(
+            (usage): UnifiedHistoryEntry => ({
+              kind: 'usage',
+              id: `usage_${usage.id}`,
+              timestamp: usage.createdAt,
+              usage
+            })
+          )
+        : [])
     ]
 
     combined.sort((a, b) => {
@@ -182,8 +198,8 @@ const TransactionsHistory = ({
       return a.kind === 'usage' ? -1 : a.kind === 'purchase' ? 0 : 1
     })
 
-    return combined
-  }, [creditUsages, purchases, statusFilter, transactions, typeFilter])
+    return { allEntries: combined, inCount: totalIn, outCount: totalOut }
+  }, [creditUsages, directionFilter, purchases, statusFilter, transactions, typeFilter])
 
   const totalRecords = allEntries.length
   const totalPages = Math.max(1, Math.ceil(totalRecords / ITEMS_PER_PAGE))
@@ -245,6 +261,30 @@ const TransactionsHistory = ({
         </Box>
       </Box>
 
+      <Tabs
+        value={directionFilter}
+        onChange={(_, val) => onDirectionFilterChange(val)}
+        variant="scrollable"
+        scrollButtons="auto"
+        sx={{
+          borderBottom: 1,
+          borderColor: 'divider',
+          minHeight: 40,
+          '& .MuiTab-root': {
+            minHeight: 40,
+            py: 0.5,
+            px: { xs: 1.5, sm: 2 },
+            fontSize: '0.85rem',
+            fontWeight: 700,
+            textTransform: 'none'
+          }
+        }}
+      >
+        <Tab label={`Todos (${inCount + outCount})`} value="ALL" />
+        <Tab label={`Créditos Adquiridos (+) • ${inCount}`} value="IN" />
+        <Tab label={`Créditos Utilizados (-) • ${outCount}`} value="OUT" />
+      </Tabs>
+
       {isLoading && allEntries.length === 0 && (
         <Card elevation={0} sx={getListCardStyles(false)}>
           {[0, 1, 2].map((item, index) => {
@@ -272,10 +312,18 @@ const TransactionsHistory = ({
       {!isLoading && allEntries.length === 0 && (
         <Paper elevation={0} sx={emptyBoxStyles}>
           <Typography variant="subtitle1" fontWeight={700}>
-            Nenhum registro encontrado
+            {directionFilter === 'OUT'
+              ? 'Nenhum uso de crédito encontrado'
+              : directionFilter === 'IN'
+              ? 'Nenhum crédito adquirido encontrado'
+              : 'Nenhum registro encontrado'}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Seus pagamentos e recebimentos de créditos aparecerão aqui.
+            {directionFilter === 'OUT'
+              ? 'Os créditos utilizados ao criar eventos aparecerão aqui.'
+              : directionFilter === 'IN'
+              ? 'Seus pagamentos e recebimentos de créditos aparecerão aqui.'
+              : 'Seus pagamentos, recebimentos e utilizações de créditos aparecerão aqui.'}
           </Typography>
         </Paper>
       )}

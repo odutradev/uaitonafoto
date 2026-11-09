@@ -26,6 +26,7 @@ import type {
 } from '@actions/payments/types'
 import type {
   BillingQueryParams,
+  TransactionDirectionFilter,
   TransactionStatusFilter,
   TransactionTypeFilter,
   UseBillingReturn
@@ -58,6 +59,7 @@ export const useBilling = (): UseBillingReturn => {
 
   const [statusFilter, setStatusFilter] = useState<TransactionStatusFilter>('ALL')
   const [typeFilter, setTypeFilter] = useState<TransactionTypeFilter>('ALL')
+  const [directionFilter, setDirectionFilter] = useState<TransactionDirectionFilter>('ALL')
 
   const [isLoadingInitial, setIsLoadingInitial] = useState(true)
   const [isLoadingTransactions, setIsLoadingTransactions] = useState(false)
@@ -156,6 +158,11 @@ export const useBilling = (): UseBillingReturn => {
     },
     [loadTransactions, statusFilter]
   )
+
+  const handleDirectionFilterChange = useCallback((nextDirection: TransactionDirectionFilter) => {
+    setDirectionFilter(nextDirection)
+    setTransactionsPage(1)
+  }, [])
 
   const handlePageChange = useCallback((nextPage: number) => {
     setTransactionsPage(nextPage)
@@ -364,6 +371,7 @@ export const useBilling = (): UseBillingReturn => {
     transactionsTotalPages,
     statusFilter,
     typeFilter,
+    directionFilter,
     isLoadingInitial,
     isLoadingTransactions,
     checkoutPlanId,
@@ -373,6 +381,7 @@ export const useBilling = (): UseBillingReturn => {
     setSelectedTransaction,
     handleStatusFilterChange,
     handleTypeFilterChange,
+    handleDirectionFilterChange,
     handlePageChange,
     handleRefreshAll,
     startCheckout,

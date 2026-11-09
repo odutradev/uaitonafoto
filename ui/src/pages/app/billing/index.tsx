@@ -25,6 +25,7 @@ const Billing = () => {
     transactionsTotalPages,
     statusFilter,
     typeFilter,
+    directionFilter,
     isLoadingInitial,
     isLoadingTransactions,
     checkoutPlanId,
@@ -34,6 +35,7 @@ const Billing = () => {
     setSelectedTransaction,
     handleStatusFilterChange,
     handleTypeFilterChange,
+    handleDirectionFilterChange,
     handlePageChange,
     handleRefreshAll,
     startCheckout,
@@ -110,9 +112,11 @@ const Billing = () => {
         totalPages={transactionsTotalPages}
         statusFilter={statusFilter}
         typeFilter={typeFilter}
+        directionFilter={directionFilter}
         isLoading={isLoadingTransactions}
         onStatusFilterChange={handleStatusFilterChange}
         onTypeFilterChange={handleTypeFilterChange}
+        onDirectionFilterChange={handleDirectionFilterChange}
         onPageChange={handlePageChange}
         onSelectTransaction={setSelectedTransaction}
       />

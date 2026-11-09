@@ -10,6 +10,7 @@ import type { AuthUser } from '@stores/auth/types'
 
 export type TransactionTypeFilter = 'ALL' | 'SUBSCRIPTION' | 'ONE_TIME' | 'UPSELL' | 'FREE'
 export type TransactionStatusFilter = 'ALL' | TransactionStatus
+export type TransactionDirectionFilter = 'ALL' | 'IN' | 'OUT'
 
 export type BillingQueryParams = Record<'checkout' | 'payment' | 'plan' | 'transaction', string>
 
@@ -25,6 +26,7 @@ export interface UseBillingReturn {
   transactionsTotalPages: number
   statusFilter: TransactionStatusFilter
   typeFilter: TransactionTypeFilter
+  directionFilter: TransactionDirectionFilter
   isLoadingInitial: boolean
   isLoadingTransactions: boolean
   checkoutPlanId: string | null
@@ -34,6 +36,7 @@ export interface UseBillingReturn {
   setSelectedTransaction: (item: TransactionItem | null) => void
   handleStatusFilterChange: (nextStatus: TransactionStatusFilter) => void
   handleTypeFilterChange: (nextType: TransactionTypeFilter) => void
+  handleDirectionFilterChange: (nextDirection: TransactionDirectionFilter) => void
   handlePageChange: (nextPage: number) => void
   handleRefreshAll: () => Promise<void>
   startCheckout: (planId: string) => Promise<void>
