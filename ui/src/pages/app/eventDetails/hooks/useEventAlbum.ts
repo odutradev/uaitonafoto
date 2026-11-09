@@ -1,4 +1,4 @@
-﻿import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 
 import { deleteEventPhoto, getEventAlbum, getEventGuests } from '@actions/events'
@@ -8,7 +8,7 @@ import type { EventGuest, EventPhoto, PaginationMeta } from '@actions/events/typ
 
 const ALBUM_PAGE_SIZE = 24
 
-const useEventAlbum = (eventId: string, isAvailable: boolean) => {
+const useEventAlbum = (eventId: string) => {
   const [photos, setPhotos] = useState<EventPhoto[]>([])
   const [guests, setGuests] = useState<EventGuest[]>([])
   const [meta, setMeta] = useState<PaginationMeta | null>(null)
@@ -17,7 +17,6 @@ const useEventAlbum = (eventId: string, isAvailable: boolean) => {
   const [isLoading, setIsLoading] = useState(false)
 
   const load = useCallback(async () => {
-    if (!isAvailable) return
     setIsLoading(true)
     try {
       const result = await getEventAlbum(eventId, { page, limit: ALBUM_PAGE_SIZE, guestId: guestId || undefined })
@@ -28,7 +27,7 @@ const useEventAlbum = (eventId: string, isAvailable: boolean) => {
     } finally {
       setIsLoading(false)
     }
-  }, [eventId, isAvailable, page, guestId])
+  }, [eventId, page, guestId])
 
   useEffect(() => {
     load()
