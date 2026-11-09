@@ -119,3 +119,4 @@ export const DuoLayout = ({
 }
 
 export default DuoLayout
+

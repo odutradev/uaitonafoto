@@ -131,3 +131,4 @@ export const ScreenQrBlock = ({
 }
 
 export default ScreenQrBlock
+

@@ -182,3 +182,4 @@ export const LateralLayout = ({
 }
 
 export default LateralLayout
+
