@@ -9,7 +9,7 @@ import screenSessionMiddleware from '../../middlewares/screenSession'
 import { arePhotosVisible, getEventPhase, hasEventEnded } from '../../utils/eventWindows'
 import { broadcastEvent, subscribeEventStream } from '../../utils/eventStream'
 import { ensureCurrentEventPin, generatePin } from '../../utils/eventPin'
-import { checkPinLockout, recordPinFailure, resetPinLockout } from '../../utils/pinLockout'
+import { checkPinLockout, recordPinFailure, resetPinLockout, resetPinLockoutsForTarget } from '../../utils/pinLockout'
 import { loadTeamAccess } from '../../utils/loadTeamAccess'
 import { removePhotoFile } from '../../utils/photoStorage'
 import { signScreenToken } from '../../utils/screenToken'
@@ -24,6 +24,8 @@ import {
   eventIdParamsSchema,
   eventPhotoParamsSchema,
   eventScreenParamsSchema,
+  resetEventLockoutsResponseSchema,
+  resetEventLockoutsSchema,
   screenQuerySchema,
   screenResponseSchema,
   screenSlotListResponseSchema,
@@ -43,6 +45,8 @@ import type {
   EventIdRequest,
   EventPhotoRequest,
   EventScreenRequest,
+  ResetEventLockoutsRequest,
+  ResetEventLockoutsResponse,
   ScreenRequest,
   ScreenResponse,
   ScreenSlotListResponse,
@@ -431,5 +435,46 @@ export const streamRoom = defineAction(
       req: defaultExpress.req,
       res: defaultExpress.res
     })
+  }
+)
+
+export const resetEventLockouts = defineAction(
+  {
+    method: 'post',
+    path: '/events/:id/lockout/reset',
+    summary: 'Desbloquear manualmente dispositivos e telões bloqueados por tentativas incorretas de PIN',
+    tags: ['Álbum e Telão'],
+    authenticate: true,
+    schema: { params: eventIdParamsSchema, body: resetEventLockoutsSchema },
+    responses: {
+      200: { description: 'Bloqueios resetados com sucesso', schema: resetEventLockoutsResponseSchema },
+      401: { description: 'Não autorizado' },
+      403: { description: 'Usuário não pertence à equipe do evento' },
+      404: { description: 'Evento não encontrado' }
+    }
+  },
+  async ({ ids, params, data, manageError }: ManageRequestBody<ResetEventLockoutsRequest>): ManageRequestResponse<ResetEventLockoutsResponse> => {
+    if (!ids.userId) return manageError({ code: 'unauthorized' })
+
+    const access = await loadTeamAccess(params.id, ids.userId)
+    if ('error' in access) return manageError({ code: access.error })
+
+    const event = access.event
+    const scope = data?.scope ?? 'all'
+    const targetIds = [event.id, event.guestToken]
+
+    const clearedCount = resetPinLockoutsForTarget(targetIds, scope)
+
+    broadcastEvent(event.id, 'lockout:reset', {
+      scope,
+      eventId: event.id,
+      timestamp: new Date().toISOString()
+    })
+
+    return {
+      success: true,
+      clearedCount,
+      message: 'Bloqueios de PIN resetados com sucesso.'
+    }
   }
 )

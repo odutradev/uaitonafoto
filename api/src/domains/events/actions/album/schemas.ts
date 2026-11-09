@@ -101,3 +101,20 @@ export const eventGuestSchema = z
   .openapi('EventGuestResponse')
 
 export const eventGuestListResponseSchema = z.array(eventGuestSchema).openapi('EventGuestListResponse')
+
+export const resetEventLockoutsSchema = z
+  .object({
+    scope: z.enum(['all', 'screen', 'guest']).optional().openapi({
+      example: 'all',
+      description: 'Escopo dos bloqueios a serem resetados (all = todos, screen = apenas telões, guest = apenas convidados)'
+    })
+  })
+  .openapi('ResetEventLockouts')
+
+export const resetEventLockoutsResponseSchema = z
+  .object({
+    success: z.boolean().openapi({ example: true }),
+    clearedCount: z.number().openapi({ example: 2, description: 'Quantidade de registros de bloqueio removidos' }),
+    message: z.string().openapi({ example: 'Dispositivos desbloqueados com sucesso.' })
+  })
+  .openapi('ResetEventLockoutsResponse')

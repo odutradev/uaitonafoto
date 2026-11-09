@@ -236,6 +236,26 @@ export const resetPinLockout = ({ scope, targetId, req }: PinLockoutParams): voi
   lockoutStore.delete(ipKey)
 }
 
+export const resetPinLockoutsForTarget = (
+  targetIds: string | string[],
+  scope?: PinLockoutScope | 'all'
+): number => {
+  const ids = Array.isArray(targetIds) ? targetIds : [targetIds]
+  let removedCount = 0
+
+  for (const key of lockoutStore.keys()) {
+    const matchesScope = !scope || scope === 'all' || key.startsWith(`${scope}:`)
+    const matchesTarget = ids.some((id) => key.includes(`:${id}:`))
+
+    if (matchesScope && matchesTarget) {
+      lockoutStore.delete(key)
+      removedCount++
+    }
+  }
+
+  return removedCount
+}
+
 // Limpeza de entradas expiradas a cada 15 minutos
 setInterval(() => {
   const now = Date.now()
@@ -247,3 +267,4 @@ setInterval(() => {
     }
   }
 }, 15 * 60 * 1000).unref?.()
+

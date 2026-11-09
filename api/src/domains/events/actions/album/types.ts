@@ -9,6 +9,8 @@ import type {
   eventIdParamsSchema,
   eventPhotoParamsSchema,
   eventScreenParamsSchema,
+  resetEventLockoutsResponseSchema,
+  resetEventLockoutsSchema,
   screenQuerySchema,
   screenResponseSchema,
   screenSlotListResponseSchema,
@@ -55,3 +57,10 @@ export type ScreenResponse = z.infer<typeof screenResponseSchema>
 export type AlbumResponse = z.infer<typeof albumResponseSchema>
 
 export type EventGuestListResponse = z.infer<typeof eventGuestListResponseSchema>
+
+export type ResetEventLockoutsRequest = {
+  params: z.infer<typeof eventIdParamsSchema>
+  body?: z.infer<typeof resetEventLockoutsSchema>
+}
+
+export type ResetEventLockoutsResponse = z.infer<typeof resetEventLockoutsResponseSchema>
