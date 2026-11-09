@@ -1,4 +1,4 @@
-import { Avatar, Box, Typography } from '@mui/material'
+import { Box, Typography } from '@mui/material'
 import { Favorite as HeartIcon } from '@mui/icons-material'
 
 import { formatGuestTaNaFoto } from '@config/events'
@@ -156,7 +156,7 @@ export const StoriesLayout = ({
                   lineHeight: 1.1
                 }}
               >
-                @{formatGuestTaNaFoto(previousPhoto.guestName)}
+                {formatGuestTaNaFoto(previousPhoto.guestName)}
               </Typography>
               {previousPhoto.challengeTitle && (
                 <Typography
@@ -278,35 +278,21 @@ export const StoriesLayout = ({
                   gap: '1cqh'
                 }}
               >
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: '1cqh', minWidth: 0 }}>
-                  <Avatar
-                    sx={{
-                      width: '3.6cqh',
-                      height: '3.6cqh',
-                      bgcolor: '#14110c',
-                      color: '#ffd21f',
-                      fontWeight: 800,
-                      fontSize: '1.8cqh'
-                    }}
-                  >
-                    {(currentPhoto.guestName || 'U')[0].toUpperCase()}
-                  </Avatar>
-                  <Typography
-                    sx={{
-                      fontFamily: "'Bricolage Grotesque', system-ui, sans-serif",
-                      fontWeight: 900,
-                      fontSize: '2.8cqh',
-                      lineHeight: 1.1,
-                      letterSpacing: '-0.02em',
-                      color: '#14110c',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap'
-                    }}
-                  >
-                    @{formatGuestTaNaFoto(currentPhoto.guestName)}
-                  </Typography>
-                </Box>
+                <Typography
+                  sx={{
+                    fontFamily: "'Bricolage Grotesque', system-ui, sans-serif",
+                    fontWeight: 900,
+                    fontSize: '2.8cqh',
+                    lineHeight: 1.1,
+                    letterSpacing: '-0.02em',
+                    color: '#14110c',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap'
+                  }}
+                >
+                  {formatGuestTaNaFoto(currentPhoto.guestName)}
+                </Typography>
 
                 {currentPhoto.challengeTitle && (
                   <Box
@@ -421,7 +407,7 @@ export const StoriesLayout = ({
                   lineHeight: 1.1
                 }}
               >
-                @{formatGuestTaNaFoto(nextPhoto.guestName)}
+                {formatGuestTaNaFoto(nextPhoto.guestName)}
               </Typography>
               {nextPhoto.challengeTitle && (
                 <Typography
