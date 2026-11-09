@@ -26,6 +26,7 @@ const EventFormFields = ({
   form,
   onChange,
   isCreate = false,
+  isEventStarted = false,
   step,
   paidCredits = 0,
   freeCredits = 0
@@ -288,6 +289,7 @@ const EventFormFields = ({
         label="Início do evento"
         type="datetime-local"
         value={form.startsAt}
+        disabled={isEventStarted}
         onChange={(e) => {
           onChange('startsAt', e.target.value)
           const durationHours = form.creditType === 'free' ? 4 : 8
@@ -296,7 +298,11 @@ const EventFormFields = ({
           }
         }}
         slotProps={{ inputLabel: { shrink: true } }}
-        helperText={`O sistema e telão ficarão abertos por ${form.creditType === 'free' ? '4' : '8'} horas a partir do início.`}
+        helperText={
+          isEventStarted
+            ? 'O evento já foi iniciado. A data e hora de início não podem mais ser alteradas.'
+            : `O sistema e telão ficarão abertos por ${form.creditType === 'free' ? '4' : '8'} horas a partir do início.`
+        }
         required
         fullWidth
       />

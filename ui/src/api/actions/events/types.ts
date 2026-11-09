@@ -53,6 +53,8 @@ export interface EventItem {
   customization?: EventCustomization
   uploadsCloseAt: string
   galleryExpiresAt: string
+  closedAt?: string
+  phase?: EventPhase
   members: EventMember[]
   screens: EventScreenSlot[]
   myRole: EventMemberRole

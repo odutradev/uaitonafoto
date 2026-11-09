@@ -28,6 +28,7 @@ import { toast } from 'react-toastify'
 
 import EventFormFields from '@components/eventFormFields'
 import { isValidEventPeriod, isValidEventPin, toEventForm, toEventPayload } from '@components/eventFormFields/utils'
+import { isEventStarted } from '@config/eventPhase'
 import Modal from '@components/modal'
 import useAuth from '@hooks/useAuth'
 
@@ -144,7 +145,7 @@ const EventSettings = ({ event, onSave, onDelete }: EventSettingsProps) => {
           </Typography>
         </Box>
 
-        <EventFormFields form={form} onChange={setField} />
+        <EventFormFields form={form} onChange={setField} isEventStarted={isEventStarted(event.startsAt)} />
 
         {/* Bloco de Personalização & Selo White-Label B2B */}
         <Card elevation={0} sx={customizationCardStyles}>

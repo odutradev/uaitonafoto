@@ -41,6 +41,21 @@ export const deleteEvent = async (id: string): Promise<EventItem> => {
   return response.data
 }
 
+export const startEvent = async (id: string): Promise<EventItem> => {
+  const response = await api.post<EventItem>(`/events/${id}/start`)
+  return response.data
+}
+
+export const closeEvent = async (id: string): Promise<EventItem> => {
+  const response = await api.post<EventItem>(`/events/${id}/close`)
+  return response.data
+}
+
+export const reopenEvent = async (id: string): Promise<EventItem> => {
+  const response = await api.post<EventItem>(`/events/${id}/reopen`)
+  return response.data
+}
+
 export const getEventTeam = async (id: string): Promise<TeamMember[]> => {
   const response = await api.get<TeamMember[]>(`/events/${id}/team`)
   return response.data
