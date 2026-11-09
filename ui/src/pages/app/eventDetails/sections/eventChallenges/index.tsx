@@ -128,7 +128,6 @@ const EventChallenges = ({ event, onRefresh }: EventChallengesProps) => {
 
   return (
     <Card elevation={0} sx={challengesCardStyles}>
-      {/* Header */}
       <Box sx={challengesHeaderRowStyles}>
         <Box>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -168,7 +167,6 @@ const EventChallenges = ({ event, onRefresh }: EventChallengesProps) => {
         </Button>
       </Box>
 
-      {/* Add New Challenge Form */}
       <Box component="form" onSubmit={handleAdd} sx={addChallengeFormRowStyles}>
         <TextField
           size="small"
@@ -192,7 +190,6 @@ const EventChallenges = ({ event, onRefresh }: EventChallengesProps) => {
         </Button>
       </Box>
 
-      {/* Challenges List */}
       {isLoading ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
           <CircularProgress size={32} />
@@ -266,7 +263,6 @@ const EventChallenges = ({ event, onRefresh }: EventChallengesProps) => {
         </Box>
       )}
 
-      {/* Delete Confirmation Modal */}
       <Modal
         open={Boolean(challengeToDelete)}
         onClose={() => setChallengeToDelete(null)}

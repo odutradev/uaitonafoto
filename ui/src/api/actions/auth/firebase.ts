@@ -59,7 +59,6 @@ export const trackEvent = (eventName: string, params?: Record<string, unknown>) 
     try {
       logEvent(analyticsInstance, eventName, params)
     } catch {
-      // Ignora bloqueadores de tracking
     }
   }
 }

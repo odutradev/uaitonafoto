@@ -9,10 +9,6 @@ interface ExportPngParams {
   config: TableDisplayConfig
 }
 
-/**
- * Generates and downloads a high-resolution 300 DPI PNG (1240 x 1754 px)
- * suitable for printing or instant sharing.
- */
 export async function exportTableDisplayPng({
   event,
   guestUrl,
@@ -31,7 +27,6 @@ export async function exportTableDisplayPng({
 
   const theme = TEMPLATE_THEMES[config.template]
 
-  // 1. Draw Background
   if (config.template === 'corporate') {
     const gradient = ctx.createLinearGradient(0, 0, 0, height)
     gradient.addColorStop(0, '#0F172A')
@@ -42,7 +37,6 @@ export async function exportTableDisplayPng({
   }
   ctx.fillRect(0, 0, width, height)
 
-  // 2. Draw Decorative Borders
   if (config.template === 'wedding') {
     ctx.strokeStyle = '#D4C3AC'
     ctx.lineWidth = 4
@@ -61,13 +55,11 @@ export async function exportTableDisplayPng({
     ctx.strokeRect(32, 32, width - 64, height - 64)
   }
 
-  // 3. Header Texts
   ctx.textAlign = 'center'
   ctx.textBaseline = 'top'
 
   let currentY = 120
 
-  // Optional category pill / tag
   if (config.template === 'modern') {
     ctx.fillStyle = '#17140F'
     const pillW = 320
@@ -90,7 +82,6 @@ export async function exportTableDisplayPng({
     currentY += 20
   }
 
-  // Event Title
   const titleText = (config.title || event.name || 'Nome do Evento').trim()
   ctx.fillStyle = theme.color
   ctx.font =
@@ -98,14 +89,12 @@ export async function exportTableDisplayPng({
       ? 'bold 64px "Playfair Display", Georgia, serif'
       : 'bold 68px system-ui, -apple-system, sans-serif'
 
-  // Wrap title text if necessary
   const titleLines = wrapText(ctx, titleText, width - 200)
   titleLines.forEach((line) => {
     ctx.fillText(line, width / 2, currentY)
     currentY += 76
   })
 
-  // Subtitle
   if (config.subtitle?.trim()) {
     ctx.fillStyle = theme.secondaryColor
     ctx.font =
@@ -119,15 +108,12 @@ export async function exportTableDisplayPng({
     })
   }
 
-  // 4. Center QR Code
   const qrBoxSize = 540
   const qrBoxY = Math.max(currentY + 40, 520)
   const qrBoxX = (width - qrBoxSize) / 2
 
-  // QR container background
   ctx.fillStyle = '#FFFFFF'
   if (config.template === 'modern') {
-    // Solid drop shadow
     ctx.fillStyle = '#17140F'
     drawRoundedRect(ctx, qrBoxX + 10, qrBoxY + 10, qrBoxSize, qrBoxSize, 36)
     ctx.fill()
@@ -135,7 +121,6 @@ export async function exportTableDisplayPng({
     drawRoundedRect(ctx, qrBoxX, qrBoxY, qrBoxSize, qrBoxSize, 36)
     ctx.fill()
   } else {
-    // Soft shadow
     ctx.shadowColor = 'rgba(0, 0, 0, 0.15)'
     ctx.shadowBlur = 30
     ctx.shadowOffsetY = 10
@@ -144,7 +129,6 @@ export async function exportTableDisplayPng({
     ctx.shadowColor = 'transparent'
   }
 
-  // Render QR image into canvas
   const qrSize = 460
   const qrImage = await loadQrCodeImage(guestUrl, qrSize)
   ctx.drawImage(
@@ -155,7 +139,6 @@ export async function exportTableDisplayPng({
     qrSize
   )
 
-  // 5. PIN Badge (if enabled)
   let nextSectionY = qrBoxY + qrBoxSize + 30
   if (config.showPin && event.settings.pinEnabled && event.settings.pin) {
     const pinBadgeW = 420
@@ -181,7 +164,6 @@ export async function exportTableDisplayPng({
     nextSectionY += pinBadgeH + 30
   }
 
-  // 6. Three Step Instructions (if enabled)
   if (config.showSteps) {
     const stepsBoxW = width - 220
     const stepsBoxH = 210
@@ -204,7 +186,6 @@ export async function exportTableDisplayPng({
 
     steps.forEach((step, idx) => {
       const stepY = stepsBoxY + 30 + idx * 58
-      // Draw step circle
       ctx.fillStyle = theme.stepNumberBg
       ctx.beginPath()
       ctx.arc(stepsBoxX + 50, stepY + 16, 20, 0, Math.PI * 2)
@@ -215,7 +196,6 @@ export async function exportTableDisplayPng({
       ctx.textAlign = 'center'
       ctx.fillText(String(idx + 1), stepsBoxX + 50, stepY + 4)
 
-      // Step text
       ctx.textAlign = 'left'
       ctx.fillStyle = theme.stepTextColor
       ctx.font = '600 30px system-ui, -apple-system, sans-serif'
@@ -223,7 +203,6 @@ export async function exportTableDisplayPng({
     })
   }
 
-  // 7. Footer Branding
   if (config.showBranding) {
     const footerY = height - 90
     ctx.strokeStyle = theme.borderColor
@@ -243,7 +222,6 @@ export async function exportTableDisplayPng({
     ctx.fillText(agencyName || 'uaitonafoto.com', width - 100, footerY + 24)
   }
 
-  // 8. Convert to blob and download
   const blob = await new Promise<Blob | null>((resolve) =>
     canvas.toBlob((b) => resolve(b), 'image/png')
   )
@@ -261,25 +239,19 @@ export async function exportTableDisplayPng({
   downloadBlob(blob, filename)
 }
 
-/**
- * Loads the QR Code as an Image element from an SVG data URI
- */
 function loadQrCodeImage(url: string, size: number): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
-    // Find or create SVG element
     const container = document.createElement('div')
     container.style.position = 'fixed'
     container.style.left = '-9999px'
     document.body.appendChild(container)
 
-    // Render using an image constructed with qrcode svg data
     const svgElem = document.querySelector('.table-display-card svg')
     let svgData = ''
 
     if (svgElem) {
       svgData = new XMLSerializer().serializeToString(svgElem)
     } else {
-      // Fallback: minimal clean SVG path QR
       svgData = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#fff"/></svg>`
     }
 
@@ -295,9 +267,6 @@ function loadQrCodeImage(url: string, size: number): Promise<HTMLImageElement> {
   })
 }
 
-/**
- * Helper to draw rounded rectangles
- */
 function drawRoundedRect(
   ctx: CanvasRenderingContext2D,
   x: number,
@@ -319,9 +288,6 @@ function drawRoundedRect(
   ctx.closePath()
 }
 
-/**
- * Helper to wrap text according to maximum line width
- */
 function wrapText(
   ctx: CanvasRenderingContext2D,
   text: string,

@@ -58,7 +58,6 @@ const useEventAlbum = (eventId: string, isModerationEnabled = false) => {
       })
       setPendingCount(pendingResult.meta.total)
     } catch {
-      // Ignore background counter refresh error
     }
   }, [eventId, isModerationEnabled])
 
@@ -74,7 +73,6 @@ const useEventAlbum = (eventId: string, isModerationEnabled = false) => {
     getEventGuests(eventId).then(setGuests).catch(() => undefined)
   }, [eventId])
 
-  // Real-time SSE synchronization for photo moderation queue
   useEffect(() => {
     if (!eventId || typeof window === 'undefined' || !('EventSource' in window)) return undefined
 
@@ -98,7 +96,6 @@ const useEventAlbum = (eventId: string, isModerationEnabled = false) => {
           })
         }
       } catch {
-        // Ignore parse error
       }
     })
 
@@ -119,7 +116,6 @@ const useEventAlbum = (eventId: string, isModerationEnabled = false) => {
           )
         })
       } catch {
-        // Ignore parse error
       }
     })
 
@@ -131,7 +127,6 @@ const useEventAlbum = (eventId: string, isModerationEnabled = false) => {
         setPhotos((current) => current.filter((p) => p.id !== data.photoId))
         refreshPendingCount()
       } catch {
-        // Ignore parse error
       }
     })
 

@@ -20,7 +20,6 @@ export const TableDisplayCard = ({
   const isPinActive = config.showPin && event.settings.pinEnabled && Boolean(event.settings.pin)
   const agencyName = event.customization?.agencyName?.trim()
 
-  // Base card dimensions: 380px x 540px (~10x15cm aspect ratio)
   const baseWidth = 380
   const baseHeight = 540
 
@@ -36,7 +35,6 @@ export const TableDisplayCard = ({
         position: 'relative'
       }}
     >
-      {/* Wedding inner border decoration */}
       {config.template === 'wedding' && (
         <Box
           sx={{
@@ -50,7 +48,6 @@ export const TableDisplayCard = ({
         />
       )}
 
-      {/* Header section */}
       <Box sx={{ textAlign: 'center', zIndex: 1 }}>
         {config.template === 'modern' && (
           <Box
@@ -121,7 +118,6 @@ export const TableDisplayCard = ({
         )}
       </Box>
 
-      {/* Center QR code and PIN */}
       <Box
         sx={{
           display: 'flex',
@@ -155,7 +151,6 @@ export const TableDisplayCard = ({
           />
         </Box>
 
-        {/* PIN Badge if enabled */}
         {isPinActive && (
           <Box
             sx={{
@@ -189,7 +184,6 @@ export const TableDisplayCard = ({
         )}
       </Box>
 
-      {/* 3 Steps instructions */}
       {config.showSteps && (
         <Box
           sx={{
@@ -226,7 +220,6 @@ export const TableDisplayCard = ({
         </Box>
       )}
 
-      {/* Footer Branding */}
       {config.showBranding && (
         <Box
           sx={{

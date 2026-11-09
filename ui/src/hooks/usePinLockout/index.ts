@@ -32,7 +32,6 @@ const usePinLockout = ({ scope, targetId }: PinLockoutOptions): PinLockoutState 
     return 0
   })
 
-  // Sincroniza se a chave mudar
   useEffect(() => {
     if (!targetId) return
     const stored = readStoredLockout(storageKey)
@@ -49,7 +48,6 @@ const usePinLockout = ({ scope, targetId }: PinLockoutOptions): PinLockoutState 
     }
   }, [storageKey, targetId])
 
-  // Contagem regressiva em tempo real a cada segundo
   useEffect(() => {
     if (isPermanent || !lockedUntil || remainingSeconds <= 0) return
 
@@ -58,7 +56,6 @@ const usePinLockout = ({ scope, targetId }: PinLockoutOptions): PinLockoutState 
       if (diff <= 0) {
         setRemainingSeconds(0)
         setLockedUntil(null)
-        // Mantém as tentativas acumuladas, mas remove a trava de tempo
         writeStoredLockout(storageKey, {
           attempts,
           lockedUntil: null,

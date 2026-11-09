@@ -176,7 +176,6 @@ const useEventScreen = (eventId: string) => {
           })
           triggerNewPhotoArrival()
         } catch {
-          // Ignore parse error
         }
       })
 
@@ -193,7 +192,6 @@ const useEventScreen = (eventId: string) => {
             return next
           })
         } catch {
-          // Ignore parse error
         }
       })
 
@@ -207,7 +205,6 @@ const useEventScreen = (eventId: string) => {
             current.map((item) => (item.id === photoId ? { ...item, likesCount } : item))
           )
         } catch {
-          // Ignore parse error
         }
       })
 
@@ -217,7 +214,6 @@ const useEventScreen = (eventId: string) => {
           const { pin: nextPin } = JSON.parse(e.data) as { pin: string | null }
           setPin(nextPin)
         } catch {
-          // Ignore parse error
         }
       })
 

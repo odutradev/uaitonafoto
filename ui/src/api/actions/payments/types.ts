@@ -12,7 +12,7 @@ export interface PlanApiItem {
   name: string
   title?: string
   description: string
-  price: number // em centavos
+  price: number
   imageUrl: string | null
   currency: string
   features: string[]

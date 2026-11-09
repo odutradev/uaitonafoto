@@ -51,32 +51,11 @@ export interface LogoProps extends Omit<BoxProps, 'display'> {
   size?: LogoSize
   variant?: LogoVariant
   display?: LogoDisplay
-  /**
-   * Convenience prop for backwards compatibility. Equivalent to display="symbol".
-   */
   symbolOnly?: boolean
-  /**
-   * Convenience prop. Equivalent to display="text".
-   */
   textOnly?: boolean
-  /**
-   * Convenience prop. Equivalent to display="text".
-   */
   wordmarkOnly?: boolean
-  /**
-   * Brand animation (1-8 or by name) or loading animation (l1-l4, l9 or by name).
-   */
   animation?: LogoAnimation
-  /**
-   * Shortcut for loading animation. Can be boolean (defaults to 'orbit'/'l1') or specific loader.
-   */
   loading?: boolean | LoadingAnimation
-  /**
-   * Whether to run non-looping animations (e.g. enter, shutter, reveal, develop). Default: true.
-   */
   play?: boolean
-  /**
-   * Whether the eye animation tracks pointer movement. Default: true.
-   */
   interactive?: boolean
 }

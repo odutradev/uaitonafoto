@@ -90,7 +90,6 @@ const useEventDetails = (eventId: string) => {
       const refreshed = await getEvent(eventId)
       setEvent(refreshed)
     } catch {
-      // noop
     }
   }, [eventId])
 

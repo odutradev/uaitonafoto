@@ -128,7 +128,6 @@ const useGuestEvent = (eventToken: string) => {
             }
           })
         } catch {
-          // Ignore parse error
         }
       })
 
@@ -149,7 +148,6 @@ const useGuestEvent = (eventToken: string) => {
             }
           })
         } catch {
-          // Ignore parse error
         }
       })
 
@@ -163,7 +161,6 @@ const useGuestEvent = (eventToken: string) => {
             current.map((item) => (item.id === photoId ? { ...item, likesCount } : item))
           )
         } catch {
-          // Ignore parse error
         }
       })
 

@@ -147,7 +147,6 @@ const EventSettings = ({ event, onSave, onDelete }: EventSettingsProps) => {
 
         <EventFormFields form={form} onChange={setField} isEventStarted={isEventStarted(event.startsAt)} />
 
-        {/* Bloco de Personalização & Selo White-Label B2B */}
         <Card elevation={0} sx={customizationCardStyles}>
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 1 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
@@ -278,7 +277,6 @@ const EventSettings = ({ event, onSave, onDelete }: EventSettingsProps) => {
                     rows={2}
                   />
 
-                  {/* Pré-visualização do Selo */}
                   <Box sx={previewBoxStyles}>
                     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1 }}>
                       <Typography variant="caption" sx={{ color: 'primary.main', fontWeight: 700, letterSpacing: 0.5, textTransform: 'uppercase' }}>

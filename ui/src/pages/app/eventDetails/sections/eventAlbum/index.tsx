@@ -138,7 +138,6 @@ const EventAlbum = ({ event }: EventAlbumProps) => {
 
   return (
     <Card elevation={0} sx={albumCardStyles}>
-      {/* Header */}
       <Box sx={albumHeaderRowStyles}>
         <Box sx={{ minWidth: 0 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -212,7 +211,6 @@ const EventAlbum = ({ event }: EventAlbumProps) => {
         </Box>
       </Box>
 
-      {/* Moderation Controls Bar (when enabled) */}
       {isModerationEnabled && (
         <Box sx={moderationBarStyles}>
           <Box sx={moderationTabsStyles}>
@@ -281,7 +279,6 @@ const EventAlbum = ({ event }: EventAlbumProps) => {
         </Box>
       )}
 
-      {/* Loading state */}
       {isLoading && (
         <Box sx={photosGridStyles}>
           {Array.from({ length: 8 }).map((_, index) => (
@@ -294,7 +291,6 @@ const EventAlbum = ({ event }: EventAlbumProps) => {
         </Box>
       )}
 
-      {/* Empty State */}
       {!isLoading && photos.length === 0 && (
         <Box sx={stateBoxStyles}>
           <Box sx={stateIconWrapperStyles}>
@@ -319,7 +315,6 @@ const EventAlbum = ({ event }: EventAlbumProps) => {
         </Box>
       )}
 
-      {/* Photos Grid */}
       {!isLoading && photos.length > 0 && (
         <>
           <Box sx={photosGridStyles}>
@@ -328,7 +323,6 @@ const EventAlbum = ({ event }: EventAlbumProps) => {
 
               return (
                 <Box key={photo.id} sx={photoCardStyles}>
-                  {/* Status Badge when moderation is active */}
                   {isModerationEnabled && (
                     <Box sx={photoStatusBadgeStyles(photoStatus)}>
                       {photoStatus === 'pending'
@@ -375,7 +369,6 @@ const EventAlbum = ({ event }: EventAlbumProps) => {
                     sx={photoImageStyles}
                   />
 
-                  {/* Actions overlay */}
                   <Box sx={photoOverlayStyles}>
                     <Typography variant="caption" sx={photoOverlayNameStyles}>
                       {photo.guestName} ·{' '}
@@ -384,7 +377,6 @@ const EventAlbum = ({ event }: EventAlbumProps) => {
                     </Typography>
 
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, flexShrink: 0 }}>
-                      {/* One-touch moderation buttons */}
                       {photoStatus === 'pending' && (
                         <>
                           <Tooltip title="Aprovar e enviar para o telão">
@@ -478,7 +470,6 @@ const EventAlbum = ({ event }: EventAlbumProps) => {
         </>
       )}
 
-      {/* Delete Confirmation Modal */}
       <Modal
         open={Boolean(photoToDelete)}
         onClose={() => setPhotoToDelete(null)}

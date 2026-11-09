@@ -183,7 +183,6 @@ const GuestUpload = ({
         </Typography>
       </Paper>
 
-      {/* Challenge Selection Modal */}
       <Dialog
         open={isChallengeModalOpen}
         onClose={() => setIsChallengeModalOpen(false)}

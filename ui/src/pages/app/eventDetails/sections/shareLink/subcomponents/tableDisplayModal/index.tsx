@@ -85,7 +85,6 @@ export const TableDisplayModal = ({
     setConfig((prev) => ({
       ...prev,
       template,
-      // Update subtitle if it was the default of another template
       subtitle:
         prev.subtitle === DEFAULT_SUBTITLES[prev.template]
           ? DEFAULT_SUBTITLES[template]
@@ -123,7 +122,6 @@ export const TableDisplayModal = ({
         fullWidth
         PaperProps={{ sx: dialogPaperStyles }}
       >
-        {/* Header */}
         <Box sx={dialogHeaderStyles}>
           <Box>
             <Typography variant="h6" fontWeight={700}>
@@ -138,11 +136,8 @@ export const TableDisplayModal = ({
           </IconButton>
         </Box>
 
-        {/* Content */}
         <Box sx={dialogContentStyles}>
-          {/* Left Column: Customization Controls */}
           <Box sx={controlsSectionStyles}>
-            {/* Template selector */}
             <Box sx={controlGroupStyles}>
               <Typography variant="subtitle2" fontWeight={700}>
                 Modelo do Display
@@ -197,7 +192,6 @@ export const TableDisplayModal = ({
 
             <Divider />
 
-            {/* Title & Subtitle inputs */}
             <Box sx={controlGroupStyles}>
               <Typography variant="subtitle2" fontWeight={700}>
                 Textos do Cartão
@@ -220,7 +214,6 @@ export const TableDisplayModal = ({
 
             <Divider />
 
-            {/* Layout & Print Format */}
             <Box sx={controlGroupStyles}>
               <Typography variant="subtitle2" fontWeight={700}>
                 Formato de Impressão
@@ -243,7 +236,6 @@ export const TableDisplayModal = ({
 
             <Divider />
 
-            {/* Toggle options */}
             <Box sx={controlGroupStyles}>
               <Typography variant="subtitle2" fontWeight={700}>
                 Elementos Visuais
@@ -296,7 +288,6 @@ export const TableDisplayModal = ({
             </Box>
           </Box>
 
-          {/* Right Column: Live Preview */}
           <Box sx={previewWrapperStyles}>
             <Typography
               variant="caption"
@@ -324,7 +315,6 @@ export const TableDisplayModal = ({
           </Box>
         </Box>
 
-        {/* Actions */}
         <Box sx={dialogActionsStyles}>
           <Button variant="outlined" color="inherit" onClick={onClose}>
             Fechar
@@ -361,7 +351,6 @@ export const TableDisplayModal = ({
         </Box>
       </Dialog>
 
-      {/* Scoped Printable Container & CSS */}
       <style>{`
         @media print {
           body * {

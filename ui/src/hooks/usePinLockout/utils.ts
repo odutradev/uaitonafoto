@@ -7,11 +7,11 @@ export const PIN_LOCKOUT_MAX_FREE_ATTEMPTS = 4
 export const PIN_LOCKOUT_PERMANENT_THRESHOLD = 10
 
 export const PIN_LOCKOUT_DURATIONS: Record<number, number> = {
-  5: 60, // 1 min
-  6: 300, // 5 min
-  7: 900, // 15 min
-  8: 3600, // 1 hora
-  9: 3600 // 1 hora
+  5: 60,
+  6: 300,
+  7: 900,
+  8: 3600,
+  9: 3600
 }
 
 export const getClientDeviceId = (): string => {
@@ -47,7 +47,6 @@ export const writeStoredLockout = (storageKey: string, data: StoredPinLockout): 
   try {
     localStorage.setItem(storageKey, JSON.stringify(data))
   } catch {
-    // Ignore storage quota errors
   }
 }
 
@@ -55,7 +54,6 @@ export const clearStoredLockout = (storageKey: string): void => {
   try {
     localStorage.removeItem(storageKey)
   } catch {
-    // Ignore
   }
 }
 

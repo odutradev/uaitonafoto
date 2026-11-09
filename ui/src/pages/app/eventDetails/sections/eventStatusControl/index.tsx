@@ -190,7 +190,6 @@ const EventStatusControl = ({ event, onStart, onClose, onReopen }: EventStatusCo
         </Box>
       </Card>
 
-      {/* Modal Iniciar Evento */}
       <Modal
         open={isStartModalOpen}
         onClose={() => !isSubmitting && setIsStartModalOpen(false)}
@@ -233,7 +232,6 @@ const EventStatusControl = ({ event, onStart, onClose, onReopen }: EventStatusCo
         </Box>
       </Modal>
 
-      {/* Modal Encerrar Evento */}
       <Modal
         open={isCloseModalOpen}
         onClose={() => !isSubmitting && setIsCloseModalOpen(false)}
@@ -274,7 +272,6 @@ const EventStatusControl = ({ event, onStart, onClose, onReopen }: EventStatusCo
         </Box>
       </Modal>
 
-      {/* Modal Reabrir Evento */}
       <Modal
         open={isReopenModalOpen}
         onClose={() => !isSubmitting && setIsReopenModalOpen(false)}
