@@ -103,7 +103,22 @@ export const Plans = ({
               </Typography>
 
               <Stack spacing={1.5} sx={{ mb: 4, flex: 1 }}>
-                {plan.features.map((feature, idx) => {
+                {plan.features
+                  .filter((feature) => {
+                    const isProPlan =
+                      plan.id?.toLowerCase().includes('pro') ||
+                      plan.title?.toLowerCase().includes('pro')
+
+                    if (isProPlan) {
+                      const lower = feature.toLowerCase()
+                      // Remove itens que já pertencem ao Essencial e são herdados
+                      if (lower.includes('créditos acumulativos') || lower.includes('crédito extra')) {
+                        return false
+                      }
+                    }
+                    return true
+                  })
+                  .map((feature, idx) => {
                   const isInheritanceHeader =
                     feature.toLowerCase().startsWith('tudo que tem no avulso') ||
                     feature.toLowerCase().startsWith('tudo que tem no essencial') ||

@@ -127,9 +127,7 @@ export const plansConfig: PlanConfig[] = [
       '4 telões simultâneos por evento',
       '5 convidados na equipe organizadora',
       'Sua marca em destaque para atrair novos clientes',
-      'Botão direto para seu WhatsApp no mural de fotos',
-      'Créditos acumulativos enquanto o plano estiver ativo',
-      'Crédito extra avulso por R$ 69,00'
+      'Botão direto para seu WhatsApp no mural de fotos'
     ],
     ctaText: 'Assinar Pro',
     ctaHref: 'prod_agency_pro',
