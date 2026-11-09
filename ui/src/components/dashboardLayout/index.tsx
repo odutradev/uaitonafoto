@@ -67,7 +67,13 @@ const SidebarContent = ({
   onLogout
 }: SidebarContentProps) => {
   const navItems: DashboardNavItem[] = [
-    { label: 'Meus eventos', path: '/app', icon: <EventsIcon fontSize="small" />, exact: true },
+    {
+      label: 'Meus eventos',
+      path: '/app',
+      icon: <EventsIcon fontSize="small" />,
+      exact: true,
+      matchPrefixes: ['/app/events']
+    },
     ...(hasActiveSubscription
       ? [{ label: 'Personalização', path: '/app/customization', icon: <PaletteIcon fontSize="small" /> }]
       : []),
@@ -114,9 +120,15 @@ const SidebarContent = ({
 
       <Box component="nav" aria-label="Menu principal da dashboard" sx={navListStyles}>
         {navItems.map((item) => {
-          const isActive = item.exact
+          const isDirectMatch = item.exact
             ? currentPath === item.path
             : currentPath === item.path || currentPath.startsWith(`${item.path}/`)
+          const isPrefixMatch = Boolean(
+            item.matchPrefixes?.some(
+              (prefix) => currentPath === prefix || currentPath.startsWith(`${prefix}/`)
+            )
+          )
+          const isActive = isDirectMatch || isPrefixMatch
 
           return (
             <Button

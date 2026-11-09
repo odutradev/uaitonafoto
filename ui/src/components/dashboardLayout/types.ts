@@ -5,6 +5,7 @@ export interface DashboardNavItem {
   path: string
   icon: ReactNode
   exact?: boolean
+  matchPrefixes?: string[]
 }
 
 export interface SidebarContentProps {
