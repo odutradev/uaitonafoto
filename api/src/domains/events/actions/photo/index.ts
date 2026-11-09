@@ -51,6 +51,7 @@ export const toPhotoResponses = async (photos: PhotoEntity[], viewerGuestId?: st
     status: photo.status ?? 'approved',
     challengeId: photo.challengeId,
     challengeTitle: photo.challengeTitle,
+    focalY: photo.focalY,
     ...(viewerGuestId ? { likedByMe: likedIds?.has(photo.id) ?? false, mine: photo.guestId === viewerGuestId } : {}),
     createdAt: photo.createdAt
   }))
@@ -133,9 +134,13 @@ export const uploadPhoto = defineAction(
 
     const rawChallengeId = (data as Record<string, unknown> | undefined)?.challengeId ?? defaultExpress?.req?.body?.challengeId
     const rawChallengeTitle = (data as Record<string, unknown> | undefined)?.challengeTitle ?? defaultExpress?.req?.body?.challengeTitle
+    const rawFocalY = (data as Record<string, unknown> | undefined)?.focalY ?? defaultExpress?.req?.body?.focalY
 
     const challengeId = typeof rawChallengeId === 'string' && rawChallengeId.trim() ? rawChallengeId.trim() : undefined
     const challengeTitle = typeof rawChallengeTitle === 'string' && rawChallengeTitle.trim() ? rawChallengeTitle.trim() : undefined
+    const focalY = rawFocalY !== undefined && rawFocalY !== null && rawFocalY !== '' && !Number.isNaN(Number(rawFocalY))
+      ? Math.min(100, Math.max(0, Math.round(Number(rawFocalY))))
+      : undefined
 
     const client = getClientIdentity(defaultExpress?.req)
 
@@ -151,6 +156,7 @@ export const uploadPhoto = defineAction(
         status: isModerationOn ? 'pending' : 'approved',
         challengeId,
         challengeTitle,
+        focalY,
         ip: client.ip,
         deviceId: client.deviceId
       })

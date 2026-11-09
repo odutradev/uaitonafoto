@@ -17,6 +17,7 @@ export const photoSchema = z
     status: z.enum(['pending', 'approved', 'rejected']).default('approved').openapi({ example: 'approved' }),
     challengeId: z.string().optional().openapi({ example: '665f1c2e9b1e8a001c8e4d88' }),
     challengeTitle: z.string().optional().openapi({ example: 'Foto com o padrinho mais animado 🕺' }),
+    focalY: z.number().min(0).max(100).optional().openapi({ example: 35, description: 'Posição vertical de foco para o telão (0 a 100%)' }),
     createdAt: z.string().openapi({ example: '2026-12-20T22:10:00.000Z' })
   })
   .openapi('PhotoResponse')

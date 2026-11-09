@@ -145,6 +145,7 @@ export interface EventPhoto {
   status?: PhotoStatus
   challengeId?: string
   challengeTitle?: string
+  focalY?: number
   createdAt: string
 }
 

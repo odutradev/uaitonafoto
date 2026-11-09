@@ -24,7 +24,8 @@ export const uploadGuestPhoto = async (
   guestToken: string,
   file: File,
   challengeId?: string,
-  challengeTitle?: string
+  challengeTitle?: string,
+  focalY?: number
 ): Promise<GuestPhoto> => {
   const formData = new FormData()
   formData.append('file', file)
@@ -34,6 +35,9 @@ export const uploadGuestPhoto = async (
   }
   if (challengeTitle) {
     formData.append('challengeTitle', challengeTitle)
+  }
+  if (typeof focalY === 'number') {
+    formData.append('focalY', Math.round(focalY).toString())
   }
   const response = await guestApi.post<GuestPhoto>('/guest/photos', formData, withGuestToken(guestToken))
   return response.data

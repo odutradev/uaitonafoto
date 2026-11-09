@@ -12,6 +12,7 @@ export interface PhotoEntity {
   status: PhotoStatus
   challengeId?: string
   challengeTitle?: string
+  focalY?: number
   ip?: string
   deviceId?: string
   createdAt: string
@@ -21,6 +22,7 @@ export type CreatePhotoPayload = Omit<PhotoEntity, 'likesCount' | 'createdAt' | 
   status?: PhotoStatus
   challengeId?: string
   challengeTitle?: string
+  focalY?: number
 }
 
 export interface ListPhotosParams {
