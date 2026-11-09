@@ -193,29 +193,6 @@ export const StoriesLayout = ({
             flexDirection: 'column'
           }}
         >
-          {/* Badge Topo Esquerdo: ★ NO PALCO AGORA */}
-          <Box
-            sx={{
-              position: 'absolute',
-              top: '1.6cqh',
-              left: '1.6cqh',
-              zIndex: 3,
-              bgcolor: '#ffd21f',
-              color: '#14110c',
-              px: '1.6cqh',
-              py: '0.6cqh',
-              borderRadius: '1cqh',
-              fontSize: '1.9cqh',
-              fontWeight: 900,
-              letterSpacing: '0.04em',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.6cqh',
-              boxShadow: '0 4px 16px rgba(0,0,0,0.4)'
-            }}
-          >
-            ★ NO PALCO AGORA
-          </Box>
 
           {/* Badge Topo Direito: Curtidas */}
           {currentPhoto && currentPhoto.likesCount > 0 && (
