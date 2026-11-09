@@ -50,45 +50,22 @@ export const DuoLayout = ({
     <Box
       sx={{
         height: '100%',
-        display: 'grid',
-        gridTemplateColumns: '53.4cqh 53.4cqh 1fr',
-        gap: '2cqh',
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'column',
         p: '2.5cqh',
         position: 'relative',
         zIndex: 1,
-        minHeight: 0
+        minHeight: 0,
+        boxSizing: 'border-box'
       }}
     >
-      {/* Coluna 1: Foto atual com overlay de legenda */}
-      <ScreenPhotoTile
-        photo={currentPhoto}
-        photoFit={photoFit}
-        isMain
-        isNewArrival={isNewArrival}
-        showOverlay
-        aspectRatio="9 / 16"
-        sx={{ height: '100%' }}
-      />
-
-      {/* Coluna 2: Foto anterior em mesma altura com badge "Anterior" */}
-      <ScreenPhotoTile
-        photo={previousPhoto}
-        photoFit={photoFit}
-        label="Anterior"
-        aspectRatio="9 / 16"
-        sx={{ height: '100%' }}
-        onClick={previousPhoto ? () => onSelectPhoto(previousIndex) : undefined}
-      />
-
-      {/* Coluna 3: Marca + Controles integrados + QR Code empilhado + 3 miniaturas */}
+      {/* Top Bar: Marca uaiToNaFoto AO VIVO na esquerda e Assessoria + Controles na direita */}
       <Box
         sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-between',
-          gap: '2cqh',
-          minHeight: 0,
-          minWidth: 0
+          mb: '2cqh',
+          width: '100%',
+          flexShrink: 0
         }}
       >
         <ScreenBrand
@@ -96,30 +73,76 @@ export const DuoLayout = ({
           onFullscreen={onFullscreen}
           onOpenSettings={onOpenSettings}
         />
+      </Box>
 
-        <ScreenQrBlock
-          guestLink={guestLink}
-          pin={pin}
-          showPin={showPin}
-          variant="stack"
+      {/* Palco Duo: 3 colunas (Foto Atual, Foto Anterior, Lateral com QR e Recentes) */}
+      <Box
+        sx={{
+          flex: 1,
+          display: 'grid',
+          gridTemplateColumns: '49.8cqh 49.8cqh 1fr',
+          gap: '2cqh',
+          minHeight: 0
+        }}
+      >
+        {/* Coluna 1: Foto atual com overlay de legenda */}
+        <ScreenPhotoTile
+          photo={currentPhoto}
+          photoFit={photoFit}
+          isMain
+          isNewArrival={isNewArrival}
+          showOverlay
+          aspectRatio="9 / 16"
+          sx={{ height: '100%' }}
         />
 
+        {/* Coluna 2: Foto anterior em mesma altura com badge "Anterior" */}
+        <ScreenPhotoTile
+          photo={previousPhoto}
+          photoFit={photoFit}
+          label="Anterior"
+          aspectRatio="9 / 16"
+          sx={{ height: '100%' }}
+          onClick={previousPhoto ? () => onSelectPhoto(previousIndex) : undefined}
+        />
+
+        {/* Coluna 3: QR Code empilhado + 3 miniaturas */}
         <Box
           sx={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(3, 1fr)',
-            gap: '1.4cqh'
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+            gap: '2cqh',
+            minHeight: 0,
+            minWidth: 0
           }}
         >
-          {recentMiniatures.map((item, idx) => (
-            <ScreenPhotoTile
-              key={item?.photo ? item.photo.id : `duo-thumb-${idx}`}
-              photo={item?.photo || null}
-              photoFit={photoFit}
-              aspectRatio="9 / 16"
-              onClick={item?.photo ? () => onSelectPhoto(item.index) : undefined}
-            />
-          ))}
+          <ScreenQrBlock
+            guestLink={guestLink}
+            pin={pin}
+            showPin={showPin}
+            variant="stack"
+            sx={{ flex: 1, minHeight: 0 }}
+          />
+
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(3, 1fr)',
+              gap: '1.4cqh',
+              flexShrink: 0
+            }}
+          >
+            {recentMiniatures.map((item, idx) => (
+              <ScreenPhotoTile
+                key={item?.photo ? item.photo.id : `duo-thumb-${idx}`}
+                photo={item?.photo || null}
+                photoFit={photoFit}
+                aspectRatio="9 / 16"
+                onClick={item?.photo ? () => onSelectPhoto(item.index) : undefined}
+              />
+            ))}
+          </Box>
         </Box>
       </Box>
     </Box>
