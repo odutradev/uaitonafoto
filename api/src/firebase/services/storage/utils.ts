@@ -54,7 +54,6 @@ export const uploadFile = async (options: UploadFileOptions): Promise<UploadFile
     try {
       await file.makePublic()
     } catch {
-      // Ignore if bucket-level access prevents object ACL changes
     }
   }
 

@@ -21,11 +21,11 @@ export const PIN_LOCKOUT_MAX_FREE_ATTEMPTS = 4
 export const PIN_LOCKOUT_PERMANENT_THRESHOLD = 10
 
 export const PIN_LOCKOUT_DURATIONS: Record<number, number> = {
-  5: 60, // 1 minuto
-  6: 300, // 5 minutos
-  7: 900, // 15 minutos
-  8: 3600, // 1 hora
-  9: 3600 // 1 hora
+  5: 60,
+  6: 300,
+  7: 900,
+  8: 3600,
+  9: 3600
 }
 
 interface LockoutEntry {
@@ -89,7 +89,6 @@ const getLockoutEntry = (key: string): LockoutEntry | null => {
   const entry = lockoutStore.get(key)
   if (!entry) return null
 
-  // Se não for permanente e o tempo já venceu, removemos o lock de tempo
   if (!entry.isPermanent && entry.lockedUntil && entry.lockedUntil <= Date.now()) {
     entry.lockedUntil = null
   }
@@ -114,7 +113,6 @@ export const checkPinLockout = ({ scope, targetId, req, res }: PinLockoutParams)
   const deviceEntry = deviceKey ? getLockoutEntry(deviceKey) : null
   const ipEntry = getLockoutEntry(ipKey)
 
-  // Prioriza a entrada que estiver com lock ativo (ou a de maior gravidade)
   const activeEntry =
     (deviceEntry?.isPermanent ? deviceEntry : null) ||
     (ipEntry?.isPermanent ? ipEntry : null) ||
@@ -256,10 +254,9 @@ export const resetPinLockoutsForTarget = (
   return removedCount
 }
 
-// Limpeza de entradas expiradas a cada 15 minutos
 setInterval(() => {
   const now = Date.now()
-  const expirationThreshold = 24 * 60 * 60 * 1000 // 24 horas
+  const expirationThreshold = 24 * 60 * 60 * 1000
 
   for (const [key, entry] of lockoutStore.entries()) {
     if (!entry.isPermanent && now - entry.lastAttemptAt > expirationThreshold) {

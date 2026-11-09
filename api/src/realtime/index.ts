@@ -117,7 +117,6 @@ export const closeAllRealtimeStreams = (): void => {
           client.res.write(shutdownMessage)
           client.res.end()
         } catch {
-          // Ignore write error on shutdown
         }
       }
     }
@@ -139,7 +138,6 @@ export const getRealtimeStats = (): RealtimeStats => {
   }
 }
 
-// Aliases for backwards compatibility
 export const subscribeEventStream = subscribeRealtimeStream
 export const broadcastEvent = broadcastRealtimeEvent
 export const closeAllEventStreams = closeAllRealtimeStreams

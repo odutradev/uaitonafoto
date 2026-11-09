@@ -1,6 +1,3 @@
-/**
- * @deprecated Use '@realtime' instead. This module is kept for backwards compatibility.
- */
 export {
   subscribeRealtimeStream,
   broadcastRealtimeEvent,

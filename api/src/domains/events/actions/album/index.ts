@@ -689,7 +689,6 @@ export const getEventChallenges = defineAction(
     const event = access.event
     let challenges = event.challenges ?? []
 
-    // If challenges list is empty, initialize with default challenges based on event type
     if (challenges.length === 0) {
       challenges = buildDefaultChallenges(event.type)
       await eventRepository.update(event.id, { challenges })

@@ -19,7 +19,6 @@ export const runPaymentSeeds = async (): Promise<void> => {
   }
 }
 
-// Executa diretamente quando chamado via CLI / script
 if (process.argv[1]?.includes('payment/seed') || process.argv[1]?.includes('payment\\seed')) {
   runPaymentSeeds()
     .then(() => process.exit(0))
