@@ -1,6 +1,7 @@
 import axios from 'axios'
 
 import defaultConfig from '@config/default'
+import { getClientDeviceId } from '@hooks/usePinLockout/utils'
 
 import type { ScreenEventInfo } from './types'
 
@@ -8,6 +9,11 @@ export const SCREEN_TOKEN_STORAGE_PREFIX = 'uaitonafoto:screen:'
 export const SCREEN_EVENT_STORAGE_PREFIX = 'uaitonafoto:screen:event:'
 
 const screenApi = axios.create({ baseURL: defaultConfig.baseURL })
+
+screenApi.interceptors.request.use((config) => {
+  config.headers['x-client-device-id'] = getClientDeviceId()
+  return config
+})
 
 export const getStoredScreenToken = (eventId: string): string | null =>
   localStorage.getItem(`${SCREEN_TOKEN_STORAGE_PREFIX}${eventId}`)

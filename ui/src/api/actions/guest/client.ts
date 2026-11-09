@@ -1,10 +1,16 @@
 import axios from 'axios'
 
 import defaultConfig from '@config/default'
+import { getClientDeviceId } from '@hooks/usePinLockout/utils'
 
 export const GUEST_TOKEN_STORAGE_PREFIX = 'uaitonafoto:guest:'
 
 const guestApi = axios.create({ baseURL: defaultConfig.baseURL })
+
+guestApi.interceptors.request.use((config) => {
+  config.headers['x-client-device-id'] = getClientDeviceId()
+  return config
+})
 
 export const getStoredGuestToken = (eventToken: string): string | null =>
   localStorage.getItem(`${GUEST_TOKEN_STORAGE_PREFIX}${eventToken}`)
