@@ -3,6 +3,7 @@ import {
   Fullscreen as FullscreenIcon,
   SettingsOutlined as SettingsIcon
 } from '@mui/icons-material'
+import Logo from '@components/logo'
 import { brandColors } from '@theme'
 import type { EventCustomization } from '@actions/events/types'
 
@@ -42,63 +43,35 @@ export const ScreenBrand = ({
           flexShrink: 0
         }}
       >
-        {/* Marcador de câmera / ícone característico */}
-        <Box
-          sx={(theme) => ({
-            width: '3.4cqh',
-            height: '3.4cqh',
-            borderRadius: '1cqh',
-            bgcolor: brandColors.flashYellow,
-            display: 'block',
-            position: 'relative',
-            flexShrink: 0,
-            '&::after': {
-              content: '""',
-              position: 'absolute',
-              inset: '25%',
-              borderRadius: '50%',
-              bgcolor: theme.palette.mode === 'dark' ? brandColors.darkBg : '#FFFFFF'
-            }
-          })}
+        <Logo
+          variant="auto"
+          animation="live"
+          size={{ symbolSize: '3.4cqh', fontSize: '3cqh', gap: '1cqh' }}
         />
 
-        <Typography
-          component="span"
-          sx={{
-            fontFamily: "'Bricolage Grotesque', system-ui, sans-serif",
-            fontWeight: 800,
-            fontSize: '3cqh',
-            lineHeight: 1,
-            color: brandColors.flashYellow,
-            letterSpacing: '-0.02em',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '1cqh',
-            whiteSpace: 'nowrap'
-          }}
-        >
-          uaiToNaFoto
-          {!hideLiveBadge && (
-            <Box
-              component="span"
-              sx={{
-                fontStyle: 'normal',
-                fontSize: '1.9cqh',
-                fontWeight: 700,
-                color: '#22c55e',
-                bgcolor: 'rgba(34, 197, 94, 0.14)',
-                border: '1px solid rgba(34, 197, 94, 0.35)',
-                px: '1.2cqh',
-                py: '0.3cqh',
-                borderRadius: '2cqh',
-                letterSpacing: '0.02em',
-                textTransform: 'lowercase'
-              }}
-            >
-              ao vivo
-            </Box>
-          )}
-        </Typography>
+        {!hideLiveBadge && (
+          <Box
+            component="span"
+            sx={{
+              fontStyle: 'normal',
+              fontSize: '1.9cqh',
+              fontWeight: 700,
+              color: '#22c55e',
+              bgcolor: 'rgba(34, 197, 94, 0.14)',
+              border: '1px solid rgba(34, 197, 94, 0.35)',
+              px: '1.2cqh',
+              py: '0.3cqh',
+              borderRadius: '2cqh',
+              letterSpacing: '0.02em',
+              textTransform: 'lowercase',
+              display: 'inline-flex',
+              alignItems: 'center',
+              lineHeight: 1
+            }}
+          >
+            ao vivo
+          </Box>
+        )}
       </Box>
 
       {/* Lado direito: Assessoria Whitelabel (Logo + Nome + Subtítulo) + Controles integrados */}
