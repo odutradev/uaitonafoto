@@ -19,7 +19,6 @@ export const guestEventInfoSchema = z
     endsAt: z.string().openapi({ example: '2026-12-21T05:00:00.000Z' }),
     uploadsCloseAt: z.string().openapi({ example: '2026-12-22T05:00:00.000Z' }),
     galleryExpiresAt: z.string().openapi({ example: '2027-01-20T05:00:00.000Z' }),
-    maxPhotosPerGuest: z.number().openapi({ example: 10 }),
     photoVisibility: z.enum(['during_event', 'after_event']),
     requiresPin: z.boolean().openapi({
       example: true,
@@ -62,7 +61,6 @@ export const guestSessionResponseSchema = z
   .object({
     guest: guestSchema,
     event: guestEventInfoSchema,
-    photosSent: z.number().openapi({ example: 3 }),
-    photosRemaining: z.number().openapi({ example: 7 })
+    photosSent: z.number().openapi({ example: 3 })
   })
   .openapi('GuestSessionResponse')

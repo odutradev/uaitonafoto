@@ -40,8 +40,7 @@ export const uploadPhoto = defineAction(
     uploadFieldName: 'file',
     responses: {
       200: { description: 'Foto enviada', schema: photoSchema },
-      403: { description: 'Envio de fotos fechado para este evento' },
-      409: { description: 'Limite de fotos por convidado atingido' }
+      403: { description: 'Envio de fotos fechado para este evento' }
     }
   },
   async ({ ids, file, manageError }: ManageRequestBody): ManageRequestResponse<PhotoResponse> => {
@@ -59,11 +58,6 @@ export const uploadPhoto = defineAction(
 
     const imageType = detectImageType(file.buffer)
     if (!imageType) return manageError({ code: 'bad_request', details: 'Conteúdo do arquivo não é uma imagem válida' })
-
-    const sentPhotos = await photoRepository.countByGuest(guest.id)
-    if (sentPhotos >= event.settings.maxPhotosPerGuest) {
-      return manageError({ code: 'conflict', details: 'Limite de fotos por convidado atingido' })
-    }
 
     const photoId = new Types.ObjectId().toString()
     const stored = await storeEventPhoto({

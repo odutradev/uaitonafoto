@@ -21,7 +21,6 @@ const toEventEntity = (doc: any): EventEntity => {
     settings: {
       uploadWindowHours: settings.uploadWindowHours ?? 24,
       galleryDurationDays: settings.galleryDurationDays ?? 30,
-      maxPhotosPerGuest: settings.maxPhotosPerGuest ?? 10,
       photoVisibility: settings.photoVisibility ?? 'during_event',
       pinEnabled: settings.pinEnabled ?? false,
       pin: settings.pin ?? '0000',

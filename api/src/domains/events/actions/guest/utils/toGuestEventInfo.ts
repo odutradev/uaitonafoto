@@ -11,7 +11,6 @@ export const toGuestEventInfo = (event: EventEntity): GuestEventInfo => ({
   endsAt: event.endsAt,
   uploadsCloseAt: event.uploadsCloseAt,
   galleryExpiresAt: event.galleryExpiresAt,
-  maxPhotosPerGuest: event.settings.maxPhotosPerGuest,
   photoVisibility: event.settings.photoVisibility,
   requiresPin: event.settings.pinEnabled,
   customization: event.customization,

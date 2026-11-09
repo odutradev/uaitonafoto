@@ -29,7 +29,6 @@ const settingsSchema = new Schema(
   {
     uploadWindowHours: { type: Number, required: true, min: 0 },
     galleryDurationDays: { type: Number, required: true, min: 1 },
-    maxPhotosPerGuest: { type: Number, required: true, min: 1 },
     photoVisibility: { type: String, enum: ['during_event', 'after_event'], required: true },
     pinEnabled: { type: Boolean, default: true },
     pin: { type: String, required: true, match: /^\d{4}$/ },

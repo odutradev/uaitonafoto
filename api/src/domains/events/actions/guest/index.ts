@@ -102,8 +102,7 @@ export const getGuestSession = defineAction(
     return {
       guest: { id: guest.id, name: guest.name },
       event: toGuestEventInfo(event),
-      photosSent,
-      photosRemaining: Math.max(0, event.settings.maxPhotosPerGuest - photosSent)
+      photosSent
     }
   }
 )

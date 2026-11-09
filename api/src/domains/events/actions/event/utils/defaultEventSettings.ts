@@ -4,7 +4,6 @@ import type { EventCreditType, EventSettings } from '../../../repositories/event
 export const buildDefaultEventSettings = (creditType: EventCreditType = 'paid'): EventSettings => ({
   uploadWindowHours: 0,
   galleryDurationDays: creditType === 'free' ? 14 : 90,
-  maxPhotosPerGuest: 10,
   photoVisibility: 'during_event',
   pinEnabled: true,
   pin: generatePin(),

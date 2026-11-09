@@ -42,10 +42,6 @@ export const eventSettingsSchema = z
       example: 30,
       description: 'Dias de disponibilidade da galeria após o término do evento'
     }),
-    maxPhotosPerGuest: z.number().int().min(1).max(100).openapi({
-      example: 10,
-      description: 'Quantidade máxima de fotos por convidado'
-    }),
     photoVisibility: z.enum(['during_event', 'after_event']).openapi({
       example: 'during_event',
       description: 'Fotos visíveis durante o evento (telão/feed) ou apenas após o término'

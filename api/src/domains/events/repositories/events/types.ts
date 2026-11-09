@@ -11,7 +11,6 @@ export type PinRotationMinutes = 5 | 15 | 30 | 60
 export interface EventSettings {
   uploadWindowHours: number
   galleryDurationDays: number
-  maxPhotosPerGuest: number
   photoVisibility: PhotoVisibility
   pinEnabled: boolean
   pin: string
