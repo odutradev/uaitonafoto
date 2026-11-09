@@ -78,13 +78,26 @@ export const previewWrapperStyles: SxProps<Theme> = {
 }
 
 export const dialogActionsStyles: SxProps<Theme> = {
-  p: 2.5,
-  pt: 2,
+  p: 2,
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
   borderTop: '1px solid',
   borderColor: 'divider',
   flexWrap: 'wrap',
-  gap: 1.5
+  gap: 1
 }
+
+export const dialogActionButtonStyles: SxProps<Theme> = {
+  minHeight: 36,
+  px: 1.75,
+  py: 0.75,
+  fontSize: '0.8125rem',
+  fontWeight: 600,
+  borderRadius: '10px',
+  borderWidth: '1px',
+  '&:hover': {
+    borderWidth: '1px'
+  }
+}
+

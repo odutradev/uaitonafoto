@@ -1,8 +1,8 @@
+import { useState } from 'react'
 import {
   Box,
   Button,
   Card,
-  Chip,
   CircularProgress,
   IconButton,
   Tooltip,
@@ -13,35 +13,33 @@ import {
   LockOpenOutlined as LockOpenIcon,
   LockOutlined as LockIcon,
   OpenInNewOutlined as OpenIcon,
-  PrintOutlined as PrintIcon,
-  SettingsOutlined as SettingsIcon
+  PrintOutlined as PrintIcon
 } from '@mui/icons-material'
 import { QRCodeSVG } from 'qrcode.react'
 import { toast } from 'react-toastify'
 
 import { buildGuestLink, pinRotationLabels } from '@config/events'
 
-import { useState } from 'react'
-
 import { TableDisplayModal } from './subcomponents/tableDisplayModal'
 
 import {
+  compactIconButtonStyles,
   linkFieldBoxStyles,
+  linkIconActionsStyles,
   linkTextStyles,
-  pinActionsRowStyles,
   pinBannerStyles,
   pinCodeTextStyles,
   qrBoxStyles,
-  shareActionsRowStyles,
   shareButtonStyles,
   shareCardStyles,
   shareInfoColumnStyles,
   shareMainRowStyles,
-  shareSectionStackStyles
+  shareSectionStackStyles,
+  unlockButtonStyles
 } from './styles'
 import type { ShareLinkProps } from './types'
 
-const ShareLink = ({ event, onGoToSettings, onUnlockLockouts }: ShareLinkProps) => {
+const ShareLink = ({ event, onUnlockLockouts }: ShareLinkProps) => {
   const link = buildGuestLink(event.guestToken)
   const [isUnlocking, setIsUnlocking] = useState(false)
   const [isDisplayModalOpen, setIsDisplayModalOpen] = useState(false)
@@ -71,27 +69,18 @@ const ShareLink = ({ event, onGoToSettings, onUnlockLockouts }: ShareLinkProps) 
       <Card elevation={0} sx={shareCardStyles}>
         <Box sx={shareMainRowStyles}>
           <Box sx={qrBoxStyles}>
-            <QRCodeSVG value={link} size={148} />
-            <Typography variant="caption" sx={{ color: '#5E584C', fontWeight: 700 }}>
-              Escaneie para enviar fotos
+            <QRCodeSVG value={link} size={132} />
+            <Typography variant="caption" sx={{ color: '#5E584C', fontWeight: 600, fontSize: '0.7rem' }}>
+              Escaneie para enviar
             </Typography>
-            <Button
-              size="small"
-              variant="text"
-              startIcon={<PrintIcon fontSize="small" />}
-              onClick={() => setIsDisplayModalOpen(true)}
-              sx={{ fontSize: '0.75rem', textTransform: 'none', mt: 0.5, p: 0.5 }}
-            >
-              Imprimir display
-            </Button>
           </Box>
 
           <Box sx={shareInfoColumnStyles}>
             <Box>
-              <Typography variant="h6" component="h2">
+              <Typography variant="subtitle1" fontWeight={700} component="h2">
                 Acesso dos convidados
               </Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+              <Typography variant="body2" color="text.secondary" sx={{ mt: 0.25 }}>
                 Compartilhe este link ou QR Code com os convidados do evento para que eles enviem fotos sem precisar baixar app.
               </Typography>
             </Box>
@@ -100,113 +89,99 @@ const ShareLink = ({ event, onGoToSettings, onUnlockLockouts }: ShareLinkProps) 
               <Typography variant="body2" sx={linkTextStyles} title={link}>
                 {link}
               </Typography>
-              <Tooltip title="Copiar link">
-                <IconButton size="small" onClick={handleCopy} aria-label="Copiar link">
-                  <CopyIcon fontSize="small" />
-                </IconButton>
-              </Tooltip>
+              <Box sx={linkIconActionsStyles}>
+                <Tooltip title="Copiar link">
+                  <IconButton
+                    size="small"
+                    onClick={handleCopy}
+                    aria-label="Copiar link"
+                    sx={compactIconButtonStyles}
+                  >
+                    <CopyIcon sx={{ fontSize: 16 }} />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Abrir link do convidado">
+                  <IconButton
+                    size="small"
+                    component="a"
+                    href={link}
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label="Abrir link do convidado"
+                    sx={compactIconButtonStyles}
+                  >
+                    <OpenIcon sx={{ fontSize: 16 }} />
+                  </IconButton>
+                </Tooltip>
+              </Box>
             </Box>
 
-            <Box sx={shareActionsRowStyles}>
-              <Button
-                variant="contained"
-                startIcon={<CopyIcon fontSize="small" />}
-                onClick={handleCopy}
-                sx={shareButtonStyles}
-              >
-                Copiar link do convidado
-              </Button>
-              <Button
-                variant="outlined"
-                startIcon={<PrintIcon fontSize="small" />}
-                onClick={() => setIsDisplayModalOpen(true)}
-                sx={shareButtonStyles}
-              >
-                Gerar displays de mesa
-              </Button>
-              <Button
-                variant="outlined"
-                startIcon={<OpenIcon fontSize="small" />}
-                component="a"
-                href={link}
-                target="_blank"
-                rel="noreferrer"
-                sx={shareButtonStyles}
-              >
-                Ver como convidado
-              </Button>
-            </Box>
+            <Button
+              size="small"
+              variant="outlined"
+              startIcon={<PrintIcon sx={{ fontSize: 16 }} />}
+              onClick={() => setIsDisplayModalOpen(true)}
+              sx={shareButtonStyles}
+            >
+              Gerar displays de mesa
+            </Button>
           </Box>
         </Box>
 
         {event.settings.pinEnabled && (
           <Box sx={pinBannerStyles}>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
-                <LockIcon fontSize="small" color="primary" />
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+                <LockIcon sx={{ fontSize: 16, color: 'primary.main' }} />
                 <Typography variant="caption" color="text.secondary" fontWeight={700}>
-                  PIN DE ACESSO DOS CONVIDADOS
+                  PIN DE ACESSO
                 </Typography>
-                <Chip
-                  size="small"
-                  variant="outlined"
-                  label={
-                    event.settings.pinRotate
-                      ? `Rotativo (${pinRotationLabels[event.settings.pinRotationMinutes]})`
-                      : 'PIN fixo'
-                  }
-                />
+                <Typography variant="caption" color="text.secondary">
+                  ·{' '}
+                  {event.settings.pinRotate
+                    ? `Rotativo (${pinRotationLabels[event.settings.pinRotationMinutes]})`
+                    : 'Fixo'}
+                </Typography>
               </Box>
 
-              <Typography sx={pinCodeTextStyles}>{event.settings.pin}</Typography>
-
-              <Typography variant="caption" color="text.secondary">
-                Os convidados devem inserir este PIN de 4 dígitos para enviar fotos.
-              </Typography>
-            </Box>
-
-            <Box sx={pinActionsRowStyles}>
-              {onUnlockLockouts && (
-                <Tooltip title="Desbloqueia convidados bloqueados por tentativas incorretas de PIN">
-                  <span>
-                    <Button
-                      size="small"
-                      variant="outlined"
-                      color="inherit"
-                      startIcon={
-                        isUnlocking ? (
-                          <CircularProgress size={14} color="inherit" />
-                        ) : (
-                          <LockOpenIcon fontSize="small" />
-                        )
-                      }
-                      onClick={handleUnlock}
-                      disabled={isUnlocking}
-                    >
-                      Desbloquear acessos
-                    </Button>
-                  </span>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                <Typography sx={pinCodeTextStyles}>{event.settings.pin}</Typography>
+                <Tooltip title="Copiar PIN">
+                  <IconButton
+                    size="small"
+                    onClick={handleCopyPin}
+                    aria-label="Copiar PIN"
+                    sx={compactIconButtonStyles}
+                  >
+                    <CopyIcon sx={{ fontSize: 15 }} />
+                  </IconButton>
                 </Tooltip>
-              )}
-              <Button
-                size="small"
-                variant="outlined"
-                startIcon={<CopyIcon fontSize="small" />}
-                onClick={handleCopyPin}
-              >
-                Copiar PIN
-              </Button>
-              {onGoToSettings && (
-                <Button
-                  size="small"
-                  variant="text"
-                  startIcon={<SettingsIcon fontSize="small" />}
-                  onClick={onGoToSettings}
-                >
-                  Configurar PIN
-                </Button>
-              )}
+              </Box>
             </Box>
+
+            {onUnlockLockouts && (
+              <Tooltip title="Desbloqueia convidados bloqueados por tentativas incorretas de PIN">
+                <span>
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    color="inherit"
+                    startIcon={
+                      isUnlocking ? (
+                        <CircularProgress size={13} color="inherit" />
+                      ) : (
+                        <LockOpenIcon sx={{ fontSize: 15 }} />
+                      )
+                    }
+                    onClick={handleUnlock}
+                    disabled={isUnlocking}
+                    sx={unlockButtonStyles}
+                  >
+                    Desbloquear acessos
+                  </Button>
+                </span>
+              </Tooltip>
+            )}
           </Box>
         )}
       </Card>
@@ -222,3 +197,4 @@ const ShareLink = ({ event, onGoToSettings, onUnlockLockouts }: ShareLinkProps) 
 }
 
 export default ShareLink
+

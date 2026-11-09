@@ -35,6 +35,7 @@ import type {
 import {
   controlGroupStyles,
   controlsSectionStyles,
+  dialogActionButtonStyles,
   dialogActionsStyles,
   dialogContentStyles,
   dialogHeaderStyles,
@@ -316,36 +317,46 @@ export const TableDisplayModal = ({
         </Box>
 
         <Box sx={dialogActionsStyles}>
-          <Button variant="outlined" color="inherit" onClick={onClose}>
+          <Button
+            size="small"
+            variant="outlined"
+            color="inherit"
+            onClick={onClose}
+            sx={dialogActionButtonStyles}
+          >
             Fechar
           </Button>
 
-          <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap' }}>
+          <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
             <Tooltip title="Baixa uma imagem em altíssima resolução (300 DPI) para enviar a uma gráfica ou compartilhar">
               <span>
                 <Button
+                  size="small"
                   variant="outlined"
                   startIcon={
                     isExportingPng ? (
-                      <CircularProgress size={16} color="inherit" />
+                      <CircularProgress size={14} color="inherit" />
                     ) : (
-                      <DownloadIcon fontSize="small" />
+                      <DownloadIcon sx={{ fontSize: 16 }} />
                     )
                   }
                   onClick={handleExportPng}
                   disabled={isExportingPng}
+                  sx={dialogActionButtonStyles}
                 >
-                  Baixar imagem (PNG 300 DPI)
+                  Baixar PNG (300 DPI)
                 </Button>
               </span>
             </Tooltip>
 
             <Button
+              size="small"
               variant="contained"
-              startIcon={<PrintIcon fontSize="small" />}
+              startIcon={<PrintIcon sx={{ fontSize: 16 }} />}
               onClick={handlePrint}
+              sx={dialogActionButtonStyles}
             >
-              Imprimir / Salvar em PDF
+              Imprimir / Salvar PDF
             </Button>
           </Box>
         </Box>
