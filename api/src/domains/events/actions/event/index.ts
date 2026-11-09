@@ -7,6 +7,7 @@ import creditUsageRepository from '@domains/payments/repositories/creditUsages'
 import eventRepository from '../../repositories/events'
 import guestRepository from '../../repositories/guests'
 import { ensureCurrentEventPin } from '../../utils/eventPin'
+import { broadcastEvent } from '../../utils/eventStream'
 import { purgeEventPhotos } from '../../utils/purgeEventPhotos'
 import buildDefaultEventSettings from './utils/defaultEventSettings'
 import findMemberRole from './utils/findMemberRole'
@@ -245,6 +246,11 @@ export const updateEvent = defineAction(
     if (!updated) return manageError({ code: 'not_found' })
 
     const currentEvent = await ensureCurrentEventPin(updated)
+    if (data.settings) {
+      broadcastEvent(currentEvent.id, 'pin:change', {
+        pin: currentEvent.settings.pinEnabled ? currentEvent.settings.pin : null
+      })
+    }
     return toEventResponse(currentEvent, role)
   }
 )

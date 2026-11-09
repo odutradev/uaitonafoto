@@ -8,6 +8,7 @@ import likeRepository from '../../repositories/likes'
 import guestSessionMiddleware from '../../middlewares/guestSession'
 import { detectImageType } from '../../utils/detectImageType'
 import { arePhotosVisible, canUploadPhotos, getEventPhase } from '../../utils/eventWindows'
+import { broadcastEvent } from '../../utils/eventStream'
 import { loadGuestContext } from '../../utils/loadGuestContext'
 import { removePhotoFile, storeEventPhoto } from '../../utils/photoStorage'
 import toPhotoResponses from './utils/toPhotoResponses'
@@ -80,6 +81,7 @@ export const uploadPhoto = defineAction(
       })
 
       const [response] = await toPhotoResponses([photo], guest.id)
+      broadcastEvent(event.id, 'photo:new', response)
       return response
     } catch (error) {
       await removePhotoFile(stored.path)
@@ -149,6 +151,8 @@ export const toggleLike = defineAction(
     const delta = liked ? 1 : removed ? -1 : 0
     const likesCount = delta === 0 ? photo.likesCount : await photoRepository.addLikes(photo.id, delta)
 
+    broadcastEvent(photo.eventId, 'photo:like', { photoId: photo.id, likesCount: likesCount ?? 0 })
+
     return { liked, likesCount: likesCount ?? 0 }
   }
 )
@@ -178,6 +182,8 @@ export const deleteMyPhoto = defineAction(
 
     await photoRepository.delete(photo.id)
     await Promise.all([likeRepository.deleteByPhoto(photo.id), removePhotoFile(photo.storagePath)])
+
+    broadcastEvent(photo.eventId, 'photo:delete', { photoId: photo.id })
 
     return response
   }

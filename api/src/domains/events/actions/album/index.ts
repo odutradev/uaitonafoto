@@ -7,6 +7,7 @@ import likeRepository from '../../repositories/likes'
 import photoRepository from '../../repositories/photos'
 import screenSessionMiddleware from '../../middlewares/screenSession'
 import { arePhotosVisible, getEventPhase, hasEventEnded } from '../../utils/eventWindows'
+import { broadcastEvent, subscribeEventStream } from '../../utils/eventStream'
 import { ensureCurrentEventPin, generatePin } from '../../utils/eventPin'
 import { loadTeamAccess } from '../../utils/loadTeamAccess'
 import { removePhotoFile } from '../../utils/photoStorage'
@@ -344,6 +345,62 @@ export const deleteEventPhoto = defineAction(
     await photoRepository.delete(photo.id)
     await Promise.all([likeRepository.deleteByPhoto(photo.id), removePhotoFile(photo.storagePath)])
 
+    broadcastEvent(photo.eventId, 'photo:delete', { photoId: photo.id })
+
     return response
+  }
+)
+
+export const streamScreen = defineAction(
+  {
+    method: 'get',
+    path: '/events/:id/screen/stream',
+    summary: 'Canal SSE em tempo real do telão',
+    tags: ['Álbum e Telão'],
+    middlewares: [screenSessionMiddleware],
+    schema: { params: eventIdParamsSchema },
+    responses: {
+      200: { description: 'Conexão SSE estabelecida (Server-Sent Events)' },
+      401: { description: 'Credencial do telão inválida' },
+      403: { description: 'Fotos ainda não liberadas' },
+      404: { description: 'Evento não encontrado' }
+    }
+  },
+  async ({ defaultExpress, params, manageError }: ManageRequestBody<EventIdRequest>): ManageRequestResponse<void> => {
+    const foundEvent = await eventRepository.findByIdOrGuestToken(params.id)
+    if (!foundEvent) return manageError({ code: 'not_found' })
+    if (!arePhotosVisible(foundEvent)) return manageError({ code: 'forbidden', details: 'Fotos ainda não liberadas' })
+
+    subscribeEventStream({
+      eventId: foundEvent.id,
+      req: defaultExpress.req,
+      res: defaultExpress.res
+    })
+  }
+)
+
+export const streamRoom = defineAction(
+  {
+    method: 'get',
+    path: '/rooms/:id',
+    summary: 'Canal SSE por sala de evento (/rooms/:eventId)',
+    tags: ['Álbum e Telão'],
+    schema: { params: eventIdParamsSchema },
+    responses: {
+      200: { description: 'Conexão SSE estabelecida por sala de evento' },
+      403: { description: 'Fotos ainda não liberadas' },
+      404: { description: 'Evento não encontrado' }
+    }
+  },
+  async ({ defaultExpress, params, manageError }: ManageRequestBody<EventIdRequest>): ManageRequestResponse<void> => {
+    const foundEvent = await eventRepository.findByIdOrGuestToken(params.id)
+    if (!foundEvent) return manageError({ code: 'not_found' })
+    if (!arePhotosVisible(foundEvent)) return manageError({ code: 'forbidden', details: 'Fotos ainda não liberadas' })
+
+    subscribeEventStream({
+      eventId: foundEvent.id,
+      req: defaultExpress.req,
+      res: defaultExpress.res
+    })
   }
 )
