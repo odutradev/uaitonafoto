@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import {
   Alert,
+  Avatar,
   Box,
   Button,
   IconButton,
@@ -8,6 +9,7 @@ import {
   Typography
 } from '@mui/material'
 import {
+  Chat as WhatsAppIcon,
   Favorite as LikeIcon,
   Fullscreen as FullscreenIcon,
   PhotoCameraOutlined as CameraIcon,
@@ -49,6 +51,8 @@ import {
   qrTitleStyles,
   getThumbnailSlotStyles,
   rightCardStyles,
+  screenAgencyBadgeStyles,
+  screenAgencyWhatsappButtonStyles,
   screenRootStyles,
   thumbnailImgStyles,
   thumbnailsRowStyles,
@@ -114,6 +118,47 @@ const EventScreen = () => {
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <Logo variant="auto" size="small" />
         </Box>
+
+        {event?.customization?.enabled && (
+          <Box sx={screenAgencyBadgeStyles}>
+            <Avatar
+              src={event.customization.agencyLogoUrl}
+              sx={{
+                width: 32,
+                height: 32,
+                bgcolor: 'primary.main',
+                color: 'primary.contrastText',
+                fontWeight: 800,
+                fontSize: '0.8rem'
+              }}
+            >
+              {(event.customization.agencyName || 'A')[0].toUpperCase()}
+            </Avatar>
+            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+              <Typography variant="body2" fontWeight={800} sx={{ lineHeight: 1.15 }}>
+                {event.customization.agencyName || 'Assessoria do Evento'}
+              </Typography>
+              <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem', lineHeight: 1.1 }}>
+                {event.customization.agencyTagline || 'Assessoria & Cerimonial'}
+              </Typography>
+            </Box>
+            {event.customization.agencyWhatsapp && (
+              <Button
+                component="a"
+                href={`https://wa.me/${event.customization.agencyWhatsapp.replace(/\D/g, '')}?text=${encodeURIComponent(
+                  event.customization.whatsappMessage || 'Olá! Vi a marca de vocês no evento e gostaria de mais informações.'
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                size="small"
+                startIcon={<WhatsAppIcon sx={{ fontSize: '15px !important' }} />}
+                sx={screenAgencyWhatsappButtonStyles}
+              >
+                WhatsApp
+              </Button>
+            )}
+          </Box>
+        )}
 
         <Box sx={controlsChipStyles}>
           {pin && (

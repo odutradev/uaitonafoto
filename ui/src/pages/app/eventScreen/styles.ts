@@ -50,6 +50,36 @@ export const iconButtonStyles: SxProps<Theme> = (theme) => ({
   }
 })
 
+export const screenAgencyBadgeStyles: SxProps<Theme> = (theme) => ({
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: 1.5,
+  px: 2,
+  py: 0.6,
+  borderRadius: '9999px',
+  bgcolor: theme.palette.mode === 'dark' ? 'rgba(26, 26, 26, 0.85)' : 'rgba(255, 255, 255, 0.9)',
+  border: `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255, 184, 0, 0.3)' : 'rgba(0, 0, 0, 0.08)'}`,
+  backdropFilter: 'blur(12px)',
+  boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
+  maxWidth: { xs: '100%', sm: 'auto' }
+})
+
+export const screenAgencyWhatsappButtonStyles: SxProps<Theme> = {
+  borderRadius: '9999px',
+  bgcolor: '#25D366',
+  color: '#fff',
+  fontWeight: 700,
+  fontSize: '0.75rem',
+  textTransform: 'none',
+  boxShadow: 'none',
+  py: 0.5,
+  px: 1.5,
+  '&:hover': {
+    bgcolor: '#20ba5a',
+    boxShadow: 'none'
+  }
+}
+
 export const contentGridStyles: SxProps<Theme> = {
   display: 'flex',
   flexDirection: { xs: 'column', md: 'row' },

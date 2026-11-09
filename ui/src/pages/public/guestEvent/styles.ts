@@ -35,3 +35,34 @@ export const chipsStyles: SxProps<Theme> = {
   gap: 1
 }
 
+export const guestAgencyCardStyles: SxProps<Theme> = (theme) => ({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  gap: 1.5,
+  p: 1.5,
+  borderRadius: '16px',
+  bgcolor: theme.palette.mode === 'dark' ? 'rgba(255, 184, 0, 0.05)' : 'rgba(255, 184, 0, 0.08)',
+  border: '1px solid',
+  borderColor: theme.palette.mode === 'dark' ? 'rgba(255, 184, 0, 0.25)' : 'rgba(255, 184, 0, 0.35)',
+  backdropFilter: 'blur(8px)'
+})
+
+export const guestWhatsappButtonStyles: SxProps<Theme> = {
+  borderRadius: '9999px',
+  bgcolor: '#25D366',
+  color: '#fff',
+  fontWeight: 700,
+  fontSize: '0.75rem',
+  textTransform: 'none',
+  boxShadow: 'none',
+  px: 1.75,
+  py: 0.5,
+  flexShrink: 0,
+  '&:hover': {
+    bgcolor: '#20ba5a',
+    boxShadow: 'none'
+  }
+}
+
+
