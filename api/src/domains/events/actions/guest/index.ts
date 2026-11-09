@@ -4,6 +4,7 @@ import guestRepository from '../../repositories/guests'
 import photoRepository from '../../repositories/photos'
 import guestSessionMiddleware from '../../middlewares/guestSession'
 import { ensureCurrentEventPin } from '../../utils/eventPin'
+import { checkPinLockout, recordPinFailure, resetPinLockout } from '../../utils/pinLockout'
 import { loadGuestContext } from '../../utils/loadGuestContext'
 import { getEventPhase } from '../../utils/eventWindows'
 import { signGuestToken } from '../../utils/guestToken'
@@ -59,14 +60,44 @@ export const joinEvent = defineAction(
       404: { description: 'Link do evento inválido' }
     }
   },
-  async ({ params, data, manageError }: ManageRequestBody<JoinEventRequest>): ManageRequestResponse<JoinEventResponse> => {
+  async ({ defaultExpress, params, data, manageError }: ManageRequestBody<JoinEventRequest>): ManageRequestResponse<JoinEventResponse> => {
     const foundEvent = await eventRepository.findByGuestToken(params.token)
     if (!foundEvent) return manageError({ code: 'not_found' })
     if (getEventPhase(foundEvent) === 'expired') return manageError({ code: 'forbidden' })
 
     const event = await ensureCurrentEventPin(foundEvent)
-    if (event.settings.pinEnabled && data.pin !== event.settings.pin) {
-      return manageError({ code: 'forbidden', details: 'PIN de acesso incorreto.' })
+    if (event.settings.pinEnabled) {
+      const lockoutStatus = checkPinLockout({
+        scope: 'guest',
+        targetId: event.id,
+        req: defaultExpress.req,
+        res: defaultExpress.res
+      })
+      if (lockoutStatus.isLocked) {
+        return manageError({
+          code: lockoutStatus.isPermanent ? 'forbidden' : 'too_many_requests',
+          details: lockoutStatus.message
+        })
+      }
+
+      if (data.pin !== event.settings.pin) {
+        const failure = recordPinFailure({
+          scope: 'guest',
+          targetId: event.id,
+          req: defaultExpress.req,
+          res: defaultExpress.res
+        })
+        return manageError({
+          code: failure.isPermanent ? 'forbidden' : failure.isLocked ? 'too_many_requests' : 'forbidden',
+          details: failure.message
+        })
+      }
+
+      resetPinLockout({
+        scope: 'guest',
+        targetId: event.id,
+        req: defaultExpress.req
+      })
     }
 
     const guest = await guestRepository.create({ eventId: event.id, name: data.name })

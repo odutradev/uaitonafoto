@@ -9,6 +9,7 @@ import screenSessionMiddleware from '../../middlewares/screenSession'
 import { arePhotosVisible, getEventPhase, hasEventEnded } from '../../utils/eventWindows'
 import { broadcastEvent, subscribeEventStream } from '../../utils/eventStream'
 import { ensureCurrentEventPin, generatePin } from '../../utils/eventPin'
+import { checkPinLockout, recordPinFailure, resetPinLockout } from '../../utils/pinLockout'
 import { loadTeamAccess } from '../../utils/loadTeamAccess'
 import { removePhotoFile } from '../../utils/photoStorage'
 import { signScreenToken } from '../../utils/screenToken'
@@ -170,16 +171,38 @@ export const activateScreen = defineAction(
       409: { description: 'PIN já utilizado em outro telão' }
     }
   },
-  async ({ params, data, manageError }: ManageRequestBody<ActivateScreenRequest>): ManageRequestResponse<ActivateScreenResponse> => {
+  async ({ defaultExpress, params, data, manageError }: ManageRequestBody<ActivateScreenRequest>): ManageRequestResponse<ActivateScreenResponse> => {
     const foundEvent = await eventRepository.findByIdOrGuestToken(params.id)
     if (!foundEvent) return manageError({ code: 'not_found' })
     if (getEventPhase(foundEvent) === 'expired') {
       return manageError({ code: 'forbidden', details: 'A galeria deste evento já foi encerrada.' })
     }
 
+    const lockoutStatus = checkPinLockout({
+      scope: 'screen',
+      targetId: foundEvent.id,
+      req: defaultExpress.req,
+      res: defaultExpress.res
+    })
+    if (lockoutStatus.isLocked) {
+      return manageError({
+        code: lockoutStatus.isPermanent ? 'forbidden' : 'too_many_requests',
+        details: lockoutStatus.message
+      })
+    }
+
     const slot = foundEvent.screens.find((item) => item.pin === data.pin)
     if (!slot) {
-      return manageError({ code: 'forbidden', details: 'PIN do telão incorreto.' })
+      const failure = recordPinFailure({
+        scope: 'screen',
+        targetId: foundEvent.id,
+        req: defaultExpress.req,
+        res: defaultExpress.res
+      })
+      return manageError({
+        code: failure.isPermanent ? 'forbidden' : failure.isLocked ? 'too_many_requests' : 'forbidden',
+        details: failure.message
+      })
     }
 
     if (slot.activatedAt) {
@@ -188,6 +211,12 @@ export const activateScreen = defineAction(
         details: 'Este PIN já está ativo em outro telão. Gere outro PIN ou desconecte o telão no painel.'
       })
     }
+
+    resetPinLockout({
+      scope: 'screen',
+      targetId: foundEvent.id,
+      req: defaultExpress.req
+    })
 
     const activatedEvent = await eventRepository.activateScreenSlot(foundEvent.id, slot.id, new Date().toISOString())
     const event = await ensureCurrentEventPin(activatedEvent ?? foundEvent)
