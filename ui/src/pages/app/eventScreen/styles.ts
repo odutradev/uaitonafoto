@@ -64,22 +64,6 @@ export const screenAgencyBadgeStyles: SxProps<Theme> = (theme) => ({
   maxWidth: { xs: '100%', sm: 'auto' }
 })
 
-export const screenAgencyWhatsappButtonStyles: SxProps<Theme> = {
-  borderRadius: '9999px',
-  bgcolor: '#25D366',
-  color: '#fff',
-  fontWeight: 700,
-  fontSize: '0.75rem',
-  textTransform: 'none',
-  boxShadow: 'none',
-  py: 0.5,
-  px: 1.5,
-  '&:hover': {
-    bgcolor: '#20ba5a',
-    boxShadow: 'none'
-  }
-}
-
 export const contentGridStyles: SxProps<Theme> = {
   display: 'flex',
   flexDirection: { xs: 'column', md: 'row' },

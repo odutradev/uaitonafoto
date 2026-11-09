@@ -9,7 +9,6 @@ import {
   Typography
 } from '@mui/material'
 import {
-  Chat as WhatsAppIcon,
   Favorite as LikeIcon,
   Fullscreen as FullscreenIcon,
   PhotoCameraOutlined as CameraIcon,
@@ -52,7 +51,6 @@ import {
   getThumbnailSlotStyles,
   rightCardStyles,
   screenAgencyBadgeStyles,
-  screenAgencyWhatsappButtonStyles,
   screenRootStyles,
   thumbnailImgStyles,
   thumbnailsRowStyles,
@@ -142,21 +140,6 @@ const EventScreen = () => {
                 {event.customization.agencyTagline || 'Assessoria & Cerimonial'}
               </Typography>
             </Box>
-            {event.customization.agencyWhatsapp && (
-              <Button
-                component="a"
-                href={`https://wa.me/${event.customization.agencyWhatsapp.replace(/\D/g, '')}?text=${encodeURIComponent(
-                  event.customization.whatsappMessage || 'Olá! Vi a marca de vocês no evento e gostaria de mais informações.'
-                )}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                size="small"
-                startIcon={<WhatsAppIcon sx={{ fontSize: '15px !important' }} />}
-                sx={screenAgencyWhatsappButtonStyles}
-              >
-                WhatsApp
-              </Button>
-            )}
           </Box>
         )}
 
