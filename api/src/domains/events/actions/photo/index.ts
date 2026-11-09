@@ -5,13 +5,55 @@ import upload from '@middlewares/upload'
 import { buildPaginatedResponse, getPaginationOptions } from '@factories/pagination/utils'
 import photoRepository from '../../repositories/photos'
 import likeRepository from '../../repositories/likes'
+import guestRepository from '../../repositories/guests'
 import guestSessionMiddleware from '../../middlewares/guestSession'
-import { detectImageType } from '../../utils/detectImageType'
 import { arePhotosVisible, canUploadPhotos, getEventPhase } from '../../utils/eventWindows'
 import { broadcastEvent } from '@realtime'
-import { loadGuestContext } from '../../utils/loadGuestContext'
 import { removePhotoFile, storeEventPhoto } from '../../utils/photoStorage'
-import toPhotoResponses from './utils/toPhotoResponses'
+import type { PhotoEntity } from '../../repositories/photos/types'
+import type { DetectedImageType } from '../../utils/types'
+
+const JPEG_SIGNATURE = [0xff, 0xd8, 0xff]
+const PNG_SIGNATURE = [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]
+
+const startsWithSignature = (buffer: Buffer, signature: number[], offset = 0): boolean =>
+  signature.every((byte, index) => buffer[offset + index] === byte)
+
+const detectImageType = (buffer: Buffer): DetectedImageType | null => {
+  if (startsWithSignature(buffer, JPEG_SIGNATURE)) return { contentType: 'image/jpeg', extension: 'jpg' }
+  if (startsWithSignature(buffer, PNG_SIGNATURE)) return { contentType: 'image/png', extension: 'png' }
+
+  const isWebp = buffer.subarray(0, 4).toString('ascii') === 'RIFF' && buffer.subarray(8, 12).toString('ascii') === 'WEBP'
+  if (isWebp) return { contentType: 'image/webp', extension: 'webp' }
+
+  return null
+}
+
+export const toPhotoResponses = async (photos: PhotoEntity[], viewerGuestId?: string): Promise<PhotoResponse[]> => {
+  if (photos.length === 0) return []
+
+  const guestIds = [...new Set(photos.map((photo) => photo.guestId))]
+  const [guests, likedIds] = await Promise.all([
+    guestRepository.findByIds(guestIds),
+    viewerGuestId
+      ? likeRepository.findLikedPhotoIds(viewerGuestId, photos.map((photo) => photo.id))
+      : Promise.resolve(undefined)
+  ])
+  const guestNames = new Map(guests.map((guest) => [guest.id, guest.name]))
+
+  return photos.map((photo) => ({
+    id: photo.id,
+    url: photo.url,
+    guestId: photo.guestId,
+    guestName: guestNames.get(photo.guestId) ?? 'Convidado',
+    likesCount: photo.likesCount,
+    status: photo.status ?? 'approved',
+    challengeId: photo.challengeId,
+    challengeTitle: photo.challengeTitle,
+    ...(viewerGuestId ? { likedByMe: likedIds?.has(photo.id) ?? false, mine: photo.guestId === viewerGuestId } : {}),
+    createdAt: photo.createdAt
+  }))
+}
 import {
   likeResponseSchema,
   listFeedQuerySchema,
@@ -47,7 +89,7 @@ export const uploadPhoto = defineAction(
   async ({ ids, file, data, defaultExpress, manageError }: ManageRequestBody): ManageRequestResponse<PhotoResponse> => {
     if (!ids.guestId) return manageError({ code: 'unauthorized' })
 
-    const context = await loadGuestContext(ids.guestId)
+    const context = await guestRepository.findContext(ids.guestId)
     if (!context) return manageError({ code: 'user_not_found' })
 
     const { guest, event } = context
@@ -138,7 +180,7 @@ export const listFeed = defineAction(
   async ({ ids, query, manageError }: ManageRequestBody<ListFeedRequest>): ManageRequestResponse<ListFeedResponse> => {
     if (!ids.guestId) return manageError({ code: 'unauthorized' })
 
-    const context = await loadGuestContext(ids.guestId)
+    const context = await guestRepository.findContext(ids.guestId)
     if (!context) return manageError({ code: 'user_not_found' })
     if (!arePhotosVisible(context.event)) return manageError({ code: 'forbidden', details: 'Fotos indisponíveis no momento' })
 
@@ -176,7 +218,7 @@ export const toggleLike = defineAction(
   async ({ ids, params, manageError }: ManageRequestBody<PhotoParamsRequest>): ManageRequestResponse<LikeResponse> => {
     if (!ids.guestId) return manageError({ code: 'unauthorized' })
 
-    const context = await loadGuestContext(ids.guestId)
+    const context = await guestRepository.findContext(ids.guestId)
     if (!context) return manageError({ code: 'user_not_found' })
     if (!arePhotosVisible(context.event)) return manageError({ code: 'forbidden', details: 'Fotos indisponíveis no momento' })
 

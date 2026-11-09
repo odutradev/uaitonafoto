@@ -3,7 +3,7 @@ import { getPaymentClient } from '@payment'
 import createLogger from '@utils/logger'
 import transactionRepository from '@domains/payments/repositories/transactions'
 import subscriptionRepository from '@domains/payments/repositories/subscriptions'
-import confirmPayment from '@domains/payments/actions/webhook/utils/confirmPayment'
+import confirmPayment from '@domains/payments/utils/confirmPayment'
 import ensureSubscriptionRecord from '@domains/payments/utils/ensureSubscriptionRecord'
 import grantSubscriptionRenewal from '@domains/payments/utils/grantSubscriptionRenewal'
 

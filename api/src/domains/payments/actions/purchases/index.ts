@@ -1,10 +1,33 @@
 import defineAction from '@factories/defineAction'
 import purchaseRepository from '../../repositories/purchases'
-import toPurchaseItemResponse from './utils/toPurchaseItemResponse'
+import type { PurchaseEntity } from '../../repositories/purchases/types'
+import type { PurchaseItemResponse, PurchaseListResponse } from './types'
 import { purchaseListResponseSchema } from './schemas'
 
 import type { ManageRequestResponse } from '@middlewares/manageRequest/types'
-import type { PurchaseListResponse } from './types'
+
+const normalizePlanName = (planId: string, planType: string, planName: string): string => {
+  if (planId === 'free_trial' || planType === 'FREE' || planName === 'Modo Degustação') {
+    return 'Teste Grátis'
+  }
+  return planName
+}
+
+const toPurchaseItemResponse = (entity: PurchaseEntity): PurchaseItemResponse => ({
+  id: entity.id,
+  transactionId: entity.transactionId,
+  subscriptionId: entity.subscriptionId,
+  planId: entity.planId,
+  planType: entity.planType,
+  planName: normalizePlanName(entity.planId, entity.planType, entity.planName),
+  amount: entity.amount,
+  currency: entity.currency,
+  credits: entity.credits,
+  remainingCredits: entity.remainingCredits,
+  creditType: entity.creditType,
+  extraStorageDays: entity.extraStorageDays,
+  createdAt: entity.createdAt
+})
 
 export const listMyPurchases = defineAction(
   {

@@ -6,14 +6,11 @@ import purchaseRepository from '@domains/payments/repositories/purchases'
 import creditUsageRepository from '@domains/payments/repositories/creditUsages'
 import eventRepository from '../../repositories/events'
 import guestRepository from '../../repositories/guests'
-import { ensureCurrentEventPin } from '../../utils/eventPin'
+import { ensureCurrentEventPin, generatePin } from '../../utils/eventPin'
 import { broadcastEvent } from '@realtime'
-import { purgeEventPhotos } from '../../utils/purgeEventPhotos'
-import buildDefaultEventSettings from './utils/defaultEventSettings'
-import findMemberRole from './utils/findMemberRole'
-import isValidEventPeriod from './utils/isValidEventPeriod'
-import toEventResponse from './utils/toEventResponse'
-import { computeEventWindows, getEventMaxDurationHours, getEventMaxEndsAt } from '../../utils/eventWindows'
+import { purgeEventPhotos } from '../../utils/photoStorage'
+import { computeEventWindows, getEventMaxDurationHours, getEventMaxEndsAt, getEventPhase } from '../../utils/eventWindows'
+import type { EventCreditType, EventEntity, EventMemberRole, EventSettings } from '../../repositories/events/types'
 import {
   createEventSchema,
   eventParamsSchema,
@@ -22,6 +19,48 @@ import {
   listEventsResponseSchema,
   updateEventSchema
 } from './schemas'
+
+export const findMemberRole = (event: EventEntity, userId: string): EventMemberRole | undefined =>
+  event.members.find((member) => member.userId === userId)?.role
+
+const isValidEventPeriod = (startsAt: string, endsAt: string): boolean =>
+  new Date(endsAt).getTime() > new Date(startsAt).getTime()
+
+const buildDefaultEventSettings = (creditType: EventCreditType = 'paid'): EventSettings => ({
+  uploadWindowHours: 0,
+  galleryDurationDays: creditType === 'free' ? 14 : 90,
+  photoVisibility: 'during_event',
+  pinEnabled: true,
+  pin: generatePin(),
+  pinRotate: true,
+  pinRotationMinutes: 15,
+  pinUpdatedAt: new Date().toISOString(),
+  moderationEnabled: false,
+  challengesEnabled: false
+})
+
+const toEventResponse = (entity: EventEntity, myRole: EventMemberRole): EventResponse => ({
+  id: entity.id,
+  name: entity.name,
+  description: entity.description,
+  type: entity.type,
+  creditType: entity.creditType,
+  startsAt: entity.startsAt,
+  endsAt: entity.endsAt,
+  guestToken: entity.guestToken,
+  settings: entity.settings,
+  customization: entity.customization,
+  uploadsCloseAt: entity.uploadsCloseAt,
+  galleryExpiresAt: entity.galleryExpiresAt,
+  closedAt: entity.closedAt,
+  phase: getEventPhase(entity),
+  challenges: entity.challenges ?? [],
+  members: entity.members,
+  screens: entity.screens,
+  myRole,
+  createdAt: entity.createdAt,
+  updatedAt: entity.updatedAt
+})
 
 import type { ManageRequestBody, ManageRequestResponse } from '@middlewares/manageRequest/types'
 import type {

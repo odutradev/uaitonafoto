@@ -13,11 +13,69 @@ import { arePhotosVisible, getEventPhase, hasEventEnded } from '../../utils/even
 import { broadcastEvent, subscribeEventStream } from '@realtime'
 import { ensureCurrentEventPin, generatePin } from '../../utils/eventPin'
 import { checkPinLockout, recordPinFailure, resetPinLockout, resetPinLockoutsForTarget } from '../../utils/pinLockout'
-import { buildDefaultChallenges } from '../../utils/defaultChallenges'
-import { loadTeamAccess } from '../../utils/loadTeamAccess'
 import { removePhotoFile } from '../../utils/photoStorage'
 import { signScreenToken } from '../../utils/screenToken'
-import toPhotoResponses from '../photo/utils/toPhotoResponses'
+import { toPhotoResponses } from '../photo'
+import { findMemberRole } from '../event'
+import type { TeamAccess } from '../../utils/types'
+import type { EventChallenge, EventType } from '../../repositories/events/types'
+
+const DEFAULT_CHALLENGES_BY_TYPE: Record<EventType, string[]> = {
+  wedding: [
+    'Foto com o padrinho ou madrinha mais animado 🕺',
+    'O brinde mais bonito da sua mesa 🥂',
+    'Flagra dos noivos apaixonados 💍',
+    'O melhor passinho na pista de dança 💃',
+    'Selfie com alguém da família dos noivos 👨‍👩‍👧',
+    'Foto do doce ou prato mais gostoso da festa 🍰',
+    'Foto com o convidado mais elegante da noite ✨'
+  ],
+  birthday: [
+    'Foto fazendo careta com o aniversariante 🤪',
+    'O abraço mais apertado da festa 🫂',
+    'Flagra na hora de cantar o Parabéns 🎂',
+    'A pose mais engraçada da sua mesa 📸',
+    'Brinde com copo cheio ao aniversariante! 🍻',
+    'Foto do look mais estiloso da festa 🕶️',
+    'Selfie com 4 pessoas sorrindo 😁'
+  ],
+  corporate: [
+    'Selfie criativa com o seu time 💼',
+    'Foto de networking: com alguém que acabou de conhecer 🤝',
+    'Foto fazendo a pose executiva mais marcante 👔',
+    'Foto da equipe brindando ao sucesso do evento 🥂',
+    'Foto em frente ao painel ou logo oficial do evento 🏢',
+    'O sorriso mais contagiante da empresa ⭐',
+    'Selfie com alguém de outro departamento 🚀'
+  ],
+  other: [
+    'A foto mais animada da galera reunida 🎉',
+    'A melhor gargalhada flagrada no evento 😂',
+    'Foto do brinde mais épico da noite 🍹',
+    'A pose mais criativa da festa 🕺',
+    'Selfie com pessoas de mesas diferentes 🤝',
+    'Foto do detalhe mais bonito da decoração 🌺',
+    'Foto do momento mais emocionante da noite ❤️'
+  ]
+}
+
+const buildDefaultChallenges = (eventType: EventType): EventChallenge[] => {
+  const titles = DEFAULT_CHALLENGES_BY_TYPE[eventType] || DEFAULT_CHALLENGES_BY_TYPE.other
+  return titles.map((title) => ({
+    id: randomUUID(),
+    title,
+    active: true,
+    createdAt: new Date().toISOString()
+  }))
+}
+
+const loadTeamAccess = async (eventId: string, userId: string): Promise<TeamAccess> => {
+  const event = await eventRepository.findById(eventId)
+  if (!event) return { error: 'not_found' }
+
+  const role = findMemberRole(event, userId)
+  return role ? { event, role } : { error: 'forbidden' }
+}
 import {
   activateScreenResponseSchema,
   activateScreenSchema,

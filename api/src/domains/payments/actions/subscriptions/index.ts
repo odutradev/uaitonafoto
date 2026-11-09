@@ -1,11 +1,11 @@
+import { getPaymentClient } from '@payment'
 import defineAction from '@factories/defineAction'
 import userRepository from '@domains/users/repositories'
 import logRepository from '@domains/system/repositories'
 import transactionRepository from '../../repositories/transactions'
 import subscriptionRepository from '../../repositories/subscriptions'
-import cancelGatewaySubscription from './utils/cancelGatewaySubscription'
-import syncUserSubscriptions from './utils/syncUserSubscriptions'
-import toSubscriptionResponse from './utils/toSubscriptionResponse'
+import ensureSubscriptionRecord from '../../utils/ensureSubscriptionRecord'
+import type { SubscriptionEntity } from '../../repositories/subscriptions/types'
 import {
   cancelSubscriptionParamsSchema,
   subscriptionListResponseSchema,
@@ -18,6 +18,49 @@ import type {
   SubscriptionListResponse,
   SubscriptionResponse
 } from './types'
+
+const cancelGatewaySubscription = async (subscriptionId: string): Promise<void> => {
+  const client = await getPaymentClient()
+  const response = await client.subscriptions.cancel(subscriptionId)
+
+  if (!response.error) return
+
+  const checkResponse = await client.subscriptions.get({ id: subscriptionId })
+  if (!checkResponse.error && checkResponse.data?.status === 'CANCELLED') {
+    return
+  }
+
+  throw new Error(`Failed to cancel AbacatePay subscription ${subscriptionId}: ${response.error}`)
+}
+
+const syncUserSubscriptions = async (userId: string): Promise<void> => {
+  const userTransactions = await transactionRepository.listByUser(userId)
+  const unlinked = userTransactions.filter(
+    (tx) => tx.planType === 'SUBSCRIPTION' && tx.status === 'PAID' && !tx.subscriptionId
+  )
+
+  for (const tx of unlinked) {
+    await ensureSubscriptionRecord(tx)
+  }
+}
+
+const toSubscriptionResponse = (entity: SubscriptionEntity): SubscriptionResponse => ({
+  id: entity.id,
+  subscriptionId: entity.subscriptionId,
+  planId: entity.planId,
+  planName: entity.planName,
+  amount: entity.amount,
+  currency: entity.currency,
+  creditsPerCycle: entity.creditsPerCycle,
+  frequency: entity.frequency,
+  method: entity.method,
+  status: entity.status,
+  cyclesCompleted: entity.cyclesCompleted,
+  lastPaidAt: entity.lastPaidAt,
+  nextBillingAt: entity.nextBillingAt,
+  cancelledAt: entity.cancelledAt,
+  createdAt: entity.createdAt
+})
 
 export const listMySubscriptions = defineAction(
   {

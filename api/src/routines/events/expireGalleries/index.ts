@@ -1,7 +1,7 @@
-﻿import { defineRoutine } from '@config/routine'
+import { defineRoutine } from '@config/routine'
 import createLogger from '@utils/logger'
 import eventRepository from '@domains/events/repositories/events'
-import { purgeEventPhotos } from '@domains/events/utils/purgeEventPhotos'
+import { purgeEventPhotos } from '@domains/events/utils/photoStorage'
 
 const logger = createLogger('events:expire-galleries-routine')
 

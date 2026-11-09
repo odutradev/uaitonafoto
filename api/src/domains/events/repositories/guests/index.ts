@@ -1,4 +1,6 @@
 import GuestModel from './model'
+import eventRepository from '../events'
+import type { EventEntity } from '../events/types'
 import type { CreateGuestPayload, GuestEntity } from './types'
 
 const toGuestEntity = (doc: any): GuestEntity => {
@@ -15,6 +17,14 @@ export const guestRepository = {
   findById: async (id: string): Promise<GuestEntity | null> => {
     const doc = await GuestModel.findById(id).lean()
     return doc ? toGuestEntity(doc) : null
+  },
+
+  findContext: async (guestId: string): Promise<{ guest: GuestEntity; event: EventEntity } | null> => {
+    const guest = await guestRepository.findById(guestId)
+    if (!guest) return null
+
+    const event = await eventRepository.findById(guest.eventId)
+    return event ? { guest, event } : null
   },
 
   findByIds: async (ids: string[]): Promise<GuestEntity[]> => {

@@ -1,8 +1,28 @@
 import defineAction from '@factories/defineAction'
 import userRepository from '@domains/users/repositories'
 import eventRepository from '../../repositories/events'
-import findMemberRole from '../event/utils/findMemberRole'
-import buildTeamResponse from './utils/buildTeamResponse'
+import { findMemberRole } from '../event'
+import type { EventEntity } from '../../repositories/events/types'
+
+const buildTeamResponse = async (event: EventEntity): Promise<TeamListResponse> => {
+  const users = await Promise.all(event.members.map((member) => userRepository.findById(member.userId)))
+
+  return event.members.flatMap((member, index) => {
+    const user = users[index]
+    if (!user) return []
+
+    return [
+      {
+        userId: member.userId,
+        name: user.fullName || user.name,
+        email: user.email,
+        photoUrl: user.photoUrl,
+        role: member.role,
+        addedAt: member.addedAt
+      }
+    ]
+  })
+}
 import {
   addOrganizerSchema,
   removeMemberParamsSchema,

@@ -1,11 +1,21 @@
 import defineAction from '@factories/defineAction'
 import eventRepository from '@domains/events/repositories/events'
 import creditUsageRepository from '../../repositories/creditUsages'
-import toCreditUsageResponse from './utils/toCreditUsageResponse'
+import type { CreditUsageEntity } from '../../repositories/creditUsages/types'
+import type { CreditUsageItemResponse, CreditUsageListResponse } from './types'
 import { creditUsageListResponseSchema } from './schemas'
 
 import type { ManageRequestResponse } from '@middlewares/manageRequest/types'
-import type { CreditUsageListResponse } from './types'
+
+const toCreditUsageResponse = (entity: CreditUsageEntity): CreditUsageItemResponse => ({
+  id: entity.id,
+  userId: entity.userId,
+  eventId: entity.eventId,
+  eventName: entity.eventName,
+  creditType: entity.creditType,
+  amount: entity.amount,
+  createdAt: entity.createdAt
+})
 
 export const listMyCreditUsages = defineAction(
   {

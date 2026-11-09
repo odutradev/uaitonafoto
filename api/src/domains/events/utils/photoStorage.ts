@@ -1,4 +1,6 @@
-﻿import { deleteDirectory, deleteFile, uploadFile } from '@firebase/services/storage'
+import { deleteDirectory, deleteFile, uploadFile } from '@firebase/services/storage'
+import likeRepository from '../repositories/likes'
+import photoRepository from '../repositories/photos'
 
 import type { StoreEventPhotoParams } from './types'
 
@@ -20,3 +22,8 @@ export const removePhotoFile = (storagePath: string): Promise<boolean> => delete
 
 export const removeEventPhotoFiles = (eventId: string): Promise<void> =>
   deleteDirectory(`events/${eventId}/photos/`)
+
+export const purgeEventPhotos = async (eventId: string): Promise<void> => {
+  await removeEventPhotoFiles(eventId)
+  await Promise.all([photoRepository.deleteByEvent(eventId), likeRepository.deleteByEvent(eventId)])
+}

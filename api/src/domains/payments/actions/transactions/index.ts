@@ -2,11 +2,37 @@ import defineAction from '@factories/defineAction'
 import { buildPaginatedResponse, getPaginationOptions } from '@factories/pagination/utils'
 import transactionRepository from '../../repositories/transactions'
 import syncOrExpirePendingTransactions from '../../utils/syncOrExpirePendingTransactions'
-import toTransactionItemResponse from './utils/toTransactionItemResponse'
+import type { TransactionEntity } from '../../repositories/transactions/types'
+import type { TransactionItemResponse } from './types'
 import { listTransactionsQuerySchema, listTransactionsResponseSchema } from './schemas'
 
 import type { ManageRequestBody, ManageRequestResponse } from '@middlewares/manageRequest/types'
 import type { ListTransactionsRequest, ListTransactionsResponse } from './types'
+
+const normalizePlanName = (planId: string, planType: string, planName: string): string => {
+  if (planId === 'free_trial' || planType === 'FREE' || planName === 'Modo Degustação') {
+    return 'Teste Grátis'
+  }
+  return planName
+}
+
+const toTransactionItemResponse = (entity: TransactionEntity): TransactionItemResponse => ({
+  id: entity.id,
+  planId: entity.planId,
+  planType: entity.planType,
+  planName: normalizePlanName(entity.planId, entity.planType, entity.planName),
+  amount: entity.amount,
+  paidAmount: entity.paidAmount,
+  currency: entity.currency,
+  status: entity.status,
+  cancelReason: entity.cancelReason,
+  paymentMethod: entity.paymentMethod,
+  checkoutUrl: entity.status === 'PENDING' ? entity.checkoutUrl : undefined,
+  receiptUrl: entity.receiptUrl,
+  subscriptionId: entity.subscriptionId,
+  paidAt: entity.paidAt,
+  createdAt: entity.createdAt
+})
 
 export const listMyTransactions = defineAction(
   {

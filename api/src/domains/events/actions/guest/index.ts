@@ -5,10 +5,27 @@ import photoRepository from '../../repositories/photos'
 import guestSessionMiddleware from '../../middlewares/guestSession'
 import { ensureCurrentEventPin } from '../../utils/eventPin'
 import { checkPinLockout, recordPinFailure, resetPinLockout } from '../../utils/pinLockout'
-import { loadGuestContext } from '../../utils/loadGuestContext'
 import { getEventPhase } from '../../utils/eventWindows'
 import { signGuestToken } from '../../utils/guestToken'
-import toGuestEventInfo from './utils/toGuestEventInfo'
+import type { EventEntity } from '../../repositories/events/types'
+
+const toGuestEventInfo = (event: EventEntity): GuestEventInfo => ({
+  name: event.name,
+  description: event.description,
+  type: event.type,
+  startsAt: event.startsAt,
+  endsAt: event.endsAt,
+  uploadsCloseAt: event.uploadsCloseAt,
+  galleryExpiresAt: event.galleryExpiresAt,
+  photoVisibility: event.settings.photoVisibility,
+  requiresPin: event.settings.pinEnabled,
+  customization: event.customization,
+  challengesEnabled: Boolean(event.settings.challengesEnabled),
+  challenges: event.settings.challengesEnabled
+    ? (event.challenges?.filter((c) => c.active) ?? [])
+    : [],
+  phase: getEventPhase(event)
+})
 import {
   guestEventInfoSchema,
   guestSessionResponseSchema,
@@ -124,7 +141,7 @@ export const getGuestSession = defineAction(
   async ({ ids, manageError }: ManageRequestBody): ManageRequestResponse<GuestSessionResponse> => {
     if (!ids.guestId) return manageError({ code: 'unauthorized' })
 
-    const context = await loadGuestContext(ids.guestId)
+    const context = await guestRepository.findContext(ids.guestId)
     if (!context) return manageError({ code: 'user_not_found' })
 
     const { guest, event } = context

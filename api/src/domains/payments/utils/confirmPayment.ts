@@ -1,13 +1,13 @@
 import createLogger from '@utils/logger'
 import userRepository from '@domains/users/repositories'
 import logRepository from '@domains/system/repositories'
-import transactionRepository from '../../../repositories/transactions'
-import purchaseRepository from '../../../repositories/purchases'
-import ensureSubscriptionRecord from '../../../utils/ensureSubscriptionRecord'
+import transactionRepository from '../repositories/transactions'
+import purchaseRepository from '../repositories/purchases'
+import ensureSubscriptionRecord from './ensureSubscriptionRecord'
 
 import type { CachedPlan } from '@payment/plans/types'
-import type { TransactionEntity } from '../../../repositories/transactions/types'
-import type { WebhookEventData } from '../types'
+import type { TransactionEntity } from '../repositories/transactions/types'
+import type { WebhookEventData } from '../actions/webhook/types'
 
 const logger = createLogger('payments:confirm')
 

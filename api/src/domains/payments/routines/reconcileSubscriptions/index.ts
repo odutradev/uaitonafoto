@@ -2,7 +2,7 @@ import { getPaymentClient } from '@payment'
 import createLogger from '@utils/logger'
 import transactionRepository from '../../repositories/transactions'
 import subscriptionRepository from '../../repositories/subscriptions'
-import confirmPayment from '../../actions/webhook/utils/confirmPayment'
+import confirmPayment from '../../utils/confirmPayment'
 import ensureSubscriptionRecord from '../../utils/ensureSubscriptionRecord'
 import grantSubscriptionRenewal from '../../utils/grantSubscriptionRenewal'
 

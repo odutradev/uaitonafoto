@@ -2,8 +2,30 @@ import defineAction from '@factories/defineAction'
 import { buildPaginatedResponse, getPaginationOptions } from '@factories/pagination/utils'
 import userRepository from '@domains/users/repositories'
 import logRepository from '../../repositories'
-import toLogItemResponse from './utils/toLogItemResponse'
+import type { LogEntity } from '../../repositories/types'
+import type { LogItemResponse } from './types'
 import { listLogsQuerySchema, listLogsResponseSchema } from './schemas'
+
+const replaceLegacyFreeTrialLabel = (text?: string): string | undefined =>
+  text ? text.replace(/Modo Degustação/gi, 'Teste Grátis') : text
+
+const toLogItemResponse = (entity: LogEntity, isAdmin: boolean): LogItemResponse => ({
+  id: entity.id,
+  category: entity.category,
+  level: entity.level,
+  action: entity.action,
+  title: replaceLegacyFreeTrialLabel(entity.title) ?? entity.title,
+  description: replaceLegacyFreeTrialLabel(entity.description) ?? entity.description,
+  userId: entity.userId,
+  userName: entity.userName,
+  userEmail: entity.userEmail,
+  targetId: entity.targetId,
+  targetName: entity.targetName,
+  details: entity.details,
+  errorMessage: isAdmin ? entity.errorMessage : undefined,
+  ipAddress: isAdmin ? entity.ipAddress : undefined,
+  createdAt: entity.createdAt
+})
 
 import type { ManageRequestBody, ManageRequestResponse } from '@middlewares/manageRequest/types'
 import type { ListLogsRequest, ListLogsResponse } from './types'

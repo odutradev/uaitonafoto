@@ -2,7 +2,7 @@ import env from '@config/env'
 import { getPaymentClient } from '@payment'
 import createLogger from '@utils/logger'
 import transactionRepository from '../repositories/transactions'
-import confirmPayment from '../actions/webhook/utils/confirmPayment'
+import confirmPayment from './confirmPayment'
 
 import type { TransactionEntity } from '../repositories/transactions/types'
 
