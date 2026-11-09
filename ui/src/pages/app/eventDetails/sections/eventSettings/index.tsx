@@ -1,15 +1,38 @@
 import { useEffect, useState } from 'react'
-import { Box, Button, Card, CircularProgress, Typography } from '@mui/material'
-import { DeleteOutline as DeleteIcon, SaveOutlined as SaveIcon } from '@mui/icons-material'
+import {
+  Alert,
+  Avatar,
+  Box,
+  Button,
+  Card,
+  Chip,
+  CircularProgress,
+  Switch,
+  TextField,
+  Typography
+} from '@mui/material'
+import {
+  DeleteOutline as DeleteIcon,
+  PaletteOutlined as PaletteIcon,
+  SaveOutlined as SaveIcon,
+  StarOutline as ProIcon,
+  Chat as WhatsAppIcon,
+  SyncOutlined as SyncIcon
+} from '@mui/icons-material'
+import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 
 import EventFormFields from '@components/eventFormFields'
 import { isValidEventPeriod, isValidEventPin, toEventForm, toEventPayload } from '@components/eventFormFields/utils'
 import Modal from '@components/modal'
+import useAuth from '@hooks/useAuth'
 
 import {
+  customizationCardStyles,
+  customizationSwitchRowStyles,
   dangerCardStyles,
   dangerRowStyles,
+  previewBoxStyles,
   settingsActionsRowStyles,
   settingsButtonStyles,
   settingsCardStyles,
@@ -18,8 +41,13 @@ import {
 import type { FormEvent } from 'react'
 import type { EventFormState } from '@components/eventFormFields/types'
 import type { EventSettingsProps } from './types'
+import type { EventCustomization } from '@actions/events/types'
 
 const EventSettings = ({ event, onSave, onDelete }: EventSettingsProps) => {
+  const navigate = useNavigate()
+  const { user } = useAuth()
+  const hasPlan = Boolean(user?.hasActiveSubscription)
+
   const initialForm = toEventForm(event)
   const [form, setForm] = useState<EventFormState>(() => initialForm)
   const [isSaving, setIsSaving] = useState(false)
@@ -34,6 +62,41 @@ const EventSettings = ({ event, onSave, onDelete }: EventSettingsProps) => {
 
   const setField = <K extends keyof EventFormState>(key: K, value: EventFormState[K]) =>
     setForm((current) => ({ ...current, [key]: value }))
+
+  const updateCustomization = (patch: Partial<EventCustomization>) => {
+    setForm((current) => {
+      const existing = current.customization ?? {
+        enabled: true,
+        agencyName: '',
+        agencyLogoUrl: '',
+        agencyWhatsapp: '',
+        agencyTagline: 'Assessoria & Cerimonial',
+        whatsappMessage: 'Olá! Vi a marca de vocês no evento e gostaria de mais informações.'
+      }
+      return {
+        ...current,
+        customization: {
+          ...existing,
+          ...patch
+        }
+      }
+    })
+  }
+
+  const handleApplyAgencyDefaults = () => {
+    if (!user?.customization) {
+      toast.info('Nenhuma personalização global configurada ainda.')
+      return
+    }
+    setForm((current) => ({
+      ...current,
+      customization: {
+        ...user.customization,
+        enabled: true
+      }
+    }))
+    toast.success('Dados da agência aplicados ao evento!')
+  }
 
   const handleSubmit = async (submitEvent: FormEvent<HTMLFormElement>) => {
     submitEvent.preventDefault()
@@ -61,6 +124,9 @@ const EventSettings = ({ event, onSave, onDelete }: EventSettingsProps) => {
     setIsDeleteModalOpen(false)
   }
 
+  const customConfig = form.customization
+  const isCustomEnabled = Boolean(customConfig?.enabled)
+
   return (
     <Box sx={settingsSectionStackStyles}>
       <Card elevation={0} component="form" onSubmit={handleSubmit} sx={settingsCardStyles}>
@@ -74,6 +140,208 @@ const EventSettings = ({ event, onSave, onDelete }: EventSettingsProps) => {
         </Box>
 
         <EventFormFields form={form} onChange={setField} />
+
+        {/* Bloco de Personalização & Selo White-Label B2B */}
+        <Card elevation={0} sx={customizationCardStyles}>
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 1 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+              <PaletteIcon sx={{ color: 'primary.main', fontSize: 26 }} />
+              <Box>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <Typography variant="subtitle1" fontWeight={700}>
+                    Selo White-Label para Cerimonial (B2B)
+                  </Typography>
+                  <Chip
+                    icon={<ProIcon sx={{ fontSize: '14px !important' }} />}
+                    label="PRO"
+                    size="small"
+                    sx={{
+                      height: 20,
+                      fontSize: '0.65rem',
+                      fontWeight: 800,
+                      bgcolor: 'primary.main',
+                      color: 'primary.contrastText'
+                    }}
+                  />
+                </Box>
+                <Typography variant="body2" color="text.secondary">
+                  Exibe a marca da sua assessoria no topo do telão e do app com botão direto para WhatsApp gerador de leads.
+                </Typography>
+              </Box>
+            </Box>
+
+            {hasPlan && user?.customization && (
+              <Button
+                variant="outlined"
+                size="small"
+                startIcon={<SyncIcon fontSize="small" />}
+                onClick={handleApplyAgencyDefaults}
+                sx={{ borderRadius: '10px', textTransform: 'none' }}
+              >
+                Puxar dados da agência
+              </Button>
+            )}
+          </Box>
+
+          {!hasPlan ? (
+            <Alert
+              severity="warning"
+              action={
+                <Button color="inherit" size="small" onClick={() => navigate('/app/billing')}>
+                  Ver planos
+                </Button>
+              }
+              sx={{ borderRadius: '12px' }}
+            >
+              Esta funcionalidade é exclusiva para assinantes de planos de agência. Assine um plano para personalizar seus eventos.
+            </Alert>
+          ) : (
+            <>
+              <Box sx={customizationSwitchRowStyles}>
+                <Box>
+                  <Typography variant="body1" fontWeight={600}>
+                    Ativar Selo White-Label neste evento
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    Habilita o banner da assessoria com logotipo e WhatsApp no topo da tela do evento.
+                  </Typography>
+                </Box>
+                <Switch
+                  checked={isCustomEnabled}
+                  onChange={(e) => updateCustomization({ enabled: e.target.checked })}
+                  color="primary"
+                />
+              </Box>
+
+              {isCustomEnabled && (
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                  <Box
+                    sx={{
+                      display: 'grid',
+                      gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' },
+                      gap: 2
+                    }}
+                  >
+                    <TextField
+                      label="Nome da Assessoria / Cerimonial"
+                      placeholder="Ex: Cerimonial Real & Eventos"
+                      value={customConfig?.agencyName ?? ''}
+                      onChange={(e) => updateCustomization({ agencyName: e.target.value })}
+                      fullWidth
+                    />
+                    <TextField
+                      label="Tagline / Slogan"
+                      placeholder="Ex: Assessoria & Organização de Casamentos"
+                      value={customConfig?.agencyTagline ?? ''}
+                      onChange={(e) => updateCustomization({ agencyTagline: e.target.value })}
+                      fullWidth
+                    />
+                  </Box>
+
+                  <Box
+                    sx={{
+                      display: 'grid',
+                      gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' },
+                      gap: 2
+                    }}
+                  >
+                    <TextField
+                      label="URL do Logotipo (quadrado ou ícone)"
+                      placeholder="https://..."
+                      value={customConfig?.agencyLogoUrl ?? ''}
+                      onChange={(e) => updateCustomization({ agencyLogoUrl: e.target.value })}
+                      fullWidth
+                    />
+                    <TextField
+                      label="WhatsApp para Contato (DDD + Número)"
+                      placeholder="Ex: 31999998888"
+                      value={customConfig?.agencyWhatsapp ?? ''}
+                      onChange={(e) => updateCustomization({ agencyWhatsapp: e.target.value })}
+                      fullWidth
+                      helperText="Somente números com DDD"
+                    />
+                  </Box>
+
+                  <TextField
+                    label="Mensagem inicial do WhatsApp (opcional)"
+                    placeholder="Mensagem pré-preenchida que o cliente enviará ao clicar no botão..."
+                    value={customConfig?.whatsappMessage ?? ''}
+                    onChange={(e) => updateCustomization({ whatsappMessage: e.target.value })}
+                    fullWidth
+                    multiline
+                    rows={2}
+                  />
+
+                  {/* Pré-visualização do Selo */}
+                  <Box sx={previewBoxStyles}>
+                    <Typography variant="caption" sx={{ color: 'primary.main', fontWeight: 700, letterSpacing: 0.5, textTransform: 'uppercase' }}>
+                      Pré-visualização do Selo no Telão e no App
+                    </Typography>
+
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        flexWrap: 'wrap',
+                        gap: 1.5,
+                        p: 1.5,
+                        borderRadius: '12px',
+                        bgcolor: 'rgba(0,0,0,0.6)',
+                        backdropFilter: 'blur(10px)',
+                        border: '1px solid rgba(255, 184, 0, 0.3)'
+                      }}
+                    >
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                        <Avatar
+                          src={customConfig?.agencyLogoUrl}
+                          sx={{
+                            width: 36,
+                            height: 36,
+                            border: '1.5px solid',
+                            borderColor: 'primary.main',
+                            bgcolor: 'rgba(255, 184, 0, 0.15)',
+                            color: 'primary.main',
+                            fontWeight: 800,
+                            fontSize: '0.85rem'
+                          }}
+                        >
+                          {(customConfig?.agencyName || 'A')[0].toUpperCase()}
+                        </Avatar>
+                        <Box>
+                          <Typography variant="body2" fontWeight={700} sx={{ color: '#fff', lineHeight: 1.2 }}>
+                            {customConfig?.agencyName || 'Sua Assessoria'}
+                          </Typography>
+                          <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.72rem' }}>
+                            {customConfig?.agencyTagline || 'Assessoria & Cerimonial'}
+                          </Typography>
+                        </Box>
+                      </Box>
+
+                      <Button
+                        size="small"
+                        startIcon={<WhatsAppIcon sx={{ fontSize: '16px !important' }} />}
+                        variant="contained"
+                        sx={{
+                          borderRadius: '999px',
+                          bgcolor: '#25D366',
+                          color: '#fff',
+                          fontWeight: 700,
+                          fontSize: '0.75rem',
+                          textTransform: 'none',
+                          boxShadow: 'none',
+                          '&:hover': { bgcolor: '#20ba5a', boxShadow: 'none' }
+                        }}
+                      >
+                        Falar no WhatsApp
+                      </Button>
+                    </Box>
+                  </Box>
+                </Box>
+              )}
+            </>
+          )}
+        </Card>
 
         <Box sx={settingsActionsRowStyles}>
           {isDirty && (

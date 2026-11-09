@@ -39,3 +39,35 @@ export const dangerRowStyles: SxProps<Theme> = {
   justifyContent: 'space-between',
   gap: 2
 }
+
+export const customizationCardStyles: SxProps<Theme> = {
+  p: { xs: 2.5, sm: 3.5 },
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 2.5,
+  borderRadius: '24px',
+  background: 'linear-gradient(180deg, rgba(255, 184, 0, 0.04) 0%, rgba(26, 26, 26, 0.6) 100%)',
+  border: '1px solid rgba(255, 184, 0, 0.2)'
+}
+
+export const customizationSwitchRowStyles: SxProps<Theme> = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  gap: 2,
+  p: 2,
+  borderRadius: '16px',
+  bgcolor: 'background.paper',
+  border: '1px solid',
+  borderColor: 'divider'
+}
+
+export const previewBoxStyles: SxProps<Theme> = {
+  p: 2.5,
+  borderRadius: '16px',
+  bgcolor: '#0f0f0f',
+  border: '1px dashed rgba(255, 184, 0, 0.3)',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 1.5
+}

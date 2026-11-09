@@ -1,4 +1,4 @@
-import type { EventCreditType, EventItem, PinRotationMinutes } from '@actions/events/types'
+import type { EventCreditType, EventCustomization, EventItem, PinRotationMinutes } from '@actions/events/types'
 
 export interface EventFormState {
   name: string
@@ -14,6 +14,7 @@ export interface EventFormState {
   pin: string
   pinRotate: boolean
   pinRotationMinutes: PinRotationMinutes
+  customization?: EventCustomization
 }
 
 export interface EventFormFieldsProps {

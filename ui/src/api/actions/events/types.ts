@@ -5,6 +5,15 @@ export type PhotoVisibility = 'during_event' | 'after_event'
 export type EventPhase = 'upcoming' | 'open' | 'closed' | 'expired'
 export type PinRotationMinutes = 5 | 15 | 30 | 60
 
+export interface EventCustomization {
+  enabled: boolean
+  agencyName?: string
+  agencyLogoUrl?: string
+  agencyWhatsapp?: string
+  agencyTagline?: string
+  whatsappMessage?: string
+}
+
 export interface EventSettings {
   uploadWindowHours: number
   galleryDurationDays: number
@@ -42,6 +51,7 @@ export interface EventItem {
   endsAt: string
   guestToken: string
   settings: EventSettings
+  customization?: EventCustomization
   uploadsCloseAt: string
   galleryExpiresAt: string
   members: EventMember[]
@@ -59,6 +69,7 @@ export interface CreateEventPayload {
   startsAt: string
   endsAt?: string
   settings?: Partial<EventSettings>
+  customization?: EventCustomization
 }
 
 export type UpdateEventPayload = Partial<Omit<CreateEventPayload, 'settings'>> & {
@@ -113,6 +124,7 @@ export interface ScreenEventInfo {
   id: string
   name: string
   guestToken: string
+  customization?: EventCustomization
 }
 
 export interface ActivateScreenResponse {

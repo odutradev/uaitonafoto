@@ -39,7 +39,8 @@ export const toEventForm = (event: EventItem): EventFormState => ({
   pinEnabled: event.settings.pinEnabled,
   pin: event.settings.pin,
   pinRotate: event.settings.pinRotate,
-  pinRotationMinutes: event.settings.pinRotationMinutes
+  pinRotationMinutes: event.settings.pinRotationMinutes,
+  customization: event.customization
 })
 
 export const isValidEventPeriod = (form: EventFormState): boolean =>
@@ -63,5 +64,6 @@ export const toEventPayload = (form: EventFormState): CreateEventPayload => ({
     pin: form.pin,
     pinRotate: form.pinRotate,
     pinRotationMinutes: form.pinRotationMinutes
-  }
+  },
+  customization: form.customization
 })
