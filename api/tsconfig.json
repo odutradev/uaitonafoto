@@ -25,6 +25,8 @@
       "@middlewares/*": ["./src/middlewares/*"],
       "@payment": ["./src/payment/index.ts"],
       "@payment/*": ["./src/payment/*"],
+      "@realtime": ["./src/realtime/index.ts"],
+      "@realtime/*": ["./src/realtime/*"],
       "@routes/*": ["./src/routes/*"],
       "@routines/*": ["./src/routines/*"],
       "@utils/*": ["./src/utils/*"]
