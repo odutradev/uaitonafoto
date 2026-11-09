@@ -13,8 +13,7 @@ import {
   Favorite as LikeIcon,
   Fullscreen as FullscreenIcon,
   PhotoCameraOutlined as CameraIcon,
-  PowerSettingsNew as DisconnectIcon,
-  Visibility as VisibilityIcon,
+  SettingsOutlined as SettingsIcon,
   VisibilityOff as VisibilityOffIcon
 } from '@mui/icons-material'
 import { QRCodeSVG } from 'qrcode.react'
@@ -24,11 +23,12 @@ import { toast } from 'react-toastify'
 import Logo from '@components/logo'
 import Modal from '@components/modal'
 import PinInput from '@components/pinInput'
-import ThemeToggle from '@components/themeToggle'
 import { buildGuestLink, formatGuestTaNaFoto } from '@config/events'
 import { brandColors } from '@theme'
 
 import useEventScreen from './hooks/useEventScreen'
+import ScreenSettingsModal from './subcomponents/screenSettingsModal'
+import type { ScreenLayoutMode } from './types'
 import {
   activationCardStyles,
   activationWrapperStyles,
@@ -64,6 +64,7 @@ import type { FormEvent } from 'react'
 
 const THUMBNAIL_SLOTS_COUNT = 6
 const SCREEN_SHOW_PIN_STORAGE_KEY = 'uaitonafoto:screen:show_pin'
+const SCREEN_LAYOUT_STORAGE_KEY = 'uaitonafoto:screen:layout'
 
 const EventScreen = () => {
   const { token, id } = useParams()
@@ -86,6 +87,14 @@ const EventScreen = () => {
   } = useEventScreen(eventIdentifier)
   const [pinInput, setPinInput] = useState('')
   const [isDisconnectModalOpen, setIsDisconnectModalOpen] = useState(false)
+  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false)
+  const [layoutMode, setLayoutMode] = useState<ScreenLayoutMode>(() => {
+    const stored = localStorage.getItem(SCREEN_LAYOUT_STORAGE_KEY) as ScreenLayoutMode | null
+    if (stored && ['classic', 'side-hub', 'social-feed'].includes(stored)) {
+      return stored
+    }
+    return 'side-hub'
+  })
   const [showPin, setShowPin] = useState<boolean>(() => {
     const stored = localStorage.getItem(SCREEN_SHOW_PIN_STORAGE_KEY)
     return stored !== null ? stored === 'true' : true
@@ -97,6 +106,11 @@ const EventScreen = () => {
       localStorage.setItem(SCREEN_SHOW_PIN_STORAGE_KEY, String(next))
       return next
     })
+  }
+
+  const handleLayoutChange = (mode: ScreenLayoutMode) => {
+    setLayoutMode(mode)
+    localStorage.setItem(SCREEN_LAYOUT_STORAGE_KEY, mode)
   }
 
   const handleFullscreen = () => {
@@ -180,36 +194,21 @@ const EventScreen = () => {
         )}
 
         <Box sx={controlsChipStyles}>
-          {pin && (
-            <Tooltip title={showPin ? 'Ocultar PIN' : 'Mostrar PIN'}>
-              <IconButton
-                aria-label={showPin ? 'Ocultar PIN' : 'Mostrar PIN'}
-                onClick={handleTogglePinVisibility}
-                sx={iconButtonStyles}
-                size="small"
-              >
-                {showPin ? <VisibilityOffIcon fontSize="small" /> : <VisibilityIcon fontSize="small" />}
-              </IconButton>
-            </Tooltip>
-          )}
-          <ThemeToggle sx={iconButtonStyles} size="small" />
           <Tooltip title="Alternar tela cheia">
             <IconButton aria-label="Tela cheia" onClick={handleFullscreen} sx={iconButtonStyles} size="small">
               <FullscreenIcon fontSize="small" />
             </IconButton>
           </Tooltip>
-          {isActivated && (
-            <Tooltip title="Desconectar telão">
-              <IconButton
-                aria-label="Desconectar telão"
-                onClick={() => setIsDisconnectModalOpen(true)}
-                sx={iconButtonStyles}
-                size="small"
-              >
-                <DisconnectIcon fontSize="small" />
-              </IconButton>
-            </Tooltip>
-          )}
+          <Tooltip title="Configurações do telão">
+            <IconButton
+              aria-label="Configurações do telão"
+              onClick={() => setIsSettingsModalOpen(true)}
+              sx={iconButtonStyles}
+              size="small"
+            >
+              <SettingsIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
         </Box>
       </Box>
 
@@ -517,6 +516,18 @@ const EventScreen = () => {
           </Box>
         </Box>
       )}
+
+      <ScreenSettingsModal
+        open={isSettingsModalOpen}
+        onClose={() => setIsSettingsModalOpen(false)}
+        layout={layoutMode}
+        onChangeLayout={handleLayoutChange}
+        showPin={showPin}
+        onTogglePin={handleTogglePinVisibility}
+        hasPin={Boolean(pin)}
+        isActivated={isActivated}
+        onRequestDisconnect={() => setIsDisconnectModalOpen(true)}
+      />
 
       <Modal
         open={isDisconnectModalOpen}
