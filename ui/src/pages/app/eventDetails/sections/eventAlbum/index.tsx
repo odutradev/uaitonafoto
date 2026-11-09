@@ -3,11 +3,13 @@ import {
   Box,
   Button,
   Card,
+  Chip,
   CircularProgress,
+  Dialog,
+  DialogContent,
+  DialogTitle,
   IconButton,
-  MenuItem,
   Skeleton,
-  TextField,
   Tooltip,
   Typography
 } from '@mui/material'
@@ -19,7 +21,13 @@ import {
   DoneAllOutlined as DoneAllIcon,
   DownloadOutlined as DownloadIcon,
   EmojiEventsOutlined as ChallengeIcon,
-  FavoriteBorder as LikeIcon
+  FavoriteBorder as LikeIcon,
+  FolderZipOutlined as ZipIcon,
+  ContentCopyOutlined as CopyIcon,
+  VisibilityOutlined as ViewIcon,
+  PhotoCameraOutlined as CameraIcon,
+  PeopleOutline as GuestsIcon,
+  AccessTimeOutlined as TimeIcon
 } from '@mui/icons-material'
 import dayjs from 'dayjs'
 import { toast } from 'react-toastify'
@@ -27,7 +35,7 @@ import { toast } from 'react-toastify'
 import { downloadEventAlbumZip } from '@actions/events'
 import Modal from '@components/modal'
 import Pagination from '@components/pagination'
-import { getErrorMessage } from '@config/events'
+import { buildGuestLink, getErrorMessage } from '@config/events'
 
 import useEventAlbum, { type AlbumStatusFilter } from '../../hooks/useEventAlbum'
 
@@ -38,11 +46,17 @@ import {
   approvePhotoButtonStyles,
   deletePhotoButtonStyles,
   downloadZipButtonStyles,
-  guestFilterFieldStyles,
+  endedDownloadBigButtonStyles,
+  endedHeroCardStyles,
+  endedHeroIconBoxStyles,
+  endedHeroInfoStyles,
+  endedStatItemStyles,
+  endedStatsRowStyles,
   moderationBarStyles,
   moderationFilterButtonStyles,
   moderationTabsStyles,
   photoCardStyles,
+  photoDirectDownloadButtonStyles,
   photoImageStyles,
   photoOverlayNameStyles,
   photoOverlayStyles,
@@ -105,12 +119,10 @@ const EventAlbum = ({ event }: EventAlbumProps) => {
     guests,
     meta,
     page,
-    guestId,
     statusFilter,
     pendingCount,
     isLoading,
     setPage,
-    changeGuest,
     changeStatusFilter,
     removePhoto,
     approvePhoto,
@@ -119,9 +131,15 @@ const EventAlbum = ({ event }: EventAlbumProps) => {
   } = useEventAlbum(event.id, isModerationEnabled)
 
   const [photoToDelete, setPhotoToDelete] = useState<EventPhoto | null>(null)
+  const [photoToView, setPhotoToView] = useState<EventPhoto | null>(null)
   const [isDeleting, setIsDeleting] = useState(false)
   const [isDownloadingZip, setIsDownloadingZip] = useState(false)
   const [isApprovingAll, setIsApprovingAll] = useState(false)
+
+  const guestLink = buildGuestLink(event.guestToken)
+
+  const expiresAt = event.galleryExpiresAt ? dayjs(event.galleryExpiresAt) : null
+  const daysLeft = expiresAt ? Math.max(0, expiresAt.diff(dayjs(), 'day')) : null
 
   const handleConfirmRemove = async () => {
     if (!photoToDelete) return
@@ -129,6 +147,9 @@ const EventAlbum = ({ event }: EventAlbumProps) => {
     await removePhoto(photoToDelete.id)
     setIsDeleting(false)
     setPhotoToDelete(null)
+    if (photoToView?.id === photoToDelete.id) {
+      setPhotoToView(null)
+    }
   }
 
   const handleApproveAll = async () => {
@@ -168,73 +189,146 @@ const EventAlbum = ({ event }: EventAlbumProps) => {
     }
   }
 
+  const handleCopyGuestLink = async () => {
+    try {
+      await navigator.clipboard.writeText(guestLink)
+      toast.success('Link da galeria pública copiado!')
+    } catch {
+      toast.error('Não foi possível copiar o link.')
+    }
+  }
+
   const totalPhotosCount = meta?.total ?? photos.length
 
   return (
     <Card elevation={0} sx={albumCardStyles}>
-      <Box sx={albumHeaderRowStyles}>
-        <Box sx={{ minWidth: 0 }}>
-          <Typography variant="subtitle1" fontWeight={700} component="h2">
-            Álbum do evento
-          </Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.25 }}>
-            {totalPhotosCount} {totalPhotosCount === 1 ? 'foto encontrada' : 'fotos encontradas'}
-            {isModerationEnabled && pendingCount > 0 && ` · ${pendingCount} aguardando aprovação`}
-          </Typography>
-        </Box>
+      {/* Caso 1: Evento Encerrado - Visual Focado em Download e Uso Pós-Evento */}
+      {isEventEnded ? (
+        <Box sx={endedHeroCardStyles}>
+          <Box sx={endedHeroInfoStyles}>
+            <Box sx={endedHeroIconBoxStyles}>
+              <ZipIcon sx={{ fontSize: 28 }} />
+            </Box>
+            <Box>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+                <Typography variant="h6" fontWeight={800} lineHeight={1.2}>
+                  Álbum Completo do Evento
+                </Typography>
+                <Chip
+                  label="Evento Encerrado"
+                  size="small"
+                  color="warning"
+                  sx={{ fontWeight: 700, height: 22, fontSize: '0.72rem' }}
+                />
+              </Box>
 
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
-          {guests.length > 0 && (
-            <TextField
-              select
+              <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                Baixe todas as fotos enviadas pelos seus convidados em alta resolução original (.zip).
+              </Typography>
+
+              <Box sx={endedStatsRowStyles}>
+                <Box sx={endedStatItemStyles}>
+                  <CameraIcon sx={{ fontSize: 16, color: 'primary.main' }} />
+                  <span>
+                    <strong>{totalPhotosCount}</strong> {totalPhotosCount === 1 ? 'foto' : 'fotos'}
+                  </span>
+                </Box>
+
+                {guests.length > 0 && (
+                  <Box sx={endedStatItemStyles}>
+                    <GuestsIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
+                    <span>
+                      <strong>{guests.length}</strong> {guests.length === 1 ? 'convidado' : 'convidados'}
+                    </span>
+                  </Box>
+                )}
+
+                {expiresAt && (
+                  <Box sx={endedStatItemStyles}>
+                    <TimeIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
+                    <span>
+                      {daysLeft !== null && daysLeft > 0
+                        ? `Restam ${daysLeft} dias para download`
+                        : `Disponível até ${expiresAt.format('DD/MM/YYYY')}`}
+                    </span>
+                  </Box>
+                )}
+              </Box>
+            </Box>
+          </Box>
+
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25, flexWrap: 'wrap' }}>
+            <Button
+              variant="outlined"
+              color="inherit"
               size="small"
-              label="Filtrar por convidado"
-              value={guestId}
-              onChange={(e) => changeGuest(e.target.value)}
-              sx={guestFilterFieldStyles}
+              startIcon={<CopyIcon sx={{ fontSize: 16 }} />}
+              onClick={handleCopyGuestLink}
+              sx={{ minHeight: 42, px: 2, borderRadius: '10px', fontWeight: 600 }}
             >
-              <MenuItem value="">Todos os convidados</MenuItem>
-              {guests.map((guest) => (
-                <MenuItem key={guest.id} value={guest.id}>
-                  {guest.name} ({guest.photosCount})
-                </MenuItem>
-              ))}
-            </TextField>
-          )}
+              Copiar link da galeria
+            </Button>
 
-          {isEventEnded && (
             <Tooltip
               title={
                 totalPhotosCount === 0
                   ? 'Nenhuma foto enviada para baixar'
-                  : 'Baixar todas as fotos do evento compactadas em um único arquivo .zip'
+                  : 'Baixar todas as fotos originais compactadas em um único arquivo .zip'
               }
             >
               <span>
                 <Button
                   variant="contained"
-                  color="primary"
-                  size="small"
+                  size="medium"
                   startIcon={
                     isDownloadingZip ? (
-                      <CircularProgress size={15} color="inherit" />
+                      <CircularProgress size={16} color="inherit" />
                     ) : (
-                      <DownloadIcon sx={{ fontSize: 16 }} />
+                      <DownloadIcon sx={{ fontSize: 18 }} />
                     )
                   }
                   onClick={handleDownloadZip}
                   disabled={isDownloadingZip || totalPhotosCount === 0}
-                  sx={downloadZipButtonStyles}
+                  sx={endedDownloadBigButtonStyles}
                 >
-                  {isDownloadingZip ? 'Gerando ZIP...' : 'Baixar álbum (.zip)'}
+                  {isDownloadingZip ? 'Preparando arquivo ZIP...' : 'Baixar Álbum Completo (.zip)'}
                 </Button>
               </span>
             </Tooltip>
-          )}
+          </Box>
         </Box>
-      </Box>
+      ) : (
+        /* Caso 2: Evento em Andamento - Header Limpo sem o filtro por convidado */
+        <Box sx={albumHeaderRowStyles}>
+          <Box sx={{ minWidth: 0 }}>
+            <Typography variant="subtitle1" fontWeight={700} component="h2">
+              Álbum do evento
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.25 }}>
+              {totalPhotosCount} {totalPhotosCount === 1 ? 'foto encontrada' : 'fotos encontradas'}
+              {isModerationEnabled && pendingCount > 0 && ` · ${pendingCount} aguardando aprovação`}
+            </Typography>
+          </Box>
 
-      {isModerationEnabled && (
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Tooltip title="Copiar link da página de envio para convidados">
+              <Button
+                variant="outlined"
+                color="inherit"
+                size="small"
+                startIcon={<CopyIcon sx={{ fontSize: 16 }} />}
+                onClick={handleCopyGuestLink}
+                sx={downloadZipButtonStyles}
+              >
+                Copiar link
+              </Button>
+            </Tooltip>
+          </Box>
+        </Box>
+      )}
+
+      {/* Barra de Moderação: Ativa somente quando o evento está em andamento com moderação ligada */}
+      {isModerationEnabled && !isEventEnded && (
         <Box sx={moderationBarStyles}>
           <Box sx={moderationTabsStyles}>
             {MODERATION_FILTERS.map((filter) => {
@@ -280,19 +374,20 @@ const EventAlbum = ({ event }: EventAlbumProps) => {
         </Box>
       )}
 
-
+      {/* Estado Carregando */}
       {isLoading && (
         <Box sx={photosGridStyles}>
           {Array.from({ length: 8 }).map((_, index) => (
             <Skeleton
               key={index}
               variant="rounded"
-              sx={{ aspectRatio: '1 / 1', height: 'auto', borderRadius: '16px' }}
+              sx={{ aspectRatio: '1 / 1', height: 'auto', borderRadius: '14px' }}
             />
           ))}
         </Box>
       )}
 
+      {/* Estado Vazio */}
       {!isLoading && photos.length === 0 && (
         <Box sx={stateBoxStyles}>
           <Box sx={stateIconWrapperStyles}>
@@ -310,13 +405,14 @@ const EventAlbum = ({ event }: EventAlbumProps) => {
           <Typography variant="body2" color="text.secondary">
             {statusFilter === 'pending'
               ? 'Todas as fotos enviadas pelos convidados já foram moderadas. Novas fotos aparecerão aqui em tempo real.'
-              : guestId
-                ? 'Este convidado não possui fotos registradas.'
+              : isEventEnded
+                ? 'Nenhuma foto foi registrada durante o evento.'
                 : 'Nenhuma foto enviada ainda para este evento.'}
           </Typography>
         </Box>
       )}
 
+      {/* Grid de Fotos */}
       {!isLoading && photos.length > 0 && (
         <>
           <Box sx={photosGridStyles}>
@@ -324,8 +420,13 @@ const EventAlbum = ({ event }: EventAlbumProps) => {
               const photoStatus = photo.status ?? 'approved'
 
               return (
-                <Box key={photo.id} sx={photoCardStyles}>
-                  {isModerationEnabled && (
+                <Box
+                  key={photo.id}
+                  sx={photoCardStyles}
+                  onClick={() => setPhotoToView(photo)}
+                >
+                  {/* Badge de Moderação (exibido apenas se moderação ativa e evento ainda aberto) */}
+                  {isModerationEnabled && !isEventEnded && (
                     <Box sx={photoStatusBadgeStyles(photoStatus)}>
                       {photoStatus === 'pending'
                         ? 'Pendente'
@@ -335,11 +436,12 @@ const EventAlbum = ({ event }: EventAlbumProps) => {
                     </Box>
                   )}
 
+                  {/* Tag do Desafio Cumprido */}
                   {photo.challengeTitle && (
                     <Box
                       sx={{
                         position: 'absolute',
-                        top: isModerationEnabled ? 32 : 8,
+                        top: isModerationEnabled && !isEventEnded ? 32 : 8,
                         left: 8,
                         bgcolor: 'rgba(245, 158, 11, 0.95)',
                         color: '#000',
@@ -371,7 +473,11 @@ const EventAlbum = ({ event }: EventAlbumProps) => {
                     sx={photoImageStyles}
                   />
 
-                  <Box sx={photoOverlayStyles}>
+                  {/* Overlay com Informações e Ações */}
+                  <Box
+                    sx={photoOverlayStyles}
+                    onClick={(e) => e.stopPropagation()}
+                  >
                     <Typography variant="caption" sx={photoOverlayNameStyles}>
                       {photo.guestName} ·{' '}
                       <LikeIcon sx={{ fontSize: 12, verticalAlign: 'middle' }} />{' '}
@@ -379,81 +485,120 @@ const EventAlbum = ({ event }: EventAlbumProps) => {
                     </Typography>
 
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, flexShrink: 0 }}>
-                      {photoStatus === 'pending' && (
+                      {/* Ações quando o evento está encerrado: Download com 1 clique, Zoom e Excluir */}
+                      {isEventEnded ? (
                         <>
-                          <Tooltip title="Aprovar e enviar para o telão">
+                          <Tooltip title="Baixar esta foto em alta resolução">
                             <IconButton
+                              aria-label="Baixar foto"
                               size="small"
-                              onClick={() => approvePhoto(photo.id)}
-                              sx={approvePhotoButtonStyles}
-                              aria-label="Aprovar foto"
+                              onClick={() => handleDownloadPhoto(photo)}
+                              sx={photoDirectDownloadButtonStyles}
                             >
-                              <ApproveIcon sx={{ fontSize: 16 }} />
+                              <DownloadIcon sx={{ fontSize: 15 }} />
                             </IconButton>
                           </Tooltip>
 
-                          <Tooltip title="Rejeitar foto">
+                          <Tooltip title="Visualizar ampliada">
                             <IconButton
+                              aria-label="Ver foto"
                               size="small"
-                              onClick={() => rejectPhoto(photo.id)}
-                              sx={rejectPhotoButtonStyles}
-                              aria-label="Rejeitar foto"
+                              onClick={() => setPhotoToView(photo)}
+                              sx={deletePhotoButtonStyles}
                             >
-                              <RejectIcon sx={{ fontSize: 16 }} />
+                              <ViewIcon sx={{ fontSize: 15 }} />
+                            </IconButton>
+                          </Tooltip>
+
+                          <Tooltip title="Remover do álbum">
+                            <IconButton
+                              aria-label="Remover foto"
+                              size="small"
+                              onClick={() => setPhotoToDelete(photo)}
+                              sx={deletePhotoButtonStyles}
+                            >
+                              <DeleteIcon sx={{ fontSize: 15 }} />
+                            </IconButton>
+                          </Tooltip>
+                        </>
+                      ) : (
+                        /* Ações durante o evento em andamento: Moderação e Download */
+                        <>
+                          {photoStatus === 'pending' && (
+                            <>
+                              <Tooltip title="Aprovar e enviar para o telão">
+                                <IconButton
+                                  size="small"
+                                  onClick={() => approvePhoto(photo.id)}
+                                  sx={approvePhotoButtonStyles}
+                                  aria-label="Aprovar foto"
+                                >
+                                  <ApproveIcon sx={{ fontSize: 16 }} />
+                                </IconButton>
+                              </Tooltip>
+
+                              <Tooltip title="Rejeitar foto">
+                                <IconButton
+                                  size="small"
+                                  onClick={() => rejectPhoto(photo.id)}
+                                  sx={rejectPhotoButtonStyles}
+                                  aria-label="Rejeitar foto"
+                                >
+                                  <RejectIcon sx={{ fontSize: 16 }} />
+                                </IconButton>
+                              </Tooltip>
+                            </>
+                          )}
+
+                          {photoStatus === 'rejected' && (
+                            <Tooltip title="Aprovar foto e enviar ao telão">
+                              <IconButton
+                                size="small"
+                                onClick={() => approvePhoto(photo.id)}
+                                sx={approvePhotoButtonStyles}
+                                aria-label="Aprovar foto rejeitada"
+                              >
+                                <ApproveIcon sx={{ fontSize: 16 }} />
+                              </IconButton>
+                            </Tooltip>
+                          )}
+
+                          {photoStatus === 'approved' && isModerationEnabled && (
+                            <Tooltip title="Rejeitar foto (retirar do telão)">
+                              <IconButton
+                                size="small"
+                                onClick={() => rejectPhoto(photo.id)}
+                                sx={deletePhotoButtonStyles}
+                                aria-label="Rejeitar foto aprovada"
+                              >
+                                <RejectIcon sx={{ fontSize: 16 }} />
+                              </IconButton>
+                            </Tooltip>
+                          )}
+
+                          <Tooltip title="Baixar foto">
+                            <IconButton
+                              aria-label="Baixar foto"
+                              size="small"
+                              onClick={() => handleDownloadPhoto(photo)}
+                              sx={deletePhotoButtonStyles}
+                            >
+                              <DownloadIcon fontSize="small" />
+                            </IconButton>
+                          </Tooltip>
+
+                          <Tooltip title="Remover permanentemente">
+                            <IconButton
+                              aria-label="Remover foto"
+                              size="small"
+                              onClick={() => setPhotoToDelete(photo)}
+                              sx={deletePhotoButtonStyles}
+                            >
+                              <DeleteIcon fontSize="small" />
                             </IconButton>
                           </Tooltip>
                         </>
                       )}
-
-                      {photoStatus === 'rejected' && (
-                        <Tooltip title="Aprovar foto e enviar ao telão">
-                          <IconButton
-                            size="small"
-                            onClick={() => approvePhoto(photo.id)}
-                            sx={approvePhotoButtonStyles}
-                            aria-label="Aprovar foto rejeitada"
-                          >
-                            <ApproveIcon sx={{ fontSize: 16 }} />
-                          </IconButton>
-                        </Tooltip>
-                      )}
-
-                      {photoStatus === 'approved' && isModerationEnabled && (
-                        <Tooltip title="Rejeitar foto (retirar do telão)">
-                          <IconButton
-                            size="small"
-                            onClick={() => rejectPhoto(photo.id)}
-                            sx={deletePhotoButtonStyles}
-                            aria-label="Rejeitar foto aprovada"
-                          >
-                            <RejectIcon sx={{ fontSize: 16 }} />
-                          </IconButton>
-                        </Tooltip>
-                      )}
-
-                      {isEventEnded && (
-                        <Tooltip title="Baixar foto">
-                          <IconButton
-                            aria-label="Baixar foto"
-                            size="small"
-                            onClick={() => handleDownloadPhoto(photo)}
-                            sx={deletePhotoButtonStyles}
-                          >
-                            <DownloadIcon fontSize="small" />
-                          </IconButton>
-                        </Tooltip>
-                      )}
-
-                      <Tooltip title="Remover permanentemente">
-                        <IconButton
-                          aria-label="Remover foto"
-                          size="small"
-                          onClick={() => setPhotoToDelete(photo)}
-                          sx={deletePhotoButtonStyles}
-                        >
-                          <DeleteIcon fontSize="small" />
-                        </IconButton>
-                      </Tooltip>
                     </Box>
                   </Box>
                 </Box>
@@ -472,6 +617,88 @@ const EventAlbum = ({ event }: EventAlbumProps) => {
         </>
       )}
 
+      {/* Modal Lightbox: Visualização de Foto Ampliada */}
+      <Dialog
+        open={Boolean(photoToView)}
+        onClose={() => setPhotoToView(null)}
+        maxWidth="md"
+        fullWidth
+        PaperProps={{
+          sx: {
+            borderRadius: 3,
+            bgcolor: 'background.paper',
+            overflow: 'hidden'
+          }
+        }}
+      >
+        {photoToView && (
+          <>
+            <DialogTitle
+              sx={{
+                p: 2,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                borderBottom: '1px solid',
+                borderColor: 'divider'
+              }}
+            >
+              <Box>
+                <Typography variant="subtitle1" fontWeight={700} lineHeight={1.2}>
+                  Foto de {photoToView.guestName}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  {dayjs(photoToView.createdAt).format('DD/MM/YYYY [às] HH:mm')} ·{' '}
+                  {photoToView.likesCount} {photoToView.likesCount === 1 ? 'curtida' : 'curtidas'}
+                  {photoToView.challengeTitle && ` · Missão: ${photoToView.challengeTitle}`}
+                </Typography>
+              </Box>
+
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Button
+                  size="small"
+                  variant="contained"
+                  color="primary"
+                  startIcon={<DownloadIcon sx={{ fontSize: 16 }} />}
+                  onClick={() => handleDownloadPhoto(photoToView)}
+                  sx={{ borderRadius: '8px', fontWeight: 700 }}
+                >
+                  Baixar foto
+                </Button>
+                <IconButton onClick={() => setPhotoToView(null)} size="small" aria-label="Fechar">
+                  <RejectIcon fontSize="small" />
+                </IconButton>
+              </Box>
+            </DialogTitle>
+
+            <DialogContent
+              sx={{
+                p: 2,
+                bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#0D0B08' : '#F5F5F3'),
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                minHeight: 380
+              }}
+            >
+              <Box
+                component="img"
+                src={photoToView.url}
+                alt={`Foto de ${photoToView.guestName}`}
+                sx={{
+                  maxWidth: '100%',
+                  maxHeight: '75vh',
+                  objectFit: 'contain',
+                  borderRadius: 2,
+                  boxShadow: '0 8px 30px rgba(0,0,0,0.3)'
+                }}
+              />
+            </DialogContent>
+          </>
+        )}
+      </Dialog>
+
+      {/* Modal de Confirmação de Exclusão */}
       <Modal
         open={Boolean(photoToDelete)}
         onClose={() => setPhotoToDelete(null)}
