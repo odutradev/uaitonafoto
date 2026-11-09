@@ -16,6 +16,7 @@ export interface TableDisplayConfig {
   template: TableDisplayTemplateId
   title: string
   subtitle: string
+  customColor?: string
   customFooter?: string
   topBadgeText?: string
   showTopBadge: boolean

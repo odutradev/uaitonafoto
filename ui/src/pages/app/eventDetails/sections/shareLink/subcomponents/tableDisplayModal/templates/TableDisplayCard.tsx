@@ -18,6 +18,10 @@ export const TableDisplayCard = ({
   scale = 1
 }: TableDisplayCardProps) => {
   const theme = TEMPLATE_THEMES[config.template]
+  const accentColor = config.customColor?.trim() || theme.accentColor
+  const frameBorder = config.customColor?.trim()
+    ? `1.5px solid ${config.customColor.trim()}`
+    : `1px solid ${theme.borderColor}`
   const isPinActive = config.showPin && event.settings.pinEnabled && Boolean(event.settings.pin)
   const agencyOrCustom =
     config.customFooter?.trim() ||
@@ -43,75 +47,45 @@ export const TableDisplayCard = ({
     >
       {/* Molduras decorativas opcionais */}
       {config.showFrame && (
-        <>
-          {config.template === 'wedding' && (
-            <Box
-              sx={{
-                position: 'absolute',
-                inset: `${10 * scale}px`,
-                border: `1px solid ${theme.borderColor}`,
-                borderRadius: `${12 * scale}px`,
-                pointerEvents: 'none',
-                opacity: 0.85
-              }}
-            />
-          )}
-          {config.template === 'rustic' && (
-            <Box
-              sx={{
-                position: 'absolute',
-                inset: `${10 * scale}px`,
-                border: `1.5px dashed ${theme.borderColor}`,
-                borderRadius: `${12 * scale}px`,
-                pointerEvents: 'none',
-                opacity: 0.9
-              }}
-            />
-          )}
-          {config.template === 'minimal' && (
-            <Box
-              sx={{
-                position: 'absolute',
-                inset: `${8 * scale}px`,
-                border: `1px solid ${theme.borderColor}`,
-                borderRadius: `${12 * scale}px`,
-                pointerEvents: 'none',
-                opacity: 0.7
-              }}
-            />
-          )}
-          {config.template === 'party' && (
-            <Box
-              sx={{
-                position: 'absolute',
-                inset: `${10 * scale}px`,
-                border: `1px solid ${theme.borderColor}`,
-                borderRadius: `${12 * scale}px`,
-                pointerEvents: 'none',
-                opacity: 0.6
-              }}
-            />
-          )}
-          {config.template === 'corporate' && (
-            <Box
-              sx={{
-                position: 'absolute',
-                inset: `${10 * scale}px`,
-                border: `1px solid ${theme.borderColor}`,
-                borderRadius: `${12 * scale}px`,
-                pointerEvents: 'none',
-                opacity: 0.5
-              }}
-            />
-          )}
-        </>
+        <Box
+          sx={{
+            position: 'absolute',
+            inset: `${10 * scale}px`,
+            border: frameBorder,
+            borderRadius: `${12 * scale}px`,
+            pointerEvents: 'none',
+            opacity: config.customColor ? 0.9 : 0.8
+          }}
+        />
       )}
 
       {/* Topo / Cabeçalho do Cartão */}
       <Box sx={{ textAlign: 'center', zIndex: 1 }}>
         {config.showTopBadge && (
           <>
-            {config.template === 'modern' && (
+            {config.customColor ? (
+              <Box
+                sx={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 0.8,
+                  backgroundColor: config.customColor,
+                  color: '#FFFFFF',
+                  px: `${12 * scale}px`,
+                  py: `${3 * scale}px`,
+                  borderRadius: '999px',
+                  fontSize: `${11 * scale}px`,
+                  fontWeight: 800,
+                  letterSpacing: '0.04em',
+                  textTransform: 'uppercase',
+                  mb: `${8 * scale}px`,
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.12)'
+                }}
+              >
+                <CameraIcon sx={{ fontSize: `${14 * scale}px` }} />
+                {config.topBadgeText || 'Fotos ao vivo'}
+              </Box>
+            ) : config.template === 'modern' ? (
               <Box
                 sx={{
                   display: 'inline-flex',
@@ -132,9 +106,7 @@ export const TableDisplayCard = ({
                 <CameraIcon sx={{ fontSize: `${14 * scale}px` }} />
                 {config.topBadgeText || 'Fotos ao vivo'}
               </Box>
-            )}
-
-            {config.template === 'party' && (
+            ) : config.template === 'party' ? (
               <Box
                 sx={{
                   display: 'inline-flex',
@@ -155,54 +127,46 @@ export const TableDisplayCard = ({
                 <SparkleIcon sx={{ fontSize: `${14 * scale}px` }} />
                 {config.topBadgeText || 'Fotos ao vivo no telão'}
               </Box>
-            )}
-
-            {config.template === 'corporate' && (
+            ) : config.template === 'corporate' ? (
               <Typography
                 sx={{
                   fontSize: `${11 * scale}px`,
                   fontWeight: 700,
                   letterSpacing: '0.12em',
                   textTransform: 'uppercase',
-                  color: theme.accentColor,
+                  color: accentColor,
                   mb: `${4 * scale}px`
                 }}
               >
                 {config.topBadgeText || 'Galeria Interativa Oficial'}
               </Typography>
-            )}
-
-            {config.template === 'wedding' && (
+            ) : config.template === 'wedding' ? (
               <Typography
                 sx={{
                   fontSize: `${10 * scale}px`,
                   fontWeight: 700,
                   letterSpacing: '0.15em',
                   textTransform: 'uppercase',
-                  color: theme.accentColor,
+                  color: accentColor,
                   mb: `${4 * scale}px`
                 }}
               >
                 {config.topBadgeText || 'Lembrança Especial'}
               </Typography>
-            )}
-
-            {config.template === 'rustic' && (
+            ) : config.template === 'rustic' ? (
               <Typography
                 sx={{
                   fontSize: `${10 * scale}px`,
                   fontWeight: 700,
                   letterSpacing: '0.14em',
                   textTransform: 'uppercase',
-                  color: theme.accentColor,
+                  color: accentColor,
                   mb: `${4 * scale}px`
                 }}
               >
                 {config.topBadgeText || 'Memórias do Dia'}
               </Typography>
-            )}
-
-            {config.template === 'minimal' && (
+            ) : (
               <Typography
                 sx={{
                   fontSize: `${10 * scale}px`,
@@ -344,6 +308,7 @@ export const TableDisplayCard = ({
             icon={<CameraIcon sx={{ fontSize: `${14 * scale}px` }} />}
             theme={theme}
             scale={scale}
+            customColor={config.customColor}
           />
           <StepItem
             number="2"
@@ -351,6 +316,7 @@ export const TableDisplayCard = ({
             icon={<UploadIcon sx={{ fontSize: `${14 * scale}px` }} />}
             theme={theme}
             scale={scale}
+            customColor={config.customColor}
           />
           <StepItem
             number="3"
@@ -358,6 +324,7 @@ export const TableDisplayCard = ({
             icon={<TvIcon sx={{ fontSize: `${14 * scale}px` }} />}
             theme={theme}
             scale={scale}
+            customColor={config.customColor}
           />
         </Box>
       )}
@@ -410,16 +377,17 @@ interface StepItemProps {
   icon: React.ReactNode
   theme: (typeof TEMPLATE_THEMES)[TableDisplayTemplateId]
   scale: number
+  customColor?: string
 }
 
-const StepItem = ({ number, text, theme, scale }: StepItemProps) => (
+const StepItem = ({ number, text, theme, scale, customColor }: StepItemProps) => (
   <Box sx={{ display: 'flex', alignItems: 'center', gap: `${8 * scale}px` }}>
     <Box
       sx={{
         width: `${18 * scale}px`,
         height: `${18 * scale}px`,
         borderRadius: '50%',
-        backgroundColor: theme.stepNumberBg,
+        backgroundColor: customColor || theme.stepNumberBg,
         color: theme.stepNumberColor,
         fontSize: `${10 * scale}px`,
         fontWeight: 800,

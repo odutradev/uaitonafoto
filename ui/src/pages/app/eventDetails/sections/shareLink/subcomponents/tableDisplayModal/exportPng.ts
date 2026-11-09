@@ -36,6 +36,7 @@ export async function exportTableDisplayPng({
   }
 
   const theme = TEMPLATE_THEMES[config.template]
+  const accentColor = config.customColor?.trim() || theme.accentColor
 
   // Fundo
   if (config.template === 'corporate') {
@@ -55,7 +56,11 @@ export async function exportTableDisplayPng({
 
   // Moldura / Borda externa
   if (config.showFrame) {
-    if (config.template === 'wedding') {
+    if (config.customColor) {
+      ctx.strokeStyle = config.customColor
+      ctx.lineWidth = 4
+      ctx.strokeRect(36, 36, width - 72, height - 72)
+    } else if (config.template === 'wedding') {
       ctx.strokeStyle = '#D4C3AC'
       ctx.lineWidth = 4
       ctx.strokeRect(36, 36, width - 72, height - 72)
@@ -103,7 +108,18 @@ export async function exportTableDisplayPng({
     }
     const badgeText = config.topBadgeText?.trim() || defaultBadgeText[config.template] || 'FOTOS AO VIVO'
 
-    if (config.template === 'modern') {
+    if (config.customColor) {
+      ctx.fillStyle = config.customColor
+      const pillW = 360
+      const pillH = 50
+      drawRoundedRect(ctx, width / 2 - pillW / 2, currentY, pillW, pillH, 25)
+      ctx.fill()
+
+      ctx.fillStyle = '#FFFFFF'
+      ctx.font = 'bold 22px system-ui, -apple-system, sans-serif'
+      ctx.fillText(badgeText, width / 2, currentY + 14)
+      currentY += 80
+    } else if (config.template === 'modern') {
       ctx.fillStyle = '#17140F'
       const pillW = 340
       const pillH = 50
@@ -133,7 +149,7 @@ export async function exportTableDisplayPng({
       ctx.fillText(badgeText, width / 2, currentY + 14)
       currentY += 80
     } else {
-      ctx.fillStyle = theme.accentColor
+      ctx.fillStyle = accentColor
       ctx.font = 'bold 22px system-ui, -apple-system, sans-serif'
       ctx.letterSpacing = '2px'
       ctx.fillText(badgeText, width / 2, currentY)
@@ -256,7 +272,7 @@ export async function exportTableDisplayPng({
 
     steps.forEach((step, idx) => {
       const stepY = stepsBoxY + 30 + idx * 58
-      ctx.fillStyle = theme.stepNumberBg
+      ctx.fillStyle = config.customColor || theme.stepNumberBg
       ctx.beginPath()
       ctx.arc(stepsBoxX + 50, stepY + 16, 20, 0, Math.PI * 2)
       ctx.fill()

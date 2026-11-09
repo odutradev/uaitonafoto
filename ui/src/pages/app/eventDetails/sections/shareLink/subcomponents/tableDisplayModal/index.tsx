@@ -5,6 +5,7 @@ import {
   Chip,
   CircularProgress,
   Dialog,
+  Divider,
   FormControlLabel,
   IconButton,
   MenuItem,
@@ -24,7 +25,9 @@ import {
   CropFreeOutlined as MinimalIcon,
   AutoAwesomeOutlined as NightlifeIcon,
   ParkOutlined as RusticIcon,
-  QrCode2Outlined as DisplayHeaderIcon
+  QrCode2Outlined as DisplayHeaderIcon,
+  PaletteOutlined as PaletteIcon,
+  FormatColorResetOutlined as ResetColorIcon
 } from '@mui/icons-material'
 import { toast } from 'react-toastify'
 
@@ -133,6 +136,17 @@ const TEMPLATE_LIST: TemplateMeta[] = [
     accentColor: '#4A5D4E',
     previewBg: '#F5EFEB'
   }
+]
+
+const BRAND_PRESET_COLORS = [
+  { label: 'Dourado / Champagne', hex: '#9E7D47' },
+  { label: 'Flash Yellow', hex: '#FFCF1F' },
+  { label: 'Azul Royal', hex: '#2563EB' },
+  { label: 'Rosa Carmim', hex: '#E11D48' },
+  { label: 'Verde Esmeralda', hex: '#059669' },
+  { label: 'Roxo Violeta', hex: '#7C3AED' },
+  { label: 'Terracota', hex: '#C2410C' },
+  { label: 'Preto Ink', hex: '#17140F' }
 ]
 
 export const TableDisplayModal = ({
@@ -289,6 +303,145 @@ export const TableDisplayModal = ({
                     </Box>
                   )
                 })}
+              </Box>
+
+              <Divider sx={{ my: 0.5 }} />
+
+              {/* Seletor de Cor Primária / Marca do Evento */}
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between'
+                  }}
+                >
+                  <Typography variant="caption" fontWeight={700} color="text.secondary">
+                    Cor Primária de Destaque:
+                  </Typography>
+                  {config.customColor && (
+                    <Button
+                      size="small"
+                      variant="text"
+                      color="inherit"
+                      onClick={() => setConfig((prev) => ({ ...prev, customColor: undefined }))}
+                      startIcon={<ResetColorIcon sx={{ fontSize: 13 }} />}
+                      sx={{ fontSize: '0.68rem', py: 0, px: 0.5, minHeight: 0 }}
+                    >
+                      Padrão do modelo
+                    </Button>
+                  )}
+                </Box>
+
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 0.75,
+                    flexWrap: 'wrap'
+                  }}
+                >
+                  {BRAND_PRESET_COLORS.map((c) => {
+                    const isSelected =
+                      config.customColor?.toLowerCase() === c.hex.toLowerCase()
+                    return (
+                      <Tooltip key={c.hex} title={c.label}>
+                        <Box
+                          component="button"
+                          type="button"
+                          onClick={() =>
+                            setConfig((prev) => ({ ...prev, customColor: c.hex }))
+                          }
+                          sx={{
+                            width: 22,
+                            height: 22,
+                            borderRadius: '50%',
+                            bgcolor: c.hex,
+                            border: '2px solid',
+                            borderColor: isSelected ? 'text.primary' : 'transparent',
+                            outline: isSelected ? '2px solid #FFCF1F' : 'none',
+                            outlineOffset: '1px',
+                            cursor: 'pointer',
+                            p: 0,
+                            transition: 'transform 0.15s ease',
+                            '&:hover': {
+                              transform: 'scale(1.15)'
+                            }
+                          }}
+                        />
+                      </Tooltip>
+                    )
+                  })}
+
+                  {/* Color Picker nativo com ícone interativo */}
+                  <Tooltip title="Abrir Color Picker livre">
+                    <Box
+                      component="label"
+                      sx={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: 26,
+                        height: 26,
+                        borderRadius: '50%',
+                        border: '1.5px dashed',
+                        borderColor: config.customColor ? 'primary.main' : 'divider',
+                        bgcolor: config.customColor || 'action.hover',
+                        cursor: 'pointer',
+                        position: 'relative',
+                        overflow: 'hidden',
+                        transition: 'transform 0.15s ease',
+                        '&:hover': { transform: 'scale(1.1)' }
+                      }}
+                    >
+                      <input
+                        type="color"
+                        value={config.customColor || '#9E7D47'}
+                        onChange={(e) =>
+                          setConfig((prev) => ({ ...prev, customColor: e.target.value }))
+                        }
+                        style={{
+                          position: 'absolute',
+                          top: -10,
+                          left: -10,
+                          width: 50,
+                          height: 50,
+                          opacity: 0,
+                          cursor: 'pointer'
+                        }}
+                      />
+                      <PaletteIcon
+                        sx={{
+                          fontSize: 14,
+                          color: config.customColor ? '#FFFFFF' : 'text.secondary',
+                          pointerEvents: 'none'
+                        }}
+                      />
+                    </Box>
+                  </Tooltip>
+
+                  {/* Input direto de código HEX */}
+                  <TextField
+                    size="small"
+                    placeholder="#HEX"
+                    value={config.customColor || ''}
+                    onChange={(e) =>
+                      setConfig((prev) => ({ ...prev, customColor: e.target.value }))
+                    }
+                    slotProps={{
+                      htmlInput: {
+                        maxLength: 9,
+                        style: {
+                          fontSize: '0.72rem',
+                          padding: '3px 6px',
+                          width: '74px',
+                          fontFamily: 'monospace'
+                        }
+                      }
+                    }}
+                    sx={{ ml: 'auto' }}
+                  />
+                </Box>
               </Box>
             </Box>
 
