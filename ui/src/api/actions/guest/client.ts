@@ -1,4 +1,4 @@
-﻿import axios from 'axios'
+import axios from 'axios'
 
 import defaultConfig from '@config/default'
 
@@ -16,5 +16,11 @@ export const clearGuestToken = (eventToken: string): void =>
   localStorage.removeItem(`${GUEST_TOKEN_STORAGE_PREFIX}${eventToken}`)
 
 export const withGuestToken = (guestToken: string) => ({ headers: { Authorization: `Bearer ${guestToken}` } })
+
+export const buildRoomStreamUrl = (roomId: string, token?: string): string => {
+  const url = new URL(`${defaultConfig.baseURL}/rooms/${encodeURIComponent(roomId)}`)
+  if (token) url.searchParams.set('token', token)
+  return url.toString()
+}
 
 export default guestApi

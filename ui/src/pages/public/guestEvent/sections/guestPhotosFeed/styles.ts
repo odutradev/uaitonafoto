@@ -13,7 +13,18 @@ export const feedGridStyles: SxProps<Theme> = {
 }
 
 export const photoCardStyles: SxProps<Theme> = {
-  overflow: 'hidden'
+  overflow: 'hidden',
+  animation: 'feedCardEntrance 0.4s ease-out',
+  '@keyframes feedCardEntrance': {
+    from: {
+      opacity: 0,
+      transform: 'translateY(12px) scale(0.98)'
+    },
+    to: {
+      opacity: 1,
+      transform: 'translateY(0) scale(1)'
+    }
+  }
 }
 
 export const photoImageStyles: SxProps<Theme> = {

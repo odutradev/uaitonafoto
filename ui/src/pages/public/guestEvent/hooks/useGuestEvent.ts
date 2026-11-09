@@ -10,7 +10,7 @@ import {
   toggleGuestPhotoLike,
   uploadGuestPhoto
 } from '@actions/guest'
-import { clearGuestToken, getStoredGuestToken, storeGuestToken } from '@actions/guest/client'
+import { buildRoomStreamUrl, clearGuestToken, getStoredGuestToken, storeGuestToken } from '@actions/guest/client'
 import { getErrorMessage } from '@config/events'
 
 import type { PaginationMeta } from '@actions/events/types'
@@ -87,6 +87,90 @@ const useGuestEvent = (eventToken: string) => {
   useEffect(() => {
     if (guestToken) loadFeed(guestToken, page)
   }, [guestToken, page, loadFeed])
+
+  useEffect(() => {
+    if (!guestToken || !eventToken) return undefined
+
+    let isActive = true
+    let eventSource: EventSource | null = null
+
+    if (typeof window !== 'undefined' && 'EventSource' in window) {
+      const streamUrl = buildRoomStreamUrl(eventToken, guestToken)
+      eventSource = new EventSource(streamUrl)
+
+      eventSource.addEventListener('photo:new', (e: MessageEvent) => {
+        if (!isActive) return
+        try {
+          const photo = JSON.parse(e.data) as GuestPhoto
+          if (!photo?.id) return
+
+          setPhotos((current) => {
+            if (current.some((p) => p.id === photo.id)) return current
+            if (page === 1) {
+              const adaptedPhoto: GuestPhoto = {
+                ...photo,
+                mine: photo.guestName === guest?.name
+              }
+              return [adaptedPhoto, ...current].slice(0, FEED_PAGE_SIZE)
+            }
+            return current
+          })
+
+          setMeta((prev) => {
+            if (!prev) return null
+            const total = prev.total + 1
+            return {
+              ...prev,
+              total,
+              totalPages: Math.ceil(total / FEED_PAGE_SIZE)
+            }
+          })
+        } catch {
+          // Ignore parse error
+        }
+      })
+
+      eventSource.addEventListener('photo:delete', (e: MessageEvent) => {
+        if (!isActive) return
+        try {
+          const { photoId } = JSON.parse(e.data) as { photoId: string }
+          if (!photoId) return
+
+          setPhotos((current) => current.filter((p) => p.id !== photoId))
+          setMeta((prev) => {
+            if (!prev) return null
+            const total = Math.max(0, prev.total - 1)
+            return {
+              ...prev,
+              total,
+              totalPages: Math.max(1, Math.ceil(total / FEED_PAGE_SIZE))
+            }
+          })
+        } catch {
+          // Ignore parse error
+        }
+      })
+
+      eventSource.addEventListener('photo:like', (e: MessageEvent) => {
+        if (!isActive) return
+        try {
+          const { photoId, likesCount } = JSON.parse(e.data) as { photoId: string; likesCount: number }
+          if (!photoId) return
+
+          setPhotos((current) =>
+            current.map((item) => (item.id === photoId ? { ...item, likesCount } : item))
+          )
+        } catch {
+          // Ignore parse error
+        }
+      })
+    }
+
+    return () => {
+      isActive = false
+      if (eventSource) eventSource.close()
+    }
+  }, [guestToken, eventToken, page, guest?.name])
 
   const join = async (name: string, pin?: string) => {
     try {
