@@ -34,7 +34,8 @@ const settingsSchema = new Schema(
     pin: { type: String, required: true, match: /^\d{4}$/ },
     pinRotate: { type: Boolean, default: true },
     pinRotationMinutes: { type: Number, enum: [5, 15, 30, 60], default: 15 },
-    pinUpdatedAt: { type: String, default: () => new Date().toISOString() }
+    pinUpdatedAt: { type: String, default: () => new Date().toISOString() },
+    moderationEnabled: { type: Boolean, default: false }
   },
   { _id: false }
 )

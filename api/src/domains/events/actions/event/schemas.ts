@@ -59,6 +59,10 @@ export const eventSettingsSchema = z
     pinUpdatedAt: z.string().openapi({
       example: '2026-11-08T17:00:00.000Z',
       description: 'Instante da última geração/alteração do PIN'
+    }),
+    moderationEnabled: z.boolean().default(false).optional().openapi({
+      example: false,
+      description: 'Indica se fotos passam por moderação prévia da equipe antes de aparecerem no telão'
     })
   })
   .openapi('EventSettings')

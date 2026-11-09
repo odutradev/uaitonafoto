@@ -17,6 +17,7 @@ export interface EventSettings {
   pinRotate: boolean
   pinRotationMinutes: PinRotationMinutes
   pinUpdatedAt: string
+  moderationEnabled?: boolean
 }
 
 export interface EventMember {

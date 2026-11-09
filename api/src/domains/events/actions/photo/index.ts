@@ -86,6 +86,8 @@ export const uploadPhoto = defineAction(
       contentType: imageType.contentType
     })
 
+    const isModerationOn = Boolean(event.settings.moderationEnabled)
+
     try {
       const photo = await photoRepository.create({
         id: photoId,
@@ -94,11 +96,16 @@ export const uploadPhoto = defineAction(
         storagePath: stored.path,
         url: stored.publicUrl,
         contentType: stored.contentType,
-        size: stored.size
+        size: stored.size,
+        status: isModerationOn ? 'pending' : 'approved'
       })
 
       const [response] = await toPhotoResponses([photo], guest.id)
-      broadcastEvent(event.id, 'photo:new', response)
+      if (isModerationOn) {
+        broadcastEvent(event.id, 'photo:pending', response)
+      } else {
+        broadcastEvent(event.id, 'photo:new', response)
+      }
       return response
     } catch (error) {
       await removePhotoFile(stored.path)
@@ -128,7 +135,12 @@ export const listFeed = defineAction(
     if (!arePhotosVisible(context.event)) return manageError({ code: 'forbidden', details: 'Fotos indisponíveis no momento' })
 
     const { page, limit, offset } = getPaginationOptions(query)
-    const result = await photoRepository.listByEvent({ eventId: context.event.id, limit, offset })
+    const result = await photoRepository.listByEvent({
+      eventId: context.event.id,
+      status: 'approved',
+      limit,
+      offset
+    })
 
     return buildPaginatedResponse(
       { count: result.count, rows: await toPhotoResponses(result.rows, ids.guestId) },

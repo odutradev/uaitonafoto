@@ -1,4 +1,4 @@
-﻿import guestRepository from '../../../repositories/guests'
+import guestRepository from '../../../repositories/guests'
 import likeRepository from '../../../repositories/likes'
 
 import type { PhotoEntity } from '../../../repositories/photos/types'
@@ -22,6 +22,7 @@ export const toPhotoResponses = async (photos: PhotoEntity[], viewerGuestId?: st
     guestId: photo.guestId,
     guestName: guestNames.get(photo.guestId) ?? 'Convidado',
     likesCount: photo.likesCount,
+    status: photo.status ?? 'approved',
     ...(viewerGuestId ? { likedByMe: likedIds?.has(photo.id) ?? false, mine: photo.guestId === viewerGuestId } : {}),
     createdAt: photo.createdAt
   }))

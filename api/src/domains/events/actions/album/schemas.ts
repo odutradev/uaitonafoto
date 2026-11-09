@@ -85,11 +85,21 @@ export const screenResponseSchema = z
 
 export const albumQuerySchema = paginationQuerySchema
   .extend({
-    guestId: z.string().optional().openapi({ description: 'Filtra por convidado' })
+    guestId: z.string().optional().openapi({ description: 'Filtra por convidado' }),
+    status: z.enum(['all', 'pending', 'approved', 'rejected']).optional().openapi({
+      example: 'all',
+      description: 'Filtra por status de moderação (all, pending, approved, rejected)'
+    })
   })
   .openapi('AlbumQuery')
 
 export const albumResponseSchema = createPaginatedSchema(photoSchema, 'AlbumResponse')
+
+export const approveAllPhotosResponseSchema = z
+  .object({
+    approvedCount: z.number().openapi({ example: 5, description: 'Quantidade de fotos aprovadas' })
+  })
+  .openapi('ApproveAllPhotosResponse')
 
 export const eventGuestSchema = z
   .object({

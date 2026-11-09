@@ -4,6 +4,7 @@ import type {
   activateScreenSchema,
   albumQuerySchema,
   albumResponseSchema,
+  approveAllPhotosResponseSchema,
   createScreenSlotSchema,
   eventGuestListResponseSchema,
   eventIdParamsSchema,
@@ -64,3 +65,5 @@ export type ResetEventLockoutsRequest = {
 }
 
 export type ResetEventLockoutsResponse = z.infer<typeof resetEventLockoutsResponseSchema>
+
+export type ApproveAllPhotosResponse = z.infer<typeof approveAllPhotosResponseSchema>

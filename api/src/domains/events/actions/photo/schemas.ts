@@ -1,4 +1,4 @@
-﻿import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi'
+import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi'
 import { z } from 'zod'
 
 import { createPaginatedSchema, paginationQuerySchema } from '@factories/pagination/schemas'
@@ -14,6 +14,7 @@ export const photoSchema = z
     likesCount: z.number().openapi({ example: 3 }),
     likedByMe: z.boolean().optional().openapi({ description: 'Somente em respostas de convidado' }),
     mine: z.boolean().optional().openapi({ description: 'Somente em respostas de convidado' }),
+    status: z.enum(['pending', 'approved', 'rejected']).default('approved').openapi({ example: 'approved' }),
     createdAt: z.string().openapi({ example: '2026-12-20T22:10:00.000Z' })
   })
   .openapi('PhotoResponse')

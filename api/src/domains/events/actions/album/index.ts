@@ -21,6 +21,7 @@ import {
   activateScreenSchema,
   albumQuerySchema,
   albumResponseSchema,
+  approveAllPhotosResponseSchema,
   createScreenSlotSchema,
   eventGuestListResponseSchema,
   eventIdParamsSchema,
@@ -42,6 +43,7 @@ import type {
   ActivateScreenResponse,
   AlbumRequest,
   AlbumResponse,
+  ApproveAllPhotosResponse,
   CreateScreenSlotRequest,
   EventGuestListResponse,
   EventIdRequest,
@@ -309,6 +311,7 @@ export const getAlbum = defineAction(
     const result = await photoRepository.listByEvent({
       eventId: access.event.id,
       guestId: query?.guestId,
+      status: query?.status ?? 'all',
       limit,
       offset
     })
@@ -382,6 +385,108 @@ export const deleteEventPhoto = defineAction(
     broadcastEvent(photo.eventId, 'photo:delete', { photoId: photo.id })
 
     return response
+  }
+)
+
+export const approveEventPhoto = defineAction(
+  {
+    method: 'patch',
+    path: '/events/:id/photos/:photoId/approve',
+    summary: 'Aprovar foto na fila de moderação para exibição no telão',
+    tags: ['Álbum e Telão'],
+    authenticate: true,
+    schema: { params: eventPhotoParamsSchema },
+    responses: {
+      200: { description: 'Foto aprovada', schema: photoSchema },
+      403: { description: 'Usuário não pertence à equipe do evento' },
+      404: { description: 'Evento ou foto não encontrados' }
+    }
+  },
+  async ({ ids, params, manageError }: ManageRequestBody<EventPhotoRequest>): ManageRequestResponse<PhotoResponse> => {
+    if (!ids.userId) return manageError({ code: 'unauthorized' })
+
+    const access = await loadTeamAccess(params.id, ids.userId)
+    if ('error' in access) return manageError({ code: access.error })
+
+    const photo = await photoRepository.findById(params.photoId)
+    if (!photo || photo.eventId !== access.event.id) return manageError({ code: 'not_found' })
+
+    const updated = await photoRepository.updateStatus(photo.id, 'approved')
+    if (!updated) return manageError({ code: 'not_found' })
+
+    const [response] = await toPhotoResponses([updated])
+
+    broadcastEvent(access.event.id, 'photo:new', response)
+    broadcastEvent(access.event.id, 'photo:moderated', { photoId: photo.id, status: 'approved' })
+
+    return response
+  }
+)
+
+export const rejectEventPhoto = defineAction(
+  {
+    method: 'patch',
+    path: '/events/:id/photos/:photoId/reject',
+    summary: 'Rejeitar foto na fila de moderação',
+    tags: ['Álbum e Telão'],
+    authenticate: true,
+    schema: { params: eventPhotoParamsSchema },
+    responses: {
+      200: { description: 'Foto rejeitada', schema: photoSchema },
+      403: { description: 'Usuário não pertence à equipe do evento' },
+      404: { description: 'Evento ou foto não encontrados' }
+    }
+  },
+  async ({ ids, params, manageError }: ManageRequestBody<EventPhotoRequest>): ManageRequestResponse<PhotoResponse> => {
+    if (!ids.userId) return manageError({ code: 'unauthorized' })
+
+    const access = await loadTeamAccess(params.id, ids.userId)
+    if ('error' in access) return manageError({ code: access.error })
+
+    const photo = await photoRepository.findById(params.photoId)
+    if (!photo || photo.eventId !== access.event.id) return manageError({ code: 'not_found' })
+
+    const updated = await photoRepository.updateStatus(photo.id, 'rejected')
+    if (!updated) return manageError({ code: 'not_found' })
+
+    const [response] = await toPhotoResponses([updated])
+
+    broadcastEvent(access.event.id, 'photo:moderated', { photoId: photo.id, status: 'rejected' })
+
+    return response
+  }
+)
+
+export const approveAllEventPhotos = defineAction(
+  {
+    method: 'post',
+    path: '/events/:id/photos/approve-all',
+    summary: 'Aprovar todas as fotos pendentes na fila de moderação',
+    tags: ['Álbum e Telão'],
+    authenticate: true,
+    schema: { params: eventIdParamsSchema },
+    responses: {
+      200: { description: 'Todas as fotos aprovadas', schema: approveAllPhotosResponseSchema },
+      403: { description: 'Usuário não pertence à equipe do evento' },
+      404: { description: 'Evento não encontrado' }
+    }
+  },
+  async ({ ids, params, manageError }: ManageRequestBody<EventIdRequest>): ManageRequestResponse<ApproveAllPhotosResponse> => {
+    if (!ids.userId) return manageError({ code: 'unauthorized' })
+
+    const access = await loadTeamAccess(params.id, ids.userId)
+    if ('error' in access) return manageError({ code: access.error })
+
+    const approvedPhotos = await photoRepository.approveAllPending(access.event.id)
+    if (approvedPhotos.length > 0) {
+      const responses = await toPhotoResponses(approvedPhotos)
+      for (const res of responses) {
+        broadcastEvent(access.event.id, 'photo:new', res)
+        broadcastEvent(access.event.id, 'photo:moderated', { photoId: res.id, status: 'approved' })
+      }
+    }
+
+    return { approvedCount: approvedPhotos.length }
   }
 )
 
