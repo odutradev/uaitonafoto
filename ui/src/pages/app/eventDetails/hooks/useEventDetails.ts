@@ -14,9 +14,10 @@ import {
   updateEvent,
   updateEventScreen
 } from '@actions/events'
+import { buildRoomStreamUrl } from '@actions/guest/client'
 import { getErrorMessage } from '@config/events'
 
-import type { EventItem, UpdateEventPayload } from '@actions/events/types'
+import type { EventItem, EventScreenSlot, UpdateEventPayload } from '@actions/events/types'
 
 const useEventDetails = (eventId: string) => {
   const navigate = useNavigate()
@@ -92,6 +93,79 @@ const useEventDetails = (eventId: string) => {
     } catch {
     }
   }, [eventId])
+
+  useEffect(() => {
+    if (!eventId || typeof window === 'undefined' || !('EventSource' in window)) return undefined
+
+    let isActive = true
+    let eventSource: EventSource | null = null
+
+    try {
+      const streamUrl = buildRoomStreamUrl(eventId)
+      eventSource = new EventSource(streamUrl)
+
+      eventSource.addEventListener('screen:disconnect', (e: MessageEvent) => {
+        if (!isActive) return
+        try {
+          const data = JSON.parse(e.data) as { screenId?: string; screens?: EventScreenSlot[] }
+          if (Array.isArray(data.screens)) {
+            setEvent((prev) => (prev ? { ...prev, screens: data.screens! } : prev))
+          } else if (data.screenId) {
+            setEvent((prev) =>
+              prev ? { ...prev, screens: (prev.screens ?? []).filter((s) => s.id !== data.screenId) } : prev
+            )
+          }
+          toast.info('Um telão foi desconectado e a vaga foi liberada.')
+        } catch {
+          refresh()
+        }
+      })
+
+      eventSource.addEventListener('screen:activate', (e: MessageEvent) => {
+        if (!isActive) return
+        try {
+          const data = JSON.parse(e.data) as { screens?: EventScreenSlot[] }
+          if (Array.isArray(data.screens)) {
+            setEvent((prev) => (prev ? { ...prev, screens: data.screens! } : prev))
+          } else {
+            refresh()
+          }
+        } catch {
+          refresh()
+        }
+      })
+
+      eventSource.addEventListener('screen:create', (e: MessageEvent) => {
+        if (!isActive) return
+        try {
+          const data = JSON.parse(e.data) as { screens?: EventScreenSlot[] }
+          if (Array.isArray(data.screens)) {
+            setEvent((prev) => (prev ? { ...prev, screens: data.screens! } : prev))
+          }
+        } catch {
+          refresh()
+        }
+      })
+
+      eventSource.addEventListener('screen:update', (e: MessageEvent) => {
+        if (!isActive) return
+        try {
+          const data = JSON.parse(e.data) as { screens?: EventScreenSlot[] }
+          if (Array.isArray(data.screens)) {
+            setEvent((prev) => (prev ? { ...prev, screens: data.screens! } : prev))
+          }
+        } catch {
+          refresh()
+        }
+      })
+    } catch {
+    }
+
+    return () => {
+      isActive = false
+      if (eventSource) eventSource.close()
+    }
+  }, [eventId, refresh])
 
   useEffect(() => {
     const screens = event?.screens ?? []
