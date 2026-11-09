@@ -112,9 +112,35 @@ export const eventGuestSchema = z
     id: z.string().openapi({ example: '665f1c2e9b1e8a001c8e4d40' }),
     name: z.string().openapi({ example: 'Maria' }),
     photosCount: z.number().openapi({ example: 4 }),
+    isBlocked: z.boolean().optional().default(false).openapi({ example: false }),
     createdAt: z.string().openapi({ example: '2026-12-20T21:30:00.000Z' })
   })
   .openapi('EventGuestResponse')
+
+export const eventGuestParamsSchema = z
+  .object({
+    id: z.string().min(1).openapi({ example: '665f1c2e9b1e8a001c8e4d30' }),
+    guestId: z.string().min(1).openapi({ example: '665f1c2e9b1e8a001c8e4d40' })
+  })
+  .openapi('EventGuestParams')
+
+export const updateEventGuestSchema = z
+  .object({
+    name: z.string().trim().min(1).max(60).openapi({ example: 'Maria Silva' })
+  })
+  .openapi('UpdateEventGuest')
+
+export const setEventGuestBlockSchema = z
+  .object({
+    blocked: z.boolean().openapi({ example: true, description: 'Se o convidado deve ser bloqueado ou liberado' })
+  })
+  .openapi('SetEventGuestBlock')
+
+export const deleteEventGuestResponseSchema = z
+  .object({
+    deleted: z.boolean().openapi({ example: true })
+  })
+  .openapi('DeleteEventGuestResponse')
 
 export const eventGuestListResponseSchema = z.array(eventGuestSchema).openapi('EventGuestListResponse')
 

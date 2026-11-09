@@ -19,8 +19,8 @@ export const guestSessionMiddleware = async (req: Request, res: Response, next: 
   const payload = verifyGuestToken(rawToken)
   const guest = payload ? await guestRepository.findById(payload.guestId) : null
 
-  if (!guest) {
-    sendError({ code: 'token_is_not_valid', res, local: 'guestSessionMiddleware' })
+  if (!guest || guest.isBlocked) {
+    sendError({ code: 'forbidden', res, local: 'guestSessionMiddleware' })
     return
   }
 

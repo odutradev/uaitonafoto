@@ -51,8 +51,11 @@ import {
   challengeListResponseSchema,
   challengeParamsSchema,
   createScreenSlotSchema,
+  deleteEventGuestResponseSchema,
   disconnectScreenResponseSchema,
   eventGuestListResponseSchema,
+  eventGuestParamsSchema,
+  eventGuestSchema,
   eventIdParamsSchema,
   eventPhotoParamsSchema,
   eventScreenParamsSchema,
@@ -61,7 +64,9 @@ import {
   screenQuerySchema,
   screenResponseSchema,
   screenSlotListResponseSchema,
+  setEventGuestBlockSchema,
   setScreenSlotBlockSchema,
+  updateEventGuestSchema,
   updateScreenSlotSchema
 } from './schemas'
 import { photoSchema } from '../photo/schemas'
@@ -78,8 +83,11 @@ import type {
   ChallengeListResponse,
   ChallengeParamsRequest,
   CreateScreenSlotRequest,
+  DeleteEventGuestResponse,
   DisconnectScreenResponse,
   EventGuestListResponse,
+  EventGuestParamsRequest,
+  EventGuestResponse,
   EventIdRequest,
   EventPhotoRequest,
   EventScreenRequest,
@@ -88,7 +96,9 @@ import type {
   ScreenRequest,
   ScreenResponse,
   ScreenSlotListResponse,
+  SetEventGuestBlockRequest,
   SetScreenSlotBlockRequest,
+  UpdateEventGuestRequest,
   UpdateScreenSlotRequest
 } from './types'
 
@@ -545,8 +555,119 @@ export const listEventGuests = defineAction(
       id: guest.id,
       name: guest.name,
       photosCount: counts[guest.id] ?? 0,
+      isBlocked: Boolean(guest.isBlocked),
       createdAt: guest.createdAt
     }))
+  }
+)
+
+export const updateEventGuest = defineAction(
+  {
+    method: 'patch',
+    path: '/events/:id/guests/:guestId',
+    summary: 'Atualizar nome de um convidado do evento',
+    tags: ['Álbum e Telão'],
+    authenticate: true,
+    schema: { params: eventGuestParamsSchema, body: updateEventGuestSchema },
+    responses: {
+      200: { description: 'Convidado atualizado', schema: eventGuestSchema },
+      403: { description: 'Usuário não pertence à equipe do evento' },
+      404: { description: 'Evento ou convidado não encontrado' }
+    }
+  },
+  async ({ ids, params, data, manageError }: ManageRequestBody<UpdateEventGuestRequest>): ManageRequestResponse<EventGuestResponse> => {
+    if (!ids.userId) return manageError({ code: 'unauthorized' })
+
+    const access = await loadTeamAccess(params.id, ids.userId)
+    if ('error' in access) return manageError({ code: access.error })
+
+    const guest = await guestRepository.findById(params.guestId)
+    if (!guest || guest.eventId !== access.event.id) return manageError({ code: 'not_found' })
+
+    const updated = await guestRepository.updateName(params.guestId, data.name.trim())
+    if (!updated) return manageError({ code: 'not_found' })
+
+    const count = await photoRepository.countByGuest(params.guestId)
+
+    return {
+      id: updated.id,
+      name: updated.name,
+      photosCount: count,
+      isBlocked: Boolean(updated.isBlocked),
+      createdAt: updated.createdAt
+    }
+  }
+)
+
+export const setEventGuestBlock = defineAction(
+  {
+    method: 'patch',
+    path: '/events/:id/guests/:guestId/block',
+    summary: 'Bloquear ou desbloquear um convidado individualmente',
+    tags: ['Álbum e Telão'],
+    authenticate: true,
+    schema: { params: eventGuestParamsSchema, body: setEventGuestBlockSchema },
+    responses: {
+      200: { description: 'Status do convidado atualizado', schema: eventGuestSchema },
+      403: { description: 'Usuário não pertence à equipe do evento' },
+      404: { description: 'Evento ou convidado não encontrado' }
+    }
+  },
+  async ({ ids, params, data, manageError }: ManageRequestBody<SetEventGuestBlockRequest>): ManageRequestResponse<EventGuestResponse> => {
+    if (!ids.userId) return manageError({ code: 'unauthorized' })
+
+    const access = await loadTeamAccess(params.id, ids.userId)
+    if ('error' in access) return manageError({ code: access.error })
+
+    const guest = await guestRepository.findById(params.guestId)
+    if (!guest || guest.eventId !== access.event.id) return manageError({ code: 'not_found' })
+
+    const shouldBlock = Boolean(data.blocked)
+    const updated = await guestRepository.setBlocked(params.guestId, shouldBlock)
+    if (!updated) return manageError({ code: 'not_found' })
+
+    if (!shouldBlock) {
+      resetPinLockoutsForTarget([access.event.id, params.guestId], 'guest')
+    }
+
+    const count = await photoRepository.countByGuest(params.guestId)
+
+    return {
+      id: updated.id,
+      name: updated.name,
+      photosCount: count,
+      isBlocked: Boolean(updated.isBlocked),
+      createdAt: updated.createdAt
+    }
+  }
+)
+
+export const deleteEventGuest = defineAction(
+  {
+    method: 'delete',
+    path: '/events/:id/guests/:guestId',
+    summary: 'Remover um convidado do evento',
+    tags: ['Álbum e Telão'],
+    authenticate: true,
+    schema: { params: eventGuestParamsSchema },
+    responses: {
+      200: { description: 'Convidado removido com sucesso', schema: deleteEventGuestResponseSchema },
+      403: { description: 'Usuário não pertence à equipe do evento' },
+      404: { description: 'Evento ou convidado não encontrado' }
+    }
+  },
+  async ({ ids, params, manageError }: ManageRequestBody<EventGuestParamsRequest>): ManageRequestResponse<DeleteEventGuestResponse> => {
+    if (!ids.userId) return manageError({ code: 'unauthorized' })
+
+    const access = await loadTeamAccess(params.id, ids.userId)
+    if ('error' in access) return manageError({ code: access.error })
+
+    const guest = await guestRepository.findById(params.guestId)
+    if (!guest || guest.eventId !== access.event.id) return manageError({ code: 'not_found' })
+
+    await guestRepository.deleteById(params.guestId)
+
+    return { deleted: true }
   }
 )
 

@@ -9,8 +9,11 @@ import type {
   challengeListResponseSchema,
   challengeParamsSchema,
   createScreenSlotSchema,
+  deleteEventGuestResponseSchema,
   disconnectScreenResponseSchema,
   eventGuestListResponseSchema,
+  eventGuestParamsSchema,
+  eventGuestSchema,
   eventIdParamsSchema,
   eventPhotoParamsSchema,
   eventScreenParamsSchema,
@@ -19,7 +22,9 @@ import type {
   screenQuerySchema,
   screenResponseSchema,
   screenSlotListResponseSchema,
+  setEventGuestBlockSchema,
   setScreenSlotBlockSchema,
+  updateEventGuestSchema,
   updateScreenSlotSchema
 } from './schemas'
 
@@ -33,6 +38,22 @@ export type CreateScreenSlotRequest = {
 export type EventPhotoRequest = { params: z.infer<typeof eventPhotoParamsSchema> }
 
 export type EventScreenRequest = { params: z.infer<typeof eventScreenParamsSchema> }
+
+export type EventGuestParamsRequest = { params: z.infer<typeof eventGuestParamsSchema> }
+
+export type UpdateEventGuestRequest = {
+  params: z.infer<typeof eventGuestParamsSchema>
+  body: z.infer<typeof updateEventGuestSchema>
+}
+
+export type SetEventGuestBlockRequest = {
+  params: z.infer<typeof eventGuestParamsSchema>
+  body: z.infer<typeof setEventGuestBlockSchema>
+}
+
+export type DeleteEventGuestResponse = z.infer<typeof deleteEventGuestResponseSchema>
+
+export type EventGuestResponse = z.infer<typeof eventGuestSchema>
 
 export type UpdateScreenSlotRequest = {
   params: z.infer<typeof eventScreenParamsSchema>

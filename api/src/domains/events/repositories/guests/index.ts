@@ -5,7 +5,11 @@ import type { CreateGuestPayload, GuestEntity } from './types'
 
 const toGuestEntity = (doc: any): GuestEntity => {
   const { _id, ...rest } = doc
-  return { ...rest, id: String(_id) }
+  return {
+    ...rest,
+    id: String(_id),
+    isBlocked: Boolean(doc.isBlocked)
+  }
 }
 
 export const guestRepository = {
@@ -35,6 +39,21 @@ export const guestRepository = {
   listByEvent: async (eventId: string): Promise<GuestEntity[]> => {
     const docs = await GuestModel.find({ eventId }).sort({ createdAt: 1 }).lean()
     return docs.map(toGuestEntity)
+  },
+
+  updateName: async (id: string, name: string): Promise<GuestEntity | null> => {
+    const doc = await GuestModel.findByIdAndUpdate(id, { $set: { name } }, { new: true, lean: true })
+    return doc ? toGuestEntity(doc) : null
+  },
+
+  setBlocked: async (id: string, isBlocked: boolean): Promise<GuestEntity | null> => {
+    const doc = await GuestModel.findByIdAndUpdate(id, { $set: { isBlocked } }, { new: true, lean: true })
+    return doc ? toGuestEntity(doc) : null
+  },
+
+  deleteById: async (id: string): Promise<boolean> => {
+    const result = await GuestModel.findByIdAndDelete(id)
+    return Boolean(result)
   },
 
   deleteByEvent: async (eventId: string): Promise<void> => {
