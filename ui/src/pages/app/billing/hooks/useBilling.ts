@@ -8,6 +8,7 @@ import {
   cancelSubscription,
   claimFreeTrial,
   createCheckout,
+  getMyCreditUsages,
   getMyPurchases,
   getMySubscriptions,
   getMyTransactions,
@@ -17,6 +18,7 @@ import useQueryParams from '@hooks/useQueryParams'
 import useAuthStore from '@stores/auth'
 
 import type {
+  CreditUsageItem,
   PlanApiItem,
   PurchaseItem,
   SubscriptionItem,
@@ -48,6 +50,7 @@ export const useBilling = (): UseBillingReturn => {
   const [plans, setPlans] = useState<PlanApiItem[]>([])
   const [subscriptions, setSubscriptions] = useState<SubscriptionItem[]>([])
   const [purchases, setPurchases] = useState<PurchaseItem[]>([])
+  const [creditUsages, setCreditUsages] = useState<CreditUsageItem[]>([])
   const [transactions, setTransactions] = useState<TransactionItem[]>([])
   const [transactionsPage, setTransactionsPage] = useState(1)
   const [transactionsTotal, setTransactionsTotal] = useState(0)
@@ -90,15 +93,17 @@ export const useBilling = (): UseBillingReturn => {
   )
 
   const loadSummaryData = useCallback(async () => {
-    const [plansResult, subsResult, purchasesResult] = await Promise.allSettled([
+    const [plansResult, subsResult, purchasesResult, creditUsagesResult] = await Promise.allSettled([
       getPlans(),
       getMySubscriptions(),
-      getMyPurchases()
+      getMyPurchases(),
+      getMyCreditUsages()
     ])
 
     if (plansResult.status === 'fulfilled') setPlans(plansResult.value)
     if (subsResult.status === 'fulfilled') setSubscriptions(subsResult.value)
     if (purchasesResult.status === 'fulfilled') setPurchases(purchasesResult.value)
+    if (creditUsagesResult.status === 'fulfilled') setCreditUsages(creditUsagesResult.value)
   }, [])
 
   useEffect(() => {
@@ -352,6 +357,7 @@ export const useBilling = (): UseBillingReturn => {
     plans,
     subscriptions,
     purchases,
+    creditUsages,
     transactions,
     transactionsPage,
     transactionsTotal,

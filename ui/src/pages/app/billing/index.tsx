@@ -18,6 +18,7 @@ const Billing = () => {
     plans,
     subscriptions,
     purchases,
+    creditUsages,
     transactions,
     transactionsPage,
     transactionsTotal,
@@ -102,6 +103,7 @@ const Billing = () => {
 
       <TransactionsHistory
         purchases={purchases}
+        creditUsages={creditUsages}
         transactions={transactions}
         page={transactionsPage}
         total={transactionsTotal}

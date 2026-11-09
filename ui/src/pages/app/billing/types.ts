@@ -1,4 +1,5 @@
 import type {
+  CreditUsageItem,
   PlanApiItem,
   PurchaseItem,
   SubscriptionItem,
@@ -17,6 +18,7 @@ export interface UseBillingReturn {
   plans: PlanApiItem[]
   subscriptions: SubscriptionItem[]
   purchases: PurchaseItem[]
+  creditUsages: CreditUsageItem[]
   transactions: TransactionItem[]
   transactionsPage: number
   transactionsTotal: number

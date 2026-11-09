@@ -17,6 +17,7 @@ import { OpenInNew as PayNowIcon } from '@mui/icons-material'
 import Pagination from '@components/pagination'
 
 import { formatPriceInBrl } from '@pages/public/landingPage/sections/plans/utils'
+import { Link as RouterLink } from 'react-router-dom'
 
 import {
   chipCompactStyles,
@@ -115,6 +116,7 @@ const ITEMS_PER_PAGE = 6
 
 const TransactionsHistory = ({
   purchases,
+  creditUsages = [],
   transactions,
   page,
   statusFilter,
@@ -138,6 +140,14 @@ const TransactionsHistory = ({
       return matchesStatus && matchesType
     })
 
+    const matchingUsages = creditUsages.filter((usage) => {
+      const matchesStatus = statusFilter === 'ALL' || statusFilter === 'PAID'
+      const matchesType =
+        typeFilter === 'ALL' ||
+        (typeFilter === 'FREE' ? usage.creditType === 'free' : usage.creditType === 'paid')
+      return matchesStatus && matchesType
+    })
+
     const combined: UnifiedHistoryEntry[] = [
       ...matchingTransactions.map(
         (tx): UnifiedHistoryEntry => ({
@@ -154,6 +164,14 @@ const TransactionsHistory = ({
           timestamp: purchase.createdAt,
           purchase
         })
+      ),
+      ...matchingUsages.map(
+        (usage): UnifiedHistoryEntry => ({
+          kind: 'usage',
+          id: `usage_${usage.id}`,
+          timestamp: usage.createdAt,
+          usage
+        })
       )
     ]
 
@@ -161,11 +179,11 @@ const TransactionsHistory = ({
       const diff = toTimestampMs(b.timestamp) - toTimestampMs(a.timestamp)
       if (diff !== 0) return diff
       if (a.kind === b.kind) return 0
-      return a.kind === 'purchase' ? -1 : 1
+      return a.kind === 'usage' ? -1 : a.kind === 'purchase' ? 0 : 1
     })
 
     return combined
-  }, [purchases, statusFilter, transactions, typeFilter])
+  }, [creditUsages, purchases, statusFilter, transactions, typeFilter])
 
   const totalRecords = allEntries.length
   const totalPages = Math.max(1, Math.ceil(totalRecords / ITEMS_PER_PAGE))
@@ -299,6 +317,52 @@ const TransactionsHistory = ({
                     <Typography variant="body2" fontWeight={800} color="success.main">
                       {creditSummaryLabel}
                     </Typography>
+                  </Box>
+                </Box>
+              )
+            }
+
+            if (entry.kind === 'usage') {
+              const { usage } = entry
+              const rowTitle = `Uso de crédito • ${usage.eventName}`
+              const creditSummaryLabel = `-${usage.amount} ${usage.amount === 1 ? 'crédito' : 'créditos'}`
+
+              return (
+                <Box key={entry.id} sx={getTransactionRowStyles(isLast)}>
+                  <Box sx={rowMainInfoStyles}>
+                    <Box sx={rowTitleBadgesStyles}>
+                      <Typography variant="body2" fontWeight={700}>
+                        {rowTitle}
+                      </Typography>
+                      <Chip
+                        size="small"
+                        color="default"
+                        label="Utilizado"
+                        sx={chipCompactStyles}
+                      />
+                    </Box>
+
+                    <Typography variant="caption" color="text.secondary">
+                      {referenceDate} • Criação de evento • {usage.creditType === 'free' ? 'Teste grátis' : 'Crédito avulso / mensal'}
+                    </Typography>
+                  </Box>
+
+                  <Box sx={rowRightColStyles}>
+                    <Typography variant="body2" fontWeight={800} color="text.secondary">
+                      {creditSummaryLabel}
+                    </Typography>
+
+                    <Box sx={rowActionsStyles}>
+                      <Button
+                        component={RouterLink}
+                        to={`/app/events/${usage.eventId}`}
+                        variant="outlined"
+                        size="small"
+                        sx={rowButtonStyles}
+                      >
+                        Ver evento
+                      </Button>
+                    </Box>
                   </Box>
                 </Box>
               )

@@ -1,4 +1,4 @@
-import type { PurchaseItem, TransactionItem } from '@actions/payments/types'
+import type { CreditUsageItem, PurchaseItem, TransactionItem } from '@actions/payments/types'
 import type { TransactionStatusFilter, TransactionTypeFilter } from '../../types'
 
 export type UnifiedHistoryEntry =
@@ -14,9 +14,16 @@ export type UnifiedHistoryEntry =
       timestamp: string
       purchase: PurchaseItem
     }
+  | {
+      kind: 'usage'
+      id: string
+      timestamp: string
+      usage: CreditUsageItem
+    }
 
 export interface TransactionsHistoryProps {
   purchases: PurchaseItem[]
+  creditUsages: CreditUsageItem[]
   transactions: TransactionItem[]
   page: number
   total: number

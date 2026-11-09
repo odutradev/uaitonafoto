@@ -2,6 +2,7 @@ import api from '@interceptor'
 import type {
   CheckoutResponse,
   ClaimFreeTrialResponse,
+  CreditUsageItem,
   GetMyTransactionsParams,
   PaginatedTransactionsResponse,
   PlanApiItem,
@@ -48,6 +49,11 @@ export const getMyTransactions = async (
 
 export const getMyPurchases = async (): Promise<PurchaseItem[]> => {
   const response = await api.get<PurchaseItem[]>('/payments/purchases')
+  return response.data
+}
+
+export const getMyCreditUsages = async (): Promise<CreditUsageItem[]> => {
+  const response = await api.get<CreditUsageItem[]>('/payments/credit-usages')
   return response.data
 }
 

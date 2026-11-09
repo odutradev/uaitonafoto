@@ -94,6 +94,16 @@ export interface PurchaseItem {
   createdAt: string
 }
 
+export interface CreditUsageItem {
+  id: string
+  userId: string
+  eventId: string
+  eventName: string
+  creditType: 'free' | 'paid'
+  amount: number
+  createdAt: string
+}
+
 export interface PaginationMeta {
   totalPages: number
   limit: number
