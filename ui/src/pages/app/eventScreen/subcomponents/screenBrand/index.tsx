@@ -1,4 +1,4 @@
-import { Box, IconButton, Tooltip, Typography } from '@mui/material'
+import { Avatar, Box, IconButton, Tooltip, Typography } from '@mui/material'
 import {
   Fullscreen as FullscreenIcon,
   SettingsOutlined as SettingsIcon
@@ -101,7 +101,7 @@ export const ScreenBrand = ({
         </Typography>
       </Box>
 
-      {/* Lado direito: Assessoria + Controles integrados em flexbox (SEM sobreposição) */}
+      {/* Lado direito: Assessoria Whitelabel (Logo + Nome + Subtítulo) + Controles integrados */}
       {(customization?.enabled && customization.agencyName || onFullscreen || onOpenSettings) && (
         <Box
           sx={{
@@ -117,41 +117,83 @@ export const ScreenBrand = ({
               sx={(theme) => ({
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '0.8cqh',
-                px: '1.4cqh',
-                py: '0.5cqh',
+                gap: '0.9cqh',
+                px: '1.2cqh',
+                py: '0.4cqh',
                 borderRadius: '9999px',
                 bgcolor:
                   theme.palette.mode === 'dark'
                     ? 'rgba(255, 255, 255, 0.08)'
-                    : 'rgba(0, 0, 0, 0.05)',
+                    : 'rgba(0, 0, 0, 0.04)',
                 border: `1px solid ${
                   theme.palette.mode === 'dark'
-                    ? 'rgba(255, 255, 255, 0.14)'
+                    ? 'rgba(255, 210, 31, 0.25)'
                     : 'rgba(0, 0, 0, 0.1)'
                 }`,
                 backdropFilter: 'blur(8px)',
-                maxWidth: '28cqh'
+                boxShadow:
+                  theme.palette.mode === 'dark'
+                    ? 'none'
+                    : '0 2px 8px rgba(0,0,0,0.04)',
+                maxWidth: '34cqh'
               })}
             >
-              <Typography
-                sx={(theme) => ({
-                  fontSize: '1.8cqh',
-                  fontWeight: 700,
-                  color:
-                    theme.palette.mode === 'dark'
-                      ? brandColors.darkTextPrimary
-                      : brandColors.ink,
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis'
-                })}
+              {/* Logo do Whitelabel */}
+              <Avatar
+                src={customization.agencyLogoUrl}
+                sx={{
+                  width: '3.2cqh',
+                  height: '3.2cqh',
+                  bgcolor: 'primary.main',
+                  color: 'primary.contrastText',
+                  fontWeight: 900,
+                  fontSize: '1.4cqh',
+                  flexShrink: 0
+                }}
               >
-                {customization.agencyName}
-              </Typography>
+                {(customization.agencyName || 'A')[0].toUpperCase()}
+              </Avatar>
+
+              {/* Nome e Subtítulo do Whitelabel */}
+              <Box sx={{ display: 'flex', flexDirection: 'column', minWidth: 0, textAlign: 'left' }}>
+                <Typography
+                  sx={(theme) => ({
+                    fontFamily: "'Bricolage Grotesque', system-ui, sans-serif",
+                    fontSize: '1.7cqh',
+                    fontWeight: 800,
+                    lineHeight: 1.15,
+                    color:
+                      theme.palette.mode === 'dark'
+                        ? brandColors.darkTextPrimary
+                        : brandColors.ink,
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis'
+                  })}
+                >
+                  {customization.agencyName}
+                </Typography>
+                <Typography
+                  sx={(theme) => ({
+                    fontFamily: "'DM Sans', system-ui, sans-serif",
+                    fontSize: '1.2cqh',
+                    lineHeight: 1.1,
+                    color:
+                      theme.palette.mode === 'dark'
+                        ? brandColors.darkTextSecondary
+                        : brandColors.textGray,
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis'
+                  })}
+                >
+                  {customization.agencyTagline || 'Assessoria & Cerimonial'}
+                </Typography>
+              </Box>
             </Box>
           )}
 
+          {/* Botões de Ação (Tela cheia e Configurações) */}
           {(onFullscreen || onOpenSettings) && (
             <Box
               sx={(theme) => ({
