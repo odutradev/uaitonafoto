@@ -139,7 +139,9 @@ export const ScreenBrand = ({
                     : theme.palette.mode === 'dark'
                       ? 'none'
                       : '0 2px 8px rgba(0,0,0,0.04)',
-                  maxWidth: '34cqh'
+                  maxWidth: '34cqh',
+                  flexShrink: 1,
+                  minWidth: 0
                 }
               }}
             >
@@ -226,6 +228,7 @@ export const ScreenBrand = ({
                     : '0 2px 8px rgba(0,0,0,0.06)',
                 transition: 'opacity 0.2s ease',
                 opacity: 0.6,
+                flexShrink: 0,
                 '&:hover, &:focus-within': {
                   opacity: 1
                 }
