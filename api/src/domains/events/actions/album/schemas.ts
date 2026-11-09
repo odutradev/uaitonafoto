@@ -39,6 +39,12 @@ export const updateScreenSlotSchema = z
   })
   .openapi('UpdateScreenSlot')
 
+export const setScreenSlotBlockSchema = z
+  .object({
+    blocked: z.boolean().openapi({ example: true, description: 'Se o telão deve ser bloqueado ou desbloqueado' })
+  })
+  .openapi('SetScreenSlotBlock')
+
 export const screenSlotListResponseSchema = z.array(eventScreenSlotSchema).openapi('ScreenSlotListResponse')
 
 export const activateScreenSchema = z

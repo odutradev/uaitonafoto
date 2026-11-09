@@ -47,13 +47,14 @@ export interface EventScreenSlot {
   createdAt: string
   activatedAt?: string
   lastSeenAt?: string
+  isBlocked?: boolean
 }
 
 export interface EventScreenHistoryEntry {
   id: string
   screenId: string
   name?: string
-  action: 'connected' | 'disconnected'
+  action: 'created' | 'updated' | 'deleted' | 'connected' | 'disconnected' | 'blocked' | 'unblocked'
   timestamp: string
 }
 

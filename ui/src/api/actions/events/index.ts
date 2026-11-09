@@ -119,6 +119,13 @@ export const updateEventScreen = async (id: string, screenId: string, name?: str
   return response.data
 }
 
+export const setEventScreenBlock = async (id: string, screenId: string, blocked: boolean): Promise<EventScreenSlot[]> => {
+  const response = await api.patch<EventScreenSlot[]>(`/events/${id}/screens/${screenId}/block`, {
+    blocked
+  })
+  return response.data
+}
+
 export const getEventAlbum = async (id: string, params?: AlbumParams): Promise<Paginated<EventPhoto>> => {
   const response = await api.get<Paginated<EventPhoto>>(`/events/${id}/album`, { params })
   return response.data

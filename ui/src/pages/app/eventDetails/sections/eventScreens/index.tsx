@@ -17,6 +17,7 @@ import {
   DeleteOutline as DeleteIcon,
   EditOutlined as EditIcon,
   LockOpenOutlined as LockOpenIcon,
+  LockOutlined as LockIcon,
   OpenInNewOutlined as OpenIcon,
   PowerOffOutlined as PowerOffIcon,
   RefreshOutlined as RefreshIcon
@@ -50,6 +51,14 @@ import type { EventScreensProps } from './types'
 const SCREEN_ONLINE_TIMEOUT_MS = 30_000
 
 const getScreenStatusBadge = (slot: EventScreenSlot) => {
+  if (slot.isBlocked) {
+    return {
+      status: 'blocked' as const,
+      label: 'Bloqueado',
+      detail: 'Telão bloqueado pela organização'
+    }
+  }
+
   if (!slot.activatedAt) {
     return {
       status: 'pending' as const,
@@ -84,6 +93,7 @@ const EventScreens = ({
   onAddScreen,
   onDisconnectScreen,
   onUpdateScreen,
+  onToggleBlockScreen,
   onRefresh,
   onUnlockLockouts
 }: EventScreensProps) => {
@@ -149,6 +159,16 @@ const EventScreens = ({
     setIsManagingScreen(true)
     await onDisconnectScreen(screenId)
     setIsManagingScreen(false)
+  }
+
+  const handleToggleBlockScreen = async (screenId: string, blocked: boolean) => {
+    if (!onToggleBlockScreen) return
+    setIsManagingScreen(true)
+    try {
+      await onToggleBlockScreen(screenId, blocked)
+    } finally {
+      setIsManagingScreen(false)
+    }
   }
 
   const handleOpenRenameModal = (slot: EventScreenSlot) => {
@@ -290,6 +310,25 @@ const EventScreens = ({
                     </Box>
 
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.25, flexShrink: 0 }}>
+                      {onToggleBlockScreen && (
+                        <Tooltip title={slot.isBlocked ? 'Desbloquear telão' : 'Bloquear telão'}>
+                          <IconButton
+                            size="small"
+                            onClick={() => handleToggleBlockScreen(slot.id, !slot.isBlocked)}
+                            disabled={isManagingScreen}
+                            aria-label={slot.isBlocked ? 'Desbloquear telão' : 'Bloquear telão'}
+                            sx={{
+                              ...compactIconButtonStyles,
+                              color: slot.isBlocked ? 'warning.main' : 'text.secondary',
+                              '&:hover': {
+                                color: slot.isBlocked ? 'warning.light' : 'text.primary'
+                              }
+                            }}
+                          >
+                            {slot.isBlocked ? <LockOpenIcon sx={{ fontSize: 16 }} /> : <LockIcon sx={{ fontSize: 16 }} />}
+                          </IconButton>
+                        </Tooltip>
+                      )}
                       <Tooltip title="Renomear telão">
                         <IconButton
                           size="small"

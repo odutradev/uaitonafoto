@@ -20,7 +20,8 @@ const screenSlotSchema = new Schema(
     pin: { type: String, required: true, match: /^\d{4}$/ },
     createdAt: { type: String, default: () => new Date().toISOString() },
     activatedAt: { type: String },
-    lastSeenAt: { type: String }
+    lastSeenAt: { type: String },
+    isBlocked: { type: Boolean, default: false }
   },
   { _id: false }
 )
@@ -30,7 +31,11 @@ const screenHistorySchema = new Schema(
     id: { type: String, required: true },
     screenId: { type: String, required: true },
     name: { type: String, trim: true },
-    action: { type: String, enum: ['connected', 'disconnected'], required: true },
+    action: {
+      type: String,
+      enum: ['created', 'updated', 'deleted', 'connected', 'disconnected', 'blocked', 'unblocked'],
+      required: true
+    },
     timestamp: { type: String, default: () => new Date().toISOString() }
   },
   { _id: false }

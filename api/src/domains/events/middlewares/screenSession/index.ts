@@ -34,7 +34,7 @@ export const screenSessionMiddleware = async (req: Request, res: Response, next:
 
   const slot = event.screens.find((item) => item.id === payload.screenId)
 
-  if (!event || !slot) {
+  if (!event || !slot || slot.isBlocked) {
     sendError({ code: 'token_is_not_valid', res, local: 'screenSessionMiddleware' })
     return
   }

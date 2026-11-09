@@ -20,7 +20,10 @@ const toEventEntity = (doc: any): EventEntity => {
     planTier: rest.planTier ?? 'single',
     customization: doc.customization ?? undefined,
     closedAt: doc.closedAt ?? undefined,
-    screens,
+    screens: screens.map((s: any) => ({
+      ...s,
+      isBlocked: Boolean(s.isBlocked)
+    })),
     screenHistory: doc.screenHistory ?? [],
     settings: {
       uploadWindowHours: settings.uploadWindowHours ?? 24,
@@ -196,6 +199,29 @@ export const eventRepository = {
           updatedAt: activatedAt
         }
       },
+      { new: true, lean: true }
+    )
+    return doc ? toEventEntity(doc) : null
+  },
+
+  setScreenSlotBlocked: async (
+    id: string,
+    screenId: string,
+    isBlocked: boolean
+  ): Promise<EventEntity | null> => {
+    const updateObj: Record<string, unknown> = {
+      $set: {
+        'screens.$.isBlocked': isBlocked,
+        updatedAt: new Date().toISOString()
+      }
+    }
+    if (isBlocked) {
+      (updateObj.$set as Record<string, unknown>)['screens.$.activatedAt'] = undefined
+    }
+
+    const doc = await EventModel.findOneAndUpdate(
+      { _id: id, 'screens.id': screenId },
+      updateObj,
       { new: true, lean: true }
     )
     return doc ? toEventEntity(doc) : null

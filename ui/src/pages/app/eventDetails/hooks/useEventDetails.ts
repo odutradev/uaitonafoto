@@ -10,6 +10,7 @@ import {
   removeEventScreen,
   reopenEvent,
   resetEventLockouts,
+  setEventScreenBlock,
   startEvent,
   updateEvent,
   updateEventScreen
@@ -182,6 +183,33 @@ const useEventDetails = (eventId: string) => {
           refresh()
         }
       })
+
+      const handleScreenStatusChange = (e: MessageEvent) => {
+        if (!isActive) return
+        try {
+          const data = JSON.parse(e.data) as {
+            screens?: EventScreenSlot[]
+            historyEntry?: EventScreenHistoryEntry
+          }
+          setEvent((prev) => {
+            if (!prev) return prev
+            const nextScreens = Array.isArray(data.screens) ? data.screens : prev.screens
+            const nextHistory = data.historyEntry
+              ? [...(prev.screenHistory ?? []).filter((h) => h.id !== data.historyEntry!.id), data.historyEntry]
+              : prev.screenHistory
+            return {
+              ...prev,
+              screens: nextScreens,
+              screenHistory: nextHistory
+            }
+          })
+        } catch {
+          refresh()
+        }
+      }
+
+      eventSource.addEventListener('screen:block', handleScreenStatusChange)
+      eventSource.addEventListener('screen:unblock', handleScreenStatusChange)
     } catch {
     }
 
@@ -247,6 +275,24 @@ const useEventDetails = (eventId: string) => {
     [eventId]
   )
 
+  const toggleBlockScreen = useCallback(
+    async (screenId: string, blocked: boolean) => {
+      try {
+        const screens = await setEventScreenBlock(eventId, screenId, blocked)
+        setEvent((prev) => (prev ? { ...prev, screens } : prev))
+        toast.success(blocked ? 'Telão bloqueado com sucesso.' : 'Telão desbloqueado com sucesso!')
+      } catch (error) {
+        toast.error(
+          getErrorMessage(
+            error,
+            blocked ? 'Não foi possível bloquear o telão.' : 'Não foi possível desbloquear o telão.'
+          )
+        )
+      }
+    },
+    [eventId]
+  )
+
   const start = useCallback(async () => {
     try {
       const updated = await startEvent(eventId)
@@ -297,6 +343,7 @@ const useEventDetails = (eventId: string) => {
     addScreen,
     disconnectScreen,
     updateScreen,
+    toggleBlockScreen,
     refresh,
     start,
     close,

@@ -61,6 +61,7 @@ import {
   screenQuerySchema,
   screenResponseSchema,
   screenSlotListResponseSchema,
+  setScreenSlotBlockSchema,
   updateScreenSlotSchema
 } from './schemas'
 import { photoSchema } from '../photo/schemas'
@@ -87,6 +88,7 @@ import type {
   ScreenRequest,
   ScreenResponse,
   ScreenSlotListResponse,
+  SetScreenSlotBlockRequest,
   UpdateScreenSlotRequest
 } from './types'
 
@@ -220,6 +222,56 @@ export const updateScreenSlot = defineAction(
   }
 )
 
+export const setScreenSlotBlock = defineAction(
+  {
+    method: 'patch',
+    path: '/events/:id/screens/:screenId/block',
+    summary: 'Bloquear ou desbloquear um telão individualmente',
+    tags: ['Álbum e Telão'],
+    authenticate: true,
+    schema: { params: eventScreenParamsSchema, body: setScreenSlotBlockSchema },
+    responses: {
+      200: { description: 'Lista atualizada de telões do evento', schema: screenSlotListResponseSchema },
+      403: { description: 'Usuário não pertence à equipe do evento' },
+      404: { description: 'Evento ou telão não encontrado' }
+    }
+  },
+  async ({ ids, params, data, manageError }: ManageRequestBody<SetScreenSlotBlockRequest>): ManageRequestResponse<ScreenSlotListResponse> => {
+    if (!ids.userId) return manageError({ code: 'unauthorized' })
+
+    const access = await loadTeamAccess(params.id, ids.userId)
+    if ('error' in access) return manageError({ code: access.error })
+
+    const slot = access.event.screens.find((s) => s.id === params.screenId)
+    if (!slot) return manageError({ code: 'not_found' })
+
+    const shouldBlock = Boolean(data?.blocked)
+    const updated = await eventRepository.setScreenSlotBlocked(access.event.id, params.screenId, shouldBlock)
+    if (!updated) return manageError({ code: 'not_found' })
+
+    if (!shouldBlock) {
+      resetPinLockoutsForTarget([access.event.id, params.screenId], 'screen')
+    }
+
+    const historyEntry: EventScreenHistoryEntry = {
+      id: randomUUID(),
+      screenId: params.screenId,
+      name: slot.name,
+      action: shouldBlock ? 'blocked' : 'unblocked',
+      timestamp: new Date().toISOString()
+    }
+    await eventRepository.addScreenHistory(access.event.id, historyEntry)
+
+    broadcastEvent(access.event.id, shouldBlock ? 'screen:block' : 'screen:unblock', {
+      screenId: params.screenId,
+      screens: updated.screens,
+      historyEntry
+    })
+
+    return updated.screens
+  }
+)
+
 export const activateScreen = defineAction(
   {
     method: 'post',
@@ -266,6 +318,13 @@ export const activateScreen = defineAction(
       return manageError({
         code: failure.isPermanent ? 'forbidden' : failure.isLocked ? 'too_many_requests' : 'forbidden',
         details: failure.message
+      })
+    }
+
+    if (slot.isBlocked) {
+      return manageError({
+        code: 'forbidden',
+        details: 'Este telão foi bloqueado pela organização do evento.'
       })
     }
 

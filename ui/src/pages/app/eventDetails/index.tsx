@@ -48,6 +48,7 @@ const EventDetails = () => {
     addScreen,
     disconnectScreen,
     updateScreen,
+    toggleBlockScreen,
     refresh,
     start,
     close,
@@ -172,6 +173,7 @@ const EventDetails = () => {
           onAddScreen={addScreen}
           onDisconnectScreen={disconnectScreen}
           onUpdateScreen={updateScreen}
+          onToggleBlockScreen={toggleBlockScreen}
           onRefresh={refresh}
           onUnlockLockouts={() => unlockPin('screen')}
         />

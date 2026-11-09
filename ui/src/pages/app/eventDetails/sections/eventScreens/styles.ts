@@ -123,7 +123,7 @@ export const screenSlotHeaderStyles: SxProps<Theme> = {
   gap: 1
 }
 
-export const statusPillStyles = (status: 'online' | 'offline' | 'pending'): SxProps<Theme> => ({
+export const statusPillStyles = (status: 'online' | 'offline' | 'pending' | 'blocked'): SxProps<Theme> => ({
   px: 0.85,
   py: 0.2,
   borderRadius: '6px',
@@ -144,6 +144,11 @@ export const statusPillStyles = (status: 'online' | 'offline' | 'pending'): SxPr
     bgcolor: 'transparent',
     color: 'text.secondary',
     borderColor: 'divider'
+  }),
+  ...(status === 'blocked' && {
+    bgcolor: 'rgba(239, 68, 68, 0.12)',
+    color: 'error.main',
+    borderColor: 'rgba(239, 68, 68, 0.3)'
   })
 })
 

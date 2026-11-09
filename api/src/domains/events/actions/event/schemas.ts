@@ -107,7 +107,8 @@ export const eventScreenSlotSchema = z
     pin: eventPinSchema,
     createdAt: z.string().openapi({ example: '2026-11-08T17:00:00.000Z' }),
     activatedAt: z.string().optional().openapi({ example: '2026-11-08T17:05:00.000Z' }),
-    lastSeenAt: z.string().optional().openapi({ example: '2026-11-08T18:00:00.000Z', description: 'Último polling/atividade' })
+    lastSeenAt: z.string().optional().openapi({ example: '2026-11-08T18:00:00.000Z', description: 'Último polling/atividade' }),
+    isBlocked: z.boolean().optional().default(false).openapi({ example: false, description: 'Se o telão está bloqueado' })
   })
   .openapi('EventScreenSlot')
 
@@ -116,7 +117,9 @@ export const eventScreenHistoryEntrySchema = z
     id: z.string().openapi({ example: '665f1c2e9b1e8a001c8e4d99' }),
     screenId: z.string().openapi({ example: '665f1c2e9b1e8a001c8e4d88' }),
     name: z.string().optional().openapi({ example: 'Telão Entrada' }),
-    action: z.enum(['connected', 'disconnected']).openapi({ example: 'connected' }),
+    action: z
+      .enum(['created', 'updated', 'deleted', 'connected', 'disconnected', 'blocked', 'unblocked'])
+      .openapi({ example: 'connected' }),
     timestamp: z.string().openapi({ example: '2026-11-09T18:00:00.000Z' })
   })
   .openapi('EventScreenHistoryEntry')
