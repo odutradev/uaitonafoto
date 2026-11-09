@@ -18,6 +18,7 @@ import {
 } from '@mui/icons-material'
 
 import Modal from '@components/modal'
+import { MAX_EVENT_ORGANIZERS } from '@config/events'
 
 import useEventTeam from '../../hooks/useEventTeam'
 import {
@@ -43,10 +44,12 @@ const EventTeam = ({ event, currentUserId }: EventTeamProps) => {
   const [memberToRemove, setMemberToRemove] = useState<TeamMember | null>(null)
   const [isRemoving, setIsRemoving] = useState(false)
   const isCreator = event.myRole === 'creator'
+  const organizersCount = members.filter((member) => member.role === 'organizer').length
+  const isLimitReached = organizersCount >= MAX_EVENT_ORGANIZERS
 
   const handleAdd = async (submitEvent: FormEvent<HTMLFormElement>) => {
     submitEvent.preventDefault()
-    if (!email.trim()) return
+    if (!email.trim() || isLimitReached) return
     setIsAdding(true)
     if (await add(email.trim())) setEmail('')
     setIsAdding(false)
@@ -124,10 +127,12 @@ const EventTeam = ({ event, currentUserId }: EventTeamProps) => {
           <Box component="form" onSubmit={handleAdd} sx={addOrganizerSectionStyles}>
             <Box>
               <Typography variant="subtitle2" fontWeight={700}>
-                Convidar novo organizador
+                Convidar novo organizador ({organizersCount}/{MAX_EVENT_ORGANIZERS})
               </Typography>
               <Typography variant="caption" color="text.secondary">
-                Informe o e-mail de uma pessoa que já possui conta na plataforma.
+                {isLimitReached
+                  ? 'Limite de 5 organizadores atingido para este evento.'
+                  : 'Informe o e-mail de uma pessoa que já possui conta na plataforma.'}
               </Typography>
             </Box>
 
@@ -138,13 +143,15 @@ const EventTeam = ({ event, currentUserId }: EventTeamProps) => {
                 placeholder="Ex: assessoria@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                disabled={isAdding || isLimitReached}
+                helperText={isLimitReached ? 'Remova um organizador para adicionar outro.' : undefined}
                 required
                 fullWidth
               />
               <Button
                 type="submit"
                 variant="outlined"
-                disabled={isAdding || !email.trim()}
+                disabled={isAdding || !email.trim() || isLimitReached}
                 startIcon={isAdding ? <CircularProgress size={16} color="inherit" /> : <AddPersonIcon fontSize="small" />}
                 sx={teamButtonStyles}
               >

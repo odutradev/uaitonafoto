@@ -39,6 +39,7 @@ export const eventPhaseLabels: Record<EventPhase, string> = {
 }
 
 export const MAX_EVENT_SCREENS = 2
+export const MAX_EVENT_ORGANIZERS = 5
 
 export const buildGuestLink = (guestToken: string): string => `${window.location.origin}/e/${guestToken}`
 
