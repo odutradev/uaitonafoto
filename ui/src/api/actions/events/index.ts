@@ -130,3 +130,10 @@ export const resetEventLockouts = async (
   const response = await api.post<ResetLockoutsResponse>(`/events/${id}/lockout/reset`, { scope })
   return response.data
 }
+
+export const downloadEventAlbumZip = async (id: string): Promise<Blob> => {
+  const response = await api.get<Blob>(`/events/${id}/album/download-zip`, {
+    responseType: 'blob'
+  })
+  return response.data
+}
