@@ -3,12 +3,14 @@ import {
   Button,
   Card,
   Chip,
+  CircularProgress,
   IconButton,
   Tooltip,
   Typography
 } from '@mui/material'
 import {
   ContentCopyOutlined as CopyIcon,
+  LockOpenOutlined as LockOpenIcon,
   LockOutlined as LockIcon,
   OpenInNewOutlined as OpenIcon,
   SettingsOutlined as SettingsIcon
@@ -17,6 +19,8 @@ import { QRCodeSVG } from 'qrcode.react'
 import { toast } from 'react-toastify'
 
 import { buildGuestLink, pinRotationLabels } from '@config/events'
+
+import { useState } from 'react'
 
 import {
   linkFieldBoxStyles,
@@ -34,8 +38,19 @@ import {
 } from './styles'
 import type { ShareLinkProps } from './types'
 
-const ShareLink = ({ event, onGoToSettings }: ShareLinkProps) => {
+const ShareLink = ({ event, onGoToSettings, onUnlockLockouts }: ShareLinkProps) => {
   const link = buildGuestLink(event.guestToken)
+  const [isUnlocking, setIsUnlocking] = useState(false)
+
+  const handleUnlock = async () => {
+    if (!onUnlockLockouts) return
+    setIsUnlocking(true)
+    try {
+      await onUnlockLockouts()
+    } finally {
+      setIsUnlocking(false)
+    }
+  }
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(link)
@@ -130,6 +145,28 @@ const ShareLink = ({ event, onGoToSettings }: ShareLinkProps) => {
             </Box>
 
             <Box sx={pinActionsRowStyles}>
+              {onUnlockLockouts && (
+                <Tooltip title="Desbloqueia convidados bloqueados por tentativas incorretas de PIN">
+                  <span>
+                    <Button
+                      size="small"
+                      variant="outlined"
+                      color="inherit"
+                      startIcon={
+                        isUnlocking ? (
+                          <CircularProgress size={14} color="inherit" />
+                        ) : (
+                          <LockOpenIcon fontSize="small" />
+                        )
+                      }
+                      onClick={handleUnlock}
+                      disabled={isUnlocking}
+                    >
+                      Desbloquear acessos
+                    </Button>
+                  </span>
+                </Tooltip>
+              )}
               <Button
                 size="small"
                 variant="outlined"

@@ -49,7 +49,8 @@ const EventDetails = () => {
     refresh,
     start,
     close,
-    reopen
+    reopen,
+    unlockPin
   } = useEventDetails(id)
 
   const rawTab = searchParams.get('tab')
@@ -151,6 +152,7 @@ const EventDetails = () => {
         <ShareLink
           event={event}
           onGoToSettings={() => handleTabChange(null, 'settings')}
+          onUnlockLockouts={() => unlockPin('guest')}
         />
       )}
       {activeTab === 'screens' && (
@@ -161,6 +163,7 @@ const EventDetails = () => {
           onDisconnectScreen={disconnectScreen}
           onUpdateScreen={updateScreen}
           onRefresh={refresh}
+          onUnlockLockouts={() => unlockPin('screen')}
         />
       )}
       {activeTab === 'album' && <EventAlbum event={event} />}

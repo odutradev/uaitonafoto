@@ -7,5 +7,6 @@ export interface EventScreensProps {
   onDisconnectScreen: (screenId: string) => Promise<void>
   onUpdateScreen: (screenId: string, name?: string) => Promise<void>
   onRefresh?: () => Promise<void>
+  onUnlockLockouts?: () => Promise<void>
 }
 

@@ -9,6 +9,7 @@ import {
   getEvent,
   removeEventScreen,
   reopenEvent,
+  resetEventLockouts,
   startEvent,
   updateEvent,
   updateEventScreen
@@ -179,6 +180,18 @@ const useEventDetails = (eventId: string) => {
     }
   }, [eventId])
 
+  const unlockPin = useCallback(
+    async (scope: 'all' | 'screen' | 'guest' = 'all') => {
+      try {
+        const result = await resetEventLockouts(eventId, scope)
+        toast.success(result.message || 'Dispositivos desbloqueados com sucesso!')
+      } catch (error) {
+        toast.error(getErrorMessage(error, 'Não foi possível desbloquear os dispositivos.'))
+      }
+    },
+    [eventId]
+  )
+
   return {
     event,
     isLoading,
@@ -190,7 +203,8 @@ const useEventDetails = (eventId: string) => {
     refresh,
     start,
     close,
-    reopen
+    reopen,
+    unlockPin
   }
 }
 

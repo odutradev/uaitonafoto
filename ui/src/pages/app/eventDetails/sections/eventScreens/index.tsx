@@ -16,6 +16,7 @@ import {
   DeleteOutline as DeleteIcon,
   EditOutlined as EditIcon,
   LiveTvOutlined as ScreenIcon,
+  LockOpenOutlined as LockOpenIcon,
   OpenInNewOutlined as OpenIcon,
   RefreshOutlined as RefreshIcon
 } from '@mui/icons-material'
@@ -82,7 +83,8 @@ const EventScreens = ({
   onAddScreen,
   onDisconnectScreen,
   onUpdateScreen,
-  onRefresh
+  onRefresh,
+  onUnlockLockouts
 }: EventScreensProps) => {
   const screenLink = buildScreenLink(event.guestToken)
   const screens = event.screens ?? []
@@ -94,6 +96,17 @@ const EventScreens = ({
   const [editingSlot, setEditingSlot] = useState<EventScreenSlot | null>(null)
   const [editNameInput, setEditNameInput] = useState('')
   const [isRefreshing, setIsRefreshing] = useState(false)
+  const [isUnlocking, setIsUnlocking] = useState(false)
+
+  const handleUnlockLockouts = async () => {
+    if (!onUnlockLockouts) return
+    setIsUnlocking(true)
+    try {
+      await onUnlockLockouts()
+    } finally {
+      setIsUnlocking(false)
+    }
+  }
 
   const handleCopyScreenLink = async () => {
     await navigator.clipboard.writeText(screenLink)
@@ -173,6 +186,29 @@ const EventScreens = ({
           </Box>
 
           <Box sx={screenHeaderActionsStyles}>
+            {onUnlockLockouts && (
+              <Tooltip title="Desbloqueia telões travados por tentativas excessivas de PIN">
+                <span>
+                  <Button
+                    variant="outlined"
+                    color="inherit"
+                    startIcon={
+                      isUnlocking ? (
+                        <CircularProgress size={16} color="inherit" />
+                      ) : (
+                        <LockOpenIcon fontSize="small" />
+                      )
+                    }
+                    onClick={handleUnlockLockouts}
+                    disabled={isUnlocking}
+                    sx={screenActionButtonStyles}
+                  >
+                    Desbloquear telões
+                  </Button>
+                </span>
+              </Tooltip>
+            )}
+
             {onRefresh && (
               <Button
                 variant="outlined"
