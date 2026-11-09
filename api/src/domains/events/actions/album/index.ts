@@ -20,7 +20,7 @@ import { findMemberRole } from '../event'
 import { resolveEventLimits } from '../../utils/eventLimits'
 import challengesData from '../../data/challenges.json'
 import type { TeamAccess } from '../../utils/types'
-import type { EventChallenge, EventType } from '../../repositories/events/types'
+import type { EventChallenge, EventScreenHistoryEntry, EventType } from '../../repositories/events/types'
 
 const DEFAULT_CHALLENGES_BY_TYPE: Record<EventType, string[]> = challengesData as Record<EventType, string[]>
 
@@ -169,12 +169,23 @@ export const removeScreenSlot = defineAction(
     const access = await loadTeamAccess(params.id, ids.userId)
     if ('error' in access) return manageError({ code: access.error })
 
+    const slot = access.event.screens.find((s) => s.id === params.screenId)
     const updated = await eventRepository.removeScreenSlot(access.event.id, params.screenId)
     if (!updated) return manageError({ code: 'not_found' })
 
+    const historyEntry: EventScreenHistoryEntry = {
+      id: randomUUID(),
+      screenId: params.screenId,
+      name: slot?.name,
+      action: 'disconnected',
+      timestamp: new Date().toISOString()
+    }
+    await eventRepository.addScreenHistory(access.event.id, historyEntry)
+
     broadcastEvent(access.event.id, 'screen:disconnect', {
       screenId: params.screenId,
-      screens: updated.screens
+      screens: updated.screens,
+      historyEntry
     })
 
     return updated.screens
@@ -272,11 +283,20 @@ export const activateScreen = defineAction(
     })
 
     const activatedEvent = await eventRepository.activateScreenSlot(foundEvent.id, slot.id, new Date().toISOString())
-    const event = await ensureCurrentEventPin(activatedEvent ?? foundEvent)
+    const historyEntry: EventScreenHistoryEntry = {
+      id: randomUUID(),
+      screenId: slot.id,
+      name: slot.name,
+      action: 'connected',
+      timestamp: new Date().toISOString()
+    }
+    const withHistory = await eventRepository.addScreenHistory(foundEvent.id, historyEntry)
+    const event = await ensureCurrentEventPin(withHistory ?? activatedEvent ?? foundEvent)
 
     broadcastEvent(event.id, 'screen:activate', {
       screenId: slot.id,
-      screens: event.screens
+      screens: event.screens,
+      historyEntry
     })
 
     return {
@@ -357,11 +377,22 @@ export const disconnectScreen = defineAction(
     const foundEvent = await eventRepository.findByIdOrGuestToken(params.id)
     if (!foundEvent) return manageError({ code: 'not_found' })
 
+    const slot = foundEvent.screens.find((s) => s.id === ids.screenId)
     const updated = await eventRepository.removeScreenSlot(foundEvent.id, ids.screenId)
+
+    const historyEntry: EventScreenHistoryEntry = {
+      id: randomUUID(),
+      screenId: ids.screenId,
+      name: slot?.name,
+      action: 'disconnected',
+      timestamp: new Date().toISOString()
+    }
+    await eventRepository.addScreenHistory(foundEvent.id, historyEntry)
 
     broadcastEvent(foundEvent.id, 'screen:disconnect', {
       screenId: ids.screenId,
-      screens: updated?.screens ?? []
+      screens: updated?.screens ?? [],
+      historyEntry
     })
 
     return { disconnected: true }

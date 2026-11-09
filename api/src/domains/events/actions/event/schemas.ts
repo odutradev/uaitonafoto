@@ -111,6 +111,16 @@ export const eventScreenSlotSchema = z
   })
   .openapi('EventScreenSlot')
 
+export const eventScreenHistoryEntrySchema = z
+  .object({
+    id: z.string().openapi({ example: '665f1c2e9b1e8a001c8e4d99' }),
+    screenId: z.string().openapi({ example: '665f1c2e9b1e8a001c8e4d88' }),
+    name: z.string().optional().openapi({ example: 'Telão Entrada' }),
+    action: z.enum(['connected', 'disconnected']).openapi({ example: 'connected' }),
+    timestamp: z.string().openapi({ example: '2026-11-09T18:00:00.000Z' })
+  })
+  .openapi('EventScreenHistoryEntry')
+
 export const eventSchema = z
   .object({
     id: z.string().openapi({ example: '665f1c2e9b1e8a001c8e4d30' }),
@@ -133,6 +143,7 @@ export const eventSchema = z
     challenges: z.array(eventChallengeSchema).optional().default([]),
     members: z.array(eventMemberSchema),
     screens: z.array(eventScreenSlotSchema),
+    screenHistory: z.array(eventScreenHistoryEntrySchema).optional().default([]),
     myRole: eventMemberRoleSchema,
     createdAt: z.string().openapi({ example: '2026-11-08T17:00:00.000Z' }),
     updatedAt: z.string().openapi({ example: '2026-11-08T17:00:00.000Z' })

@@ -49,6 +49,14 @@ export interface EventScreenSlot {
   lastSeenAt?: string
 }
 
+export interface EventScreenHistoryEntry {
+  id: string
+  screenId: string
+  name?: string
+  action: 'connected' | 'disconnected'
+  timestamp: string
+}
+
 export interface EventCustomization {
   enabled: boolean
   agencyName?: string
@@ -77,6 +85,7 @@ export interface EventEntity {
   challenges?: EventChallenge[]
   members: EventMember[]
   screens: EventScreenSlot[]
+  screenHistory?: EventScreenHistoryEntry[]
   createdAt: string
   updatedAt: string
 }

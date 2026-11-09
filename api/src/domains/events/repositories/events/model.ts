@@ -25,6 +25,17 @@ const screenSlotSchema = new Schema(
   { _id: false }
 )
 
+const screenHistorySchema = new Schema(
+  {
+    id: { type: String, required: true },
+    screenId: { type: String, required: true },
+    name: { type: String, trim: true },
+    action: { type: String, enum: ['connected', 'disconnected'], required: true },
+    timestamp: { type: String, default: () => new Date().toISOString() }
+  },
+  { _id: false }
+)
+
 const settingsSchema = new Schema(
   {
     uploadWindowHours: { type: Number, required: true, min: 0 },
@@ -80,6 +91,7 @@ const eventSchema = new Schema<EventDocument>(
     challenges: { type: [challengeSchema], default: [] },
     members: { type: [memberSchema], required: true },
     screens: { type: [screenSlotSchema], default: [] },
+    screenHistory: { type: [screenHistorySchema], default: [] },
     createdAt: { type: String, default: () => new Date().toISOString() },
     updatedAt: { type: String, default: () => new Date().toISOString() }
   },

@@ -5,6 +5,7 @@ import type {
   CreateEventPayload,
   EventEntity,
   EventMemberRole,
+  EventScreenHistoryEntry,
   EventScreenSlot,
   ListEventsByMemberParams,
   UpdateEventPayload
@@ -20,6 +21,7 @@ const toEventEntity = (doc: any): EventEntity => {
     customization: doc.customization ?? undefined,
     closedAt: doc.closedAt ?? undefined,
     screens,
+    screenHistory: doc.screenHistory ?? [],
     settings: {
       uploadWindowHours: settings.uploadWindowHours ?? 24,
       galleryDurationDays: settings.galleryDurationDays ?? 30,
@@ -204,6 +206,22 @@ export const eventRepository = {
       { _id: id, 'screens.id': screenId },
       { $set: { 'screens.$.lastSeenAt': lastSeenAt } }
     )
+  },
+
+  addScreenHistory: async (
+    id: string,
+    entry: EventScreenHistoryEntry,
+    maxEntries = 30
+  ): Promise<EventEntity | null> => {
+    const doc = await EventModel.findByIdAndUpdate(
+      id,
+      {
+        $push: { screenHistory: { $each: [entry], $slice: -maxEntries } },
+        $set: { updatedAt: new Date().toISOString() }
+      },
+      { new: true, lean: true }
+    )
+    return doc ? toEventEntity(doc) : null
   }
 }
 

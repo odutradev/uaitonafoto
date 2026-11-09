@@ -65,6 +65,7 @@ const toEventResponse = (entity: EventEntity, myRole: EventMemberRole): EventRes
     challenges: entity.challenges ?? [],
     members: entity.members,
     screens: entity.screens,
+    screenHistory: entity.screenHistory ?? [],
     myRole,
     createdAt: entity.createdAt,
     updatedAt: entity.updatedAt
