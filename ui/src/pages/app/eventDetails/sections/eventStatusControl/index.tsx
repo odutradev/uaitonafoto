@@ -315,3 +315,4 @@ const EventStatusControl = ({ event, onStart, onClose, onReopen }: EventStatusCo
 }
 
 export default EventStatusControl
+

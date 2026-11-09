@@ -6,3 +6,4 @@ export interface EventStatusControlProps {
   onClose: () => Promise<void>
   onReopen: () => Promise<void>
 }
+

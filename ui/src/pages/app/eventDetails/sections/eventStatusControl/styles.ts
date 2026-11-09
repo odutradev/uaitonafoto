@@ -45,3 +45,4 @@ export const liveDotStyles: SxProps<Theme> = {
   boxShadow: '0 0 8px #22c55e',
   display: 'inline-block'
 }
+
