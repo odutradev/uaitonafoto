@@ -184,7 +184,7 @@ export const LateralLayout = ({
             guestLink={guestLink}
             pin={pin}
             showPin={showPin}
-            variant="column-fit"
+            variant="lateral"
           />
         </Box>
       </Box>
