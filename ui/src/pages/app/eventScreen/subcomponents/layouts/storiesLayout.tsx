@@ -4,6 +4,7 @@ import { Favorite as HeartIcon } from '@mui/icons-material'
 import { formatGuestTaNaFoto } from '@config/events'
 import ScreenBrand from '../screenBrand'
 import ScreenPhotoTile from '../screenPhotoTile'
+import ScreenQrBlock from '../screenQrBlock'
 import type { EventCustomization, EventPhoto } from '@actions/events/types'
 import type { ScreenPhotoFit } from '../../types'
 
@@ -28,6 +29,7 @@ export const StoriesLayout = ({
   photos,
   currentIndex,
   onSelectPhoto,
+  guestLink,
   pin,
   showPin,
   photoFit,
@@ -35,12 +37,8 @@ export const StoriesLayout = ({
   onFullscreen,
   onOpenSettings
 }: StoriesLayoutProps) => {
-  // Foto anterior (esquerda)
-  const previousIndex = photos.length > 1 ? (currentIndex - 1 + photos.length) % photos.length : -1
-  const previousPhoto = previousIndex >= 0 ? photos[previousIndex] : null
-
   // Próxima foto (direita)
-  const nextIndex = photos.length > 2 ? (currentIndex + 1) % photos.length : -1
+  const nextIndex = photos.length > 1 ? (currentIndex + 1) % photos.length : -1
   const nextPhoto = nextIndex >= 0 ? photos[nextIndex] : null
 
   return (
@@ -74,7 +72,7 @@ export const StoriesLayout = ({
         />
       </Box>
 
-      {/* Palco dos Stories: 3 colunas (Anterior, Palco Central, Próxima) */}
+      {/* Palco dos Stories: 3 colunas (QR Code & PIN, Palco Central, Próxima Foto) */}
       <Box
         sx={{
           flex: 1,
@@ -86,100 +84,33 @@ export const StoriesLayout = ({
           position: 'relative'
         }}
       >
-        {/* Story 1 (Esquerda): Foto Anterior */}
+        {/* Story 1 (Esquerda): QR Code & PIN de Acesso */}
         <Box
-          onClick={previousPhoto ? () => onSelectPhoto(previousIndex) : undefined}
           sx={{
             height: '90%',
             aspectRatio: '9 / 16',
             borderRadius: '2.2cqh',
             overflow: 'hidden',
             position: 'relative',
-            opacity: 0.62,
             transform: 'scale(0.92)',
-            transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
-            cursor: previousPhoto ? 'pointer' : 'default',
             boxShadow: '0 10px 30px rgba(0,0,0,0.6)',
-            '&:hover': previousPhoto
-              ? {
-                  opacity: 0.9,
-                  transform: 'scale(0.95)'
-                }
-              : undefined
+            display: 'flex',
+            flexDirection: 'column'
           }}
         >
-          {/* Badge Topo: ← ANTERIOR */}
-          <Box
+          <ScreenQrBlock
+            guestLink={guestLink}
+            pin={pin}
+            showPin={showPin}
+            variant="column-fit"
             sx={{
-              position: 'absolute',
-              top: '1.6cqh',
-              left: '1.6cqh',
-              zIndex: 3,
-              bgcolor: 'rgba(0, 0, 0, 0.65)',
-              backdropFilter: 'blur(4px)',
-              color: '#d9d2bf',
-              px: '1.4cqh',
-              py: '0.6cqh',
-              borderRadius: '1cqh',
-              fontSize: '1.8cqh',
-              fontWeight: 700,
-              letterSpacing: '0.04em'
+              height: '100%',
+              width: '100%',
+              borderRadius: '2.2cqh',
+              p: '2.5cqh 2cqh',
+              gap: '1.4cqh'
             }}
-          >
-            ← ANTERIOR
-          </Box>
-
-          <ScreenPhotoTile
-            photo={previousPhoto}
-            photoFit={photoFit}
-            aspectRatio="9 / 16"
-            sx={{ height: '100%', width: '100%', borderRadius: 0 }}
           />
-
-          {/* Overlay Inferior */}
-          {previousPhoto && (
-            <Box
-              sx={{
-                position: 'absolute',
-                left: 0,
-                right: 0,
-                bottom: 0,
-                pt: '6cqh',
-                px: '2cqh',
-                pb: '2cqh',
-                background: 'linear-gradient(transparent, rgba(0,0,0,0.92))',
-                zIndex: 2
-              }}
-            >
-              <Typography
-                sx={{
-                  fontFamily: "'Bricolage Grotesque', system-ui, sans-serif",
-                  fontWeight: 800,
-                  fontSize: '2.4cqh',
-                  color: '#ffffff',
-                  lineHeight: 1.1
-                }}
-              >
-                {formatGuestTaNaFoto(previousPhoto.guestName)}
-              </Typography>
-              {previousPhoto.challengeTitle && (
-                <Typography
-                  sx={{
-                    fontFamily: "'DM Sans', system-ui, sans-serif",
-                    fontSize: '1.8cqh',
-                    color: '#b9b2a0',
-                    lineHeight: 1.2,
-                    mt: '0.4cqh',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap'
-                  }}
-                >
-                  {previousPhoto.challengeTitle}
-                </Typography>
-              )}
-            </Box>
-          )}
         </Box>
 
         {/* Story 2 (Centro): Foto Atual com Moldura Amarela Brilhante */}
