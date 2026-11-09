@@ -17,6 +17,8 @@ interface DuoLayoutProps {
   showPin: boolean
   photoFit: ScreenPhotoFit
   customization?: EventCustomization
+  onFullscreen?: () => void
+  onOpenSettings?: () => void
 }
 
 export const DuoLayout = ({
@@ -29,7 +31,9 @@ export const DuoLayout = ({
   pin,
   showPin,
   photoFit,
-  customization
+  customization,
+  onFullscreen,
+  onOpenSettings
 }: DuoLayoutProps) => {
   // Foto anterior (rec(1)[0])
   const previousIndex = photos.length > 1 ? (currentIndex - 1 + photos.length) % photos.length : -1
@@ -76,7 +80,7 @@ export const DuoLayout = ({
         onClick={previousPhoto ? () => onSelectPhoto(previousIndex) : undefined}
       />
 
-      {/* Coluna 3: Marca + QR Code empilhado + 3 miniaturas */}
+      {/* Coluna 3: Marca + Controles integrados + QR Code empilhado + 3 miniaturas */}
       <Box
         sx={{
           display: 'flex',
@@ -87,7 +91,11 @@ export const DuoLayout = ({
           minWidth: 0
         }}
       >
-        <ScreenBrand customization={customization} />
+        <ScreenBrand
+          customization={customization}
+          onFullscreen={onFullscreen}
+          onOpenSettings={onOpenSettings}
+        />
 
         <ScreenQrBlock
           guestLink={guestLink}
@@ -119,4 +127,3 @@ export const DuoLayout = ({
 }
 
 export default DuoLayout
-

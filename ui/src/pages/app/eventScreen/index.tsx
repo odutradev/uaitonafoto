@@ -32,7 +32,6 @@ import {
   activationCardStyles,
   activationWrapperStyles,
   controlsChipStyles,
-  floatingControlsStyles,
   iconButtonStyles,
   screenAgencyBadgeStyles,
   screenRootStyles,
@@ -312,33 +311,47 @@ const EventScreen = () => {
           </Box>
         </Box>
       ) : (
-        /* Telão Ativado: Palco imersivo 16:9 com container query */
+        /* Telão Ativado: Background fluido em tela cheia (100vw x 100vh) com palco imersivo */
         <Box sx={stageContainerStyles}>
-          <Box id="stage" sx={stageFrameStyles}>
-            {/* Controles flutuantes discretos para alternar tela cheia e abrir ajustes */}
-            <Box sx={floatingControlsStyles}>
-              <Tooltip title="Alternar tela cheia">
-                <IconButton
-                  aria-label="Tela cheia"
-                  onClick={handleFullscreen}
-                  size="small"
-                  sx={{ color: '#f6f1e4', p: '0.4cqh' }}
-                >
-                  <FullscreenIcon sx={{ fontSize: '2.4cqh' }} />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="Configurações do telão">
-                <IconButton
-                  aria-label="Configurações do telão"
-                  onClick={() => setIsSettingsModalOpen(true)}
-                  size="small"
-                  sx={{ color: '#f6f1e4', p: '0.4cqh' }}
-                >
-                  <SettingsIcon sx={{ fontSize: '2.4cqh' }} />
-                </IconButton>
-              </Tooltip>
-            </Box>
+          {/* Fundo ambiente cobrindo toda a tela (ultrawide, 16:9, etc.) */}
+          <Box
+            aria-hidden="true"
+            sx={{
+              position: 'absolute',
+              inset: '-10%',
+              width: '120vw',
+              height: '120vh',
+              bgcolor: '#14110c',
+              ...(currentPhoto?.url
+                ? {
+                    backgroundImage: `url('${currentPhoto.url}')`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    filter: 'blur(60px) brightness(0.35) saturate(1.4)',
+                    transform: 'scale(1.15)',
+                    transition: 'background-image 0.8s ease'
+                  }
+                : {
+                    background: 'radial-gradient(ellipse at center, #1e1912 0%, #100e0b 100%)'
+                  }),
+              pointerEvents: 'none',
+              zIndex: 0
+            }}
+          />
 
+          {/* Máscara de vinheta suave cobrindo 100% da tela */}
+          <Box
+            aria-hidden="true"
+            sx={{
+              position: 'absolute',
+              inset: 0,
+              background: 'radial-gradient(circle at center, transparent 35%, rgba(10, 8, 6, 0.75) 100%)',
+              pointerEvents: 'none',
+              zIndex: 0
+            }}
+          />
+
+          <Box id="stage" sx={stageFrameStyles}>
             {layoutMode === 'stories' ? (
               <StoriesLayout
                 currentPhoto={currentPhoto}
@@ -351,6 +364,8 @@ const EventScreen = () => {
                 showPin={showPin}
                 photoFit={photoFit}
                 customization={event?.customization}
+                onFullscreen={handleFullscreen}
+                onOpenSettings={() => setIsSettingsModalOpen(true)}
               />
             ) : layoutMode === 'stage' ? (
               <StageLayout
@@ -364,6 +379,8 @@ const EventScreen = () => {
                 showPin={showPin}
                 photoFit={photoFit}
                 customization={event?.customization}
+                onFullscreen={handleFullscreen}
+                onOpenSettings={() => setIsSettingsModalOpen(true)}
               />
             ) : layoutMode === 'mosaic' ? (
               <MosaicLayout
@@ -377,6 +394,8 @@ const EventScreen = () => {
                 showPin={showPin}
                 photoFit={photoFit}
                 customization={event?.customization}
+                onFullscreen={handleFullscreen}
+                onOpenSettings={() => setIsSettingsModalOpen(true)}
               />
             ) : layoutMode === 'duo' ? (
               <DuoLayout
@@ -390,6 +409,8 @@ const EventScreen = () => {
                 showPin={showPin}
                 photoFit={photoFit}
                 customization={event?.customization}
+                onFullscreen={handleFullscreen}
+                onOpenSettings={() => setIsSettingsModalOpen(true)}
               />
             ) : (
               <LateralLayout
@@ -403,6 +424,8 @@ const EventScreen = () => {
                 showPin={showPin}
                 photoFit={photoFit}
                 customization={event?.customization}
+                onFullscreen={handleFullscreen}
+                onOpenSettings={() => setIsSettingsModalOpen(true)}
               />
             )}
           </Box>

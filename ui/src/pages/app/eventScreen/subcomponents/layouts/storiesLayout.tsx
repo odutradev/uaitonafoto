@@ -18,6 +18,8 @@ interface StoriesLayoutProps {
   showPin: boolean
   photoFit: ScreenPhotoFit
   customization?: EventCustomization
+  onFullscreen?: () => void
+  onOpenSettings?: () => void
 }
 
 export const StoriesLayout = ({
@@ -27,7 +29,9 @@ export const StoriesLayout = ({
   currentIndex,
   onSelectPhoto,
   photoFit,
-  customization
+  customization,
+  onFullscreen,
+  onOpenSettings
 }: StoriesLayoutProps) => {
   // Foto anterior (esquerda)
   const previousIndex = photos.length > 1 ? (currentIndex - 1 + photos.length) % photos.length : -1
@@ -51,72 +55,19 @@ export const StoriesLayout = ({
         boxSizing: 'border-box'
       }}
     >
-      {/* Top Bar: Marca uaiToNaFoto AO VIVO na esquerda e Badge de Assessoria / Customização no topo */}
+      {/* Top Bar: Marca uaiToNaFoto AO VIVO na esquerda e Assessoria + Controles na direita (sem sobreposição) */}
       <Box
         sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
           mb: '2cqh',
           width: '100%',
           flexShrink: 0
         }}
       >
-        <ScreenBrand customization={undefined} />
-
-        {customization?.enabled && customization.agencyName && (
-          <Box
-            sx={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '1.2cqh',
-              px: '1.8cqh',
-              py: '0.6cqh',
-              borderRadius: '9999px',
-              bgcolor: 'rgba(26, 26, 26, 0.85)',
-              border: '1px solid rgba(255, 210, 31, 0.3)',
-              backdropFilter: 'blur(12px)',
-              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.25)'
-            }}
-          >
-            <Avatar
-              src={customization.agencyLogoUrl}
-              sx={{
-                width: '3.4cqh',
-                height: '3.4cqh',
-                bgcolor: '#2563eb',
-                color: '#ffffff',
-                fontWeight: 800,
-                fontSize: '1.6cqh'
-              }}
-            >
-              {(customization.agencyName || 'A')[0].toUpperCase()}
-            </Avatar>
-            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-              <Typography
-                sx={{
-                  fontFamily: "'Bricolage Grotesque', system-ui, sans-serif",
-                  fontWeight: 800,
-                  fontSize: '1.8cqh',
-                  lineHeight: 1.15,
-                  color: '#f6f1e4'
-                }}
-              >
-                {customization.agencyName}
-              </Typography>
-              <Typography
-                sx={{
-                  fontFamily: "'DM Sans', system-ui, sans-serif",
-                  fontSize: '1.3cqh',
-                  lineHeight: 1.1,
-                  color: '#b9b2a0'
-                }}
-              >
-                {customization.agencyTagline || 'Assessoria & Cerimonial'}
-              </Typography>
-            </Box>
-          </Box>
-        )}
+        <ScreenBrand
+          customization={customization}
+          onFullscreen={onFullscreen}
+          onOpenSettings={onOpenSettings}
+        />
       </Box>
 
       {/* Palco dos Stories: 3 colunas (Anterior, Palco Central, Próxima) */}
@@ -497,4 +448,3 @@ export const StoriesLayout = ({
 }
 
 export default StoriesLayout
-

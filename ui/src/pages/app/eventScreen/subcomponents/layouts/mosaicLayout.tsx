@@ -17,6 +17,8 @@ interface MosaicLayoutProps {
   showPin: boolean
   photoFit: ScreenPhotoFit
   customization?: EventCustomization
+  onFullscreen?: () => void
+  onOpenSettings?: () => void
 }
 
 export const MosaicLayout = ({
@@ -29,7 +31,9 @@ export const MosaicLayout = ({
   pin,
   showPin,
   photoFit,
-  customization
+  customization,
+  onFullscreen,
+  onOpenSettings
 }: MosaicLayoutProps) => {
   // Pega até 5 fotos recentes
   const recentPhotos = Array.from({ length: 5 }, (_, idx) => {
@@ -102,7 +106,12 @@ export const MosaicLayout = ({
           variant="mosaic"
           headerContent={
             <Box sx={{ mb: '1cqh' }}>
-              <ScreenBrand customization={customization} hideLiveBadge />
+              <ScreenBrand
+                customization={customization}
+                hideLiveBadge
+                onFullscreen={onFullscreen}
+                onOpenSettings={onOpenSettings}
+              />
             </Box>
           }
         />

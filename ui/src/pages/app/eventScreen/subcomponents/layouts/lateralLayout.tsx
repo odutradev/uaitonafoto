@@ -19,6 +19,8 @@ interface LateralLayoutProps {
   showPin: boolean
   photoFit: ScreenPhotoFit
   customization?: EventCustomization
+  onFullscreen?: () => void
+  onOpenSettings?: () => void
 }
 
 export const LateralLayout = ({
@@ -31,7 +33,9 @@ export const LateralLayout = ({
   pin,
   showPin,
   photoFit,
-  customization
+  customization,
+  onFullscreen,
+  onOpenSettings
 }: LateralLayoutProps) => {
   // Pega até 4 fotos recentes anteriores à atual
   const recentPhotos = Array.from({ length: 4 }, (_, idx) => {
@@ -73,7 +77,11 @@ export const LateralLayout = ({
           minWidth: 0
         }}
       >
-        <ScreenBrand customization={customization} />
+        <ScreenBrand
+          customization={customization}
+          onFullscreen={onFullscreen}
+          onOpenSettings={onOpenSettings}
+        />
 
         {/* Legenda grande em destaque */}
         <Box
@@ -182,4 +190,3 @@ export const LateralLayout = ({
 }
 
 export default LateralLayout
-
