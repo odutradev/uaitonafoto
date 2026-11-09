@@ -16,7 +16,7 @@ export const freeTrialPlan: CachedPlan = {
   currency: 'BRL',
   period: 'sem cartão',
   subBadge: 'Até 25 fotos para testar',
-  description: 'Experimente a dinâmica do telão e do aplicativo na sua festa sem nenhum compromisso financeiro.',
+  description: 'Teste o telão e o app na sua festa sem nenhum compromisso financeiro.',
   features: [
     'Até 25 fotos compartilhadas no mural',
     'Duração do evento: 4 horas no mural e telão',
@@ -45,7 +45,7 @@ export const plansConfig: PlanConfig[] = [
     currency: 'BRL',
     period: 'pagamento único',
     subBadge: 'Fotos e convidados ilimitados',
-    description: 'Perfeito para noivos, aniversariantes e formaturas contratando para uma data especial.',
+    description: 'Para casamentos, aniversários e formaturas em data única.',
     features: [
       '1 evento completo com fotos ilimitadas',
       '8 horas de telão ao vivo e recepção de fotos',
@@ -93,7 +93,7 @@ export const plansConfig: PlanConfig[] = [
     currency: 'BRL',
     period: '/mês',
     costPerEvent: 'R$ 61,75 por evento (58% de economia)',
-    description: 'Para assessores e cerimonialistas que realizam eventos com frequência regular.',
+    description: 'Para assessores e cerimonialistas com eventos regulares.',
     features: [
       'Tudo que tem no Avulso, mais:',
       '4 eventos inclusos por mês',
@@ -120,7 +120,7 @@ export const plansConfig: PlanConfig[] = [
     currency: 'BRL',
     period: '/mês',
     costPerEvent: 'R$ 44,70 por evento (70% de economia)',
-    description: 'O melhor custo-benefício para agências consolidadas com múltiplos eventos por semana.',
+    description: 'Para agências consolidadas com múltiplos eventos por semana.',
     features: [
       'Tudo que tem no Essencial, mais:',
       '10 eventos inclusos por mês',

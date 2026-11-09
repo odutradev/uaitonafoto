@@ -187,18 +187,33 @@ export const planDescriptionStyles: SxProps<Theme> = {
 
 export const featureItemStyles: SxProps<Theme> = {
   display: 'flex',
-  alignItems: 'flex-start',
-  gap: 1.25,
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  gap: 1,
   fontSize: '0.84rem',
   color: 'text.primary',
-  lineHeight: 1.45
+  lineHeight: 1.35
+}
+
+export const featureInfoButtonStyles: SxProps<Theme> = {
+  p: 0.35,
+  ml: 'auto',
+  color: 'text.secondary',
+  opacity: 0.65,
+  flexShrink: 0,
+  transition: 'all 0.2s ease',
+  '&:hover': {
+    opacity: 1,
+    color: 'primary.main',
+    bgcolor: (theme: Theme) =>
+      theme.palette.mode === 'dark' ? 'rgba(255, 207, 31, 0.12)' : 'rgba(255, 207, 31, 0.2)'
+  }
 }
 
 export const checkIconStyles: SxProps<Theme> = {
-  fontSize: 18,
+  fontSize: 17,
   color: brandColors.flashYellow,
-  flexShrink: 0,
-  mt: 0.25
+  flexShrink: 0
 }
 
 export const getPlanCtaButtonStyles = (highlighted: boolean, isDark: boolean): SxProps<Theme> => ({

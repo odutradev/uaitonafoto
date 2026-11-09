@@ -1,16 +1,19 @@
-import { Box, Button, Card, Container, Stack, Typography } from '@mui/material'
+import { Box, Button, Card, Container, IconButton, Stack, Tooltip, Typography } from '@mui/material'
 import {
   CheckCircle as CheckCircleIcon,
   ArrowForward as ArrowForwardIcon,
   AutoAwesome as AutoAwesomeIcon,
-  Bolt as BoltIcon
+  Bolt as BoltIcon,
+  InfoOutlined as InfoOutlinedIcon
 } from '@mui/icons-material'
 import { Link as RouterLink } from 'react-router-dom'
 
 import PlansSkeleton from './skeleton'
+import { resolvePlanFeature } from './featuresMap'
 import {
   checkIconStyles,
   costPerEventBadgeStyles,
+  featureInfoButtonStyles,
   featureItemStyles,
   getPlanCardStyles,
   getPlanCtaButtonStyles,
@@ -141,12 +144,63 @@ export const Plans = ({
                     )
                   }
 
+                  const info = resolvePlanFeature(feature)
+
                   return (
                     <Box key={idx} sx={featureItemStyles}>
-                      <CheckCircleIcon sx={checkIconStyles} />
-                      <Typography variant="body2" sx={{ color: 'text.primary' }}>
-                        {feature}
-                      </Typography>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 0 }}>
+                        <CheckCircleIcon sx={checkIconStyles} />
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            color: 'text.primary',
+                            fontSize: '0.84rem',
+                            fontWeight: 500,
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis'
+                          }}
+                        >
+                          {info.label}
+                        </Typography>
+                      </Box>
+
+                      <Tooltip
+                        title={info.tooltip}
+                        arrow
+                        placement="top"
+                        enterTouchDelay={50}
+                        leaveTouchDelay={3500}
+                        componentsProps={{
+                          tooltip: {
+                            sx: {
+                              bgcolor: isDark ? '#1a1813' : '#1f1d19',
+                              color: '#f8fafc',
+                              fontSize: '0.78rem',
+                              lineHeight: 1.45,
+                              p: 1.25,
+                              borderRadius: '8px',
+                              border: '1px solid',
+                              borderColor: isDark ? 'rgba(255, 214, 10, 0.3)' : 'rgba(255, 255, 255, 0.15)',
+                              boxShadow: '0 8px 24px rgba(0,0,0,0.45)',
+                              maxWidth: 260
+                            }
+                          },
+                          arrow: {
+                            sx: {
+                              color: isDark ? '#1a1813' : '#1f1d19'
+                            }
+                          }
+                        }}
+                      >
+                        <IconButton
+                          size="small"
+                          aria-label={`Mais informações sobre ${info.label}`}
+                          sx={featureInfoButtonStyles}
+                        >
+                          <InfoOutlinedIcon sx={{ fontSize: 15 }} />
+                        </IconButton>
+                      </Tooltip>
                     </Box>
                   )
                 })}
