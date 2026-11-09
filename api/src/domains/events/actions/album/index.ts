@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+import { randomUUID } from 'crypto'
 import { ZipArchive } from 'archiver'
 import defineAction from '@factories/defineAction'
 import { getStorageFile } from '@firebase/services/storage'
@@ -12,6 +13,7 @@ import { arePhotosVisible, getEventPhase, hasEventEnded } from '../../utils/even
 import { broadcastEvent, subscribeEventStream } from '../../utils/eventStream'
 import { ensureCurrentEventPin, generatePin } from '../../utils/eventPin'
 import { checkPinLockout, recordPinFailure, resetPinLockout, resetPinLockoutsForTarget } from '../../utils/pinLockout'
+import { buildDefaultChallenges } from '../../utils/defaultChallenges'
 import { loadTeamAccess } from '../../utils/loadTeamAccess'
 import { removePhotoFile } from '../../utils/photoStorage'
 import { signScreenToken } from '../../utils/screenToken'
@@ -19,9 +21,12 @@ import toPhotoResponses from '../photo/utils/toPhotoResponses'
 import {
   activateScreenResponseSchema,
   activateScreenSchema,
+  addChallengeSchema,
   albumQuerySchema,
   albumResponseSchema,
   approveAllPhotosResponseSchema,
+  challengeListResponseSchema,
+  challengeParamsSchema,
   createScreenSlotSchema,
   eventGuestListResponseSchema,
   eventIdParamsSchema,
@@ -41,9 +46,12 @@ import type { PhotoResponse } from '../photo/types'
 import type {
   ActivateScreenRequest,
   ActivateScreenResponse,
+  AddChallengeRequest,
   AlbumRequest,
   AlbumResponse,
   ApproveAllPhotosResponse,
+  ChallengeListResponse,
+  ChallengeParamsRequest,
   CreateScreenSlotRequest,
   EventGuestListResponse,
   EventIdRequest,
@@ -655,5 +663,161 @@ export const downloadAlbumZip = defineAction(
     })
 
     await archive.finalize()
+  }
+)
+
+export const getEventChallenges = defineAction(
+  {
+    method: 'get',
+    path: '/events/:id/challenges',
+    summary: 'Listar missões e desafios fotográficos do evento',
+    tags: ['Gamificação & Desafios'],
+    authenticate: true,
+    schema: { params: eventIdParamsSchema },
+    responses: {
+      200: { description: 'Lista de desafios', schema: challengeListResponseSchema },
+      403: { description: 'Usuário não pertence à equipe do evento' },
+      404: { description: 'Evento não encontrado' }
+    }
+  },
+  async ({ ids, params, manageError }: ManageRequestBody<EventIdRequest>): ManageRequestResponse<ChallengeListResponse> => {
+    if (!ids.userId) return manageError({ code: 'unauthorized' })
+
+    const access = await loadTeamAccess(params.id, ids.userId)
+    if ('error' in access) return manageError({ code: access.error })
+
+    const event = access.event
+    let challenges = event.challenges ?? []
+
+    // If challenges list is empty, initialize with default challenges based on event type
+    if (challenges.length === 0) {
+      challenges = buildDefaultChallenges(event.type)
+      await eventRepository.update(event.id, { challenges })
+    }
+
+    return challenges
+  }
+)
+
+export const addEventChallenge = defineAction(
+  {
+    method: 'post',
+    path: '/events/:id/challenges',
+    summary: 'Adicionar nova missão fotográfica ao evento',
+    tags: ['Gamificação & Desafios'],
+    authenticate: true,
+    schema: { params: eventIdParamsSchema, body: addChallengeSchema },
+    responses: {
+      200: { description: 'Desafios atualizados', schema: challengeListResponseSchema },
+      403: { description: 'Usuário não pertence à equipe do evento' },
+      404: { description: 'Evento não encontrado' }
+    }
+  },
+  async ({ ids, params, data, manageError }: ManageRequestBody<AddChallengeRequest>): ManageRequestResponse<ChallengeListResponse> => {
+    if (!ids.userId) return manageError({ code: 'unauthorized' })
+
+    const access = await loadTeamAccess(params.id, ids.userId)
+    if ('error' in access) return manageError({ code: access.error })
+
+    const currentChallenges = access.event.challenges ?? (buildDefaultChallenges(access.event.type))
+    const newChallenge = {
+      id: randomUUID(),
+      title: data.title.trim(),
+      description: data.description?.trim(),
+      active: true,
+      createdAt: new Date().toISOString()
+    }
+
+    const nextChallenges = [...currentChallenges, newChallenge]
+    await eventRepository.update(access.event.id, { challenges: nextChallenges })
+
+    return nextChallenges
+  }
+)
+
+export const deleteEventChallenge = defineAction(
+  {
+    method: 'delete',
+    path: '/events/:id/challenges/:challengeId',
+    summary: 'Remover missão fotográfica do evento',
+    tags: ['Gamificação & Desafios'],
+    authenticate: true,
+    schema: { params: challengeParamsSchema },
+    responses: {
+      200: { description: 'Desafios atualizados', schema: challengeListResponseSchema },
+      403: { description: 'Usuário não pertence à equipe do evento' },
+      404: { description: 'Evento não encontrado' }
+    }
+  },
+  async ({ ids, params, manageError }: ManageRequestBody<ChallengeParamsRequest>): ManageRequestResponse<ChallengeListResponse> => {
+    if (!ids.userId) return manageError({ code: 'unauthorized' })
+
+    const access = await loadTeamAccess(params.id, ids.userId)
+    if ('error' in access) return manageError({ code: access.error })
+
+    const currentChallenges = access.event.challenges ?? []
+    const nextChallenges = currentChallenges.filter((c) => c.id !== params.challengeId)
+
+    await eventRepository.update(access.event.id, { challenges: nextChallenges })
+
+    return nextChallenges
+  }
+)
+
+export const toggleEventChallenge = defineAction(
+  {
+    method: 'patch',
+    path: '/events/:id/challenges/:challengeId/toggle',
+    summary: 'Ativar ou desativar missão fotográfica do evento',
+    tags: ['Gamificação & Desafios'],
+    authenticate: true,
+    schema: { params: challengeParamsSchema },
+    responses: {
+      200: { description: 'Desafios atualizados', schema: challengeListResponseSchema },
+      403: { description: 'Usuário não pertence à equipe do evento' },
+      404: { description: 'Evento não encontrado' }
+    }
+  },
+  async ({ ids, params, manageError }: ManageRequestBody<ChallengeParamsRequest>): ManageRequestResponse<ChallengeListResponse> => {
+    if (!ids.userId) return manageError({ code: 'unauthorized' })
+
+    const access = await loadTeamAccess(params.id, ids.userId)
+    if ('error' in access) return manageError({ code: access.error })
+
+    const currentChallenges = access.event.challenges ?? []
+    const nextChallenges = currentChallenges.map((c) =>
+      c.id === params.challengeId ? { ...c, active: !c.active } : c
+    )
+
+    await eventRepository.update(access.event.id, { challenges: nextChallenges })
+
+    return nextChallenges
+  }
+)
+
+export const resetEventChallenges = defineAction(
+  {
+    method: 'post',
+    path: '/events/:id/challenges/reset',
+    summary: 'Restaurar missões fotográficas padrão do tipo de evento',
+    tags: ['Gamificação & Desafios'],
+    authenticate: true,
+    schema: { params: eventIdParamsSchema },
+    responses: {
+      200: { description: 'Desafios restaurados', schema: challengeListResponseSchema },
+      403: { description: 'Usuário não pertence à equipe do evento' },
+      404: { description: 'Evento não encontrado' }
+    }
+  },
+  async ({ ids, params, manageError }: ManageRequestBody<EventIdRequest>): ManageRequestResponse<ChallengeListResponse> => {
+    if (!ids.userId) return manageError({ code: 'unauthorized' })
+
+    const access = await loadTeamAccess(params.id, ids.userId)
+    if ('error' in access) return manageError({ code: access.error })
+
+    const defaultChallenges = buildDefaultChallenges(access.event.type)
+    await eventRepository.update(access.event.id, { challenges: defaultChallenges })
+
+    return defaultChallenges
   }
 )

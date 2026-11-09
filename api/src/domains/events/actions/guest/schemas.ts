@@ -1,7 +1,7 @@
 import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi'
 import { z } from 'zod'
 
-import { eventCustomizationSchema, eventPinSchema, eventTypeSchema } from '../event/schemas'
+import { eventChallengeSchema, eventCustomizationSchema, eventPinSchema, eventTypeSchema } from '../event/schemas'
 
 extendZodWithOpenApi(z)
 
@@ -25,6 +25,8 @@ export const guestEventInfoSchema = z
       description: 'Indica se é necessário informar o PIN numérico de 4 dígitos para entrar no evento'
     }),
     customization: eventCustomizationSchema.optional(),
+    challengesEnabled: z.boolean().default(false).optional(),
+    challenges: z.array(eventChallengeSchema).default([]),
     phase: eventPhaseSchema
   })
   .openapi('GuestEventInfo')

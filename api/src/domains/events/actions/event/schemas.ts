@@ -63,9 +63,23 @@ export const eventSettingsSchema = z
     moderationEnabled: z.boolean().default(false).optional().openapi({
       example: false,
       description: 'Indica se fotos passam por moderação prévia da equipe antes de aparecerem no telão'
+    }),
+    challengesEnabled: z.boolean().default(false).optional().openapi({
+      example: false,
+      description: 'Indica se as missões fotográficas interativas estão ativadas'
     })
   })
   .openapi('EventSettings')
+
+export const eventChallengeSchema = z
+  .object({
+    id: z.string().openapi({ example: '665f1c2e9b1e8a001c8e4d88' }),
+    title: z.string().openapi({ example: 'Foto com o padrinho mais animado 🕺' }),
+    description: z.string().optional(),
+    active: z.boolean().default(true).openapi({ example: true }),
+    createdAt: z.string().openapi({ example: '2026-11-09T01:00:00.000Z' })
+  })
+  .openapi('EventChallenge')
 
 export const eventSettingsInputSchema = eventSettingsSchema
   .omit({ pinUpdatedAt: true })
@@ -107,6 +121,7 @@ export const eventSchema = z
     galleryExpiresAt: z.string().openapi({ example: '2027-01-20T05:00:00.000Z' }),
     closedAt: z.string().optional().openapi({ example: '2026-12-21T02:00:00.000Z' }),
     phase: z.enum(['upcoming', 'open', 'closed', 'expired']).optional(),
+    challenges: z.array(eventChallengeSchema).optional().default([]),
     members: z.array(eventMemberSchema),
     screens: z.array(eventScreenSlotSchema),
     myRole: eventMemberRoleSchema,
@@ -124,6 +139,7 @@ export const createEventSchema = z
     startsAt: z.string().datetime().openapi({ example: '2026-12-20T21:00:00.000Z' }),
     endsAt: z.string().datetime().optional().openapi({ example: '2026-12-21T05:00:00.000Z' }),
     customization: eventCustomizationSchema.optional(),
+    challenges: z.array(eventChallengeSchema).optional(),
     settings: eventSettingsInputSchema.optional()
   })
   .openapi('CreateEvent')

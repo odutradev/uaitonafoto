@@ -10,7 +10,8 @@ export const buildDefaultEventSettings = (creditType: EventCreditType = 'paid'):
   pinRotate: true,
   pinRotationMinutes: 15,
   pinUpdatedAt: new Date().toISOString(),
-  moderationEnabled: false
+  moderationEnabled: false,
+  challengesEnabled: false
 })
 
 export default buildDefaultEventSettings

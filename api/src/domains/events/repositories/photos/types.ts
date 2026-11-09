@@ -10,11 +10,15 @@ export interface PhotoEntity {
   size: number
   likesCount: number
   status: PhotoStatus
+  challengeId?: string
+  challengeTitle?: string
   createdAt: string
 }
 
 export type CreatePhotoPayload = Omit<PhotoEntity, 'likesCount' | 'createdAt' | 'status'> & {
   status?: PhotoStatus
+  challengeId?: string
+  challengeTitle?: string
 }
 
 export interface ListPhotosParams {

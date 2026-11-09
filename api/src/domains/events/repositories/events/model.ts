@@ -35,7 +35,19 @@ const settingsSchema = new Schema(
     pinRotate: { type: Boolean, default: true },
     pinRotationMinutes: { type: Number, enum: [5, 15, 30, 60], default: 15 },
     pinUpdatedAt: { type: String, default: () => new Date().toISOString() },
-    moderationEnabled: { type: Boolean, default: false }
+    moderationEnabled: { type: Boolean, default: false },
+    challengesEnabled: { type: Boolean, default: false }
+  },
+  { _id: false }
+)
+
+const challengeSchema = new Schema(
+  {
+    id: { type: String, required: true },
+    title: { type: String, required: true, trim: true },
+    description: { type: String, trim: true },
+    active: { type: Boolean, default: true },
+    createdAt: { type: String, default: () => new Date().toISOString() }
   },
   { _id: false }
 )
@@ -63,6 +75,7 @@ const eventSchema = new Schema<EventDocument>(
     galleryExpiresAt: { type: String, required: true, index: true },
     galleryCleanedAt: { type: String },
     closedAt: { type: String },
+    challenges: { type: [challengeSchema], default: [] },
     members: { type: [memberSchema], required: true },
     screens: { type: [screenSlotSchema], default: [] },
     createdAt: { type: String, default: () => new Date().toISOString() },

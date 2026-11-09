@@ -2,9 +2,12 @@ import type { z } from 'zod'
 import type {
   activateScreenResponseSchema,
   activateScreenSchema,
+  addChallengeSchema,
   albumQuerySchema,
   albumResponseSchema,
   approveAllPhotosResponseSchema,
+  challengeListResponseSchema,
+  challengeParamsSchema,
   createScreenSlotSchema,
   eventGuestListResponseSchema,
   eventIdParamsSchema,
@@ -67,3 +70,14 @@ export type ResetEventLockoutsRequest = {
 export type ResetEventLockoutsResponse = z.infer<typeof resetEventLockoutsResponseSchema>
 
 export type ApproveAllPhotosResponse = z.infer<typeof approveAllPhotosResponseSchema>
+
+export type AddChallengeRequest = {
+  params: z.infer<typeof eventIdParamsSchema>
+  body: z.infer<typeof addChallengeSchema>
+}
+
+export type ChallengeParamsRequest = {
+  params: z.infer<typeof challengeParamsSchema>
+}
+
+export type ChallengeListResponse = z.infer<typeof challengeListResponseSchema>

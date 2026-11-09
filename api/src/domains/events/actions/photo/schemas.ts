@@ -15,6 +15,8 @@ export const photoSchema = z
     likedByMe: z.boolean().optional().openapi({ description: 'Somente em respostas de convidado' }),
     mine: z.boolean().optional().openapi({ description: 'Somente em respostas de convidado' }),
     status: z.enum(['pending', 'approved', 'rejected']).default('approved').openapi({ example: 'approved' }),
+    challengeId: z.string().optional().openapi({ example: '665f1c2e9b1e8a001c8e4d88' }),
+    challengeTitle: z.string().optional().openapi({ example: 'Foto com o padrinho mais animado 🕺' }),
     createdAt: z.string().openapi({ example: '2026-12-20T22:10:00.000Z' })
   })
   .openapi('PhotoResponse')

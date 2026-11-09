@@ -2,7 +2,7 @@ import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi'
 import { z } from 'zod'
 
 import { createPaginatedSchema, paginationQuerySchema } from '@factories/pagination/schemas'
-import { eventCustomizationSchema, eventPinSchema, eventScreenSlotSchema } from '../event/schemas'
+import { eventChallengeSchema, eventCustomizationSchema, eventPinSchema, eventScreenSlotSchema } from '../event/schemas'
 import { photoSchema } from '../photo/schemas'
 
 extendZodWithOpenApi(z)
@@ -128,3 +128,19 @@ export const resetEventLockoutsResponseSchema = z
     message: z.string().openapi({ example: 'Dispositivos desbloqueados com sucesso.' })
   })
   .openapi('ResetEventLockoutsResponse')
+
+export const addChallengeSchema = z
+  .object({
+    title: z.string().trim().min(2).max(120).openapi({ example: 'Foto com o padrinho mais animado 🕺' }),
+    description: z.string().trim().max(300).optional()
+  })
+  .openapi('AddChallenge')
+
+export const challengeParamsSchema = z
+  .object({
+    id: z.string().min(1).openapi({ example: '665f1c2e9b1e8a001c8e4d30' }),
+    challengeId: z.string().min(1).openapi({ example: '665f1c2e9b1e8a001c8e4d88' })
+  })
+  .openapi('ChallengeParams')
+
+export const challengeListResponseSchema = z.array(eventChallengeSchema).openapi('ChallengeListResponse')

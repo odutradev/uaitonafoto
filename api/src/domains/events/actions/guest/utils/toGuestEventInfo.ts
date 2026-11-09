@@ -14,6 +14,10 @@ export const toGuestEventInfo = (event: EventEntity): GuestEventInfo => ({
   photoVisibility: event.settings.photoVisibility,
   requiresPin: event.settings.pinEnabled,
   customization: event.customization,
+  challengesEnabled: Boolean(event.settings.challengesEnabled),
+  challenges: event.settings.challengesEnabled
+    ? (event.challenges?.filter((c) => c.active) ?? [])
+    : [],
   phase: getEventPhase(event)
 })
 

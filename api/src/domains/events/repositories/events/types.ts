@@ -18,6 +18,15 @@ export interface EventSettings {
   pinRotationMinutes: PinRotationMinutes
   pinUpdatedAt: string
   moderationEnabled?: boolean
+  challengesEnabled?: boolean
+}
+
+export interface EventChallenge {
+  id: string
+  title: string
+  description?: string
+  active: boolean
+  createdAt: string
 }
 
 export interface EventMember {
@@ -59,6 +68,7 @@ export interface EventEntity {
   galleryExpiresAt: string
   galleryCleanedAt?: string
   closedAt?: string
+  challenges?: EventChallenge[]
   members: EventMember[]
   screens: EventScreenSlot[]
   createdAt: string
@@ -88,6 +98,7 @@ export interface UpdateEventPayload {
   endsAt?: string
   settings?: Partial<EventSettings>
   customization?: EventCustomization
+  challenges?: EventChallenge[]
   uploadsCloseAt?: string
   galleryExpiresAt?: string
   closedAt?: string | null

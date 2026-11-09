@@ -88,6 +88,12 @@ export const uploadPhoto = defineAction(
 
     const isModerationOn = Boolean(event.settings.moderationEnabled)
 
+    const rawChallengeId = (data as Record<string, unknown> | undefined)?.challengeId ?? defaultExpress?.req?.body?.challengeId
+    const rawChallengeTitle = (data as Record<string, unknown> | undefined)?.challengeTitle ?? defaultExpress?.req?.body?.challengeTitle
+
+    const challengeId = typeof rawChallengeId === 'string' && rawChallengeId.trim() ? rawChallengeId.trim() : undefined
+    const challengeTitle = typeof rawChallengeTitle === 'string' && rawChallengeTitle.trim() ? rawChallengeTitle.trim() : undefined
+
     try {
       const photo = await photoRepository.create({
         id: photoId,
@@ -97,7 +103,9 @@ export const uploadPhoto = defineAction(
         url: stored.publicUrl,
         contentType: stored.contentType,
         size: stored.size,
-        status: isModerationOn ? 'pending' : 'approved'
+        status: isModerationOn ? 'pending' : 'approved',
+        challengeId,
+        challengeTitle
       })
 
       const [response] = await toPhotoResponses([photo], guest.id)

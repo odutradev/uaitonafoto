@@ -14,6 +14,8 @@ const photoSchema = new Schema<PhotoDocument>(
     size: { type: Number, required: true },
     likesCount: { type: Number, required: true, default: 0, min: 0 },
     status: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'approved' },
+    challengeId: { type: String },
+    challengeTitle: { type: String },
     createdAt: { type: String, default: () => new Date().toISOString() }
   },
   { timestamps: false, versionKey: false }

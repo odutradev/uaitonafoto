@@ -17,6 +17,7 @@ export const toEventResponse = (entity: EventEntity, myRole: EventMemberRole): E
   galleryExpiresAt: entity.galleryExpiresAt,
   closedAt: entity.closedAt,
   phase: getEventPhase(entity),
+  challenges: entity.challenges ?? [],
   members: entity.members,
   screens: entity.screens,
   myRole,

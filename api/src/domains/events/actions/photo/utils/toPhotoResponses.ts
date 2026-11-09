@@ -23,6 +23,8 @@ export const toPhotoResponses = async (photos: PhotoEntity[], viewerGuestId?: st
     guestName: guestNames.get(photo.guestId) ?? 'Convidado',
     likesCount: photo.likesCount,
     status: photo.status ?? 'approved',
+    challengeId: photo.challengeId,
+    challengeTitle: photo.challengeTitle,
     ...(viewerGuestId ? { likedByMe: likedIds?.has(photo.id) ?? false, mine: photo.guestId === viewerGuestId } : {}),
     createdAt: photo.createdAt
   }))
