@@ -7,12 +7,14 @@ import {
   IconButton,
   Stack,
   Switch,
+  Tooltip,
   Typography
 } from '@mui/material'
 import {
   CheckCircle as CheckIcon,
   Close as CloseIcon,
   CropFree as FitIcon,
+  DashboardCustomizeOutlined as LayoutIcon,
   DarkMode as DarkModeIcon,
   LightMode as LightModeIcon,
   PowerSettingsNew as DisconnectIcon,
@@ -49,7 +51,7 @@ interface ScreenSettingsModalProps {
   onRequestDisconnect: () => void
 }
 
-const ScreenSettingsModal = ({
+export const ScreenSettingsModal = ({
   open,
   onClose,
   layout,
@@ -70,13 +72,13 @@ const ScreenSettingsModal = ({
     <Dialog
       open={open}
       onClose={onClose}
-      maxWidth="sm"
+      maxWidth="md"
       fullWidth
       slotProps={{
         backdrop: {
           sx: {
-            backdropFilter: 'blur(6px)',
-            backgroundColor: 'rgba(0, 0, 0, 0.7)'
+            backdropFilter: 'blur(8px)',
+            backgroundColor: 'rgba(0, 0, 0, 0.75)'
           }
         },
         paper: {
@@ -92,56 +94,74 @@ const ScreenSettingsModal = ({
         size="small"
         sx={{
           position: 'absolute',
-          top: 14,
-          right: 14,
+          top: 16,
+          right: 16,
           color: 'text.secondary',
+          bgcolor: (theme) =>
+            theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.04)',
           '&:hover': {
             color: 'text.primary',
-            bgcolor: 'action.hover'
+            bgcolor: (theme) =>
+              theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.08)'
           }
         }}
       >
         <CloseIcon fontSize="small" />
       </IconButton>
 
-      {/* Cabeçalho */}
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, pr: 5, mb: 0.5 }}>
+      {/* Cabeçalho do Modal */}
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.75, pr: 6, mb: 1.5 }}>
         <Box
           sx={{
-            width: 42,
-            height: 42,
-            borderRadius: '12px',
+            width: 46,
+            height: 46,
+            borderRadius: '14px',
             bgcolor: 'rgba(255, 207, 31, 0.15)',
             color: brandColors.flashYellow,
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center'
+            justifyContent: 'center',
+            flexShrink: 0
           }}
         >
-          <SettingsIcon sx={{ fontSize: 24 }} />
+          <SettingsIcon sx={{ fontSize: 26 }} />
         </Box>
         <Box>
           <Typography
-            variant="h6"
+            variant="h5"
             component="h2"
             fontWeight={900}
-            sx={{ fontFamily: "'Bricolage Grotesque', sans-serif", letterSpacing: '-0.02em', lineHeight: 1.2 }}
+            sx={{
+              fontFamily: "'Bricolage Grotesque', sans-serif",
+              letterSpacing: '-0.02em',
+              lineHeight: 1.2
+            }}
           >
             Configurações do Telão
           </Typography>
-          <Typography variant="caption" color="text.secondary">
-            Personalize o layout e enquadramento das fotos.
+          <Typography variant="body2" color="text.secondary">
+            Personalize a disposição, enquadramento das fotos e preferências da tela.
           </Typography>
         </Box>
       </Box>
 
       {/* Corpo rolável com scroll suave */}
       <Box sx={modalBodyStyles}>
-        <Stack spacing={2.5}>
-          {/* Seção 1: Formato do Layout */}
+        <Stack spacing={3}>
+          {/* Seção 1: Formato do Layout (Grid 2 colunas) */}
           <Box sx={settingsSectionStyles}>
-            <Typography sx={settingsSectionTitleStyles}>Disposição do Telão (Layout)</Typography>
-            <Stack spacing={1}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <LayoutIcon sx={{ fontSize: 18, color: brandColors.flashYellow }} />
+              <Typography sx={settingsSectionTitleStyles}>Disposição do Telão (Layout)</Typography>
+            </Box>
+
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' },
+                gap: 1.5
+              }}
+            >
               {SCREEN_LAYOUT_OPTIONS.map((option) => {
                 const isSelected = layout === option.id
                 return (
@@ -151,8 +171,8 @@ const ScreenSettingsModal = ({
                     sx={getLayoutCardStyles(isSelected)}
                   >
                     <Box sx={{ minWidth: 0, flex: 1 }}>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.25, flexWrap: 'wrap' }}>
-                        <Typography variant="subtitle2" fontWeight={800}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5, flexWrap: 'wrap' }}>
+                        <Typography variant="subtitle2" fontWeight={800} sx={{ lineHeight: 1.2 }}>
                           {option.label}
                         </Typography>
                         {option.tag && (
@@ -160,8 +180,8 @@ const ScreenSettingsModal = ({
                             size="small"
                             label={option.tag}
                             sx={{
-                              height: 18,
-                              fontSize: '0.65rem',
+                              height: 20,
+                              fontSize: '0.68rem',
                               fontWeight: 800,
                               bgcolor: isSelected ? brandColors.flashYellow : 'action.selected',
                               color: isSelected ? brandColors.ink : 'text.secondary'
@@ -169,18 +189,23 @@ const ScreenSettingsModal = ({
                           />
                         )}
                       </Box>
-                      <Typography variant="caption" color="text.secondary" sx={{ display: 'block', lineHeight: 1.3 }}>
+                      <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        sx={{ display: 'block', lineHeight: 1.35 }}
+                      >
                         {option.subtitle}
                       </Typography>
                     </Box>
-                    <Box sx={{ display: 'flex', alignItems: 'center', pl: 1 }}>
+
+                    <Box sx={{ display: 'flex', alignItems: 'center', pt: 0.25 }}>
                       {isSelected ? (
-                        <CheckIcon sx={{ color: brandColors.flashYellow, fontSize: 22 }} />
+                        <CheckIcon sx={{ color: brandColors.flashYellow, fontSize: 24 }} />
                       ) : (
                         <Box
                           sx={{
-                            width: 18,
-                            height: 18,
+                            width: 20,
+                            height: 20,
                             borderRadius: '50%',
                             border: '2px solid',
                             borderColor: 'divider'
@@ -191,18 +216,25 @@ const ScreenSettingsModal = ({
                   </Box>
                 )
               })}
-            </Stack>
+            </Box>
           </Box>
 
           <Divider />
 
-          {/* Seção 2: Enquadramento da Foto */}
+          {/* Seção 2: Enquadramento da Foto (Grid 2 colunas) */}
           <Box sx={settingsSectionStyles}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <FitIcon sx={{ fontSize: 18, color: brandColors.flashYellow }} />
               <Typography sx={settingsSectionTitleStyles}>Enquadramento da Foto</Typography>
             </Box>
-            <Stack spacing={1}>
+
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' },
+                gap: 1.5
+              }}
+            >
               {SCREEN_PHOTO_FIT_OPTIONS.map((option) => {
                 const isSelected = photoFit === option.id
                 return (
@@ -212,21 +244,26 @@ const ScreenSettingsModal = ({
                     sx={getLayoutCardStyles(isSelected)}
                   >
                     <Box sx={{ minWidth: 0, flex: 1 }}>
-                      <Typography variant="subtitle2" fontWeight={800}>
+                      <Typography variant="subtitle2" fontWeight={800} sx={{ mb: 0.5 }}>
                         {option.label}
                       </Typography>
-                      <Typography variant="caption" color="text.secondary" sx={{ display: 'block', lineHeight: 1.3 }}>
+                      <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        sx={{ display: 'block', lineHeight: 1.35 }}
+                      >
                         {option.subtitle}
                       </Typography>
                     </Box>
-                    <Box sx={{ display: 'flex', alignItems: 'center', pl: 1 }}>
+
+                    <Box sx={{ display: 'flex', alignItems: 'center', pt: 0.25 }}>
                       {isSelected ? (
-                        <CheckIcon sx={{ color: brandColors.flashYellow, fontSize: 22 }} />
+                        <CheckIcon sx={{ color: brandColors.flashYellow, fontSize: 24 }} />
                       ) : (
                         <Box
                           sx={{
-                            width: 18,
-                            height: 18,
+                            width: 20,
+                            height: 20,
                             borderRadius: '50%',
                             border: '2px solid',
                             borderColor: 'divider'
@@ -237,43 +274,104 @@ const ScreenSettingsModal = ({
                   </Box>
                 )
               })}
-            </Stack>
+            </Box>
           </Box>
 
           <Divider />
 
-          {/* Seção 3: Preferências Gerais */}
+          {/* Seção 3: Preferências Gerais (Grid 2 colunas com botão de ícone para troca de tema) */}
           <Box sx={settingsSectionStyles}>
             <Typography sx={settingsSectionTitleStyles}>Preferências de Exibição</Typography>
 
-            <Stack spacing={1.25}>
-              {/* Tema Claro / Escuro */}
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: hasPin ? { xs: '1fr', sm: 'repeat(2, 1fr)' } : '1fr',
+                gap: 1.5
+              }}
+            >
+              {/* Botão de Troca de Tema via Ícone */}
               <Box sx={settingRowStyles}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                  {isDark ? <DarkModeIcon sx={{ color: brandColors.flashYellow }} /> : <LightModeIcon sx={{ color: '#F59E0B' }} />}
-                  <Box>
-                    <Typography variant="body2" fontWeight={700}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, minWidth: 0 }}>
+                  <Box
+                    sx={{
+                      width: 40,
+                      height: 40,
+                      borderRadius: '12px',
+                      bgcolor: isDark ? 'rgba(255, 207, 31, 0.15)' : 'rgba(245, 158, 11, 0.12)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: isDark ? brandColors.flashYellow : '#F59E0B',
+                      flexShrink: 0
+                    }}
+                  >
+                    {isDark ? <DarkModeIcon fontSize="small" /> : <LightModeIcon fontSize="small" />}
+                  </Box>
+                  <Box sx={{ minWidth: 0 }}>
+                    <Typography variant="body2" fontWeight={800}>
                       Tema da Interface
                     </Typography>
                     <Typography variant="caption" color="text.secondary">
-                      {isDark ? 'Modo Escuro' : 'Modo Claro'}
+                      {isDark ? 'Modo Escuro ativo' : 'Modo Claro ativo'}
                     </Typography>
                   </Box>
                 </Box>
-                <Switch
-                  checked={isDark}
-                  onChange={toggleTheme}
-                  inputProps={{ 'aria-label': 'Alternar tema claro e escuro' }}
-                />
+
+                {/* Ícone Clicável para Alternar Tema */}
+                <Tooltip title={isDark ? 'Alternar para Modo Claro' : 'Alternar para Modo Escuro'}>
+                  <IconButton
+                    onClick={toggleTheme}
+                    aria-label={isDark ? 'Alternar para Modo Claro' : 'Alternar para Modo Escuro'}
+                    sx={(theme) => ({
+                      width: 44,
+                      height: 44,
+                      borderRadius: '14px',
+                      bgcolor:
+                        theme.palette.mode === 'dark'
+                          ? 'rgba(255, 255, 255, 0.08)'
+                          : 'rgba(0, 0, 0, 0.05)',
+                      border: `1px solid ${
+                        theme.palette.mode === 'dark'
+                          ? 'rgba(255, 255, 255, 0.14)'
+                          : 'rgba(0, 0, 0, 0.1)'
+                      }`,
+                      color: isDark ? brandColors.flashYellow : '#F59E0B',
+                      transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
+                      '&:hover': {
+                        bgcolor: isDark
+                          ? 'rgba(255, 207, 31, 0.2)'
+                          : 'rgba(245, 158, 11, 0.18)',
+                        transform: 'rotate(18deg) scale(1.08)'
+                      }
+                    })}
+                  >
+                    {isDark ? <LightModeIcon /> : <DarkModeIcon />}
+                  </IconButton>
+                </Tooltip>
               </Box>
 
               {/* Visibilidade do PIN */}
               {hasPin && (
                 <Box sx={settingRowStyles}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                    {showPin ? <VisibilityIcon sx={{ color: 'primary.main' }} /> : <VisibilityOffIcon sx={{ color: 'text.secondary' }} />}
-                    <Box>
-                      <Typography variant="body2" fontWeight={700}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, minWidth: 0 }}>
+                    <Box
+                      sx={{
+                        width: 40,
+                        height: 40,
+                        borderRadius: '12px',
+                        bgcolor: showPin ? 'rgba(34, 197, 94, 0.12)' : 'rgba(150, 150, 150, 0.1)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: showPin ? '#22c55e' : 'text.secondary',
+                        flexShrink: 0
+                      }}
+                    >
+                      {showPin ? <VisibilityIcon fontSize="small" /> : <VisibilityOffIcon fontSize="small" />}
+                    </Box>
+                    <Box sx={{ minWidth: 0 }}>
+                      <Typography variant="body2" fontWeight={800}>
                         Mostrar PIN no Telão
                       </Typography>
                       <Typography variant="caption" color="text.secondary">
@@ -281,6 +379,7 @@ const ScreenSettingsModal = ({
                       </Typography>
                     </Box>
                   </Box>
+
                   <Switch
                     checked={showPin}
                     onChange={onTogglePin}
@@ -288,7 +387,7 @@ const ScreenSettingsModal = ({
                   />
                 </Box>
               )}
-            </Stack>
+            </Box>
           </Box>
 
           {/* Seção 4: Desconectar (se ativado) */}
@@ -300,45 +399,23 @@ const ScreenSettingsModal = ({
                 <Button
                   variant="outlined"
                   color="error"
+                  fullWidth
                   startIcon={<DisconnectIcon />}
-                  onClick={() => {
-                    onClose()
-                    onRequestDisconnect()
-                  }}
+                  onClick={onRequestDisconnect}
                   sx={{
-                    py: 1.25,
                     borderRadius: '14px',
+                    py: 1.2,
                     fontWeight: 800,
-                    borderWidth: 1.5
+                    textTransform: 'none',
+                    fontSize: '0.92rem'
                   }}
                 >
-                  Desconectar este telão
+                  Desconectar este dispositivo do evento
                 </Button>
               </Box>
             </>
           )}
         </Stack>
-      </Box>
-
-      {/* Rodapé Fixo com Botão Pronto */}
-      <Box sx={{ pt: 1.5, borderTop: 1, borderColor: 'divider', display: 'flex', justifyContent: 'flex-end' }}>
-        <Button
-          variant="contained"
-          onClick={onClose}
-          sx={{
-            px: 4,
-            py: 1,
-            borderRadius: '9999px',
-            bgcolor: brandColors.flashYellow,
-            color: brandColors.ink,
-            fontWeight: 900,
-            '&:hover': {
-              bgcolor: '#F5C30A'
-            }
-          }}
-        >
-          Pronto
-        </Button>
       </Box>
     </Dialog>
   )
