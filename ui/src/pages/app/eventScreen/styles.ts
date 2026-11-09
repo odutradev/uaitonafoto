@@ -1,6 +1,50 @@
 import { brandColors } from '@theme'
 import type { SxProps, Theme } from '@mui/material'
 
+export const stageContainerStyles: SxProps<Theme> = {
+  width: '100vw',
+  height: '100vh',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  bgcolor: '#0f0e0b',
+  overflow: 'hidden',
+  position: 'relative'
+}
+
+export const stageFrameStyles: SxProps<Theme> = {
+  width: 'min(100vw, calc(100vh * 16 / 9))',
+  height: 'min(100vh, calc(100vw * 9 / 16))',
+  aspectRatio: '16 / 9',
+  containerType: 'size',
+  bgcolor: '#14110c',
+  color: '#f6f1e4',
+  position: 'relative',
+  overflow: 'hidden',
+  display: 'flex',
+  flexDirection: 'column'
+}
+
+export const floatingControlsStyles: SxProps<Theme> = {
+  position: 'absolute',
+  top: '2cqh',
+  right: '2cqh',
+  zIndex: 10,
+  display: 'inline-flex',
+  alignItems: 'center',
+  p: '0.4cqh',
+  gap: '0.4cqh',
+  borderRadius: '9999px',
+  bgcolor: 'rgba(20, 17, 12, 0.75)',
+  border: '1px solid rgba(255, 255, 255, 0.12)',
+  backdropFilter: 'blur(8px)',
+  transition: 'opacity 0.25s ease',
+  opacity: 0.2,
+  '&:hover, &:focus-within': {
+    opacity: 1
+  }
+}
+
 export const screenRootStyles: SxProps<Theme> = {
   position: 'fixed',
   inset: 0,

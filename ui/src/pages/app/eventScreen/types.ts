@@ -1,4 +1,4 @@
-export type ScreenLayoutMode = 'classic' | 'side-hub' | 'social-feed'
+export type ScreenLayoutMode = 'lateral' | 'stage' | 'mosaic' | 'duo'
 export type ScreenPhotoFit = 'cover' | 'contain'
 
 export interface ScreenLayoutOption {
@@ -16,34 +16,40 @@ export interface ScreenPhotoFitOption {
 
 export const SCREEN_LAYOUT_OPTIONS: ScreenLayoutOption[] = [
   {
-    id: 'side-hub',
-    label: 'Painel Lateral (Recomendado)',
-    subtitle: 'Foto com altura total na esquerda e hub interativo com QR Code e recentes na direita.',
-    tag: 'Ideal para verticais'
+    id: 'lateral',
+    label: 'Lateral',
+    subtitle: 'Foto à esquerda; texto grande, 4 recentes e QR à direita.',
+    tag: 'Melhor para ler de longe'
   },
   {
-    id: 'social-feed',
-    label: 'Feed Social (3 Colunas)',
-    subtitle: 'QR Code e dados na esquerda, foto em destaque no centro e feed das últimas fotos na direita.',
-    tag: 'Estilo Stories'
+    id: 'stage',
+    label: 'Palco Central',
+    subtitle: 'Foto no centro com legenda sobreposta e fundo desfocado ambiente; QR à esquerda e recentes à direita.',
+    tag: 'Mais cara de telão'
   },
   {
-    id: 'classic',
-    label: 'Clássico',
-    subtitle: 'Foto central ampla com miniaturas no rodapé e coluna de QR Code na direita.',
-    tag: 'Tradicional'
+    id: 'mosaic',
+    label: 'Mosaico',
+    subtitle: 'Foto com legenda sobre ela e um mural com 5 fotos recentes e QR Code integrado.',
+    tag: 'Mais fotos de uma vez'
+  },
+  {
+    id: 'duo',
+    label: 'Dupla',
+    subtitle: 'Foto atual ao lado da anterior na mesma altura; QR Code e 3 miniaturas na coluna final.',
+    tag: 'Foto atual + anterior'
   }
 ]
 
 export const SCREEN_PHOTO_FIT_OPTIONS: ScreenPhotoFitOption[] = [
   {
-    id: 'cover',
-    label: 'Preencher Telão (Sem bordas)',
-    subtitle: 'A foto preenche todo o card sem faixas ou bordas laterais.'
+    id: 'contain',
+    label: 'Desfocar laterais (Foto inteira)',
+    subtitle: 'A foto fica 100% visível sem cortes com efeito desfocado ambiente nas laterais.'
   },
   {
-    id: 'contain',
-    label: 'Ajustar Foto Completa',
-    subtitle: 'Exibe a foto inteira sem nenhum corte nas extremidades.'
+    id: 'cover',
+    label: 'Cortar e preencher (Sem bordas)',
+    subtitle: 'A foto preenche todo o espaço vertical sem bordas desfocadas.'
   }
 ]

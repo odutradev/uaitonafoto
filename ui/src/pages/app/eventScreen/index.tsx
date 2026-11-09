@@ -23,16 +23,20 @@ import { brandColors } from '@theme'
 
 import useEventScreen from './hooks/useEventScreen'
 import ScreenSettingsModal from './subcomponents/screenSettingsModal'
-import ClassicLayout from './subcomponents/layouts/classicLayout'
-import SideHubLayout from './subcomponents/layouts/sideHubLayout'
-import SocialFeedLayout from './subcomponents/layouts/socialFeedLayout'
+import LateralLayout from './subcomponents/layouts/lateralLayout'
+import StageLayout from './subcomponents/layouts/stageLayout'
+import MosaicLayout from './subcomponents/layouts/mosaicLayout'
+import DuoLayout from './subcomponents/layouts/duoLayout'
 import {
   activationCardStyles,
   activationWrapperStyles,
   controlsChipStyles,
+  floatingControlsStyles,
   iconButtonStyles,
   screenAgencyBadgeStyles,
   screenRootStyles,
+  stageContainerStyles,
+  stageFrameStyles,
   topBarStyles
 } from './styles'
 import type { FormEvent } from 'react'
@@ -65,18 +69,22 @@ const EventScreen = () => {
   const [isDisconnectModalOpen, setIsDisconnectModalOpen] = useState(false)
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false)
   const [layoutMode, setLayoutMode] = useState<ScreenLayoutMode>(() => {
-    const stored = localStorage.getItem(SCREEN_LAYOUT_STORAGE_KEY) as ScreenLayoutMode | null
-    if (stored && ['classic', 'side-hub', 'social-feed'].includes(stored)) {
+    const stored = localStorage.getItem(SCREEN_LAYOUT_STORAGE_KEY)
+    if (stored === 'lateral' || stored === 'stage' || stored === 'mosaic' || stored === 'duo') {
       return stored
     }
-    return 'side-hub'
+    // Compatibilidade com configurações anteriores
+    if (stored === 'side-hub') return 'lateral'
+    if (stored === 'classic') return 'stage'
+    if (stored === 'social-feed') return 'mosaic'
+    return 'lateral'
   })
   const [photoFit, setPhotoFit] = useState<ScreenPhotoFit>(() => {
     const stored = localStorage.getItem(SCREEN_PHOTO_FIT_STORAGE_KEY) as ScreenPhotoFit | null
     if (stored && ['cover', 'contain'].includes(stored)) {
       return stored
     }
-    return 'cover'
+    return 'contain'
   })
   const [showPin, setShowPin] = useState<boolean>(() => {
     const stored = localStorage.getItem(SCREEN_SHOW_PIN_STORAGE_KEY)
@@ -118,218 +126,267 @@ const EventScreen = () => {
   const guestLink = event ? buildGuestLink(event.guestToken) : token ? buildGuestLink(token) : ''
 
   return (
-    <Box sx={screenRootStyles}>
-      <Box component="header" sx={topBarStyles}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <Logo variant="auto" size="small" />
-          {isActivated && isLiveStreamConnected && (
-            <Tooltip title="Transmissão instantânea ativa via SSE (<300ms)">
-              <Box
+    <>
+      {!isActivated ? (
+        <Box sx={screenRootStyles}>
+          <Box component="header" sx={topBarStyles}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <Logo variant="auto" size="small" />
+              {isLiveStreamConnected && (
+                <Tooltip title="Transmissão instantânea ativa via SSE (<300ms)">
+                  <Box
+                    sx={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 0.75,
+                      px: 1.5,
+                      py: 0.45,
+                      borderRadius: '9999px',
+                      bgcolor: 'rgba(34, 197, 94, 0.12)',
+                      border: '1px solid rgba(34, 197, 94, 0.35)',
+                      fontSize: '0.72rem',
+                      fontWeight: 800,
+                      color: '#22c55e',
+                      letterSpacing: '0.04em'
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        width: 7,
+                        height: 7,
+                        borderRadius: '50%',
+                        bgcolor: '#22c55e',
+                        boxShadow: '0 0 8px #22c55e'
+                      }}
+                    />
+                    AO VIVO
+                  </Box>
+                </Tooltip>
+              )}
+            </Box>
+
+            {event?.customization?.enabled && (
+              <Box sx={screenAgencyBadgeStyles}>
+                <Avatar
+                  src={event.customization.agencyLogoUrl}
+                  sx={{
+                    width: 32,
+                    height: 32,
+                    bgcolor: 'primary.main',
+                    color: 'primary.contrastText',
+                    fontWeight: 800,
+                    fontSize: '0.8rem'
+                  }}
+                >
+                  {(event.customization.agencyName || 'A')[0].toUpperCase()}
+                </Avatar>
+                <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                  <Typography variant="body2" fontWeight={800} sx={{ lineHeight: 1.15 }}>
+                    {event.customization.agencyName || 'Assessoria do Evento'}
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem', lineHeight: 1.1 }}>
+                    {event.customization.agencyTagline || 'Assessoria & Cerimonial'}
+                  </Typography>
+                </Box>
+              </Box>
+            )}
+
+            <Box sx={controlsChipStyles}>
+              <Tooltip title="Alternar tela cheia">
+                <IconButton aria-label="Tela cheia" onClick={handleFullscreen} sx={iconButtonStyles} size="small">
+                  <FullscreenIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Configurações do telão">
+                <IconButton
+                  aria-label="Configurações do telão"
+                  onClick={() => setIsSettingsModalOpen(true)}
+                  sx={iconButtonStyles}
+                  size="small"
+                >
+                  <SettingsIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
+            </Box>
+          </Box>
+
+          <Box sx={activationWrapperStyles}>
+            <Box component="form" noValidate onSubmit={handleActivateSubmit} sx={activationCardStyles}>
+              <Logo variant="auto" size="medium" symbolOnly />
+              <Box>
+                <Typography
+                  variant="h5"
+                  component="h2"
+                  fontWeight={900}
+                  sx={{ fontFamily: "'Bricolage Grotesque', sans-serif", letterSpacing: '-0.03em' }}
+                >
+                  Ativar telão do evento
+                </Typography>
+                <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.75 }}>
+                  Digite o PIN de 4 dígitos gerado pelo administrador no painel do evento para liberar este dispositivo.
+                </Typography>
+              </Box>
+
+              {lockout.isPermanent ? (
+                <Alert severity="error" sx={{ width: '100%', textAlign: 'left' }}>
+                  <Typography variant="subtitle2" fontWeight={800}>
+                    Telão bloqueado definitivamente
+                  </Typography>
+                  <Typography variant="body2" sx={{ mt: 0.5 }}>
+                    Limite de 10 tentativas incorretas atingido. Entre em contato com o organizador para gerar um novo PIN.
+                  </Typography>
+                </Alert>
+              ) : lockout.isLocked ? (
+                <Alert severity="warning" sx={{ width: '100%', textAlign: 'left' }}>
+                  <Typography variant="subtitle2" fontWeight={800}>
+                    Telão indisponível temporariamente
+                  </Typography>
+                  <Typography variant="body2" sx={{ mt: 0.5 }}>
+                    Tente novamente em{' '}
+                    <Typography component="span" fontWeight={900} sx={{ fontVariantNumeric: 'tabular-nums' }}>
+                      {lockout.formattedTime}
+                    </Typography>
+                  </Typography>
+                </Alert>
+              ) : activationError ? (
+                <Alert severity="error" sx={{ width: '100%', textAlign: 'left' }}>
+                  {activationError}
+                </Alert>
+              ) : null}
+
+              <PinInput
+                value={pinInput}
+                onChange={setPinInput}
+                autoFocus
+                disabled={isActivating || lockout.isLocked}
+                mask
+                showMaskToggle
+                slotSx={(theme) => ({
+                  '& .MuiOutlinedInput-root': {
+                    bgcolor: theme.palette.mode === 'dark' ? brandColors.darkSurface : brandColors.sand,
+                    color: 'text.primary',
+                    '& fieldset': {
+                      borderColor: theme.palette.divider
+                    },
+                    '&:hover fieldset': {
+                      borderColor: brandColors.flashYellow
+                    }
+                  }
+                })}
+              />
+
+              <Button
+                type="submit"
+                variant="contained"
+                size="large"
+                fullWidth
+                disabled={isActivating || lockout.isLocked || !/^\d{4}$/.test(pinInput)}
                 sx={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 0.75,
-                  px: 1.5,
-                  py: 0.45,
+                  bgcolor: brandColors.flashYellow,
+                  color: brandColors.ink,
+                  fontWeight: 900,
+                  fontSize: '1.05rem',
+                  py: 1.5,
                   borderRadius: '9999px',
-                  bgcolor: 'rgba(34, 197, 94, 0.12)',
-                  border: '1px solid rgba(34, 197, 94, 0.35)',
-                  fontSize: '0.72rem',
-                  fontWeight: 800,
-                  color: '#22c55e',
-                  letterSpacing: '0.04em'
+                  '&:hover': {
+                    bgcolor: '#F5C30A'
+                  }
                 }}
               >
-                <Box
-                  sx={{
-                    width: 7,
-                    height: 7,
-                    borderRadius: '50%',
-                    bgcolor: '#22c55e',
-                    boxShadow: '0 0 8px #22c55e'
-                  }}
-                />
-                AO VIVO
-              </Box>
-            </Tooltip>
-          )}
-        </Box>
-
-        {event?.customization?.enabled && (
-          <Box sx={screenAgencyBadgeStyles}>
-            <Avatar
-              src={event.customization.agencyLogoUrl}
-              sx={{
-                width: 32,
-                height: 32,
-                bgcolor: 'primary.main',
-                color: 'primary.contrastText',
-                fontWeight: 800,
-                fontSize: '0.8rem'
-              }}
-            >
-              {(event.customization.agencyName || 'A')[0].toUpperCase()}
-            </Avatar>
-            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-              <Typography variant="body2" fontWeight={800} sx={{ lineHeight: 1.15 }}>
-                {event.customization.agencyName || 'Assessoria do Evento'}
-              </Typography>
-              <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem', lineHeight: 1.1 }}>
-                {event.customization.agencyTagline || 'Assessoria & Cerimonial'}
-              </Typography>
+                {isActivating
+                  ? 'Ativando...'
+                  : lockout.isPermanent
+                    ? 'Bloqueado definitivamente'
+                    : lockout.isLocked
+                      ? `Tente novamente em ${lockout.formattedTime}`
+                      : 'Ativar telão'}
+              </Button>
             </Box>
           </Box>
-        )}
-
-        <Box sx={controlsChipStyles}>
-          <Tooltip title="Alternar tela cheia">
-            <IconButton aria-label="Tela cheia" onClick={handleFullscreen} sx={iconButtonStyles} size="small">
-              <FullscreenIcon fontSize="small" />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Configurações do telão">
-            <IconButton
-              aria-label="Configurações do telão"
-              onClick={() => setIsSettingsModalOpen(true)}
-              sx={iconButtonStyles}
-              size="small"
-            >
-              <SettingsIcon fontSize="small" />
-            </IconButton>
-          </Tooltip>
         </Box>
-      </Box>
-
-      {!isActivated ? (
-        <Box sx={activationWrapperStyles}>
-          <Box component="form" noValidate onSubmit={handleActivateSubmit} sx={activationCardStyles}>
-            <Logo variant="auto" size="medium" symbolOnly />
-            <Box>
-              <Typography
-                variant="h5"
-                component="h2"
-                fontWeight={900}
-                sx={{ fontFamily: "'Bricolage Grotesque', sans-serif", letterSpacing: '-0.03em' }}
-              >
-                Ativar telão do evento
-              </Typography>
-              <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.75 }}>
-                Digite o PIN de 4 dígitos gerado pelo administrador no painel do evento para liberar este dispositivo.
-              </Typography>
-            </Box>
-
-            {lockout.isPermanent ? (
-              <Alert severity="error" sx={{ width: '100%', textAlign: 'left' }}>
-                <Typography variant="subtitle2" fontWeight={800}>
-                  Telão bloqueado definitivamente
-                </Typography>
-                <Typography variant="body2" sx={{ mt: 0.5 }}>
-                  Limite de 10 tentativas incorretas atingido. Entre em contato com o organizador para gerar um novo PIN.
-                </Typography>
-              </Alert>
-            ) : lockout.isLocked ? (
-              <Alert severity="warning" sx={{ width: '100%', textAlign: 'left' }}>
-                <Typography variant="subtitle2" fontWeight={800}>
-                  Telão indisponível temporariamente
-                </Typography>
-                <Typography variant="body2" sx={{ mt: 0.5 }}>
-                  Tente novamente em{' '}
-                  <Typography component="span" fontWeight={900} sx={{ fontVariantNumeric: 'tabular-nums' }}>
-                    {lockout.formattedTime}
-                  </Typography>
-                </Typography>
-              </Alert>
-            ) : activationError ? (
-              <Alert severity="error" sx={{ width: '100%', textAlign: 'left' }}>
-                {activationError}
-              </Alert>
-            ) : null}
-
-            <PinInput
-              value={pinInput}
-              onChange={setPinInput}
-              autoFocus
-              disabled={isActivating || lockout.isLocked}
-              mask
-              showMaskToggle
-              slotSx={(theme) => ({
-                '& .MuiOutlinedInput-root': {
-                  bgcolor: theme.palette.mode === 'dark' ? brandColors.darkSurface : brandColors.sand,
-                  color: 'text.primary',
-                  '& fieldset': {
-                    borderColor: theme.palette.divider
-                  },
-                  '&:hover fieldset': {
-                    borderColor: brandColors.flashYellow
-                  }
-                }
-              })}
-            />
-
-            <Button
-              type="submit"
-              variant="contained"
-              size="large"
-              fullWidth
-              disabled={isActivating || lockout.isLocked || !/^\d{4}$/.test(pinInput)}
-              sx={{
-                bgcolor: brandColors.flashYellow,
-                color: brandColors.ink,
-                fontWeight: 900,
-                fontSize: '1.05rem',
-                py: 1.5,
-                borderRadius: '9999px',
-                '&:hover': {
-                  bgcolor: '#F5C30A'
-                }
-              }}
-            >
-              {isActivating
-                ? 'Ativando...'
-                : lockout.isPermanent
-                  ? 'Bloqueado definitivamente'
-                  : lockout.isLocked
-                    ? `Tente novamente em ${lockout.formattedTime}`
-                    : 'Ativar telão'}
-            </Button>
-          </Box>
-        </Box>
-      ) : layoutMode === 'social-feed' ? (
-        <SocialFeedLayout
-          currentPhoto={currentPhoto}
-          isNewArrival={isNewArrival}
-          photos={photos}
-          currentIndex={currentIndex}
-          onSelectPhoto={selectPhoto}
-          guestLink={guestLink}
-          pin={pin}
-          showPin={showPin}
-          photoFit={photoFit}
-        />
-      ) : layoutMode === 'classic' ? (
-        <ClassicLayout
-          currentPhoto={currentPhoto}
-          isNewArrival={isNewArrival}
-          photos={photos}
-          currentIndex={currentIndex}
-          onSelectPhoto={selectPhoto}
-          guestLink={guestLink}
-          pin={pin}
-          showPin={showPin}
-          photoFit={photoFit}
-        />
       ) : (
-        <SideHubLayout
-          currentPhoto={currentPhoto}
-          isNewArrival={isNewArrival}
-          photos={photos}
-          currentIndex={currentIndex}
-          onSelectPhoto={selectPhoto}
-          guestLink={guestLink}
-          pin={pin}
-          showPin={showPin}
-          photoFit={photoFit}
-        />
+        /* Telão Ativado: Palco imersivo 16:9 com container query */
+        <Box sx={stageContainerStyles}>
+          <Box id="stage" sx={stageFrameStyles}>
+            {/* Controles flutuantes discretos para alternar tela cheia e abrir ajustes */}
+            <Box sx={floatingControlsStyles}>
+              <Tooltip title="Alternar tela cheia">
+                <IconButton
+                  aria-label="Tela cheia"
+                  onClick={handleFullscreen}
+                  size="small"
+                  sx={{ color: '#f6f1e4', p: '0.4cqh' }}
+                >
+                  <FullscreenIcon sx={{ fontSize: '2.4cqh' }} />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Configurações do telão">
+                <IconButton
+                  aria-label="Configurações do telão"
+                  onClick={() => setIsSettingsModalOpen(true)}
+                  size="small"
+                  sx={{ color: '#f6f1e4', p: '0.4cqh' }}
+                >
+                  <SettingsIcon sx={{ fontSize: '2.4cqh' }} />
+                </IconButton>
+              </Tooltip>
+            </Box>
+
+            {layoutMode === 'stage' ? (
+              <StageLayout
+                currentPhoto={currentPhoto}
+                isNewArrival={isNewArrival}
+                photos={photos}
+                currentIndex={currentIndex}
+                onSelectPhoto={selectPhoto}
+                guestLink={guestLink}
+                pin={pin}
+                showPin={showPin}
+                photoFit={photoFit}
+                customization={event?.customization}
+              />
+            ) : layoutMode === 'mosaic' ? (
+              <MosaicLayout
+                currentPhoto={currentPhoto}
+                isNewArrival={isNewArrival}
+                photos={photos}
+                currentIndex={currentIndex}
+                onSelectPhoto={selectPhoto}
+                guestLink={guestLink}
+                pin={pin}
+                showPin={showPin}
+                photoFit={photoFit}
+                customization={event?.customization}
+              />
+            ) : layoutMode === 'duo' ? (
+              <DuoLayout
+                currentPhoto={currentPhoto}
+                isNewArrival={isNewArrival}
+                photos={photos}
+                currentIndex={currentIndex}
+                onSelectPhoto={selectPhoto}
+                guestLink={guestLink}
+                pin={pin}
+                showPin={showPin}
+                photoFit={photoFit}
+                customization={event?.customization}
+              />
+            ) : (
+              <LateralLayout
+                currentPhoto={currentPhoto}
+                isNewArrival={isNewArrival}
+                photos={photos}
+                currentIndex={currentIndex}
+                onSelectPhoto={selectPhoto}
+                guestLink={guestLink}
+                pin={pin}
+                showPin={showPin}
+                photoFit={photoFit}
+                customization={event?.customization}
+              />
+            )}
+          </Box>
+        </Box>
       )}
 
       <ScreenSettingsModal
@@ -366,7 +423,7 @@ const EventScreen = () => {
           onClick: () => setIsDisconnectModalOpen(false)
         }}
       />
-    </Box>
+    </>
   )
 }
 
