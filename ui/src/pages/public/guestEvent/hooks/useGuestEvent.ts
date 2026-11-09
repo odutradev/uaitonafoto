@@ -12,6 +12,7 @@ import {
 } from '@actions/guest'
 import { buildRoomStreamUrl, clearGuestToken, getStoredGuestToken, storeGuestToken } from '@actions/guest/client'
 import { getErrorMessage } from '@config/events'
+import usePinLockout from '@hooks/usePinLockout'
 
 import type { PaginationMeta } from '@actions/events/types'
 import type { GuestEventInfo, GuestPhoto, GuestProfile } from '@actions/guest/types'
@@ -19,6 +20,7 @@ import type { GuestEventInfo, GuestPhoto, GuestProfile } from '@actions/guest/ty
 const FEED_PAGE_SIZE = 24
 
 const useGuestEvent = (eventToken: string) => {
+  const lockout = usePinLockout({ scope: 'guest', targetId: eventToken })
   const [event, setEvent] = useState<GuestEventInfo | null>(null)
   const [guest, setGuest] = useState<GuestProfile | null>(null)
   const [guestToken, setGuestToken] = useState<string | null>(() => getStoredGuestToken(eventToken))
@@ -173,14 +175,17 @@ const useGuestEvent = (eventToken: string) => {
   }, [guestToken, eventToken, page, guest?.name])
 
   const join = async (name: string, pin?: string) => {
+    if (lockout.isLocked) return
     try {
       const response = await joinEvent(eventToken, name, pin)
+      lockout.resetLockout()
       storeGuestToken(eventToken, response.guestToken)
       setGuestToken(response.guestToken)
       setGuest(response.guest)
       setEvent(response.event)
       setPhotosSent(0)
     } catch (error) {
+      lockout.recordFailure(error)
       toast.error(getErrorMessage(error, 'Não foi possível entrar no evento.'))
     }
   }
@@ -237,6 +242,7 @@ const useGuestEvent = (eventToken: string) => {
     isLoading,
     isUploading,
     notFound,
+    lockout,
     setPage,
     join,
     upload,

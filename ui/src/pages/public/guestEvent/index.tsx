@@ -34,6 +34,7 @@ const GuestEvent = () => {
     isLoading,
     isUploading,
     notFound,
+    lockout,
     setPage,
     join,
     upload,
@@ -121,7 +122,7 @@ const GuestEvent = () => {
             </Box>
 
             {!guest ? (
-              <GuestJoin event={event} onJoin={join} />
+              <GuestJoin event={event} onJoin={join} lockout={lockout} />
             ) : (
               <>
                 <GuestUpload
