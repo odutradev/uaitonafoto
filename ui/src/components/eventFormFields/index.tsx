@@ -323,21 +323,7 @@ const EventFormFields = ({
       </TextField>
 
       <Box sx={pinCardBoxStyles}>
-        <Typography variant="subtitle2" fontWeight={700}>
-          Resumo das janelas do evento
-        </Typography>
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-          <Typography variant="body2" color="text.secondary">
-            ⏱️ <strong>Duração ao vivo:</strong> {form.creditType === 'free' ? '4 horas' : '8 horas'} de telão e fotos abertos.
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            🖼️ <strong>Retenção da galeria:</strong> disponível por {form.creditType === 'free' ? '14 dias' : '90 dias'} para visualização e download.
-          </Typography>
-        </Box>
-      </Box>
-
-    <Box sx={pinCardBoxStyles}>
-      <Box sx={pinToggleRowStyles}>
+        <Box sx={pinToggleRowStyles}>
         <Box>
           <Typography variant="subtitle2" fontWeight={700}>
             Senha de acesso (PIN de 4 dígitos)
