@@ -25,6 +25,7 @@ const useGuestEvent = (eventToken: string) => {
   const [guest, setGuest] = useState<GuestProfile | null>(null)
   const [guestToken, setGuestToken] = useState<string | null>(() => getStoredGuestToken(eventToken))
   const [photosSent, setPhotosSent] = useState(0)
+  const [completedChallengeIds, setCompletedChallengeIds] = useState<string[]>([])
   const [photos, setPhotos] = useState<GuestPhoto[]>([])
   const [meta, setMeta] = useState<PaginationMeta | null>(null)
   const [page, setPage] = useState(1)
@@ -60,6 +61,7 @@ const useGuestEvent = (eventToken: string) => {
           setGuest(session.guest)
           setEvent(session.event)
           setPhotosSent(session.photosSent)
+          setCompletedChallengeIds(session.completedChallengeIds ?? [])
           setGuestToken(storedToken)
           await loadFeed(storedToken, 1)
           setIsLoading(false)
@@ -186,6 +188,7 @@ const useGuestEvent = (eventToken: string) => {
       setGuest(response.guest)
       setEvent(response.event)
       setPhotosSent(0)
+      setCompletedChallengeIds(response.completedChallengeIds ?? [])
     } catch (error) {
       lockout.recordFailure(error)
       toast.error(getErrorMessage(error, 'Não foi possível entrar no evento.'))
@@ -198,6 +201,9 @@ const useGuestEvent = (eventToken: string) => {
     try {
       await uploadGuestPhoto(guestToken, file, challengeId, challengeTitle)
       setPhotosSent((count) => count + 1)
+      if (challengeId) {
+        setCompletedChallengeIds((prev) => (prev.includes(challengeId) ? prev : [...prev, challengeId]))
+      }
       setPage(1)
       await loadFeed(guestToken, 1)
       if (challengeTitle) {
@@ -242,6 +248,7 @@ const useGuestEvent = (eventToken: string) => {
     event,
     guest,
     photosSent,
+    completedChallengeIds,
     photos,
     meta,
     page,

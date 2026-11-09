@@ -69,4 +69,34 @@ export const challengeItemCardStyles: SxProps<Theme> = {
   }
 }
 
+export const challengeCompletedItemCardStyles: SxProps<Theme> = {
+  p: 2,
+  borderRadius: 2,
+  border: '1px solid',
+  borderColor: (theme) => (theme.palette.mode === 'dark' ? 'rgba(34, 197, 94, 0.35)' : 'rgba(34, 197, 94, 0.35)'),
+  bgcolor: (theme) => (theme.palette.mode === 'dark' ? 'rgba(34, 197, 94, 0.08)' : '#f0fdf4'),
+  cursor: 'pointer',
+  transition: 'all 0.2s ease',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  gap: 1.5,
+  '&:hover': {
+    borderColor: 'success.main',
+    transform: 'translateY(-1px)'
+  }
+}
+
+export const randomChallengeCardStyles: SxProps<Theme> = {
+  p: 2.5,
+  borderRadius: 3,
+  border: '2px solid',
+  borderColor: '#f59e0b',
+  bgcolor: (theme) => (theme.palette.mode === 'dark' ? 'rgba(245, 158, 11, 0.12)' : '#fffbeb'),
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 1.5,
+  textAlign: 'center'
+}
+
 

@@ -28,6 +28,7 @@ const GuestEvent = () => {
     event,
     guest,
     photosSent,
+    completedChallengeIds,
     photos,
     meta,
     page,
@@ -129,6 +130,7 @@ const GuestEvent = () => {
                   event={event}
                   guest={guest}
                   photosSent={photosSent}
+                  completedChallengeIds={completedChallengeIds}
                   isUploading={isUploading}
                   onUpload={upload}
                 />
