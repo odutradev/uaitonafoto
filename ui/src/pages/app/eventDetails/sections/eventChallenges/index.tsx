@@ -3,7 +3,6 @@ import {
   Box,
   Button,
   Card,
-  Chip,
   CircularProgress,
   IconButton,
   Switch,
@@ -14,7 +13,6 @@ import {
 import {
   AddOutlined as AddIcon,
   DeleteOutline as DeleteIcon,
-  EmojiEventsOutlined as ChallengeIcon,
   RestartAltOutlined as ResetIcon
 } from '@mui/icons-material'
 import { toast } from 'react-toastify'
@@ -30,12 +28,15 @@ import Modal from '@components/modal'
 import { getErrorMessage } from '@config/events'
 
 import {
+  addChallengeButtonStyles,
   addChallengeFormRowStyles,
   challengeActionsRowStyles,
   challengeItemCardStyles,
   challengeListStackStyles,
   challengesCardStyles,
-  challengesHeaderRowStyles
+  challengesHeaderRowStyles,
+  countBadgeStyles,
+  resetButtonStyles
 } from './styles'
 import type { EventChallenge } from '@actions/events/types'
 import type { EventChallengesProps } from './types'
@@ -131,19 +132,14 @@ const EventChallenges = ({ event, onRefresh }: EventChallengesProps) => {
       <Box sx={challengesHeaderRowStyles}>
         <Box>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <ChallengeIcon color="primary" />
-            <Typography variant="h6" component="h2" fontWeight={700}>
-              Missões Fotográficas Interativas
+            <Typography variant="subtitle1" component="h2" fontWeight={700}>
+              Missões fotográficas
             </Typography>
-            <Chip
-              size="small"
-              color={activeCount > 0 ? 'success' : 'default'}
-              variant="outlined"
-              label={`${activeCount} ${activeCount === 1 ? 'missão ativa' : 'missões ativas'}`}
-              sx={{ fontWeight: 700 }}
-            />
+            <Box component="span" sx={countBadgeStyles}>
+              {activeCount} {activeCount === 1 ? 'ativa' : 'ativas'}
+            </Box>
           </Box>
-          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.25 }}>
             Os convidados podem escolher missões temáticas para cumprir ao enviar fotos.
           </Typography>
         </Box>
@@ -156,14 +152,14 @@ const EventChallenges = ({ event, onRefresh }: EventChallengesProps) => {
             isResetting ? (
               <CircularProgress size={14} color="inherit" />
             ) : (
-              <ResetIcon fontSize="small" />
+              <ResetIcon sx={{ fontSize: 16 }} />
             )
           }
           onClick={handleReset}
           disabled={isResetting}
-          sx={{ whiteSpace: 'nowrap' }}
+          sx={resetButtonStyles}
         >
-          Restaurar padrão ({event.type})
+          Restaurar padrão
         </Button>
       </Box>
 
@@ -179,38 +175,39 @@ const EventChallenges = ({ event, onRefresh }: EventChallengesProps) => {
         />
         <Button
           type="submit"
+          size="small"
           variant="contained"
           startIcon={
-            isAdding ? <CircularProgress size={16} color="inherit" /> : <AddIcon fontSize="small" />
+            isAdding ? <CircularProgress size={15} color="inherit" /> : <AddIcon sx={{ fontSize: 16 }} />
           }
           disabled={isAdding || !newTitle.trim()}
-          sx={{ whiteSpace: 'nowrap', px: 3, fontWeight: 700 }}
+          sx={addChallengeButtonStyles}
         >
-          Adicionar missão
+          Adicionar
         </Button>
       </Box>
 
       {isLoading ? (
-        <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-          <CircularProgress size={32} />
+        <Box sx={{ display: 'flex', justifyContent: 'center', py: 3 }}>
+          <CircularProgress size={28} />
         </Box>
       ) : challenges.length === 0 ? (
-        <Box sx={{ textAlign: 'center', py: 4, color: 'text.secondary' }}>
+        <Box sx={{ textAlign: 'center', py: 3, color: 'text.secondary' }}>
           <Typography variant="body2">
-            Nenhuma missão configurada. Digite uma missão acima ou clique em "Restaurar padrão".
+            Nenhuma missão configurada. Digite uma missão acima ou clique em &ldquo;Restaurar padrão&rdquo;.
           </Typography>
         </Box>
       ) : (
         <Box sx={challengeListStackStyles}>
           {challenges.map((challenge, index) => (
             <Box key={challenge.id} sx={challengeItemCardStyles(challenge.active)}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, minWidth: 0 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25, minWidth: 0 }}>
                 <Typography
-                  variant="body2"
+                  variant="caption"
                   sx={{
                     fontWeight: 700,
                     color: challenge.active ? 'primary.main' : 'text.disabled',
-                    width: 24,
+                    width: 22,
                     flexShrink: 0
                   }}
                 >
@@ -219,7 +216,7 @@ const EventChallenges = ({ event, onRefresh }: EventChallengesProps) => {
 
                 <Box sx={{ minWidth: 0 }}>
                   <Typography
-                    variant="body1"
+                    variant="body2"
                     fontWeight={600}
                     sx={{
                       textDecoration: challenge.active ? 'none' : 'line-through',
@@ -253,8 +250,9 @@ const EventChallenges = ({ event, onRefresh }: EventChallengesProps) => {
                     color="error"
                     onClick={() => setChallengeToDelete(challenge)}
                     aria-label="Excluir desafio"
+                    sx={{ p: 0.5, borderRadius: '8px' }}
                   >
-                    <DeleteIcon fontSize="small" />
+                    <DeleteIcon sx={{ fontSize: 16 }} />
                   </IconButton>
                 </Tooltip>
               </Box>
@@ -270,7 +268,7 @@ const EventChallenges = ({ event, onRefresh }: EventChallengesProps) => {
         title="Excluir missão fotográfica?"
         description={
           <>
-            A missão "<strong>{challengeToDelete?.title}</strong>" será removida do evento e não aparecerá mais para os convidados.
+            A missão &ldquo;<strong>{challengeToDelete?.title}</strong>&rdquo; será removida do evento e não aparecerá mais para os convidados.
           </>
         }
         primaryAction={{
@@ -290,3 +288,4 @@ const EventChallenges = ({ event, onRefresh }: EventChallengesProps) => {
 }
 
 export default EventChallenges
+
