@@ -21,6 +21,17 @@ export const eventPinSchema = z
   .regex(/^\d{4}$/, 'O PIN deve conter exatamente 4 dígitos numéricos')
   .openapi({ example: '4829', description: 'PIN numérico de 4 dígitos para acesso dos convidados' })
 
+export const eventCustomizationSchema = z
+  .object({
+    enabled: z.boolean().default(false),
+    agencyName: z.string().optional(),
+    agencyLogoUrl: z.string().optional(),
+    agencyWhatsapp: z.string().optional(),
+    agencyTagline: z.string().optional(),
+    whatsappMessage: z.string().optional()
+  })
+  .openapi('EventCustomization')
+
 export const eventSettingsSchema = z
   .object({
     uploadWindowHours: z.number().int().min(0).max(168).openapi({
@@ -91,6 +102,7 @@ export const eventSchema = z
     endsAt: z.string().openapi({ example: '2026-12-21T05:00:00.000Z' }),
     guestToken: z.string().openapi({ example: 'k3J9xQ2mZ1aB' }),
     settings: eventSettingsSchema,
+    customization: eventCustomizationSchema.optional(),
     uploadsCloseAt: z.string().openapi({ example: '2026-12-22T05:00:00.000Z' }),
     galleryExpiresAt: z.string().openapi({ example: '2027-01-20T05:00:00.000Z' }),
     members: z.array(eventMemberSchema),
@@ -109,6 +121,7 @@ export const createEventSchema = z
     creditType: eventCreditTypeSchema.optional(),
     startsAt: z.string().datetime().openapi({ example: '2026-12-20T21:00:00.000Z' }),
     endsAt: z.string().datetime().optional().openapi({ example: '2026-12-21T05:00:00.000Z' }),
+    customization: eventCustomizationSchema.optional(),
     settings: eventSettingsInputSchema.optional()
   })
   .openapi('CreateEvent')

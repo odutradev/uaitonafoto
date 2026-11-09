@@ -115,6 +115,11 @@ export const subscriptionRepository = {
 
     const doc = await SubscriptionModel.findByIdAndUpdate(id, { $set: updateData }, { new: true, lean: true })
     return doc ? toSubscriptionEntity(doc) : null
+  },
+
+  hasActiveByUser: async (userId: string): Promise<boolean> => {
+    const count = await SubscriptionModel.countDocuments({ userId, status: 'ACTIVE' })
+    return count > 0
   }
 }
 

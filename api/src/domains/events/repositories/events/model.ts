@@ -51,6 +51,14 @@ const eventSchema = new Schema<EventDocument>(
     endsAt: { type: String, required: true },
     guestToken: { type: String, required: true, unique: true, default: () => randomBytes(9).toString('base64url') },
     settings: { type: settingsSchema, required: true },
+    customization: {
+      enabled: { type: Boolean, default: false },
+      agencyName: { type: String, trim: true },
+      agencyLogoUrl: { type: String, trim: true },
+      agencyWhatsapp: { type: String, trim: true },
+      agencyTagline: { type: String, trim: true },
+      whatsappMessage: { type: String, trim: true }
+    },
     uploadsCloseAt: { type: String, required: true },
     galleryExpiresAt: { type: String, required: true, index: true },
     galleryCleanedAt: { type: String },

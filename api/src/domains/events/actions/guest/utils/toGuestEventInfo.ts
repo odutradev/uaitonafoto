@@ -14,6 +14,7 @@ export const toGuestEventInfo = (event: EventEntity): GuestEventInfo => ({
   maxPhotosPerGuest: event.settings.maxPhotosPerGuest,
   photoVisibility: event.settings.photoVisibility,
   requiresPin: event.settings.pinEnabled,
+  customization: event.customization,
   phase: getEventPhase(event)
 })
 

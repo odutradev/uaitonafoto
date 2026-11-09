@@ -2,7 +2,7 @@ import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi'
 import { z } from 'zod'
 
 import { createPaginatedSchema, paginationQuerySchema } from '@factories/pagination/schemas'
-import { eventPinSchema, eventScreenSlotSchema } from '../event/schemas'
+import { eventCustomizationSchema, eventPinSchema, eventScreenSlotSchema } from '../event/schemas'
 import { photoSchema } from '../photo/schemas'
 
 extendZodWithOpenApi(z)
@@ -51,7 +51,8 @@ export const screenEventInfoSchema = z
   .object({
     id: z.string().openapi({ example: '665f1c2e9b1e8a001c8e4d30' }),
     name: z.string().openapi({ example: 'Casamento Ana & Pedro' }),
-    guestToken: z.string().openapi({ example: 'k3J9xQ2mZ1aB' })
+    guestToken: z.string().openapi({ example: 'k3J9xQ2mZ1aB' }),
+    customization: eventCustomizationSchema.optional()
   })
   .openapi('ScreenEventInfo')
 

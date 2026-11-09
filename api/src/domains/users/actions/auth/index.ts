@@ -7,6 +7,7 @@ import { authRateLimiter } from '@middlewares/rateLimit'
 import { getJwtSecret } from '@config/env'
 import { getUserByEmail, updateUser, verifyIdToken } from '@firebase/services/auth'
 import userRepository from '../../repositories'
+import subscriptionRepository from '@domains/payments/repositories/subscriptions'
 import logRepository from '@domains/system/repositories'
 import defineAction from '@factories/defineAction'
 
@@ -106,7 +107,8 @@ export const getMe = defineAction(
 
       if (!user) return manageError({ code: 'user_not_found' })
 
-      return user
+      const hasActiveSubscription = await subscriptionRepository.hasActiveByUser(user.id)
+      return { ...user, hasActiveSubscription }
     } catch (error) {
       return manageError({ code: 'internal_error', error })
     }
@@ -132,6 +134,8 @@ export const updateMe = defineAction(
 
       if (!user) return manageError({ code: 'user_not_found' })
 
+      const hasActiveSubscription = await subscriptionRepository.hasActiveByUser(user.id)
+
       logRepository.create({
         category: 'user',
         level: 'info',
@@ -144,7 +148,7 @@ export const updateMe = defineAction(
         details: data
       })
 
-      return user
+      return { ...user, hasActiveSubscription }
     } catch (error) {
       return manageError({ code: 'internal_error', error })
     }

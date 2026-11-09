@@ -83,6 +83,7 @@ export const createEvent = defineAction(
     await purchaseRepository.consumeCredit(user.id, creditType)
 
     const settings = { ...buildDefaultEventSettings(creditType), ...data.settings }
+    const customization = data.customization ?? user.customization
 
     try {
       const event = await eventRepository.create({
@@ -90,6 +91,7 @@ export const createEvent = defineAction(
         creditType,
         endsAt,
         settings,
+        customization,
         ...computeEventWindows(endsAt, settings),
         creatorId: user.id
       })

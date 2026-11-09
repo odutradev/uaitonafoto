@@ -3,6 +3,17 @@ import { z } from 'zod'
 
 extendZodWithOpenApi(z)
 
+export const userCustomizationSchema = z
+  .object({
+    enabled: z.boolean().default(false),
+    agencyName: z.string().optional(),
+    agencyLogoUrl: z.string().optional(),
+    agencyWhatsapp: z.string().optional(),
+    agencyTagline: z.string().optional(),
+    whatsappMessage: z.string().optional()
+  })
+  .openapi('UserCustomization')
+
 export const userSchema = z.object({
   id: z.string().openapi({ example: 'firebase-uid' }),
   role: z.enum(['admin', 'user']).openapi({ example: 'user' }),
@@ -15,6 +26,8 @@ export const userSchema = z.object({
   freeCredits: z.number().openapi({ example: 1 }),
   paidCredits: z.number().openapi({ example: 4 }),
   freeTrialClaimedAt: z.string().optional().openapi({ example: '2026-01-01T00:00:00.000Z' }),
+  hasActiveSubscription: z.boolean().optional().openapi({ example: true }),
+  customization: userCustomizationSchema.optional(),
   createdAt: z.string().openapi({ example: '2026-01-01T00:00:00.000Z' }),
   updatedAt: z.string().openapi({ example: '2026-01-01T00:00:00.000Z' })
 }).openapi('UserResponse')
@@ -32,7 +45,8 @@ export const updateUserSchema = z.object({
   name: z.string().min(1).optional().openapi({ example: 'John Doe' }),
   fullName: z.string().min(1).optional().openapi({ example: 'Johnathan Doe Smith' }),
   phone: z.string().min(10).optional().openapi({ example: '31999999999' }),
-  photoUrl: z.string().optional().openapi({ example: 'https://uaitonafoto.odutra.com/photo.webp' })
+  photoUrl: z.string().optional().openapi({ example: 'https://uaitonafoto.odutra.com/photo.webp' }),
+  customization: userCustomizationSchema.optional()
 }).openapi('UpdateUserRequest')
 
 export const syncResponseSchema = z.object({

@@ -11,6 +11,7 @@ export const toEventResponse = (entity: EventEntity, myRole: EventMemberRole): E
   endsAt: entity.endsAt,
   guestToken: entity.guestToken,
   settings: entity.settings,
+  customization: entity.customization,
   uploadsCloseAt: entity.uploadsCloseAt,
   galleryExpiresAt: entity.galleryExpiresAt,
   members: entity.members,

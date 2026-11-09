@@ -35,6 +35,15 @@ export interface EventScreenSlot {
   lastSeenAt?: string
 }
 
+export interface EventCustomization {
+  enabled: boolean
+  agencyName?: string
+  agencyLogoUrl?: string
+  agencyWhatsapp?: string
+  agencyTagline?: string
+  whatsappMessage?: string
+}
+
 export interface EventEntity {
   id: string
   name: string
@@ -45,6 +54,7 @@ export interface EventEntity {
   endsAt: string
   guestToken: string
   settings: EventSettings
+  customization?: EventCustomization
   uploadsCloseAt: string
   galleryExpiresAt: string
   galleryCleanedAt?: string
@@ -62,6 +72,7 @@ export interface CreateEventPayload {
   startsAt: string
   endsAt: string
   settings: EventSettings
+  customization?: EventCustomization
   uploadsCloseAt: string
   galleryExpiresAt: string
   creatorId: string
@@ -75,6 +86,7 @@ export interface UpdateEventPayload {
   startsAt?: string
   endsAt?: string
   settings?: Partial<EventSettings>
+  customization?: EventCustomization
   uploadsCloseAt?: string
   galleryExpiresAt?: string
 }

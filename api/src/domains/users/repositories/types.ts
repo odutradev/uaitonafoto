@@ -1,5 +1,14 @@
 export type UserRole = 'admin' | 'user'
 
+export interface UserCustomization {
+  enabled: boolean
+  agencyName?: string
+  agencyLogoUrl?: string
+  agencyWhatsapp?: string
+  agencyTagline?: string
+  whatsappMessage?: string
+}
+
 export interface UserEntity {
   id: string
   role: UserRole
@@ -12,6 +21,8 @@ export interface UserEntity {
   freeCredits: number
   paidCredits: number
   freeTrialClaimedAt?: string
+  customization?: UserCustomization
+  hasActiveSubscription?: boolean
   createdAt: string
   updatedAt: string
 }
@@ -32,4 +43,5 @@ export interface UpdateUserPayload {
   phone?: string
   photoUrl?: string
   role?: UserRole
+  customization?: UserCustomization
 }

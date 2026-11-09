@@ -14,6 +14,7 @@ const toUserEntity = (doc: any): UserEntity => ({
   freeCredits: doc.freeCredits ?? 0,
   paidCredits: doc.paidCredits ?? 0,
   freeTrialClaimedAt: doc.freeTrialClaimedAt ?? undefined,
+  customization: doc.customization ?? undefined,
   createdAt: doc.createdAt,
   updatedAt: doc.updatedAt
 })

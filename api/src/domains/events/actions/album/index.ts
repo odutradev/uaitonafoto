@@ -196,7 +196,8 @@ export const activateScreen = defineAction(
       event: {
         id: event.id,
         name: event.name,
-        guestToken: event.guestToken
+        guestToken: event.guestToken,
+        customization: event.customization
       },
       pin: event.settings.pinEnabled ? event.settings.pin : null
     }
@@ -238,7 +239,8 @@ export const getScreen = defineAction(
       event: {
         id: event.id,
         name: event.name,
-        guestToken: event.guestToken
+        guestToken: event.guestToken,
+        customization: event.customization
       },
       photos: await toPhotoResponses(photos),
       nextSince: photos.at(-1)?.createdAt ?? query?.since,
