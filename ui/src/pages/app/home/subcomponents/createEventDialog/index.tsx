@@ -73,10 +73,6 @@ const CreateEventDialog = ({ open, onClose, onCreated }: CreateEventDialogProps)
     }
 
     if (stepIndex === 1) {
-      if (!form.maxPhotosPerGuest || form.maxPhotosPerGuest < 1 || form.maxPhotosPerGuest > 100) {
-        toast.error('O limite deve ser entre 1 e 100 fotos por convidado.')
-        return false
-      }
       return true
     }
 

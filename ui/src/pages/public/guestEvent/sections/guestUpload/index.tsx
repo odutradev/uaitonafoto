@@ -11,12 +11,11 @@ const GuestUpload = ({
   event,
   guest,
   photosSent,
-  photosRemaining,
   isUploading,
   onUpload
 }: GuestUploadProps) => {
   const inputRef = useRef<HTMLInputElement | null>(null)
-  const canUpload = event.phase === 'open' && photosRemaining > 0
+  const canUpload = event.phase === 'open'
 
   const handleFileChange = async (changeEvent: ChangeEvent<HTMLInputElement>) => {
     const file = changeEvent.target.files?.[0]
@@ -30,11 +29,13 @@ const GuestUpload = ({
         <Typography variant="subtitle1" fontWeight={700}>
           Olá, {guest.name}
         </Typography>
-        <Chip
-          size="small"
-          color={photosRemaining > 0 ? 'primary' : 'default'}
-          label={`${photosSent} / ${event.maxPhotosPerGuest} fotos`}
-        />
+        {photosSent > 0 && (
+          <Chip
+            size="small"
+            color="primary"
+            label={`${photosSent} ${photosSent === 1 ? 'foto enviada' : 'fotos enviadas'}`}
+          />
+        )}
       </Box>
 
       {event.phase === 'upcoming' && (
@@ -44,10 +45,6 @@ const GuestUpload = ({
       )}
 
       {event.phase === 'closed' && <Alert severity="info">O período de envio de fotos já se encerrou.</Alert>}
-
-      {event.phase === 'open' && photosRemaining === 0 && (
-        <Alert severity="info">Você atingiu o limite de fotos deste evento.</Alert>
-      )}
 
       <input
         ref={inputRef}

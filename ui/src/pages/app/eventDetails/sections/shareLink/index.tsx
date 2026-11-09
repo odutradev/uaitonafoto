@@ -248,15 +248,6 @@ const ShareLink = ({
         <Box sx={summaryGridStyles}>
           <Box sx={summaryItemStyles}>
             <Typography variant="caption" color="text.secondary" fontWeight={700}>
-              LIMITE POR CONVIDADO
-            </Typography>
-            <Typography variant="body2" fontWeight={700}>
-              Até {event.settings.maxPhotosPerGuest} {event.settings.maxPhotosPerGuest === 1 ? 'foto' : 'fotos'}
-            </Typography>
-          </Box>
-
-          <Box sx={summaryItemStyles}>
-            <Typography variant="caption" color="text.secondary" fontWeight={700}>
               VISIBILIDADE NO MURAL
             </Typography>
             <Typography variant="body2" fontWeight={700}>

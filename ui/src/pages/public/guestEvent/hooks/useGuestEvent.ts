@@ -23,7 +23,6 @@ const useGuestEvent = (eventToken: string) => {
   const [guest, setGuest] = useState<GuestProfile | null>(null)
   const [guestToken, setGuestToken] = useState<string | null>(() => getStoredGuestToken(eventToken))
   const [photosSent, setPhotosSent] = useState(0)
-  const [photosRemaining, setPhotosRemaining] = useState(0)
   const [photos, setPhotos] = useState<GuestPhoto[]>([])
   const [meta, setMeta] = useState<PaginationMeta | null>(null)
   const [page, setPage] = useState(1)
@@ -59,7 +58,6 @@ const useGuestEvent = (eventToken: string) => {
           setGuest(session.guest)
           setEvent(session.event)
           setPhotosSent(session.photosSent)
-          setPhotosRemaining(session.photosRemaining)
           setGuestToken(storedToken)
           await loadFeed(storedToken, 1)
           setIsLoading(false)
@@ -98,7 +96,6 @@ const useGuestEvent = (eventToken: string) => {
       setGuest(response.guest)
       setEvent(response.event)
       setPhotosSent(0)
-      setPhotosRemaining(response.event.maxPhotosPerGuest)
     } catch (error) {
       toast.error(getErrorMessage(error, 'Não foi possível entrar no evento.'))
     }
@@ -110,7 +107,6 @@ const useGuestEvent = (eventToken: string) => {
     try {
       await uploadGuestPhoto(guestToken, file)
       setPhotosSent((count) => count + 1)
-      setPhotosRemaining((count) => Math.max(0, count - 1))
       setPage(1)
       await loadFeed(guestToken, 1)
       toast.success('Foto enviada!')
@@ -140,7 +136,6 @@ const useGuestEvent = (eventToken: string) => {
     try {
       await deleteGuestPhoto(guestToken, photoId)
       setPhotosSent((count) => Math.max(0, count - 1))
-      setPhotosRemaining((count) => count + 1)
       await loadFeed(guestToken, page)
       toast.success('Foto excluída.')
     } catch (error) {
@@ -152,7 +147,6 @@ const useGuestEvent = (eventToken: string) => {
     event,
     guest,
     photosSent,
-    photosRemaining,
     photos,
     meta,
     page,

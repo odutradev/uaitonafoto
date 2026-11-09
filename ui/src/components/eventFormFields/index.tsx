@@ -103,32 +103,20 @@ const EventFormFields = ({
   if (step === 1) {
     return (
       <Box sx={formFieldsStackStyles}>
-        <Box sx={twoColsRowStyles}>
-          <TextField
-            select
-            label="Fotos visíveis"
-            value={form.photoVisibility}
-            onChange={(e) => onChange('photoVisibility', e.target.value as PhotoVisibility)}
-            helperText="Quando as fotos aparecem no telão e no mural."
-            fullWidth
-          >
-            {Object.entries(photoVisibilityLabels).map(([value, label]) => (
-              <MenuItem key={value} value={value}>
-                {label}
-              </MenuItem>
-            ))}
-          </TextField>
-
-          <TextField
-            label="Limite de fotos por convidado"
-            type="number"
-            value={form.maxPhotosPerGuest}
-            onChange={(e) => onChange('maxPhotosPerGuest', Number(e.target.value))}
-            slotProps={{ htmlInput: { min: 1, max: 100 } }}
-            helperText="Quantidade máxima de uploads por celular."
-            fullWidth
-          />
-        </Box>
+        <TextField
+          select
+          label="Fotos visíveis"
+          value={form.photoVisibility}
+          onChange={(e) => onChange('photoVisibility', e.target.value as PhotoVisibility)}
+          helperText="Quando as fotos aparecem no telão e no mural."
+          fullWidth
+        >
+          {Object.entries(photoVisibilityLabels).map(([value, label]) => (
+            <MenuItem key={value} value={value}>
+              {label}
+            </MenuItem>
+          ))}
+        </TextField>
 
         <Box sx={pinCardBoxStyles}>
           <Typography variant="subtitle2" fontWeight={700}>
@@ -342,34 +330,24 @@ const EventFormFields = ({
         ))}
       </TextField>
 
-      <Box sx={twoColsRowStyles}>
+      {!isCreate ? (
         <TextField
-          label="Fotos por convidado"
+          label="Envio após o fim (horas)"
           type="number"
-          value={form.maxPhotosPerGuest}
-          onChange={(e) => onChange('maxPhotosPerGuest', Number(e.target.value))}
-          slotProps={{ htmlInput: { min: 1, max: 100 } }}
+          value={form.uploadWindowHours}
+          onChange={(e) => onChange('uploadWindowHours', Number(e.target.value))}
+          slotProps={{ htmlInput: { min: 0, max: 168 } }}
           fullWidth
         />
-        {!isCreate ? (
-          <TextField
-            label="Envio após o fim (horas)"
-            type="number"
-            value={form.uploadWindowHours}
-            onChange={(e) => onChange('uploadWindowHours', Number(e.target.value))}
-            slotProps={{ htmlInput: { min: 0, max: 168 } }}
-            fullWidth
-          />
-        ) : (
-          <TextField
-            label="Galeria disponível por"
-            value={`${form.galleryDurationDays} dias`}
-            slotProps={{ htmlInput: { readOnly: true } }}
-            helperText={`Regra do crédito: ${form.creditType === 'free' ? '14 dias' : '90 dias'}`}
-            fullWidth
-          />
-        )}
-      </Box>
+      ) : (
+        <TextField
+          label="Galeria disponível por"
+          value={`${form.galleryDurationDays} dias`}
+          slotProps={{ htmlInput: { readOnly: true } }}
+          helperText={`Regra do crédito: ${form.creditType === 'free' ? '14 dias' : '90 dias'}`}
+          fullWidth
+        />
+      )}
 
       {!isCreate && (
         <TextField

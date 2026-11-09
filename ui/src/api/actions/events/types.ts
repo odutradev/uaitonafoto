@@ -17,7 +17,6 @@ export interface EventCustomization {
 export interface EventSettings {
   uploadWindowHours: number
   galleryDurationDays: number
-  maxPhotosPerGuest: number
   photoVisibility: PhotoVisibility
   pinEnabled: boolean
   pin: string

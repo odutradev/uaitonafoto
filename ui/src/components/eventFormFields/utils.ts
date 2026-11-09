@@ -15,7 +15,6 @@ export const buildInitialEventForm = (defaultCreditType: EventCreditType = 'paid
     creditType: defaultCreditType,
     startsAt: start.format(DATETIME_INPUT_FORMAT),
     endsAt: '',
-    maxPhotosPerGuest: 10,
     photoVisibility: 'during_event',
     uploadWindowHours: 0,
     galleryDurationDays: isFree ? 14 : 90,
@@ -32,7 +31,6 @@ export const toEventForm = (event: EventItem): EventFormState => ({
   creditType: event.creditType ?? 'paid',
   startsAt: dayjs(event.startsAt).format(DATETIME_INPUT_FORMAT),
   endsAt: dayjs(event.endsAt).format(DATETIME_INPUT_FORMAT),
-  maxPhotosPerGuest: event.settings.maxPhotosPerGuest,
   photoVisibility: event.settings.photoVisibility,
   uploadWindowHours: event.settings.uploadWindowHours,
   galleryDurationDays: event.settings.galleryDurationDays,
@@ -56,7 +54,6 @@ export const toEventPayload = (form: EventFormState): CreateEventPayload => ({
   startsAt: dayjs(form.startsAt).toISOString(),
   ...(form.endsAt ? { endsAt: dayjs(form.endsAt).toISOString() } : {}),
   settings: {
-    maxPhotosPerGuest: form.maxPhotosPerGuest,
     photoVisibility: form.photoVisibility,
     uploadWindowHours: form.uploadWindowHours,
     galleryDurationDays: form.galleryDurationDays,

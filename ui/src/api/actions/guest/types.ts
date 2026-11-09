@@ -8,7 +8,6 @@ export interface GuestEventInfo {
   endsAt: string
   uploadsCloseAt: string
   galleryExpiresAt: string
-  maxPhotosPerGuest: number
   photoVisibility: PhotoVisibility
   requiresPin: boolean
   phase: EventPhase
@@ -30,7 +29,6 @@ export interface GuestSession {
   guest: GuestProfile
   event: GuestEventInfo
   photosSent: number
-  photosRemaining: number
 }
 
 export interface LikeResult {

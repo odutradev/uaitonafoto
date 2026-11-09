@@ -6,7 +6,6 @@ export interface EventFormState {
   creditType: EventCreditType
   startsAt: string
   endsAt: string
-  maxPhotosPerGuest: number
   photoVisibility: EventItem['settings']['photoVisibility']
   uploadWindowHours: number
   galleryDurationDays: number
