@@ -9,6 +9,7 @@ import {
   Typography
 } from '@mui/material'
 import { RefreshOutlined as RefreshIcon } from '@mui/icons-material'
+import dayjs from 'dayjs'
 
 import {
   eventTypeLabels,
@@ -257,70 +258,55 @@ const EventFormFields = ({
         </TextField>
       )}
 
+      <Box sx={twoColsRowStyles}>
+        <TextField
+          label="Nome do evento"
+          placeholder="Ex: Casamento Marina & Pedro"
+          value={form.name}
+          onChange={(e) => onChange('name', e.target.value)}
+          slotProps={{ htmlInput: { maxLength: 120 } }}
+          required
+          fullWidth
+        />
+
+        <TextField
+          select
+          label="Tipo de evento"
+          value={form.type}
+          onChange={(e) => onChange('type', e.target.value as EventType)}
+          fullWidth
+        >
+          {Object.entries(eventTypeLabels).map(([value, label]) => (
+            <MenuItem key={value} value={value}>
+              {label}
+            </MenuItem>
+          ))}
+        </TextField>
+      </Box>
+
       <TextField
-        label="Nome do evento"
-        placeholder="Ex: Casamento Marina & Pedro"
-        value={form.name}
-        onChange={(e) => onChange('name', e.target.value)}
-        slotProps={{ htmlInput: { maxLength: 120 } }}
+        label="Início do evento"
+        type="datetime-local"
+        value={form.startsAt}
+        onChange={(e) => {
+          onChange('startsAt', e.target.value)
+          const durationHours = form.creditType === 'free' ? 4 : 8
+          if (e.target.value) {
+            onChange('endsAt', dayjs(e.target.value).add(durationHours, 'hour').format('YYYY-MM-DDTHH:mm'))
+          }
+        }}
+        slotProps={{ inputLabel: { shrink: true } }}
+        helperText={`O sistema e telão ficarão abertos por ${form.creditType === 'free' ? '4' : '8'} horas a partir do início.`}
         required
         fullWidth
       />
 
       <TextField
         select
-        label="Tipo de evento"
-        value={form.type}
-        onChange={(e) => onChange('type', e.target.value as EventType)}
-        fullWidth
-      >
-        {Object.entries(eventTypeLabels).map(([value, label]) => (
-          <MenuItem key={value} value={value}>
-            {label}
-          </MenuItem>
-        ))}
-      </TextField>
-
-      {isCreate ? (
-        <TextField
-          label="Início do evento"
-          type="datetime-local"
-          value={form.startsAt}
-          onChange={(e) => onChange('startsAt', e.target.value)}
-          slotProps={{ inputLabel: { shrink: true } }}
-          helperText={`O sistema e telão ficarão abertos por ${form.creditType === 'free' ? '4' : '8'} horas a partir do início.`}
-          required
-          fullWidth
-        />
-      ) : (
-        <Box sx={twoColsRowStyles}>
-          <TextField
-            label="Início"
-            type="datetime-local"
-            value={form.startsAt}
-            onChange={(e) => onChange('startsAt', e.target.value)}
-            slotProps={{ inputLabel: { shrink: true } }}
-            required
-            fullWidth
-          />
-          <TextField
-            label="Término"
-            type="datetime-local"
-            value={form.endsAt}
-            onChange={(e) => onChange('endsAt', e.target.value)}
-            slotProps={{ inputLabel: { shrink: true } }}
-            required
-            fullWidth
-          />
-        </Box>
-      )}
-
-      <TextField
-        select
         label="Fotos visíveis"
         value={form.photoVisibility}
         onChange={(e) => onChange('photoVisibility', e.target.value as PhotoVisibility)}
-        helperText="Quando as fotos aparecem no telão e no feed."
+        helperText="Quando as fotos aparecem no telão e no mural."
         fullWidth
       >
         {Object.entries(photoVisibilityLabels).map(([value, label]) => (
@@ -330,35 +316,19 @@ const EventFormFields = ({
         ))}
       </TextField>
 
-      {!isCreate ? (
-        <TextField
-          label="Envio após o fim (horas)"
-          type="number"
-          value={form.uploadWindowHours}
-          onChange={(e) => onChange('uploadWindowHours', Number(e.target.value))}
-          slotProps={{ htmlInput: { min: 0, max: 168 } }}
-          fullWidth
-        />
-      ) : (
-        <TextField
-          label="Galeria disponível por"
-          value={`${form.galleryDurationDays} dias`}
-          slotProps={{ htmlInput: { readOnly: true } }}
-          helperText={`Regra do crédito: ${form.creditType === 'free' ? '14 dias' : '90 dias'}`}
-          fullWidth
-        />
-      )}
-
-      {!isCreate && (
-        <TextField
-          label="Galeria disponível por (dias após o fim)"
-          type="number"
-          value={form.galleryDurationDays}
-          onChange={(e) => onChange('galleryDurationDays', Number(e.target.value))}
-          slotProps={{ htmlInput: { min: 1, max: 365 } }}
-          fullWidth
-        />
-      )}
+      <Box sx={pinCardBoxStyles}>
+        <Typography variant="subtitle2" fontWeight={700}>
+          Resumo das janelas do evento
+        </Typography>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+          <Typography variant="body2" color="text.secondary">
+            ⏱️ <strong>Duração ao vivo:</strong> {form.creditType === 'free' ? '4 horas' : '8 horas'} de telão e fotos abertos.
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            🖼️ <strong>Retenção da galeria:</strong> disponível por {form.creditType === 'free' ? '14 dias' : '90 dias'} para visualização e download.
+          </Typography>
+        </Box>
+      </Box>
 
     <Box sx={pinCardBoxStyles}>
       <Box sx={pinToggleRowStyles}>

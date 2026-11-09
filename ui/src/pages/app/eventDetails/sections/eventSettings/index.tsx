@@ -135,7 +135,7 @@ const EventSettings = ({ event, onSave, onDelete }: EventSettingsProps) => {
             Dados e regras do evento
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mt: 0.25 }}>
-            Ajuste o nome, datas de início e fim, visibilidade no mural e limites de envio por convidado.
+            Ajuste o nome, tipo, data de início, visibilidade no mural e senha de acesso.
           </Typography>
         </Box>
 

@@ -47,20 +47,26 @@ export const isValidEventPeriod = (form: EventFormState): boolean =>
 export const isValidEventPin = (form: EventFormState): boolean =>
   !form.pinEnabled || /^\d{4}$/.test(form.pin)
 
-export const toEventPayload = (form: EventFormState): CreateEventPayload => ({
-  name: form.name.trim(),
-  type: form.type,
-  creditType: form.creditType,
-  startsAt: dayjs(form.startsAt).toISOString(),
-  ...(form.endsAt ? { endsAt: dayjs(form.endsAt).toISOString() } : {}),
-  settings: {
-    photoVisibility: form.photoVisibility,
-    uploadWindowHours: form.uploadWindowHours,
-    galleryDurationDays: form.galleryDurationDays,
-    pinEnabled: form.pinEnabled,
-    pin: form.pin,
-    pinRotate: form.pinRotate,
-    pinRotationMinutes: form.pinRotationMinutes
-  },
-  customization: form.customization
-})
+export const toEventPayload = (form: EventFormState): CreateEventPayload => {
+  const durationHours = form.creditType === 'free' ? 4 : 8
+  const calculatedEndsAt = dayjs(form.startsAt).add(durationHours, 'hour').toISOString()
+  const galleryDays = form.creditType === 'free' ? 14 : 90
+
+  return {
+    name: form.name.trim(),
+    type: form.type,
+    creditType: form.creditType,
+    startsAt: dayjs(form.startsAt).toISOString(),
+    endsAt: form.endsAt ? dayjs(form.endsAt).toISOString() : calculatedEndsAt,
+    settings: {
+      photoVisibility: form.photoVisibility,
+      uploadWindowHours: form.uploadWindowHours ?? 0,
+      galleryDurationDays: form.galleryDurationDays ?? galleryDays,
+      pinEnabled: form.pinEnabled,
+      pin: form.pin,
+      pinRotate: form.pinRotate,
+      pinRotationMinutes: form.pinRotationMinutes
+    },
+    customization: form.customization
+  }
+}
