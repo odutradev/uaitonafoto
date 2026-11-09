@@ -193,7 +193,7 @@ export const thumbnailsRowStyles: SxProps<Theme> = {
   gridTemplateColumns: 'repeat(6, 1fr)',
   gap: { xs: 1, md: 1.75 },
   mt: { xs: 1.5, md: 2.5 },
-  height: { xs: 60, md: 92 },
+  height: { xs: 76, sm: 100, md: 135, lg: 155, xl: 170 },
   flexShrink: 0
 }
 
@@ -205,6 +205,10 @@ export const getThumbnailSlotStyles = (isActive: boolean = false): SxProps<Theme
   boxShadow: isActive ? '0 0 16px rgba(255, 207, 31, 0.45)' : 'none',
   transition: 'all 0.2s ease',
   cursor: 'pointer',
+  position: 'relative',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
   '&:hover': {
     borderColor: brandColors.flashYellow
   }
@@ -213,7 +217,8 @@ export const getThumbnailSlotStyles = (isActive: boolean = false): SxProps<Theme
 export const thumbnailImgStyles: SxProps<Theme> = {
   width: '100%',
   height: '100%',
-  objectFit: 'cover'
+  objectFit: 'cover',
+  objectPosition: 'center'
 }
 
 export const rightCardStyles: SxProps<Theme> = (theme) => ({
