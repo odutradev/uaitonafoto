@@ -38,6 +38,80 @@ const formatPlanCard = (item: PlanApiItem): PlanCardData => {
   }
 }
 
+const DEFAULT_FALLBACK_PLANS: PlanCardData[] = [
+  {
+    id: 'prod_b2c_event_pass',
+    abacateProductId: 'prod_b2c_event_pass',
+    tag: 'Evento Único',
+    title: 'Passe do Evento',
+    price: 'R$ 147,00',
+    period: 'pagamento único',
+    subBadge: 'Fotos e convidados ilimitados',
+    description: 'Perfeito para noivos, aniversariantes e formaturas contratando para uma data especial.',
+    features: [
+      '1 evento completo com fotos ilimitadas',
+      '8 horas de telão ao vivo e recepção de fotos',
+      '2 telões simultâneos com PIN individual',
+      '1 convidado na equipe organizadora',
+      'Convidados ilimitados sem app e sem cadastro',
+      'Moderação de fotos em tempo real com PIN',
+      'Missões fotográficas interativas',
+      'Display de mesa com QR Code para impressão',
+      'Download de todas as fotos em alta resolução (.zip)',
+      'Galeria online ativa por 90 dias'
+    ],
+    ctaText: 'Criar meu evento',
+    ctaHref: 'prod_b2c_event_pass',
+    highlighted: false
+  },
+  {
+    id: 'prod_agency_essential',
+    abacateProductId: 'prod_agency_essential',
+    tag: 'Cerimonialistas',
+    title: 'Agência Essencial',
+    price: 'R$ 247,00',
+    period: '/mês',
+    costPerEvent: 'R$ 61,75 por evento (58% de economia)',
+    description: 'Para assessores e cerimonialistas que realizam eventos com frequência regular.',
+    features: [
+      'Tudo que tem no Avulso, mais:',
+      '4 eventos inclusos por mês',
+      '3 telões simultâneos por evento',
+      '2 convidados na equipe organizadora',
+      'Sua própria marca White-Label no telão e app',
+      'Créditos acumulativos enquanto o plano estiver ativo',
+      'Crédito extra avulso por R$ 69,00'
+    ],
+    ctaText: 'Assinar Essencial',
+    ctaHref: 'prod_agency_essential',
+    highlighted: false
+  },
+  {
+    id: 'prod_agency_pro',
+    abacateProductId: 'prod_agency_pro',
+    badge: 'Mais Escolhido',
+    tag: 'Alta Demanda',
+    title: 'Agência Pro',
+    price: 'R$ 447,00',
+    period: '/mês',
+    costPerEvent: 'R$ 44,70 por evento (70% de economia)',
+    description: 'O melhor custo-benefício para agências consolidadas com múltiplos eventos por semana.',
+    features: [
+      'Tudo que tem no Essencial, mais:',
+      '10 eventos inclusos por mês',
+      '4 telões simultâneos por evento',
+      '5 convidados na equipe organizadora',
+      'Sua marca em destaque para atrair novos clientes',
+      'Botão direto para seu WhatsApp no mural de fotos',
+      'Créditos acumulativos enquanto o plano estiver ativo',
+      'Crédito extra avulso por R$ 69,00'
+    ],
+    ctaText: 'Assinar Pro',
+    ctaHref: 'prod_agency_pro',
+    highlighted: true
+  }
+]
+
 export const useLandingPage = (): UseLandingPageReturn => {
   const theme = useTheme()
   const isDark = theme.palette.mode === 'dark'
@@ -62,7 +136,7 @@ export const useLandingPage = (): UseLandingPageReturn => {
       })
       .catch(() => {
         if (isMounted) {
-          setPlans([])
+          setPlans(DEFAULT_FALLBACK_PLANS)
         }
       })
       .finally(() => {

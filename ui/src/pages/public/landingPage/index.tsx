@@ -1,6 +1,7 @@
 import { Box } from '@mui/material'
 
 import useLandingPage from './hook'
+import Features from './sections/features'
 import FinalCta from './sections/finalCta'
 import Hero from './sections/hero'
 import HowItWorks from './sections/howItWorks'
@@ -38,6 +39,7 @@ const LandingPage = () => {
         guestFeedData={data.guestFeed}
         isDark={isDark}
       />
+      <Features data={data.features} isDark={isDark} />
       <Plans
         data={data.plans}
         plans={plans}

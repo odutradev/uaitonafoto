@@ -2,6 +2,7 @@ import { Box, Button, Card, Container, Stack, Typography } from '@mui/material'
 import {
   CheckCircle as CheckCircleIcon,
   ArrowForward as ArrowForwardIcon,
+  AutoAwesome as AutoAwesomeIcon,
   Bolt as BoltIcon
 } from '@mui/icons-material'
 import { Link as RouterLink } from 'react-router-dom'
@@ -99,14 +100,56 @@ export const Plans = ({
               </Typography>
 
               <Stack spacing={1.5} sx={{ mb: 4, flex: 1 }}>
-                {plan.features.map((feature, idx) => (
-                  <Box key={idx} sx={featureItemStyles}>
-                    <CheckCircleIcon sx={checkIconStyles} />
-                    <Typography variant="body2" sx={{ color: 'text.primary' }}>
-                      {feature}
-                    </Typography>
-                  </Box>
-                ))}
+                {plan.features.map((feature, idx) => {
+                  const isInheritanceHeader =
+                    feature.toLowerCase().startsWith('tudo que tem no avulso') ||
+                    feature.toLowerCase().startsWith('tudo que tem no essencial') ||
+                    feature.toLowerCase().startsWith('tudo do avulso') ||
+                    feature.toLowerCase().startsWith('tudo do essencial')
+
+                  if (isInheritanceHeader) {
+                    return (
+                      <Box
+                        key={idx}
+                        sx={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 1,
+                          py: 0.85,
+                          px: 1.25,
+                          borderRadius: '10px',
+                          bgcolor: isDark ? 'rgba(255, 214, 10, 0.12)' : 'rgba(255, 214, 10, 0.22)',
+                          border: '1px solid',
+                          borderColor: isDark ? 'rgba(255, 214, 10, 0.3)' : 'rgba(200, 160, 0, 0.35)',
+                          mt: 0.5,
+                          mb: 0.5
+                        }}
+                      >
+                        <AutoAwesomeIcon sx={{ fontSize: 16, color: isDark ? '#ffd60a' : '#805d00' }} />
+                        <Typography
+                          variant="caption"
+                          fontWeight={800}
+                          sx={{
+                            color: isDark ? '#ffd60a' : '#805d00',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.04em'
+                          }}
+                        >
+                          {feature}
+                        </Typography>
+                      </Box>
+                    )
+                  }
+
+                  return (
+                    <Box key={idx} sx={featureItemStyles}>
+                      <CheckCircleIcon sx={checkIconStyles} />
+                      <Typography variant="body2" sx={{ color: 'text.primary' }}>
+                        {feature}
+                      </Typography>
+                    </Box>
+                  )
+                })}
               </Stack>
 
               <Button
