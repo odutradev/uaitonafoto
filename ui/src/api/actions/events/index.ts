@@ -5,6 +5,7 @@ import type {
   AlbumParams,
   ApproveAllPhotosResponse,
   CreateEventPayload,
+  EventChallenge,
   EventGuest,
   EventItem,
   EventPhoto,
@@ -151,5 +152,40 @@ export const downloadEventAlbumZip = async (id: string): Promise<Blob> => {
   const response = await api.get<Blob>(`/events/${id}/album/download-zip`, {
     responseType: 'blob'
   })
+  return response.data
+}
+
+export const getEventChallenges = async (id: string): Promise<EventChallenge[]> => {
+  const response = await api.get<EventChallenge[]>(`/events/${id}/challenges`)
+  return response.data
+}
+
+export const addEventChallenge = async (
+  id: string,
+  title: string,
+  description?: string
+): Promise<EventChallenge[]> => {
+  const response = await api.post<EventChallenge[]>(`/events/${id}/challenges`, { title, description })
+  return response.data
+}
+
+export const deleteEventChallenge = async (
+  id: string,
+  challengeId: string
+): Promise<EventChallenge[]> => {
+  const response = await api.delete<EventChallenge[]>(`/events/${id}/challenges/${challengeId}`)
+  return response.data
+}
+
+export const toggleEventChallenge = async (
+  id: string,
+  challengeId: string
+): Promise<EventChallenge[]> => {
+  const response = await api.patch<EventChallenge[]>(`/events/${id}/challenges/${challengeId}/toggle`)
+  return response.data
+}
+
+export const resetEventChallenges = async (id: string): Promise<EventChallenge[]> => {
+  const response = await api.post<EventChallenge[]>(`/events/${id}/challenges/reset`)
   return response.data
 }

@@ -25,6 +25,15 @@ export interface EventSettings {
   pinRotationMinutes: PinRotationMinutes
   pinUpdatedAt: string
   moderationEnabled?: boolean
+  challengesEnabled?: boolean
+}
+
+export interface EventChallenge {
+  id: string
+  title: string
+  description?: string
+  active: boolean
+  createdAt: string
 }
 
 export interface EventMember {
@@ -57,6 +66,7 @@ export interface EventItem {
   galleryExpiresAt: string
   closedAt?: string
   phase?: EventPhase
+  challenges?: EventChallenge[]
   members: EventMember[]
   screens: EventScreenSlot[]
   myRole: EventMemberRole
@@ -73,10 +83,12 @@ export interface CreateEventPayload {
   endsAt?: string
   settings?: Partial<EventSettings>
   customization?: EventCustomization
+  challenges?: EventChallenge[]
 }
 
 export type UpdateEventPayload = Partial<Omit<CreateEventPayload, 'settings'>> & {
   settings?: Partial<EventSettings>
+  challenges?: EventChallenge[]
 }
 
 export interface PaginationMeta {
@@ -114,6 +126,8 @@ export interface EventPhoto {
   likedByMe?: boolean
   mine?: boolean
   status?: PhotoStatus
+  challengeId?: string
+  challengeTitle?: string
   createdAt: string
 }
 

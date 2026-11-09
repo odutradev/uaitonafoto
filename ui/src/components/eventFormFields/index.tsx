@@ -143,6 +143,27 @@ const EventFormFields = ({
         </Box>
 
         <Box sx={pinCardBoxStyles}>
+          <Box sx={pinToggleRowStyles}>
+            <Box>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Typography variant="subtitle2" fontWeight={700}>
+                  Missões Fotográficas (Gamificação)
+                </Typography>
+                <Chip size="small" label="Engajamento" color="primary" variant="outlined" sx={{ fontSize: '0.7rem' }} />
+              </Box>
+              <Typography variant="caption" color="text.secondary">
+                Ativa uma lista de desafios interativos para os convidados cumprirem fotos temáticas no evento.
+              </Typography>
+            </Box>
+            <Switch
+              checked={form.challengesEnabled}
+              onChange={(e) => onChange('challengesEnabled', e.target.checked)}
+              inputProps={{ 'aria-label': 'Ativar missões fotográficas' }}
+            />
+          </Box>
+        </Box>
+
+        <Box sx={pinCardBoxStyles}>
           <Typography variant="subtitle2" fontWeight={700}>
             Resumo das janelas do evento
           </Typography>
@@ -453,6 +474,27 @@ const EventFormFields = ({
           checked={form.moderationEnabled}
           onChange={(e) => onChange('moderationEnabled', e.target.checked)}
           inputProps={{ 'aria-label': 'Ativar moderação prévia' }}
+        />
+      </Box>
+    </Box>
+
+    <Box sx={pinCardBoxStyles}>
+      <Box sx={pinToggleRowStyles}>
+        <Box>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Typography variant="subtitle2" fontWeight={700}>
+              Missões Fotográficas (Gamificação)
+            </Typography>
+            <Chip size="small" label="Engajamento" color="primary" variant="outlined" sx={{ fontSize: '0.7rem' }} />
+          </Box>
+          <Typography variant="caption" color="text.secondary">
+            Ativa uma lista de desafios interativos para os convidados cumprirem fotos temáticas no evento.
+          </Typography>
+        </Box>
+        <Switch
+          checked={form.challengesEnabled}
+          onChange={(e) => onChange('challengesEnabled', e.target.checked)}
+          inputProps={{ 'aria-label': 'Ativar missões fotográficas' }}
         />
       </Box>
     </Box>

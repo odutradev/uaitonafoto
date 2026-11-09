@@ -2,6 +2,7 @@ import { Box, Button, Skeleton, Tab, Tabs } from '@mui/material'
 import {
   ArrowBack as BackIcon,
   CollectionsOutlined as AlbumIcon,
+  EmojiEventsOutlined as ChallengesIcon,
   GroupOutlined as TeamIcon,
   LiveTvOutlined as ScreenIcon,
   QrCode2Outlined as QrIcon,
@@ -13,6 +14,7 @@ import useAuth from '@hooks/useAuth'
 
 import useEventDetails from './hooks/useEventDetails'
 import EventAlbum from './sections/eventAlbum'
+import EventChallenges from './sections/eventChallenges'
 import EventScreens from './sections/eventScreens'
 import EventSettings from './sections/eventSettings'
 import EventStatusControl from './sections/eventStatusControl'
@@ -27,7 +29,7 @@ import {
 } from './styles'
 import type { EventDetailsTab } from './types'
 
-const VALID_TABS: readonly EventDetailsTab[] = ['access', 'screens', 'album', 'team', 'settings']
+const VALID_TABS: readonly EventDetailsTab[] = ['access', 'screens', 'challenges', 'album', 'team', 'settings']
 
 const isValidTab = (tab: string | null): tab is EventDetailsTab => {
   return tab !== null && (VALID_TABS as readonly string[]).includes(tab)
@@ -124,6 +126,15 @@ const EventDetails = () => {
             label="Telões"
             sx={tabItemStyles}
           />
+          {event.settings.challengesEnabled && (
+            <Tab
+              value="challenges"
+              icon={<ChallengesIcon fontSize="small" />}
+              iconPosition="start"
+              label="Desafios"
+              sx={tabItemStyles}
+            />
+          )}
           <Tab
             value="album"
             icon={<AlbumIcon fontSize="small" />}
@@ -165,6 +176,9 @@ const EventDetails = () => {
           onRefresh={refresh}
           onUnlockLockouts={() => unlockPin('screen')}
         />
+      )}
+      {activeTab === 'challenges' && event.settings.challengesEnabled && (
+        <EventChallenges event={event} onRefresh={refresh} />
       )}
       {activeTab === 'album' && <EventAlbum event={event} />}
       {activeTab === 'team' && <EventTeam event={event} currentUserId={user.id} />}
