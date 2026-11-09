@@ -27,7 +27,7 @@ const GuestJoin = ({ event, onJoin, lockout }: GuestJoinProps) => {
   }
 
   return (
-    <Paper variant="outlined" component="form" onSubmit={handleSubmit} sx={joinPaperStyles}>
+    <Paper variant="outlined" component="form" noValidate onSubmit={handleSubmit} sx={joinPaperStyles}>
       <Typography variant="h6" component="h2">
         Como você quer ser chamado?
       </Typography>

@@ -214,7 +214,7 @@ const EventScreen = () => {
 
       {!isActivated ? (
         <Box sx={activationWrapperStyles}>
-          <Box component="form" onSubmit={handleActivateSubmit} sx={activationCardStyles}>
+          <Box component="form" noValidate onSubmit={handleActivateSubmit} sx={activationCardStyles}>
             <Logo variant="auto" size="medium" symbolOnly />
             <Box>
               <Typography
