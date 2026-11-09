@@ -97,14 +97,7 @@ const CreateEventDialog = ({ open, onClose, onCreated }: CreateEventDialogProps)
     setActiveStep((current) => Math.max(current - 1, 0))
   }
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-
-    if (activeStep < STEPS.length - 1) {
-      handleNext()
-      return
-    }
-
+  const handleCreateEvent = async () => {
     if (!validateStep(0) || !validateStep(1) || !validateStep(2)) {
       return
     }
@@ -126,6 +119,17 @@ const CreateEventDialog = ({ open, onClose, onCreated }: CreateEventDialogProps)
     } finally {
       setIsSubmitting(false)
     }
+  }
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+
+    if (activeStep < STEPS.length - 1) {
+      handleNext()
+      return
+    }
+
+    await handleCreateEvent()
   }
 
   return (
@@ -168,11 +172,18 @@ const CreateEventDialog = ({ open, onClose, onCreated }: CreateEventDialogProps)
 
         <DialogActions sx={dialogActionsStyles}>
           {activeStep === 0 ? (
-            <Button type="button" variant="outlined" onClick={onClose} sx={dialogButtonStyles}>
+            <Button
+              key="btn-cancel"
+              type="button"
+              variant="outlined"
+              onClick={onClose}
+              sx={dialogButtonStyles}
+            >
               Cancelar
             </Button>
           ) : (
             <Button
+              key="btn-back"
               type="button"
               variant="outlined"
               onClick={handleBack}
@@ -185,6 +196,7 @@ const CreateEventDialog = ({ open, onClose, onCreated }: CreateEventDialogProps)
 
           {!hasCredits ? (
             <Button
+              key="btn-billing"
               type="button"
               variant="contained"
               color="primary"
@@ -198,6 +210,7 @@ const CreateEventDialog = ({ open, onClose, onCreated }: CreateEventDialogProps)
             </Button>
           ) : activeStep < STEPS.length - 1 ? (
             <Button
+              key="btn-next"
               type="button"
               variant="contained"
               color="primary"
@@ -208,9 +221,11 @@ const CreateEventDialog = ({ open, onClose, onCreated }: CreateEventDialogProps)
             </Button>
           ) : (
             <Button
-              type="submit"
+              key="btn-create"
+              type="button"
               variant="contained"
               color="primary"
+              onClick={handleCreateEvent}
               disabled={isSubmitting}
               sx={dialogButtonStyles}
             >
