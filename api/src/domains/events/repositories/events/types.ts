@@ -65,6 +65,7 @@ export interface EventCustomization {
   agencyWhatsapp?: string
   agencyTagline?: string
   whatsappMessage?: string
+  primaryColor?: string
 }
 
 export interface EventEntity {

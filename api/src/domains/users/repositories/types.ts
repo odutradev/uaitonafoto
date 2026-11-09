@@ -7,6 +7,7 @@ export interface UserCustomization {
   agencyWhatsapp?: string
   agencyTagline?: string
   whatsappMessage?: string
+  primaryColor?: string
 }
 
 export interface UserEntity {

@@ -30,7 +30,8 @@ export const eventCustomizationSchema = z
     agencyLogoUrl: z.string().optional(),
     agencyWhatsapp: z.string().optional(),
     agencyTagline: z.string().optional(),
-    whatsappMessage: z.string().optional()
+    whatsappMessage: z.string().optional(),
+    primaryColor: z.string().optional()
   })
   .openapi('EventCustomization')
 

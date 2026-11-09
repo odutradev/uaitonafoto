@@ -5,6 +5,7 @@ import {
   Box,
   Button,
   Card,
+  Chip,
   CircularProgress,
   Switch,
   Tab,
@@ -82,7 +83,8 @@ const EventSettings = ({ event, onSave, onDelete }: EventSettingsProps) => {
         agencyLogoUrl: '',
         agencyWhatsapp: '',
         agencyTagline: 'Assessoria & Cerimonial',
-        whatsappMessage: 'Olá! Vi a marca de vocês no evento e gostaria de mais informações.'
+        whatsappMessage: 'Olá! Vi a marca de vocês no evento e gostaria de mais informações.',
+        primaryColor: '#FFD21F'
       }
       return {
         ...current,
@@ -266,16 +268,108 @@ const EventSettings = ({ event, onSave, onDelete }: EventSettingsProps) => {
                     />
                   </Box>
 
-                  <TextField
-                    size="small"
-                    label="Mensagem inicial do WhatsApp (opcional)"
-                    placeholder="Mensagem pré-preenchida que o cliente enviará ao clicar no botão..."
-                    value={customConfig?.whatsappMessage ?? ''}
-                    onChange={(e) => updateCustomization({ whatsappMessage: e.target.value })}
-                    fullWidth
-                    multiline
-                    rows={2}
-                  />
+                  <Box
+                    sx={{
+                      display: 'grid',
+                      gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' },
+                      gap: 2
+                    }}
+                  >
+                    <TextField
+                      size="small"
+                      label="Mensagem inicial do WhatsApp (opcional)"
+                      placeholder="Mensagem pré-preenchida que o cliente enviará ao clicar no botão..."
+                      value={customConfig?.whatsappMessage ?? ''}
+                      onChange={(e) => updateCustomization({ whatsappMessage: e.target.value })}
+                      fullWidth
+                      multiline
+                      rows={3}
+                    />
+
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                        <Box
+                          component="input"
+                          type="color"
+                          value={customConfig?.primaryColor || '#FFD21F'}
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                            updateCustomization({ primaryColor: e.target.value })
+                          }
+                          sx={{
+                            width: 44,
+                            height: 40,
+                            p: 0.5,
+                            borderRadius: '8px',
+                            border: 1,
+                            borderColor: 'divider',
+                            cursor: 'pointer',
+                            bgcolor: 'background.paper',
+                            '&::-webkit-color-swatch-wrapper': { p: 0 },
+                            '&::-webkit-color-swatch': { borderRadius: '6px', border: 'none' }
+                          }}
+                        />
+                        <TextField
+                          size="small"
+                          label="Cor de destaque do selo / badge"
+                          placeholder="#FFD21F"
+                          value={customConfig?.primaryColor ?? ''}
+                          onChange={(e) => updateCustomization({ primaryColor: e.target.value })}
+                          fullWidth
+                          helperText="Cor da borda e detalhes do selo da assessoria no telão"
+                        />
+                      </Box>
+
+                      {/* Paleta rápida de sugestões */}
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, flexWrap: 'wrap', pt: 0.5 }}>
+                        <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.72rem' }}>
+                          Sugestões:
+                        </Typography>
+                        {[
+                          { name: 'Dourado', hex: '#FFD21F' },
+                          { name: 'Ouro Real', hex: '#F59E0B' },
+                          { name: 'Rosa', hex: '#EC4899' },
+                          { name: 'Esmeralda', hex: '#10B981' },
+                          { name: 'Roxo', hex: '#8B5CF6' },
+                          { name: 'Azul', hex: '#3B82F6' },
+                          { name: 'Branco', hex: '#FFFFFF' }
+                        ].map((preset) => {
+                          const isSelected = (customConfig?.primaryColor || '').toLowerCase() === preset.hex.toLowerCase()
+                          return (
+                            <Chip
+                              key={preset.hex}
+                              label={preset.name}
+                              size="small"
+                              onClick={() => updateCustomization({ primaryColor: preset.hex })}
+                              sx={{
+                                height: 22,
+                                fontSize: '0.68rem',
+                                cursor: 'pointer',
+                                borderColor: isSelected ? preset.hex : 'divider',
+                                borderWidth: 1,
+                                borderStyle: 'solid',
+                                bgcolor: isSelected ? `${preset.hex}22` : 'transparent',
+                                '&:hover': {
+                                  bgcolor: `${preset.hex}33`
+                                }
+                              }}
+                              avatar={
+                                <Box
+                                  sx={{
+                                    width: 10,
+                                    height: 10,
+                                    borderRadius: '50%',
+                                    bgcolor: preset.hex,
+                                    border: '1px solid rgba(0,0,0,0.2)',
+                                    ml: '4px !important'
+                                  }}
+                                />
+                              }
+                            />
+                          )
+                        })}
+                      </Box>
+                    </Box>
+                  </Box>
 
                   <Box sx={previewBoxStyles}>
                     <Box sx={previewTabsContainerStyles}>
@@ -327,14 +421,22 @@ const EventSettings = ({ event, onSave, onDelete }: EventSettingsProps) => {
                           </Typography>
                         </Box>
 
-                        <Box sx={screenBadgeStyles}>
+                        <Box
+                          sx={{
+                            ...screenBadgeStyles,
+                            border: `1.5px solid ${customConfig?.primaryColor || 'rgba(255, 255, 255, 0.25)'}`,
+                            boxShadow: customConfig?.primaryColor
+                              ? `0 0 16px ${customConfig.primaryColor}40`
+                              : '0 4px 16px rgba(0, 0, 0, 0.3)'
+                          }}
+                        >
                           <Avatar
                             src={customConfig?.agencyLogoUrl}
                             sx={{
                               width: 34,
                               height: 34,
-                              border: '2px solid #FFCF1F',
-                              bgcolor: 'primary.main',
+                              border: `2px solid ${customConfig?.primaryColor || '#FFCF1F'}`,
+                              bgcolor: customConfig?.primaryColor || 'primary.main',
                               color: 'primary.contrastText',
                               fontWeight: 800,
                               fontSize: '0.85rem'
@@ -352,7 +454,11 @@ const EventSettings = ({ event, onSave, onDelete }: EventSettingsProps) => {
                             </Typography>
                             <Typography
                               variant="caption"
-                              sx={{ color: '#FDE68A', fontSize: '0.7rem', fontWeight: 600 }}
+                              sx={{
+                                color: customConfig?.primaryColor || '#FDE68A',
+                                fontSize: '0.7rem',
+                                fontWeight: 600
+                              }}
                             >
                               {customConfig?.agencyTagline || 'Assessoria & Cerimonial'}
                             </Typography>

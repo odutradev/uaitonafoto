@@ -37,7 +37,8 @@ const userSchema = new Schema<UserDocument>(
       agencyLogoUrl: { type: String, trim: true },
       agencyWhatsapp: { type: String, trim: true },
       agencyTagline: { type: String, trim: true },
-      whatsappMessage: { type: String, trim: true }
+      whatsappMessage: { type: String, trim: true },
+      primaryColor: { type: String, trim: true }
     },
     createdAt: { type: String, default: () => new Date().toISOString() },
     updatedAt: { type: String, default: () => new Date().toISOString() }

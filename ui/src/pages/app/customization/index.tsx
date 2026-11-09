@@ -56,7 +56,8 @@ const Customization = () => {
     agencyTagline: user?.customization?.agencyTagline ?? 'Assessoria & Cerimonial',
     whatsappMessage:
       user?.customization?.whatsappMessage ??
-      'Olá! Vi a marca de vocês no evento e gostaria de mais informações para um orçamento.'
+      'Olá! Vi a marca de vocês no evento e gostaria de mais informações para um orçamento.',
+    primaryColor: user?.customization?.primaryColor ?? '#FFD21F'
   }))
 
   const [previewTab, setPreviewTab] = useState<'screen' | 'app'>('screen')
@@ -197,6 +198,90 @@ const Customization = () => {
             fullWidth
           />
 
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+              <Box
+                component="input"
+                type="color"
+                value={form.primaryColor || '#FFD21F'}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setField('primaryColor', e.target.value)}
+                disabled={!hasPlan || !form.enabled}
+                sx={{
+                  width: 44,
+                  height: 40,
+                  p: 0.5,
+                  borderRadius: '8px',
+                  border: 1,
+                  borderColor: 'divider',
+                  cursor: hasPlan && form.enabled ? 'pointer' : 'default',
+                  bgcolor: 'background.paper',
+                  '&::-webkit-color-swatch-wrapper': { p: 0 },
+                  '&::-webkit-color-swatch': { borderRadius: '6px', border: 'none' }
+                }}
+              />
+              <TextField
+                size="small"
+                label="Cor de destaque do badge (opcional)"
+                placeholder="#FFD21F"
+                value={form.primaryColor ?? ''}
+                onChange={(e) => setField('primaryColor', e.target.value)}
+                disabled={!hasPlan || !form.enabled}
+                fullWidth
+                helperText="Cor da borda e detalhes do selo da assessoria no telão"
+              />
+            </Box>
+
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, flexWrap: 'wrap', pt: 0.5 }}>
+              <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.72rem' }}>
+                Sugestões:
+              </Typography>
+              {[
+                { name: 'Dourado', hex: '#FFD21F' },
+                { name: 'Ouro Real', hex: '#F59E0B' },
+                { name: 'Rosa', hex: '#EC4899' },
+                { name: 'Esmeralda', hex: '#10B981' },
+                { name: 'Roxo', hex: '#8B5CF6' },
+                { name: 'Azul', hex: '#3B82F6' },
+                { name: 'Branco', hex: '#FFFFFF' }
+              ].map((preset) => {
+                const isSelected = (form.primaryColor || '').toLowerCase() === preset.hex.toLowerCase()
+                return (
+                  <Chip
+                    key={preset.hex}
+                    label={preset.name}
+                    size="small"
+                    onClick={() => hasPlan && form.enabled && setField('primaryColor', preset.hex)}
+                    disabled={!hasPlan || !form.enabled}
+                    sx={{
+                      height: 22,
+                      fontSize: '0.68rem',
+                      cursor: hasPlan && form.enabled ? 'pointer' : 'default',
+                      borderColor: isSelected ? preset.hex : 'divider',
+                      borderWidth: 1,
+                      borderStyle: 'solid',
+                      bgcolor: isSelected ? `${preset.hex}22` : 'transparent',
+                      '&:hover': {
+                        bgcolor: `${preset.hex}33`
+                      }
+                    }}
+                    avatar={
+                      <Box
+                        sx={{
+                          width: 10,
+                          height: 10,
+                          borderRadius: '50%',
+                          bgcolor: preset.hex,
+                          border: '1px solid rgba(0,0,0,0.2)',
+                          ml: '4px !important'
+                        }}
+                      />
+                    }
+                  />
+                )
+              })}
+            </Box>
+          </Box>
+
           <Button
             type="submit"
             variant="contained"
@@ -245,14 +330,40 @@ const Customization = () => {
                 p: 1.5,
                 borderRadius: '12px',
                 bgcolor: 'rgba(255, 255, 255, 0.04)',
-                border: '1px solid rgba(255, 255, 255, 0.1)'
+                border: `1.5px solid ${
+                  previewTab === 'screen' && form.primaryColor
+                    ? form.primaryColor
+                    : 'rgba(255, 255, 255, 0.1)'
+                }`,
+                boxShadow:
+                  previewTab === 'screen' && form.primaryColor
+                    ? `0 0 16px ${form.primaryColor}33`
+                    : 'none'
               }}
             >
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25, minWidth: 0 }}>
                 {form.agencyLogoUrl ? (
-                  <Avatar src={form.agencyLogoUrl} alt={form.agencyName} sx={{ width: 34, height: 34 }} />
+                  <Avatar
+                    src={form.agencyLogoUrl}
+                    alt={form.agencyName}
+                    sx={{
+                      width: 34,
+                      height: 34,
+                      border: form.primaryColor ? `1.5px solid ${form.primaryColor}` : 'none'
+                    }}
+                  />
                 ) : (
-                  <Avatar sx={{ width: 34, height: 34, bgcolor: 'primary.main', color: 'primary.contrastText', fontWeight: 800, fontSize: '0.85rem' }}>
+                  <Avatar
+                    sx={{
+                      width: 34,
+                      height: 34,
+                      bgcolor: form.primaryColor || 'primary.main',
+                      color: 'primary.contrastText',
+                      fontWeight: 800,
+                      fontSize: '0.85rem',
+                      border: form.primaryColor ? `1.5px solid ${form.primaryColor}` : 'none'
+                    }}
+                  >
                     {form.agencyName ? form.agencyName.charAt(0).toUpperCase() : 'A'}
                   </Avatar>
                 )}

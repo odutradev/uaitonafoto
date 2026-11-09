@@ -114,29 +114,34 @@ export const ScreenBrand = ({
         >
           {customization?.enabled && customization.agencyName && (
             <Box
-              sx={(theme) => ({
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.9cqh',
-                px: '1.2cqh',
-                py: '0.4cqh',
-                borderRadius: '9999px',
-                bgcolor:
-                  theme.palette.mode === 'dark'
-                    ? 'rgba(255, 255, 255, 0.08)'
-                    : 'rgba(0, 0, 0, 0.04)',
-                border: `1px solid ${
+              sx={(theme) => {
+                const accentColor = customization.primaryColor?.trim()
+                const defaultBorder =
                   theme.palette.mode === 'dark'
                     ? 'rgba(255, 210, 31, 0.25)'
                     : 'rgba(0, 0, 0, 0.1)'
-                }`,
-                backdropFilter: 'blur(8px)',
-                boxShadow:
-                  theme.palette.mode === 'dark'
-                    ? 'none'
-                    : '0 2px 8px rgba(0,0,0,0.04)',
-                maxWidth: '34cqh'
-              })}
+
+                return {
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.9cqh',
+                  px: '1.2cqh',
+                  py: '0.4cqh',
+                  borderRadius: '9999px',
+                  bgcolor:
+                    theme.palette.mode === 'dark'
+                      ? 'rgba(255, 255, 255, 0.08)'
+                      : 'rgba(0, 0, 0, 0.04)',
+                  border: `1.5px solid ${accentColor || defaultBorder}`,
+                  backdropFilter: 'blur(8px)',
+                  boxShadow: accentColor
+                    ? `0 0 16px ${accentColor}33`
+                    : theme.palette.mode === 'dark'
+                      ? 'none'
+                      : '0 2px 8px rgba(0,0,0,0.04)',
+                  maxWidth: '34cqh'
+                }
+              }}
             >
               {/* Logo do Whitelabel */}
               <Avatar
@@ -144,8 +149,11 @@ export const ScreenBrand = ({
                 sx={{
                   width: '3.2cqh',
                   height: '3.2cqh',
-                  bgcolor: 'primary.main',
+                  bgcolor: customization.primaryColor?.trim() || 'primary.main',
                   color: 'primary.contrastText',
+                  border: customization.primaryColor?.trim()
+                    ? `1.5px solid ${customization.primaryColor.trim()}`
+                    : 'none',
                   fontWeight: 900,
                   fontSize: '1.4cqh',
                   flexShrink: 0

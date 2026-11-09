@@ -87,7 +87,8 @@ const eventSchema = new Schema<EventDocument>(
       agencyLogoUrl: { type: String, trim: true },
       agencyWhatsapp: { type: String, trim: true },
       agencyTagline: { type: String, trim: true },
-      whatsappMessage: { type: String, trim: true }
+      whatsappMessage: { type: String, trim: true },
+      primaryColor: { type: String, trim: true }
     },
     uploadsCloseAt: { type: String, required: true },
     galleryExpiresAt: { type: String, required: true, index: true },
