@@ -25,7 +25,7 @@ import Logo from '@components/logo'
 import Modal from '@components/modal'
 import PinInput from '@components/pinInput'
 import ThemeToggle from '@components/themeToggle'
-import { buildGuestLink } from '@config/events'
+import { buildGuestLink, formatGuestTaNaFoto } from '@config/events'
 import { brandColors } from '@theme'
 
 import useEventScreen from './hooks/useEventScreen'
@@ -387,13 +387,13 @@ const EventScreen = () => {
                   <Box sx={yellowBannerStyles}>
                     <Box sx={bannerTextRowStyles}>
                       <Typography component="span" sx={bannerAuthorStyles}>
-                        {currentPhoto.guestName}
+                        {formatGuestTaNaFoto(currentPhoto.guestName)}
                       </Typography>
-                      <Typography component="span" sx={bannerTextStyles}>
-                        {currentPhoto.challengeTitle
-                          ? `cumpriu a missão: "${currentPhoto.challengeTitle}"`
-                          : 'entrou na foto'}
-                      </Typography>
+                      {currentPhoto.challengeTitle && (
+                        <Typography component="span" sx={bannerTextStyles}>
+                          • cumpriu a missão: "{currentPhoto.challengeTitle}"
+                        </Typography>
+                      )}
                     </Box>
 
                     {currentPhoto.likesCount > 0 && (
@@ -425,10 +425,10 @@ const EventScreen = () => {
                   <Box sx={yellowBannerStyles}>
                     <Box sx={bannerTextRowStyles}>
                       <Typography component="span" sx={bannerAuthorStyles}>
-                        seja o primeiro
+                        voceTaNaFoto
                       </Typography>
                       <Typography component="span" sx={bannerTextStyles}>
-                        a entrar na foto
+                        • seja o primeiro a mandar sua foto!
                       </Typography>
                     </Box>
                   </Box>

@@ -66,3 +66,19 @@ export const getErrorMessage = (error: unknown, fallback: string): string => {
   if (typeof data?.details === 'string') return data.details
   return data?.message ?? fallback
 }
+
+export const formatGuestTaNaFoto = (name: string): string => {
+  const trimmed = name.trim()
+  if (!trimmed) return 'voceTaNaFoto'
+
+  const words = trimmed.split(/\s+/).filter(Boolean)
+  const camelWords = words.map((word, idx) => {
+    const clean = word.replace(/[^a-zA-Z0-9À-ÿ]/g, '')
+    if (!clean) return ''
+    const lower = clean.toLowerCase()
+    return idx === 0 ? lower : lower.charAt(0).toUpperCase() + lower.slice(1)
+  })
+
+  const base = camelWords.join('') || 'alguem'
+  return `${base}TaNaFoto`
+}
