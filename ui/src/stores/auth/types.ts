@@ -1,3 +1,12 @@
+export interface UserCustomization {
+  enabled: boolean
+  agencyName?: string
+  agencyLogoUrl?: string
+  agencyWhatsapp?: string
+  agencyTagline?: string
+  whatsappMessage?: string
+}
+
 export interface AuthUser {
   authProviderId: string
   fullName?: string
@@ -10,6 +19,8 @@ export interface AuthUser {
   freeCredits: number
   paidCredits: number
   freeTrialClaimedAt?: string
+  hasActiveSubscription?: boolean
+  customization?: UserCustomization
   createdAt?: string
   updatedAt?: string
 }

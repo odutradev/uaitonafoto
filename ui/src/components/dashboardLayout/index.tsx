@@ -17,6 +17,7 @@ import {
   HistoryOutlined as LogsIcon,
   Logout as LogoutIcon,
   Menu as MenuIcon,
+  PaletteOutlined as PaletteIcon,
   PhotoCameraOutlined as EventsIcon,
   ReceiptLongOutlined as BillingIcon
 } from '@mui/icons-material'
@@ -52,12 +53,6 @@ import {
 } from './styles'
 import type { DashboardNavItem, SidebarContentProps } from './types'
 
-const NAV_ITEMS: DashboardNavItem[] = [
-  { label: 'Meus eventos', path: '/app', icon: <EventsIcon fontSize="small" />, exact: true },
-  { label: 'Plano e transações', path: '/app/billing', icon: <BillingIcon fontSize="small" /> },
-  { label: 'Logs de atividade', path: '/app/logs', icon: <LogsIcon fontSize="small" /> }
-]
-
 const SidebarContent = ({
   isDark,
   currentPath,
@@ -65,11 +60,21 @@ const SidebarContent = ({
   userEmail,
   userPhotoUrl,
   isAdmin,
+  hasActiveSubscription = false,
   paidCredits,
   freeCredits,
   onNavigate,
   onLogout
 }: SidebarContentProps) => {
+  const navItems: DashboardNavItem[] = [
+    { label: 'Meus eventos', path: '/app', icon: <EventsIcon fontSize="small" />, exact: true },
+    ...(hasActiveSubscription
+      ? [{ label: 'Personalização', path: '/app/customization', icon: <PaletteIcon fontSize="small" /> }]
+      : []),
+    { label: 'Plano e transações', path: '/app/billing', icon: <BillingIcon fontSize="small" /> },
+    { label: 'Logs de atividade', path: '/app/logs', icon: <LogsIcon fontSize="small" /> }
+  ]
+
   return (
     <Box sx={sidebarInnerStyles}>
       <Box sx={sidebarHeaderStyles}>
@@ -108,7 +113,7 @@ const SidebarContent = ({
       </Box>
 
       <Box component="nav" aria-label="Menu principal da dashboard" sx={navListStyles}>
-        {NAV_ITEMS.map((item) => {
+        {navItems.map((item) => {
           const isActive = item.exact
             ? currentPath === item.path
             : currentPath === item.path || currentPath.startsWith(`${item.path}/`)
@@ -214,6 +219,7 @@ const DashboardLayout = () => {
     userEmail: user.email,
     userPhotoUrl: user.photoUrl,
     isAdmin: user.role === 'admin',
+    hasActiveSubscription: Boolean(user.hasActiveSubscription),
     paidCredits: user.paidCredits,
     freeCredits: user.freeCredits,
     onNavigate: handleNavigate,

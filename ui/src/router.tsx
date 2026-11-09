@@ -17,6 +17,7 @@ import EventScreen from '@pages/app/eventScreen'
 import Home from '@pages/app/home'
 import Logs from '@pages/app/logs'
 import Profile from '@pages/app/profile'
+import Customization from '@pages/app/customization'
 
 const appRouter = createBrowserRouter([
   {
@@ -38,6 +39,7 @@ const appRouter = createBrowserRouter([
             children: [
               { index: true, element: createElement(Home) },
               { path: 'events/:id', element: createElement(EventDetails) },
+              { path: 'customization', element: createElement(Customization) },
               { path: 'billing', element: createElement(Billing) },
               { path: 'profile', element: createElement(Profile) },
               { path: 'logs', element: createElement(Logs) }

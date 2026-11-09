@@ -1,5 +1,5 @@
 import type { SyncPayload } from '@hooks/useAuth/types'
-import type { AuthUser } from '@stores/auth/types'
+import type { AuthUser, UserCustomization } from '@stores/auth/types'
 
 export interface SyncServicePayload extends SyncPayload {
   firebaseToken: string
@@ -15,6 +15,7 @@ export interface UpdateMePayload {
   photoUrl?: string
   phone?: string
   name?: string
+  customization?: UserCustomization
 }
 
 export interface ForgotPasswordPayload {

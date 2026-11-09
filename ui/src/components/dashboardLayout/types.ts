@@ -14,6 +14,7 @@ export interface SidebarContentProps {
   userEmail: string
   userPhotoUrl?: string
   isAdmin: boolean
+  hasActiveSubscription?: boolean
   paidCredits: number
   freeCredits: number
   onNavigate: (path: string) => void
