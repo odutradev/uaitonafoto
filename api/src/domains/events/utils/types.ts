@@ -1,4 +1,4 @@
-import type { EventEntity, EventMemberRole, EventSettings } from '../repositories/events/types'
+import type { EventCreditType, EventEntity, EventMemberRole, EventSettings } from '../repositories/events/types'
 import type { GuestEntity } from '../repositories/guests/types'
 
 export type EventPhase = 'upcoming' | 'open' | 'closed' | 'expired'
@@ -12,6 +12,8 @@ export interface EventWindowsInput extends EventWindows {
   startsAt: string
   endsAt: string
   settings: EventSettings
+  closedAt?: string
+  creditType?: EventCreditType
 }
 
 export interface GuestTokenPayload {

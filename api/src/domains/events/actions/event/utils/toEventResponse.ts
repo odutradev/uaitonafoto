@@ -1,3 +1,4 @@
+import { getEventPhase } from '../../../utils/eventWindows'
 import type { EventEntity, EventMemberRole } from '../../../repositories/events/types'
 import type { EventResponse } from '../types'
 
@@ -14,6 +15,8 @@ export const toEventResponse = (entity: EventEntity, myRole: EventMemberRole): E
   customization: entity.customization,
   uploadsCloseAt: entity.uploadsCloseAt,
   galleryExpiresAt: entity.galleryExpiresAt,
+  closedAt: entity.closedAt,
+  phase: getEventPhase(entity),
   members: entity.members,
   screens: entity.screens,
   myRole,

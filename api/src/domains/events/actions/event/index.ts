@@ -13,7 +13,7 @@ import buildDefaultEventSettings from './utils/defaultEventSettings'
 import findMemberRole from './utils/findMemberRole'
 import isValidEventPeriod from './utils/isValidEventPeriod'
 import toEventResponse from './utils/toEventResponse'
-import { computeEventWindows } from '../../utils/eventWindows'
+import { computeEventWindows, getEventMaxDurationHours, getEventMaxEndsAt } from '../../utils/eventWindows'
 import {
   createEventSchema,
   eventParamsSchema,
@@ -216,6 +216,16 @@ export const updateEvent = defineAction(
     const role = findMemberRole(event, ids.userId)
     if (!role) return manageError({ code: 'forbidden' })
 
+    if (data.startsAt && data.startsAt !== event.startsAt) {
+      const isAlreadyStarted = new Date(event.startsAt).getTime() <= Date.now()
+      if (isAlreadyStarted) {
+        return manageError({
+          code: 'bad_request',
+          details: 'A data e hora de início não podem ser alteradas após o início do evento.'
+        })
+      }
+    }
+
     const startsAt = data.startsAt ?? event.startsAt
     const durationHours = event.creditType === 'free' ? 4 : 8
     const calculatedEndsAt = new Date(new Date(startsAt).getTime() + durationHours * 60 * 60 * 1000).toISOString()
@@ -283,5 +293,151 @@ export const deleteEvent = defineAction(
     if (!deleted) return manageError({ code: 'not_found' })
 
     return toEventResponse(event, 'creator')
+  }
+)
+
+export const startEvent = defineAction(
+  {
+    method: 'post',
+    path: '/events/:id/start',
+    summary: 'Iniciar o evento manualmente (atualiza o início para o momento atual)',
+    tags: ['Eventos'],
+    authenticate: true,
+    schema: { params: eventParamsSchema },
+    responses: {
+      200: { description: 'Evento iniciado com sucesso', schema: eventSchema },
+      400: { description: 'Evento já iniciado' },
+      403: { description: 'Usuário não pertence à equipe do evento' },
+      404: { description: 'Evento não encontrado' }
+    }
+  },
+  async ({ ids, params, manageError }: ManageRequestBody<GetEventRequest>): ManageRequestResponse<EventResponse> => {
+    if (!ids.userId) return manageError({ code: 'unauthorized' })
+
+    const event = await eventRepository.findById(params.id)
+    if (!event) return manageError({ code: 'not_found' })
+
+    const role = findMemberRole(event, ids.userId)
+    if (!role) return manageError({ code: 'forbidden' })
+
+    if (new Date(event.startsAt).getTime() <= Date.now() && !event.closedAt) {
+      return manageError({ code: 'bad_request', details: 'O evento já foi iniciado.' })
+    }
+
+    const now = new Date()
+    const startsAt = now.toISOString()
+    const durationHours = getEventMaxDurationHours(event.creditType)
+    const endsAt = new Date(now.getTime() + durationHours * 60 * 60 * 1000).toISOString()
+    const windows = computeEventWindows(endsAt, event.settings)
+
+    const updated = await eventRepository.update(event.id, {
+      startsAt,
+      endsAt,
+      ...windows,
+      closedAt: null
+    })
+    if (!updated) return manageError({ code: 'not_found' })
+
+    const currentEvent = await ensureCurrentEventPin(updated)
+    broadcastEvent(currentEvent.id, 'event:started', { startsAt, endsAt })
+    return toEventResponse(currentEvent, role)
+  }
+)
+
+export const closeEvent = defineAction(
+  {
+    method: 'post',
+    path: '/events/:id/close',
+    summary: 'Encerrar o evento manualmente (bloqueia envios e libera galeria)',
+    tags: ['Eventos'],
+    authenticate: true,
+    schema: { params: eventParamsSchema },
+    responses: {
+      200: { description: 'Evento encerrado com sucesso', schema: eventSchema },
+      400: { description: 'Evento não iniciado ou já encerrado' },
+      403: { description: 'Usuário não pertence à equipe do evento' },
+      404: { description: 'Evento não encontrado' }
+    }
+  },
+  async ({ ids, params, manageError }: ManageRequestBody<GetEventRequest>): ManageRequestResponse<EventResponse> => {
+    if (!ids.userId) return manageError({ code: 'unauthorized' })
+
+    const event = await eventRepository.findById(params.id)
+    if (!event) return manageError({ code: 'not_found' })
+
+    const role = findMemberRole(event, ids.userId)
+    if (!role) return manageError({ code: 'forbidden' })
+
+    if (new Date(event.startsAt).getTime() > Date.now()) {
+      return manageError({ code: 'bad_request', details: 'O evento ainda não foi iniciado.' })
+    }
+
+    if (event.closedAt) {
+      return manageError({ code: 'bad_request', details: 'O evento já está encerrado.' })
+    }
+
+    const closedAt = new Date().toISOString()
+    const updated = await eventRepository.update(event.id, {
+      closedAt,
+      uploadsCloseAt: closedAt
+    })
+    if (!updated) return manageError({ code: 'not_found' })
+
+    const currentEvent = await ensureCurrentEventPin(updated)
+    broadcastEvent(currentEvent.id, 'event:closed', { closedAt })
+    return toEventResponse(currentEvent, role)
+  }
+)
+
+export const reopenEvent = defineAction(
+  {
+    method: 'post',
+    path: '/events/:id/reopen',
+    summary: 'Reabrir evento dentro do limite de 8 horas',
+    tags: ['Eventos'],
+    authenticate: true,
+    schema: { params: eventParamsSchema },
+    responses: {
+      200: { description: 'Evento reaberto com sucesso', schema: eventSchema },
+      400: { description: 'Evento não está encerrado' },
+      403: { description: 'Janela de 8 horas expirada ou usuário sem permissão' },
+      404: { description: 'Evento não encontrado' }
+    }
+  },
+  async ({ ids, params, manageError }: ManageRequestBody<GetEventRequest>): ManageRequestResponse<EventResponse> => {
+    if (!ids.userId) return manageError({ code: 'unauthorized' })
+
+    const event = await eventRepository.findById(params.id)
+    if (!event) return manageError({ code: 'not_found' })
+
+    const role = findMemberRole(event, ids.userId)
+    if (!role) return manageError({ code: 'forbidden' })
+
+    if (!event.closedAt) {
+      return manageError({ code: 'bad_request', details: 'O evento não está encerrado.' })
+    }
+
+    const durationHours = getEventMaxDurationHours(event.creditType)
+    const maxEndsAt = getEventMaxEndsAt(event.startsAt, event.creditType)
+    if (Date.now() >= new Date(maxEndsAt).getTime()) {
+      return manageError({
+        code: 'forbidden',
+        details: `O evento não pode mais ser reaberto pois ultrapassou a duração limite de ${durationHours} horas.`
+      })
+    }
+
+    const endsAt = maxEndsAt
+    const windows = computeEventWindows(endsAt, event.settings)
+
+    const updated = await eventRepository.update(event.id, {
+      endsAt,
+      ...windows,
+      closedAt: null
+    })
+    if (!updated) return manageError({ code: 'not_found' })
+
+    const currentEvent = await ensureCurrentEventPin(updated)
+    broadcastEvent(currentEvent.id, 'event:reopened', { endsAt })
+    return toEventResponse(currentEvent, role)
   }
 )

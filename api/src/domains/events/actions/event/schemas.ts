@@ -101,6 +101,8 @@ export const eventSchema = z
     customization: eventCustomizationSchema.optional(),
     uploadsCloseAt: z.string().openapi({ example: '2026-12-22T05:00:00.000Z' }),
     galleryExpiresAt: z.string().openapi({ example: '2027-01-20T05:00:00.000Z' }),
+    closedAt: z.string().optional().openapi({ example: '2026-12-21T02:00:00.000Z' }),
+    phase: z.enum(['upcoming', 'open', 'closed', 'expired']).optional(),
     members: z.array(eventMemberSchema),
     screens: z.array(eventScreenSlotSchema),
     myRole: eventMemberRoleSchema,

@@ -57,6 +57,7 @@ export interface EventEntity {
   uploadsCloseAt: string
   galleryExpiresAt: string
   galleryCleanedAt?: string
+  closedAt?: string
   members: EventMember[]
   screens: EventScreenSlot[]
   createdAt: string
@@ -88,6 +89,7 @@ export interface UpdateEventPayload {
   customization?: EventCustomization
   uploadsCloseAt?: string
   galleryExpiresAt?: string
+  closedAt?: string | null
 }
 
 export interface ListEventsByMemberParams {

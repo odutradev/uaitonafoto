@@ -61,6 +61,7 @@ const eventSchema = new Schema<EventDocument>(
     uploadsCloseAt: { type: String, required: true },
     galleryExpiresAt: { type: String, required: true, index: true },
     galleryCleanedAt: { type: String },
+    closedAt: { type: String },
     members: { type: [memberSchema], required: true },
     screens: { type: [screenSlotSchema], default: [] },
     createdAt: { type: String, default: () => new Date().toISOString() },

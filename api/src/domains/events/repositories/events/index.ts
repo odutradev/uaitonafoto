@@ -17,6 +17,7 @@ const toEventEntity = (doc: any): EventEntity => {
     id: String(_id),
     creditType: rest.creditType ?? 'paid',
     customization: doc.customization ?? undefined,
+    closedAt: doc.closedAt ?? undefined,
     screens,
     settings: {
       uploadWindowHours: settings.uploadWindowHours ?? 24,
@@ -89,8 +90,14 @@ export const eventRepository = {
   },
 
   update: async (id: string, { settings, ...data }: UpdateEventPayload): Promise<EventEntity | null> => {
+    const updateObj: Record<string, unknown> = {}
     const set = { ...removeUndefined(data), ...flattenSettings(settings), updatedAt: new Date().toISOString() }
-    const doc = await EventModel.findByIdAndUpdate(id, { $set: set }, { new: true, lean: true })
+    updateObj.$set = set
+    if ('closedAt' in data && (data.closedAt === null || data.closedAt === undefined)) {
+      updateObj.$unset = { closedAt: 1 }
+      delete (set as Record<string, unknown>).closedAt
+    }
+    const doc = await EventModel.findByIdAndUpdate(id, updateObj, { new: true, lean: true })
     return doc ? toEventEntity(doc) : null
   },
 
