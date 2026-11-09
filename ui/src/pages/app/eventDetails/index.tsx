@@ -5,6 +5,7 @@ import {
   EmojiEventsOutlined as ChallengesIcon,
   GroupOutlined as TeamIcon,
   LiveTvOutlined as ScreenIcon,
+  PeopleAltOutlined as GuestIcon,
   QrCode2Outlined as QrIcon,
   SettingsOutlined as SettingsIcon
 } from '@mui/icons-material'
@@ -15,6 +16,7 @@ import useAuth from '@hooks/useAuth'
 import useEventDetails from './hooks/useEventDetails'
 import EventAlbum from './sections/eventAlbum'
 import EventChallenges from './sections/eventChallenges'
+import EventGuests from './sections/eventGuests'
 import EventScreens from './sections/eventScreens'
 import EventSettings from './sections/eventSettings'
 import EventStatusControl from './sections/eventStatusControl'
@@ -29,7 +31,7 @@ import {
 } from './styles'
 import type { EventDetailsTab } from './types'
 
-const VALID_TABS: readonly EventDetailsTab[] = ['access', 'screens', 'challenges', 'album', 'team', 'settings']
+const VALID_TABS: readonly EventDetailsTab[] = ['access', 'screens', 'guests', 'challenges', 'album', 'team', 'settings']
 
 const isValidTab = (tab: string | null): tab is EventDetailsTab => {
   return tab !== null && (VALID_TABS as readonly string[]).includes(tab)
@@ -127,6 +129,13 @@ const EventDetails = () => {
             label="Telões"
             sx={tabItemStyles}
           />
+          <Tab
+            value="guests"
+            icon={<GuestIcon fontSize="small" />}
+            iconPosition="start"
+            label="Convidados"
+            sx={tabItemStyles}
+          />
           {event.settings.challengesEnabled && (
             <Tab
               value="challenges"
@@ -178,6 +187,7 @@ const EventDetails = () => {
           onUnlockLockouts={() => unlockPin('screen')}
         />
       )}
+      {activeTab === 'guests' && <EventGuests event={event} />}
       {activeTab === 'challenges' && event.settings.challengesEnabled && (
         <EventChallenges event={event} onRefresh={refresh} />
       )}

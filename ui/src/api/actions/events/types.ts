@@ -194,3 +194,11 @@ export interface ResetLockoutsResponse {
 export interface ApproveAllPhotosResponse {
   approvedCount: number
 }
+
+export interface EventGuest {
+  id: string
+  name: string
+  photosCount: number
+  isBlocked: boolean
+  createdAt: string
+}

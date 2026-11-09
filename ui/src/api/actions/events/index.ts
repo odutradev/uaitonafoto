@@ -200,3 +200,25 @@ export const resetEventChallenges = async (id: string): Promise<EventChallenge[]
   const response = await api.post<EventChallenge[]>(`/events/${id}/challenges/reset`)
   return response.data
 }
+
+export const updateEventGuest = async (
+  id: string,
+  guestId: string,
+  name: string
+): Promise<EventGuest> => {
+  const response = await api.patch<EventGuest>(`/events/${id}/guests/${guestId}`, { name })
+  return response.data
+}
+
+export const setEventGuestBlock = async (
+  id: string,
+  guestId: string,
+  blocked: boolean
+): Promise<EventGuest> => {
+  const response = await api.patch<EventGuest>(`/events/${id}/guests/${guestId}/block`, { blocked })
+  return response.data
+}
+
+export const deleteEventGuest = async (id: string, guestId: string): Promise<void> => {
+  await api.delete(`/events/${id}/guests/${guestId}`)
+}
