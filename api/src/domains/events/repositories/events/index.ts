@@ -27,7 +27,9 @@ const toEventEntity = (doc: any): EventEntity => {
       pin: settings.pin ?? '0000',
       pinRotate: settings.pinRotate ?? true,
       pinRotationMinutes: settings.pinRotationMinutes ?? 15,
-      pinUpdatedAt: settings.pinUpdatedAt ?? rest.createdAt ?? new Date().toISOString()
+      pinUpdatedAt: settings.pinUpdatedAt ?? rest.createdAt ?? new Date().toISOString(),
+      moderationEnabled: Boolean(settings.moderationEnabled),
+      challengesEnabled: Boolean(settings.challengesEnabled)
     }
   }
 }
