@@ -13,6 +13,7 @@ import {
   LockOpenOutlined as LockOpenIcon,
   LockOutlined as LockIcon,
   OpenInNewOutlined as OpenIcon,
+  PrintOutlined as PrintIcon,
   SettingsOutlined as SettingsIcon
 } from '@mui/icons-material'
 import { QRCodeSVG } from 'qrcode.react'
@@ -21,6 +22,8 @@ import { toast } from 'react-toastify'
 import { buildGuestLink, pinRotationLabels } from '@config/events'
 
 import { useState } from 'react'
+
+import { TableDisplayModal } from './subcomponents/tableDisplayModal'
 
 import {
   linkFieldBoxStyles,
@@ -41,6 +44,7 @@ import type { ShareLinkProps } from './types'
 const ShareLink = ({ event, onGoToSettings, onUnlockLockouts }: ShareLinkProps) => {
   const link = buildGuestLink(event.guestToken)
   const [isUnlocking, setIsUnlocking] = useState(false)
+  const [isDisplayModalOpen, setIsDisplayModalOpen] = useState(false)
 
   const handleUnlock = async () => {
     if (!onUnlockLockouts) return
@@ -71,6 +75,15 @@ const ShareLink = ({ event, onGoToSettings, onUnlockLockouts }: ShareLinkProps) 
             <Typography variant="caption" sx={{ color: '#5E584C', fontWeight: 700 }}>
               Escaneie para enviar fotos
             </Typography>
+            <Button
+              size="small"
+              variant="text"
+              startIcon={<PrintIcon fontSize="small" />}
+              onClick={() => setIsDisplayModalOpen(true)}
+              sx={{ fontSize: '0.75rem', textTransform: 'none', mt: 0.5, p: 0.5 }}
+            >
+              Imprimir display
+            </Button>
           </Box>
 
           <Box sx={shareInfoColumnStyles}>
@@ -102,6 +115,14 @@ const ShareLink = ({ event, onGoToSettings, onUnlockLockouts }: ShareLinkProps) 
                 sx={shareButtonStyles}
               >
                 Copiar link do convidado
+              </Button>
+              <Button
+                variant="outlined"
+                startIcon={<PrintIcon fontSize="small" />}
+                onClick={() => setIsDisplayModalOpen(true)}
+                sx={shareButtonStyles}
+              >
+                Gerar displays de mesa
               </Button>
               <Button
                 variant="outlined"
@@ -189,6 +210,13 @@ const ShareLink = ({ event, onGoToSettings, onUnlockLockouts }: ShareLinkProps) 
           </Box>
         )}
       </Card>
+
+      <TableDisplayModal
+        open={isDisplayModalOpen}
+        onClose={() => setIsDisplayModalOpen(false)}
+        event={event}
+        guestUrl={link}
+      />
     </Box>
   )
 }
