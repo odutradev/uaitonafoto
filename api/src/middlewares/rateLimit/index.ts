@@ -44,7 +44,10 @@ export const globalRateLimiter: DocumentedMiddleware = Object.assign(
       req.path === '/health' ||
       req.path === '/api/health' ||
       req.path.startsWith('/docs') ||
-      req.path.startsWith('/api/docs'),
+      req.path.startsWith('/api/docs') ||
+      req.path.includes('/stream') ||
+      req.path.startsWith('/rooms') ||
+      req.path.startsWith('/api/rooms'),
     handler: (_req, res) => {
       sendError({
         res,

@@ -11,6 +11,7 @@ import usersDomain from '@domains/users'
 import systemDomain from '@domains/system'
 import paymentsDomain from '@domains/payments'
 import eventsDomain from '@domains/events'
+import { closeAllEventStreams } from '@domains/events/utils/eventStream'
 import paymentsRoutines from '@routines/payments'
 import eventsRoutines from '@routines/events'
 import { connectDatabase, disconnectDatabase } from '@database'
@@ -33,6 +34,7 @@ const setupGracefulShutdown = (server: Server): void => {
 
     logger.info(`Received ${signal}. Starting graceful shutdown...`)
     stopRoutines()
+    closeAllEventStreams()
 
     const forceExitTimer = setTimeout(() => {
       logger.error('Graceful shutdown timed out. Forcing exit...')

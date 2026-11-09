@@ -8,13 +8,15 @@ import type { DocumentedMiddleware, ResponseConfig } from '@factories/defineActi
 
 export const screenSessionMiddleware = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const authHeader = req.headers.authorization
+  const queryToken = typeof req.query.token === 'string' ? req.query.token : undefined
+  const rawToken = authHeader?.startsWith('Bearer ') ? authHeader.split('Bearer ')[1] : queryToken
 
-  if (!authHeader?.startsWith('Bearer ')) {
+  if (!rawToken) {
     sendError({ code: 'no_token', res, local: 'screenSessionMiddleware' })
     return
   }
 
-  const payload = verifyScreenToken(authHeader.split('Bearer ')[1])
+  const payload = verifyScreenToken(rawToken)
   if (!payload) {
     sendError({ code: 'token_is_not_valid', res, local: 'screenSessionMiddleware' })
     return

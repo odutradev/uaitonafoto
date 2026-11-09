@@ -1,4 +1,4 @@
-﻿import sendError from '@error/index'
+import sendError from '@error/index'
 import { errorResponseSchema } from '@factories/errors/schemas'
 import guestRepository from '../../repositories/guests'
 import { verifyGuestToken } from '../../utils/guestToken'
@@ -8,13 +8,15 @@ import type { DocumentedMiddleware, ResponseConfig } from '@factories/defineActi
 
 export const guestSessionMiddleware = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const authHeader = req.headers.authorization
+  const queryToken = typeof req.query.token === 'string' ? req.query.token : undefined
+  const rawToken = authHeader?.startsWith('Bearer ') ? authHeader.split('Bearer ')[1] : queryToken
 
-  if (!authHeader?.startsWith('Bearer ')) {
+  if (!rawToken) {
     sendError({ code: 'no_token', res, local: 'guestSessionMiddleware' })
     return
   }
 
-  const payload = verifyGuestToken(authHeader.split('Bearer ')[1])
+  const payload = verifyGuestToken(rawToken)
   const guest = payload ? await guestRepository.findById(payload.guestId) : null
 
   if (!guest) {
