@@ -1,4 +1,5 @@
 import type { Request, Response } from 'express'
+import { getClientDeviceId, getClientFingerprint, getClientIp } from './clientIdentity'
 
 export type PinLockoutScope = 'screen' | 'guest'
 
@@ -56,33 +57,18 @@ export const formatLockoutDuration = (seconds: number): string => {
   return `${hours} h e ${remainingMins} min`
 }
 
-const getClientIp = (req?: Request): string => {
-  if (!req) return 'unknown'
-  const forwarded = req.headers['x-forwarded-for']
-  if (typeof forwarded === 'string') {
-    return forwarded.split(',')[0].trim()
-  }
-  if (Array.isArray(forwarded) && forwarded.length > 0) {
-    return forwarded[0].trim()
-  }
-  return req.ip || req.socket?.remoteAddress || 'unknown'
-}
-
-const getClientDeviceId = (req?: Request): string => {
-  if (!req) return ''
-  const deviceId = req.headers['x-client-device-id']
-  if (typeof deviceId === 'string' && deviceId.trim()) {
-    return deviceId.trim()
-  }
-  return ''
-}
-
-const getStorageKeys = (scope: PinLockoutScope, targetId: string, req?: Request): { deviceKey: string | null; ipKey: string } => {
+const getStorageKeys = (
+  scope: PinLockoutScope,
+  targetId: string,
+  req?: Request
+): { deviceKey: string | null; ipKey: string; fpKey: string | null } => {
   const ip = getClientIp(req)
   const deviceId = getClientDeviceId(req)
+  const fp = getClientFingerprint(req)
   const ipKey = `${scope}:${targetId}:ip:${ip}`
   const deviceKey = deviceId ? `${scope}:${targetId}:device:${deviceId}` : null
-  return { deviceKey, ipKey }
+  const fpKey = fp ? `${scope}:${targetId}:fp:${fp}` : null
+  return { deviceKey, ipKey, fpKey }
 }
 
 const getLockoutEntry = (key: string): LockoutEntry | null => {
@@ -109,16 +95,20 @@ const applyResponseHeaders = (res: Response | undefined, status: PinLockoutStatu
 }
 
 export const checkPinLockout = ({ scope, targetId, req, res }: PinLockoutParams): PinLockoutStatus => {
-  const { deviceKey, ipKey } = getStorageKeys(scope, targetId, req)
+  const { deviceKey, ipKey, fpKey } = getStorageKeys(scope, targetId, req)
   const deviceEntry = deviceKey ? getLockoutEntry(deviceKey) : null
+  const fpEntry = fpKey ? getLockoutEntry(fpKey) : null
   const ipEntry = getLockoutEntry(ipKey)
 
   const activeEntry =
     (deviceEntry?.isPermanent ? deviceEntry : null) ||
+    (fpEntry?.isPermanent ? fpEntry : null) ||
     (ipEntry?.isPermanent ? ipEntry : null) ||
     (deviceEntry?.lockedUntil && deviceEntry.lockedUntil > Date.now() ? deviceEntry : null) ||
+    (fpEntry?.lockedUntil && fpEntry.lockedUntil > Date.now() ? fpEntry : null) ||
     (ipEntry?.lockedUntil && ipEntry.lockedUntil > Date.now() ? ipEntry : null) ||
     deviceEntry ||
+    fpEntry ||
     ipEntry
 
   if (!activeEntry) {
@@ -166,11 +156,12 @@ export const checkPinLockout = ({ scope, targetId, req, res }: PinLockoutParams)
 }
 
 export const recordPinFailure = ({ scope, targetId, req, res }: PinLockoutParams): PinLockoutStatus => {
-  const { deviceKey, ipKey } = getStorageKeys(scope, targetId, req)
+  const { deviceKey, ipKey, fpKey } = getStorageKeys(scope, targetId, req)
   const now = Date.now()
 
   const keysToUpdate = [ipKey]
   if (deviceKey) keysToUpdate.push(deviceKey)
+  if (fpKey) keysToUpdate.push(fpKey)
 
   let highestAttempts = 0
   let isPermanent = false
@@ -229,8 +220,9 @@ export const recordPinFailure = ({ scope, targetId, req, res }: PinLockoutParams
 }
 
 export const resetPinLockout = ({ scope, targetId, req }: PinLockoutParams): void => {
-  const { deviceKey, ipKey } = getStorageKeys(scope, targetId, req)
+  const { deviceKey, ipKey, fpKey } = getStorageKeys(scope, targetId, req)
   if (deviceKey) lockoutStore.delete(deviceKey)
+  if (fpKey) lockoutStore.delete(fpKey)
   lockoutStore.delete(ipKey)
 }
 
