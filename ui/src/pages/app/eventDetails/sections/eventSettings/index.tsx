@@ -8,12 +8,16 @@ import {
   Chip,
   CircularProgress,
   Switch,
+  Tab,
+  Tabs,
   TextField,
   Typography
 } from '@mui/material'
 import {
   DeleteOutline as DeleteIcon,
+  DesktopWindowsOutlined as ScreenIcon,
   PaletteOutlined as PaletteIcon,
+  PhoneIphoneOutlined as MobileIcon,
   SaveOutlined as SaveIcon,
   StarOutline as ProIcon,
   Chat as WhatsAppIcon,
@@ -53,6 +57,7 @@ const EventSettings = ({ event, onSave, onDelete }: EventSettingsProps) => {
   const [isSaving, setIsSaving] = useState(false)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
+  const [previewTab, setPreviewTab] = useState<'screen' | 'app'>('screen')
 
   useEffect(() => {
     setForm(toEventForm(event))
@@ -165,7 +170,7 @@ const EventSettings = ({ event, onSave, onDelete }: EventSettingsProps) => {
                   />
                 </Box>
                 <Typography variant="body2" color="text.secondary">
-                  Exibe a marca da sua assessoria no topo do telão e do app com botão direto para WhatsApp gerador de leads.
+                  Exibe a marca da sua assessoria no topo do telão e no aplicativo dos convidados (com botão direto para WhatsApp no app).
                 </Typography>
               </Box>
             </Box>
@@ -203,7 +208,7 @@ const EventSettings = ({ event, onSave, onDelete }: EventSettingsProps) => {
                     Ativar Selo White-Label neste evento
                   </Typography>
                   <Typography variant="caption" color="text.secondary">
-                    Habilita o banner da assessoria com logotipo e WhatsApp no topo da tela do evento.
+                    Habilita o banner da assessoria com logotipo no topo do telão e com WhatsApp no app dos convidados.
                   </Typography>
                 </Box>
                 <Switch
@@ -274,9 +279,38 @@ const EventSettings = ({ event, onSave, onDelete }: EventSettingsProps) => {
 
                   {/* Pré-visualização do Selo */}
                   <Box sx={previewBoxStyles}>
-                    <Typography variant="caption" sx={{ color: 'primary.main', fontWeight: 700, letterSpacing: 0.5, textTransform: 'uppercase' }}>
-                      Pré-visualização do Selo no Telão e no App
-                    </Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1 }}>
+                      <Typography variant="caption" sx={{ color: 'primary.main', fontWeight: 700, letterSpacing: 0.5, textTransform: 'uppercase' }}>
+                        {previewTab === 'screen' ? 'Pré-visualização no Telão (Ao Vivo)' : 'Pré-visualização no App dos Convidados'}
+                      </Typography>
+                      <Chip
+                        size="small"
+                        label={previewTab === 'screen' ? 'Sem botões interativos' : 'Com botão WhatsApp'}
+                        sx={{ height: 20, fontSize: '0.65rem' }}
+                      />
+                    </Box>
+
+                    <Tabs
+                      value={previewTab}
+                      onChange={(_, val) => setPreviewTab(val)}
+                      variant="fullWidth"
+                      sx={{ borderBottom: 1, borderColor: 'rgba(255, 184, 0, 0.2)', minHeight: 36 }}
+                    >
+                      <Tab
+                        icon={<ScreenIcon sx={{ fontSize: '1rem' }} />}
+                        iconPosition="start"
+                        label="No Telão"
+                        value="screen"
+                        sx={{ minHeight: 36, py: 0.5, textTransform: 'none', fontSize: '0.8rem' }}
+                      />
+                      <Tab
+                        icon={<MobileIcon sx={{ fontSize: '1rem' }} />}
+                        iconPosition="start"
+                        label="No App dos Convidados"
+                        value="app"
+                        sx={{ minHeight: 36, py: 0.5, textTransform: 'none', fontSize: '0.8rem' }}
+                      />
+                    </Tabs>
 
                     <Box
                       sx={{
@@ -318,24 +352,32 @@ const EventSettings = ({ event, onSave, onDelete }: EventSettingsProps) => {
                         </Box>
                       </Box>
 
-                      <Button
-                        size="small"
-                        startIcon={<WhatsAppIcon sx={{ fontSize: '16px !important' }} />}
-                        variant="contained"
-                        sx={{
-                          borderRadius: '999px',
-                          bgcolor: '#25D366',
-                          color: '#fff',
-                          fontWeight: 700,
-                          fontSize: '0.75rem',
-                          textTransform: 'none',
-                          boxShadow: 'none',
-                          '&:hover': { bgcolor: '#20ba5a', boxShadow: 'none' }
-                        }}
-                      >
-                        Falar no WhatsApp
-                      </Button>
+                      {previewTab === 'app' && (
+                        <Button
+                          size="small"
+                          startIcon={<WhatsAppIcon sx={{ fontSize: '16px !important' }} />}
+                          variant="contained"
+                          sx={{
+                            borderRadius: '999px',
+                            bgcolor: '#25D366',
+                            color: '#fff',
+                            fontWeight: 700,
+                            fontSize: '0.75rem',
+                            textTransform: 'none',
+                            boxShadow: 'none',
+                            '&:hover': { bgcolor: '#20ba5a', boxShadow: 'none' }
+                          }}
+                        >
+                          Falar no WhatsApp
+                        </Button>
+                      )}
                     </Box>
+
+                    <Typography variant="caption" color="text.secondary" sx={{ textAlign: 'center' }}>
+                      {previewTab === 'screen'
+                        ? 'No telão do evento, sua marca é exibida com destaque sem botões clicáveis.'
+                        : 'No celular dos convidados, o botão de WhatsApp permite iniciar conversa direta com a assessoria.'}
+                    </Typography>
                   </Box>
                 </Box>
               )}

@@ -70,17 +70,6 @@ export const previewFrameStyles: SxProps<Theme> = {
   gap: 2
 }
 
-export const previewBadgeStyles: SxProps<Theme> = {
-  display: 'inline-flex',
-  alignItems: 'center',
-  gap: 1.5,
-  px: 2,
-  py: 1,
-  borderRadius: '12px',
-  border: '1px solid rgba(255, 207, 31, 0.4)',
-  bgcolor: 'rgba(255, 207, 31, 0.08)'
-}
-
 export const whatsappPreviewButtonStyles: SxProps<Theme> = {
   bgcolor: '#25D366',
   color: '#FFFFFF',

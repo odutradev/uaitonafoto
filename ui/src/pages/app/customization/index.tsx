@@ -33,7 +33,6 @@ import {
   formCardStyles,
   headerBoxStyles,
   mainGridStyles,
-  previewBadgeStyles,
   previewCardStyles,
   previewFrameStyles,
   switchCardStyles,
@@ -108,7 +107,7 @@ const Customization = () => {
           />
         </Box>
         <Typography variant="body2" color="text.secondary">
-          Configure a marca do seu cerimonial ou assessoria para ser exibida no topo do telão e do aplicativo dos convidados com botão direto para WhatsApp gerador de leads.
+          Configure a marca do seu cerimonial ou assessoria para ser exibida no topo do telão e no aplicativo dos convidados com botão de WhatsApp gerador de leads no app.
         </Typography>
       </Box>
 
@@ -268,21 +267,25 @@ const Customization = () => {
                 </Box>
               </Box>
 
-              <Button
-                component="a"
-                href={cleanPhone ? whatsappUrl : '#'}
-                target="_blank"
-                rel="noopener noreferrer"
-                size="small"
-                startIcon={<WhatsAppIcon sx={{ fontSize: '1rem !important' }} />}
-                sx={whatsappPreviewButtonStyles}
-              >
-                WhatsApp
-              </Button>
+              {previewTab === 'app' && (
+                <Button
+                  component="a"
+                  href={cleanPhone ? whatsappUrl : '#'}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  size="small"
+                  startIcon={<WhatsAppIcon sx={{ fontSize: '1rem !important' }} />}
+                  sx={whatsappPreviewButtonStyles}
+                >
+                  WhatsApp
+                </Button>
+              )}
             </Box>
 
             <Typography variant="caption" color="text.secondary" sx={{ textAlign: 'center', mt: 1 }}>
-              Cada convidado que acessar o mural ou olhar o telão pode tocar no botão para iniciar conversa imediata com sua agência.
+              {previewTab === 'screen'
+                ? 'No telão do evento, sua marca é exibida com destaque sem botões interativos.'
+                : 'No mural mobile, os convidados podem tocar no botão para iniciar conversa imediata pelo WhatsApp com sua agência.'}
             </Typography>
           </Box>
         </Card>
