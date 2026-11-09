@@ -1,7 +1,7 @@
 import { brandColors } from '@theme'
 import type { SxProps, Theme } from '@mui/material'
 
-export const stageContainerStyles: SxProps<Theme> = {
+export const stageContainerStyles: SxProps<Theme> = (theme) => ({
   position: 'fixed',
   inset: 0,
   width: '100vw',
@@ -9,23 +9,25 @@ export const stageContainerStyles: SxProps<Theme> = {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  bgcolor: '#14110c',
-  overflow: 'hidden'
-}
+  bgcolor: theme.palette.mode === 'dark' ? brandColors.darkBg : brandColors.paper,
+  color: theme.palette.mode === 'dark' ? brandColors.darkTextPrimary : brandColors.ink,
+  overflow: 'hidden',
+  transition: 'background-color 0.25s ease, color 0.25s ease'
+})
 
-export const stageFrameStyles: SxProps<Theme> = {
+export const stageFrameStyles: SxProps<Theme> = (theme) => ({
   width: 'min(100vw, calc(100vh * 16 / 9))',
   height: 'min(100vh, calc(100vw * 9 / 16))',
   aspectRatio: '16 / 9',
   containerType: 'size',
   bgcolor: 'transparent',
-  color: '#f6f1e4',
+  color: theme.palette.mode === 'dark' ? brandColors.darkTextPrimary : brandColors.ink,
   position: 'relative',
   overflow: 'hidden',
   display: 'flex',
   flexDirection: 'column',
   zIndex: 1
-}
+})
 
 export const floatingControlsStyles: SxProps<Theme> = {
   position: 'absolute',

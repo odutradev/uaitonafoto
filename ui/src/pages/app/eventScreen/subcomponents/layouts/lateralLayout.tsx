@@ -112,14 +112,17 @@ export const LateralLayout = ({
               {currentPhoto.challengeTitle && (
                 <Typography
                   component="div"
-                  sx={{
+                  sx={(theme) => ({
                     fontFamily: "'DM Sans', system-ui, sans-serif",
                     fontSize: '4.4cqh',
                     lineHeight: 1.15,
                     mt: '2cqh',
                     fontWeight: 500,
-                    color: '#f6f1e4'
-                  }}
+                    color:
+                      theme.palette.mode === 'dark'
+                        ? '#f6f1e4'
+                        : '#1b1b1b'
+                  })}
                 >
                   cumpriu a missão: “{currentPhoto.challengeTitle}”
                 </Typography>

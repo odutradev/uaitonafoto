@@ -3,6 +3,7 @@ import {
   Fullscreen as FullscreenIcon,
   SettingsOutlined as SettingsIcon
 } from '@mui/icons-material'
+import { brandColors } from '@theme'
 import type { EventCustomization } from '@actions/events/types'
 
 interface ScreenBrandProps {
@@ -43,11 +44,11 @@ export const ScreenBrand = ({
       >
         {/* Marcador de câmera / ícone característico */}
         <Box
-          sx={{
+          sx={(theme) => ({
             width: '3.4cqh',
             height: '3.4cqh',
             borderRadius: '1cqh',
-            bgcolor: '#ffd21f',
+            bgcolor: brandColors.flashYellow,
             display: 'block',
             position: 'relative',
             flexShrink: 0,
@@ -56,9 +57,9 @@ export const ScreenBrand = ({
               position: 'absolute',
               inset: '25%',
               borderRadius: '50%',
-              bgcolor: '#14110c'
+              bgcolor: theme.palette.mode === 'dark' ? brandColors.darkBg : '#FFFFFF'
             }
-          }}
+          })}
         />
 
         <Typography
@@ -68,7 +69,7 @@ export const ScreenBrand = ({
             fontWeight: 800,
             fontSize: '3cqh',
             lineHeight: 1,
-            color: '#ffd21f',
+            color: brandColors.flashYellow,
             letterSpacing: '-0.02em',
             display: 'flex',
             alignItems: 'center',
@@ -84,9 +85,9 @@ export const ScreenBrand = ({
                 fontStyle: 'normal',
                 fontSize: '1.9cqh',
                 fontWeight: 700,
-                color: '#4ade80',
-                bgcolor: 'rgba(74, 222, 128, 0.14)',
-                border: '1px solid rgba(74, 222, 128, 0.3)',
+                color: '#22c55e',
+                bgcolor: 'rgba(34, 197, 94, 0.14)',
+                border: '1px solid rgba(34, 197, 94, 0.35)',
                 px: '1.2cqh',
                 py: '0.3cqh',
                 borderRadius: '2cqh',
@@ -113,28 +114,38 @@ export const ScreenBrand = ({
         >
           {customization?.enabled && customization.agencyName && (
             <Box
-              sx={{
+              sx={(theme) => ({
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '0.8cqh',
                 px: '1.4cqh',
                 py: '0.5cqh',
                 borderRadius: '9999px',
-                bgcolor: 'rgba(255, 255, 255, 0.08)',
-                border: '1px solid rgba(255, 255, 255, 0.14)',
+                bgcolor:
+                  theme.palette.mode === 'dark'
+                    ? 'rgba(255, 255, 255, 0.08)'
+                    : 'rgba(0, 0, 0, 0.05)',
+                border: `1px solid ${
+                  theme.palette.mode === 'dark'
+                    ? 'rgba(255, 255, 255, 0.14)'
+                    : 'rgba(0, 0, 0, 0.1)'
+                }`,
                 backdropFilter: 'blur(8px)',
                 maxWidth: '28cqh'
-              }}
+              })}
             >
               <Typography
-                sx={{
+                sx={(theme) => ({
                   fontSize: '1.8cqh',
                   fontWeight: 700,
-                  color: '#e5e1d8',
+                  color:
+                    theme.palette.mode === 'dark'
+                      ? brandColors.darkTextPrimary
+                      : brandColors.ink,
                   whiteSpace: 'nowrap',
                   overflow: 'hidden',
                   textOverflow: 'ellipsis'
-                }}
+                })}
               >
                 {customization.agencyName}
               </Typography>
@@ -143,21 +154,32 @@ export const ScreenBrand = ({
 
           {(onFullscreen || onOpenSettings) && (
             <Box
-              sx={{
+              sx={(theme) => ({
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '0.4cqh',
                 p: '0.3cqh',
                 borderRadius: '9999px',
-                bgcolor: 'rgba(20, 17, 12, 0.85)',
-                border: '1px solid rgba(255, 255, 255, 0.14)',
+                bgcolor:
+                  theme.palette.mode === 'dark'
+                    ? 'rgba(20, 17, 12, 0.85)'
+                    : 'rgba(255, 255, 255, 0.9)',
+                border: `1px solid ${
+                  theme.palette.mode === 'dark'
+                    ? 'rgba(255, 255, 255, 0.14)'
+                    : 'rgba(0, 0, 0, 0.12)'
+                }`,
                 backdropFilter: 'blur(8px)',
+                boxShadow:
+                  theme.palette.mode === 'dark'
+                    ? 'none'
+                    : '0 2px 8px rgba(0,0,0,0.06)',
                 transition: 'opacity 0.2s ease',
-                opacity: 0.5,
+                opacity: 0.6,
                 '&:hover, &:focus-within': {
                   opacity: 1
                 }
-              }}
+              })}
             >
               {onFullscreen && (
                 <Tooltip title="Alternar tela cheia">
@@ -165,11 +187,19 @@ export const ScreenBrand = ({
                     aria-label="Tela cheia"
                     onClick={onFullscreen}
                     size="small"
-                    sx={{
-                      color: '#f6f1e4',
+                    sx={(theme) => ({
+                      color:
+                        theme.palette.mode === 'dark'
+                          ? brandColors.darkTextPrimary
+                          : brandColors.ink,
                       p: '0.4cqh',
-                      '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.12)' }
-                    }}
+                      '&:hover': {
+                        bgcolor:
+                          theme.palette.mode === 'dark'
+                            ? 'rgba(255, 255, 255, 0.12)'
+                            : 'rgba(0, 0, 0, 0.08)'
+                      }
+                    })}
                   >
                     <FullscreenIcon sx={{ fontSize: '2.4cqh' }} />
                   </IconButton>
@@ -181,11 +211,19 @@ export const ScreenBrand = ({
                     aria-label="Configurações do telão"
                     onClick={onOpenSettings}
                     size="small"
-                    sx={{
-                      color: '#f6f1e4',
+                    sx={(theme) => ({
+                      color:
+                        theme.palette.mode === 'dark'
+                          ? brandColors.darkTextPrimary
+                          : brandColors.ink,
                       p: '0.4cqh',
-                      '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.12)' }
-                    }}
+                      '&:hover': {
+                        bgcolor:
+                          theme.palette.mode === 'dark'
+                            ? 'rgba(255, 255, 255, 0.12)'
+                            : 'rgba(0, 0, 0, 0.08)'
+                      }
+                    })}
                   >
                     <SettingsIcon sx={{ fontSize: '2.4cqh' }} />
                   </IconButton>

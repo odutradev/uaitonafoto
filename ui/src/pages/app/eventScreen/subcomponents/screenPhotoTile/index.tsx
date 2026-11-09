@@ -33,11 +33,11 @@ export const ScreenPhotoTile = ({
     <Box
       onClick={onClick}
       sx={[
-        {
+        (theme) => ({
           position: 'relative',
           overflow: 'hidden',
           borderRadius: '1.6cqh',
-          bgcolor: '#0a0907',
+          bgcolor: theme.palette.mode === 'dark' ? '#0a0907' : '#e7e1d2',
           minHeight: 0,
           aspectRatio,
           cursor: onClick ? 'pointer' : 'default',
@@ -49,7 +49,7 @@ export const ScreenPhotoTile = ({
                 zIndex: 3
               }
             : undefined
-        },
+        }),
         ...(Array.isArray(sx) ? sx : [sx])
       ]}
     >

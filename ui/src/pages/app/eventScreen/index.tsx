@@ -311,46 +311,8 @@ const EventScreen = () => {
           </Box>
         </Box>
       ) : (
-        /* Telão Ativado: Background fluido em tela cheia (100vw x 100vh) com palco imersivo */
+        /* Telão Ativado: Palco imersivo que segue o tema (Light/Dark) ocupando toda a tela */
         <Box sx={stageContainerStyles}>
-          {/* Fundo ambiente cobrindo toda a tela (ultrawide, 16:9, etc.) */}
-          <Box
-            aria-hidden="true"
-            sx={{
-              position: 'absolute',
-              inset: '-10%',
-              width: '120vw',
-              height: '120vh',
-              bgcolor: '#14110c',
-              ...(currentPhoto?.url
-                ? {
-                    backgroundImage: `url('${currentPhoto.url}')`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    filter: 'blur(60px) brightness(0.35) saturate(1.4)',
-                    transform: 'scale(1.15)',
-                    transition: 'background-image 0.8s ease'
-                  }
-                : {
-                    background: 'radial-gradient(ellipse at center, #1e1912 0%, #100e0b 100%)'
-                  }),
-              pointerEvents: 'none',
-              zIndex: 0
-            }}
-          />
-
-          {/* Máscara de vinheta suave cobrindo 100% da tela */}
-          <Box
-            aria-hidden="true"
-            sx={{
-              position: 'absolute',
-              inset: 0,
-              background: 'radial-gradient(circle at center, transparent 35%, rgba(10, 8, 6, 0.75) 100%)',
-              pointerEvents: 'none',
-              zIndex: 0
-            }}
-          />
-
           <Box id="stage" sx={stageFrameStyles}>
             {layoutMode === 'stories' ? (
               <StoriesLayout

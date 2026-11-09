@@ -103,14 +103,14 @@ export const StageLayout = ({
       >
         <Box>
           <Typography
-            sx={{
+            sx={(theme) => ({
               fontFamily: "'Bricolage Grotesque', system-ui, sans-serif",
               fontSize: '2.4cqh',
               fontWeight: 700,
               mb: '1.4cqh',
-              color: '#d9d2bf',
+              color: theme.palette.mode === 'dark' ? '#d9d2bf' : '#5b6166',
               letterSpacing: '-0.01em'
-            }}
+            })}
           >
             Fotos recentes
           </Typography>

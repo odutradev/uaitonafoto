@@ -1,5 +1,6 @@
 import { Box, Typography } from '@mui/material'
 import { QRCodeSVG } from 'qrcode.react'
+import { brandColors } from '@theme'
 import type { ReactNode } from 'react'
 
 export type ScreenQrVariant = 'horizontal' | 'stack' | 'column-fit' | 'mosaic'
@@ -25,11 +26,21 @@ export const ScreenQrBlock = ({
 
   return (
     <Box
-      sx={{
+      sx={(theme) => ({
         display: 'flex',
         alignItems: 'center',
         gap: isStack ? '1.2cqh' : '2cqh',
-        bgcolor: '#241f16',
+        bgcolor:
+          theme.palette.mode === 'dark' ? brandColors.darkPaper : '#FFFFFF',
+        border: `1px solid ${
+          theme.palette.mode === 'dark'
+            ? brandColors.darkBorder
+            : brandColors.lightBorder
+        }`,
+        boxShadow:
+          theme.palette.mode === 'dark'
+            ? 'none'
+            : '0 4px 24px rgba(0, 0, 0, 0.06)',
         borderRadius: '2cqh',
         p: '2cqh',
         minHeight: 0,
@@ -39,13 +50,16 @@ export const ScreenQrBlock = ({
         textAlign: isStack ? 'center' : 'left',
         flex: isColumnFit ? 1 : 'none',
         gridColumn: isMosaic ? 'span 3' : 'auto'
-      }}
+      })}
     >
       {/* Bloco branco do QRCode */}
       <Box
-        sx={{
+        sx={(theme) => ({
           bgcolor: '#ffffff',
           borderRadius: '1.2cqh',
+          border: `1px solid ${
+            theme.palette.mode === 'dark' ? 'transparent' : brandColors.lightBorder
+          }`,
           p: '0.9cqh',
           display: 'flex',
           alignItems: 'center',
@@ -59,7 +73,7 @@ export const ScreenQrBlock = ({
               : isMosaic
                 ? { height: '100%', maxHeight: '30cqh', width: 'auto' }
                 : { height: '100%', maxHeight: '24cqh', width: 'auto' })
-        }}
+        })}
       >
         {guestLink ? (
           <QRCodeSVG
@@ -80,27 +94,33 @@ export const ScreenQrBlock = ({
         {headerContent}
         <Typography
           component="b"
-          sx={{
+          sx={(theme) => ({
             display: 'block',
             fontFamily: "'Bricolage Grotesque', system-ui, sans-serif",
             fontSize: isStack ? '2.8cqh' : isMosaic ? '3.6cqh' : '3.3cqh',
             lineHeight: 1.05,
             fontWeight: 800,
-            color: '#f6f1e4',
+            color:
+              theme.palette.mode === 'dark'
+                ? brandColors.darkTextPrimary
+                : brandColors.ink,
             letterSpacing: '-0.02em'
-          }}
+          })}
         >
           escaneia e entra na foto
         </Typography>
         <Typography
           component="small"
-          sx={{
+          sx={(theme) => ({
             display: 'block',
             fontFamily: "'DM Sans', system-ui, sans-serif",
-            color: '#b9b2a0',
+            color:
+              theme.palette.mode === 'dark'
+                ? brandColors.darkTextSecondary
+                : brandColors.textGray,
             fontSize: isStack ? '1.8cqh' : '2cqh',
             mt: '0.6cqh'
-          }}
+          })}
         >
           sem app, sem cadastro
         </Typography>
@@ -108,19 +128,30 @@ export const ScreenQrBlock = ({
         {pin && showPin && (
           <Box
             component="span"
-            sx={{
+            sx={(theme) => ({
               display: 'inline-block',
               mt: '1.2cqh',
               fontSize: '2.2cqh',
               fontWeight: 800,
-              bgcolor: '#14110c',
-              color: '#ffd21f',
+              bgcolor:
+                theme.palette.mode === 'dark'
+                  ? brandColors.darkBg
+                  : brandColors.sand,
+              color:
+                theme.palette.mode === 'dark'
+                  ? brandColors.flashYellow
+                  : brandColors.ink,
+              border: `1px solid ${
+                theme.palette.mode === 'dark'
+                  ? brandColors.darkBorder
+                  : brandColors.sandDark
+              }`,
               px: '1.4cqh',
               py: '0.6cqh',
               borderRadius: '1cqh',
               letterSpacing: '0.12em',
               fontFamily: 'monospace'
-            }}
+            })}
           >
             PIN {pin}
           </Box>
@@ -131,4 +162,3 @@ export const ScreenQrBlock = ({
 }
 
 export default ScreenQrBlock
-
