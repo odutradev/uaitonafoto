@@ -9,60 +9,35 @@ import {
   Typography
 } from '@mui/material'
 import {
-  EmojiEventsOutlined as ChallengeIcon,
-  Favorite as LikeIcon,
   Fullscreen as FullscreenIcon,
-  PhotoCameraOutlined as CameraIcon,
-  SettingsOutlined as SettingsIcon,
-  VisibilityOff as VisibilityOffIcon
+  SettingsOutlined as SettingsIcon
 } from '@mui/icons-material'
-import { QRCodeSVG } from 'qrcode.react'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 
 import Logo from '@components/logo'
 import Modal from '@components/modal'
 import PinInput from '@components/pinInput'
-import { buildGuestLink, formatGuestTaNaFoto } from '@config/events'
+import { buildGuestLink } from '@config/events'
 import { brandColors } from '@theme'
 
 import useEventScreen from './hooks/useEventScreen'
 import ScreenSettingsModal from './subcomponents/screenSettingsModal'
-import type { ScreenLayoutMode } from './types'
+import ClassicLayout from './subcomponents/layouts/classicLayout'
+import SideHubLayout from './subcomponents/layouts/sideHubLayout'
+import SocialFeedLayout from './subcomponents/layouts/socialFeedLayout'
 import {
   activationCardStyles,
   activationWrapperStyles,
-  bannerAuthorStyles,
-  bannerLikesStyles,
-  bannerTextRowStyles,
-  bannerTextStyles,
-  contentGridStyles,
   controlsChipStyles,
-  getMainCardStyles,
-  getPhotoStyles,
   iconButtonStyles,
-  leftColumnStyles,
-  photoContainerStyles,
-  qrFrameStyles,
-  qrPinBadgeStyles,
-  qrPinCodeStyles,
-  qrPinLabelStyles,
-  qrSubtitleStyles,
-  qrTextContainerStyles,
-  qrTitleStyles,
-  getThumbnailSlotStyles,
-  rightCardStyles,
   screenAgencyBadgeStyles,
   screenRootStyles,
-  thumbnailImgStyles,
-  thumbnailsRowStyles,
-  topBarStyles,
-  waitingEmptyStyles,
-  yellowBannerStyles
+  topBarStyles
 } from './styles'
 import type { FormEvent } from 'react'
+import type { ScreenLayoutMode } from './types'
 
-const THUMBNAIL_SLOTS_COUNT = 6
 const SCREEN_SHOW_PIN_STORAGE_KEY = 'uaitonafoto:screen:show_pin'
 const SCREEN_LAYOUT_STORAGE_KEY = 'uaitonafoto:screen:layout'
 
@@ -306,215 +281,39 @@ const EventScreen = () => {
             </Button>
           </Box>
         </Box>
+      ) : layoutMode === 'social-feed' ? (
+        <SocialFeedLayout
+          currentPhoto={currentPhoto}
+          isNewArrival={isNewArrival}
+          photos={photos}
+          currentIndex={currentIndex}
+          onSelectPhoto={selectPhoto}
+          guestLink={guestLink}
+          pin={pin}
+          showPin={showPin}
+        />
+      ) : layoutMode === 'classic' ? (
+        <ClassicLayout
+          currentPhoto={currentPhoto}
+          isNewArrival={isNewArrival}
+          photos={photos}
+          currentIndex={currentIndex}
+          onSelectPhoto={selectPhoto}
+          guestLink={guestLink}
+          pin={pin}
+          showPin={showPin}
+        />
       ) : (
-        <Box sx={contentGridStyles}>
-          <Box sx={leftColumnStyles}>
-            <Box sx={getMainCardStyles(isNewArrival)}>
-              {currentPhoto ? (
-                <>
-                  <Box sx={photoContainerStyles}>
-                    {isNewArrival && (
-                      <Box
-                        sx={{
-                          position: 'absolute',
-                          top: 18,
-                          left: 18,
-                          bgcolor: brandColors.flashYellow,
-                          color: brandColors.ink,
-                          fontWeight: 900,
-                          fontSize: '0.8rem',
-                          letterSpacing: '0.04em',
-                          textTransform: 'uppercase',
-                          px: 2,
-                          py: 0.7,
-                          borderRadius: '9999px',
-                          boxShadow: '0 4px 20px rgba(0,0,0,0.4)',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: 1,
-                          animation: 'photoEntrance 0.5s ease',
-                          zIndex: 5
-                        }}
-                      >
-                        <Box
-                          sx={{
-                            width: 8,
-                            height: 8,
-                            borderRadius: '50%',
-                            bgcolor: brandColors.ink
-                          }}
-                        />
-                        Nova foto na festa!
-                      </Box>
-                    )}
-                    {currentPhoto.challengeTitle && (
-                      <Box
-                        sx={{
-                          position: 'absolute',
-                          top: 18,
-                          right: 18,
-                          bgcolor: '#f59e0b',
-                          color: brandColors.ink,
-                          fontWeight: 900,
-                          fontSize: '0.85rem',
-                          letterSpacing: '0.03em',
-                          textTransform: 'uppercase',
-                          px: 2,
-                          py: 0.7,
-                          borderRadius: '9999px',
-                          boxShadow: '0 4px 20px rgba(0,0,0,0.5)',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: 1,
-                          animation: 'photoEntrance 0.5s ease',
-                          zIndex: 6
-                        }}
-                      >
-                        <ChallengeIcon sx={{ fontSize: 20, color: brandColors.ink }} />
-                        Missão: {currentPhoto.challengeTitle}
-                      </Box>
-                    )}
-                    <Box
-                      key={currentPhoto.id}
-                      component="img"
-                      src={currentPhoto.url}
-                      alt={`Foto de ${currentPhoto.guestName}`}
-                      sx={getPhotoStyles(isNewArrival)}
-                    />
-                  </Box>
-
-                  <Box sx={yellowBannerStyles}>
-                    <Box sx={bannerTextRowStyles}>
-                      <Typography component="span" sx={bannerAuthorStyles}>
-                        {formatGuestTaNaFoto(currentPhoto.guestName)}
-                      </Typography>
-                      {currentPhoto.challengeTitle && (
-                        <Typography component="span" sx={bannerTextStyles}>
-                          • cumpriu a missão: "{currentPhoto.challengeTitle}"
-                        </Typography>
-                      )}
-                    </Box>
-
-                    {currentPhoto.likesCount > 0 && (
-                      <Box sx={bannerLikesStyles}>
-                        <LikeIcon fontSize="small" sx={{ color: brandColors.ink }} />
-                        <Typography component="span" fontWeight={900}>
-                          {currentPhoto.likesCount}
-                        </Typography>
-                      </Box>
-                    )}
-                  </Box>
-                </>
-              ) : (
-                <>
-                  <Box sx={waitingEmptyStyles}>
-                    <CameraIcon sx={{ fontSize: { xs: 54, md: 72 }, color: brandColors.flashYellow, opacity: 0.85 }} />
-                    <Typography
-                      variant="h4"
-                      fontWeight={900}
-                      sx={{ fontFamily: "'Bricolage Grotesque', sans-serif", letterSpacing: '-0.03em' }}
-                    >
-                      O mural ao vivo está aberto!
-                    </Typography>
-                    <Typography variant="body1" sx={{ color: 'text.secondary', maxWidth: 440 }}>
-                      Aponte a câmera do seu celular para o QR Code ao lado e seja o primeiro a mandar sua foto.
-                    </Typography>
-                  </Box>
-
-                  <Box sx={yellowBannerStyles}>
-                    <Box sx={bannerTextRowStyles}>
-                      <Typography component="span" sx={bannerAuthorStyles}>
-                        voceTaNaFoto
-                      </Typography>
-                      <Typography component="span" sx={bannerTextStyles}>
-                        • seja o primeiro a mandar sua foto!
-                      </Typography>
-                    </Box>
-                  </Box>
-                </>
-              )}
-            </Box>
-
-            <Box sx={thumbnailsRowStyles}>
-              {Array.from({ length: THUMBNAIL_SLOTS_COUNT }).map((_, slotIndex) => {
-                const photo = photos[slotIndex]
-                const isActive = slotIndex === currentIndex
-
-                if (!photo) {
-                  return <Box key={`slot-${slotIndex}`} sx={getThumbnailSlotStyles(false)} />
-                }
-
-                return (
-                  <Box
-                    key={photo.id}
-                    onClick={() => selectPhoto(slotIndex)}
-                    sx={getThumbnailSlotStyles(isActive)}
-                  >
-                    <Box
-                      component="img"
-                      src={photo.url}
-                      alt={`Miniatura ${slotIndex + 1}`}
-                      sx={thumbnailImgStyles}
-                    />
-                  </Box>
-                )
-              })}
-            </Box>
-          </Box>
-
-          <Box sx={rightCardStyles}>
-            <Box sx={qrFrameStyles}>
-              {guestLink ? (
-                <QRCodeSVG
-                  value={guestLink}
-                  size={220}
-                  bgColor="transparent"
-                  fgColor={brandColors.ink}
-                  level="M"
-                />
-              ) : null}
-            </Box>
-
-            <Box sx={qrTextContainerStyles}>
-              <Typography component="h2" sx={qrTitleStyles}>
-                escaneia e<br />
-                entra na foto
-              </Typography>
-              <Typography component="p" sx={qrSubtitleStyles}>
-                sem app, sem cadastro
-              </Typography>
-
-              {pin && showPin && (
-                <Box sx={qrPinBadgeStyles}>
-                  <Typography component="span" sx={qrPinLabelStyles}>
-                    PIN de acesso
-                  </Typography>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <Typography component="span" sx={qrPinCodeStyles}>
-                      {pin}
-                    </Typography>
-                    <Tooltip title="Ocultar PIN">
-                      <IconButton
-                        size="small"
-                        onClick={handleTogglePinVisibility}
-                        aria-label="Ocultar PIN"
-                        sx={(theme) => ({
-                          p: 0.5,
-                          color: theme.palette.mode === 'dark' ? brandColors.darkTextSecondary : brandColors.textGray,
-                          '&:hover': {
-                            color: theme.palette.mode === 'dark' ? brandColors.darkTextPrimary : brandColors.ink
-                          }
-                        })}
-                      >
-                        <VisibilityOffIcon sx={{ fontSize: 18 }} />
-                      </IconButton>
-                    </Tooltip>
-                  </Box>
-                </Box>
-              )}
-            </Box>
-          </Box>
-        </Box>
+        <SideHubLayout
+          currentPhoto={currentPhoto}
+          isNewArrival={isNewArrival}
+          photos={photos}
+          currentIndex={currentIndex}
+          onSelectPhoto={selectPhoto}
+          guestLink={guestLink}
+          pin={pin}
+          showPin={showPin}
+        />
       )}
 
       <ScreenSettingsModal

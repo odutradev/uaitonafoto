@@ -114,11 +114,29 @@ export const photoContainerStyles: SxProps<Theme> = {
   position: 'relative'
 }
 
+export const photoBackdropStyles: SxProps<Theme> = {
+  position: 'absolute',
+  inset: -30,
+  width: 'calc(100% + 60px)',
+  height: 'calc(100% + 60px)',
+  objectFit: 'cover',
+  objectPosition: 'center',
+  filter: 'blur(36px) brightness(0.42) saturate(1.25)',
+  transform: 'scale(1.15)',
+  pointerEvents: 'none',
+  zIndex: 0
+}
+
 export const getPhotoStyles = (isNew = false): SxProps<Theme> => ({
   width: '100%',
   height: '100%',
+  maxWidth: '100%',
+  maxHeight: '100%',
   objectFit: 'contain',
   borderRadius: '16px',
+  position: 'relative',
+  zIndex: 1,
+  boxShadow: '0 12px 40px rgba(0, 0, 0, 0.45)',
   animation: isNew ? 'photoEntrance 0.7s cubic-bezier(0.16, 1, 0.3, 1)' : 'none',
   transition: 'transform 0.4s ease, opacity 0.4s ease',
   '@keyframes photoEntrance': {
@@ -333,4 +351,199 @@ export const activationCardStyles: SxProps<Theme> = (theme) => ({
   textAlign: 'center',
   gap: 2.5,
   boxShadow: theme.palette.mode === 'dark' ? '0 8px 32px rgba(0, 0, 0, 0.5)' : '0 8px 32px rgba(0, 0, 0, 0.08)'
+})
+
+// Novos estilos para os layouts: Painel Lateral (side-hub) e Feed Social (social-feed)
+export const sideHubRightStyles: SxProps<Theme> = {
+  width: { xs: '100%', md: 360, lg: 420 },
+  display: 'flex',
+  flexDirection: 'column',
+  gap: { xs: 1.5, md: 2.5 },
+  height: '100%',
+  minHeight: 0,
+  flexShrink: 0
+}
+
+export const sideHubQrCardStyles: SxProps<Theme> = (theme) => ({
+  bgcolor: theme.palette.mode === 'dark' ? brandColors.darkPaper : '#FFFFFF',
+  borderRadius: '26px',
+  border: `1px solid ${theme.palette.divider}`,
+  p: { xs: 2, md: 2.5 },
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center',
+  gap: 2,
+  flexShrink: 0,
+  boxShadow: theme.palette.mode === 'dark' ? 'none' : '0 6px 24px rgba(0, 0, 0, 0.06)'
+})
+
+export const sideHubQrTitleStyles: SxProps<Theme> = (theme) => ({
+  fontFamily: "'Bricolage Grotesque', sans-serif",
+  fontWeight: 900,
+  fontSize: { xs: '1.2rem', md: '1.45rem' },
+  lineHeight: 1.05,
+  letterSpacing: '-0.04em',
+  color: theme.palette.mode === 'dark' ? brandColors.darkTextPrimary : brandColors.ink
+})
+
+export const sideHubQrSubtitleStyles: SxProps<Theme> = (theme) => ({
+  fontFamily: "'DM Sans', sans-serif",
+  color: theme.palette.mode === 'dark' ? brandColors.darkTextSecondary : brandColors.textGray,
+  fontSize: '0.85rem',
+  fontWeight: 600,
+  mt: 0.25
+})
+
+export const sideHubPinBadgeStyles: SxProps<Theme> = (theme) => ({
+  mt: 1,
+  px: 1.25,
+  py: 0.5,
+  borderRadius: '10px',
+  bgcolor: theme.palette.mode === 'dark' ? brandColors.darkSurface : brandColors.sand,
+  border: `1px solid ${theme.palette.mode === 'dark' ? brandColors.darkBorder : brandColors.sandDark}`,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  width: '100%'
+})
+
+export const sideHubPinLabelStyles: SxProps<Theme> = (theme) => ({
+  fontFamily: "'DM Sans', sans-serif",
+  fontSize: '0.72rem',
+  fontWeight: 700,
+  color: theme.palette.mode === 'dark' ? brandColors.darkTextSecondary : brandColors.textGray,
+  textTransform: 'uppercase',
+  letterSpacing: '0.05em'
+})
+
+export const sideHubPinCodeStyles: SxProps<Theme> = (theme) => ({
+  fontFamily: 'monospace',
+  fontSize: '1.05rem',
+  fontWeight: 900,
+  letterSpacing: '0.15em',
+  color: theme.palette.mode === 'dark' ? brandColors.darkTextPrimary : brandColors.ink
+})
+
+export const getSideHubThumbnailSlotStyles = (isActive: boolean = false): SxProps<Theme> => (theme) => ({
+  borderRadius: '16px',
+  bgcolor: theme.palette.mode === 'dark' ? brandColors.darkSurface : brandColors.sand,
+  overflow: 'hidden',
+  border: isActive ? `3px solid ${brandColors.flashYellow}` : `1.5px solid ${theme.palette.divider}`,
+  boxShadow: isActive ? '0 0 16px rgba(255, 207, 31, 0.45)' : 'none',
+  transition: 'all 0.2s ease',
+  cursor: 'pointer',
+  position: 'relative',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  minHeight: 90,
+  height: '100%',
+  '&:hover': {
+    borderColor: brandColors.flashYellow
+  }
+})
+
+export const sideHubRecentCardStyles: SxProps<Theme> = (theme) => ({
+  flex: 1,
+  bgcolor: theme.palette.mode === 'dark' ? brandColors.darkPaper : '#FFFFFF',
+  borderRadius: '26px',
+  border: `1px solid ${theme.palette.divider}`,
+  p: { xs: 2, md: 2.5 },
+  display: 'flex',
+  flexDirection: 'column',
+  minHeight: 0,
+  boxShadow: theme.palette.mode === 'dark' ? 'none' : '0 6px 24px rgba(0, 0, 0, 0.06)'
+})
+
+export const sideHubRecentGridStyles: SxProps<Theme> = {
+  display: 'grid',
+  gridTemplateColumns: 'repeat(2, 1fr)',
+  gap: 1.5,
+  flex: 1,
+  minHeight: 0,
+  overflowY: 'auto',
+  pr: 0.5
+}
+
+export const socialFeedLeftColumnStyles: SxProps<Theme> = (theme) => ({
+  width: { xs: '100%', md: 280, lg: 320 },
+  bgcolor: theme.palette.mode === 'dark' ? brandColors.darkPaper : '#FFFFFF',
+  borderRadius: '26px',
+  border: `1px solid ${theme.palette.divider}`,
+  p: { xs: 2.5, md: 3 },
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  gap: 2,
+  height: '100%',
+  minHeight: 0,
+  flexShrink: 0,
+  boxShadow: theme.palette.mode === 'dark' ? 'none' : '0 6px 24px rgba(0, 0, 0, 0.06)'
+})
+
+export const socialFeedQrTitleStyles: SxProps<Theme> = (theme) => ({
+  fontFamily: "'Bricolage Grotesque', sans-serif",
+  fontWeight: 900,
+  fontSize: { xs: '1.4rem', md: '1.75rem' },
+  lineHeight: 1.05,
+  letterSpacing: '-0.04em',
+  color: theme.palette.mode === 'dark' ? brandColors.darkTextPrimary : brandColors.ink
+})
+
+export const socialFeedCenterStyles: SxProps<Theme> = {
+  display: 'flex',
+  flexDirection: 'column',
+  flex: 1,
+  minWidth: 0,
+  height: '100%',
+  minHeight: 0
+}
+
+export const socialFeedRightColumnStyles: SxProps<Theme> = (theme) => ({
+  width: { xs: '100%', md: 280, lg: 320 },
+  bgcolor: theme.palette.mode === 'dark' ? brandColors.darkPaper : '#FFFFFF',
+  borderRadius: '26px',
+  border: `1px solid ${theme.palette.divider}`,
+  p: { xs: 2, md: 2.5 },
+  display: 'flex',
+  flexDirection: 'column',
+  height: '100%',
+  minHeight: 0,
+  flexShrink: 0,
+  boxShadow: theme.palette.mode === 'dark' ? 'none' : '0 6px 24px rgba(0, 0, 0, 0.06)'
+})
+
+export const socialFeedListStyles: SxProps<Theme> = {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 1.5,
+  flex: 1,
+  minHeight: 0,
+  overflowY: 'auto',
+  pr: 0.5
+}
+
+export const socialFeedCardStyles = (isActive = false): SxProps<Theme> => (theme) => ({
+  display: 'flex',
+  alignItems: 'center',
+  gap: 1.5,
+  p: 1.25,
+  borderRadius: '16px',
+  cursor: 'pointer',
+  bgcolor: isActive
+    ? theme.palette.mode === 'dark'
+      ? 'rgba(255, 207, 31, 0.1)'
+      : 'rgba(255, 207, 31, 0.15)'
+    : theme.palette.mode === 'dark'
+      ? brandColors.darkSurface
+      : brandColors.sand,
+  border: isActive
+    ? `2px solid ${brandColors.flashYellow}`
+    : `1px solid ${theme.palette.divider}`,
+  transition: 'all 0.2s ease',
+  boxShadow: isActive ? '0 0 12px rgba(255, 207, 31, 0.3)' : 'none',
+  '&:hover': {
+    borderColor: brandColors.flashYellow
+  }
 })
