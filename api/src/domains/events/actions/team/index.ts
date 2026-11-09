@@ -43,6 +43,8 @@ export const listTeam = defineAction(
   }
 )
 
+export const MAX_ORGANIZERS = 5
+
 export const addOrganizer = defineAction(
   {
     method: 'post',
@@ -55,7 +57,7 @@ export const addOrganizer = defineAction(
       200: { description: 'Equipe atualizada', schema: teamListResponseSchema },
       403: { description: 'Somente o criador pode gerenciar a equipe' },
       404: { description: 'Evento ou usuário não encontrado' },
-      409: { description: 'Usuário já faz parte da equipe' }
+      409: { description: 'Usuário já faz parte da equipe ou limite de organizadores atingido' }
     }
   },
   async ({ ids, params, data, manageError }: ManageRequestBody<AddOrganizerRequest>): ManageRequestResponse<TeamListResponse> => {
@@ -64,6 +66,14 @@ export const addOrganizer = defineAction(
     const event = await eventRepository.findById(params.id)
     if (!event) return manageError({ code: 'not_found' })
     if (findMemberRole(event, ids.userId) !== 'creator') return manageError({ code: 'forbidden' })
+
+    const organizersCount = event.members.filter((member) => member.role === 'organizer').length
+    if (organizersCount >= MAX_ORGANIZERS) {
+      return manageError({
+        code: 'conflict',
+        details: `Limite de ${MAX_ORGANIZERS} organizadores atingido para este evento`
+      })
+    }
 
     const user = await userRepository.findByEmail(data.email)
     if (!user) return manageError({ code: 'user_not_found' })
