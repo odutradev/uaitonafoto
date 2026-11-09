@@ -4,7 +4,6 @@ import {
   Box,
   Button,
   Card,
-  Chip,
   CircularProgress,
   IconButton,
   Skeleton,
@@ -29,6 +28,7 @@ import {
   memberRowStyles,
   membersListStyles,
   memberTextStyles,
+  roleBadgeStyles,
   teamButtonStyles,
   teamCardStyles,
   teamSectionStackStyles
@@ -67,7 +67,7 @@ const EventTeam = ({ event, currentUserId }: EventTeamProps) => {
     <Box sx={teamSectionStackStyles}>
       <Card elevation={0} sx={teamCardStyles}>
         <Box>
-          <Typography variant="h6" component="h2">
+          <Typography variant="subtitle1" fontWeight={700} component="h2">
             Equipe organizadora
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mt: 0.25 }}>
@@ -77,8 +77,8 @@ const EventTeam = ({ event, currentUserId }: EventTeamProps) => {
 
         {isLoading ? (
           <Box sx={membersListStyles}>
-            <Skeleton variant="rounded" height={68} sx={{ borderRadius: '16px' }} />
-            <Skeleton variant="rounded" height={68} sx={{ borderRadius: '16px' }} />
+            <Skeleton variant="rounded" height={56} sx={{ borderRadius: '10px' }} />
+            <Skeleton variant="rounded" height={56} sx={{ borderRadius: '10px' }} />
           </Box>
         ) : (
           <Box sx={membersListStyles}>
@@ -91,20 +91,16 @@ const EventTeam = ({ event, currentUserId }: EventTeamProps) => {
                     {member.name.charAt(0).toUpperCase()}
                   </Avatar>
                   <Box sx={memberTextStyles}>
-                    <Typography variant="subtitle2" fontWeight={700} sx={ellipsisStyles}>
+                    <Typography variant="body2" fontWeight={700} sx={ellipsisStyles}>
                       {member.name}
                     </Typography>
                     <Typography variant="caption" color="text.secondary" component="p" sx={ellipsisStyles}>
                       {member.email}
                     </Typography>
                   </Box>
-                  <Chip
-                    size="small"
-                    color={member.role === 'creator' ? 'primary' : 'default'}
-                    variant={member.role === 'creator' ? 'filled' : 'outlined'}
-                    label={member.role === 'creator' ? 'Criador' : 'Organizador'}
-                    sx={{ fontWeight: 700 }}
-                  />
+                  <Box component="span" sx={roleBadgeStyles(member.role === 'creator')}>
+                    {member.role === 'creator' ? 'Criador' : 'Organizador'}
+                  </Box>
                   {canRemove && (
                     <Tooltip title={member.userId === currentUserId ? 'Sair da equipe' : 'Remover organizador'}>
                       <IconButton
@@ -112,8 +108,9 @@ const EventTeam = ({ event, currentUserId }: EventTeamProps) => {
                         color="error"
                         aria-label={`Remover ${member.name}`}
                         onClick={() => setMemberToRemove(member)}
+                        sx={{ p: 0.5, borderRadius: '8px' }}
                       >
-                        <DeleteIcon fontSize="small" />
+                        <DeleteIcon sx={{ fontSize: 16 }} />
                       </IconButton>
                     </Tooltip>
                   )}
@@ -126,8 +123,8 @@ const EventTeam = ({ event, currentUserId }: EventTeamProps) => {
         {isCreator && (
           <Box component="form" onSubmit={handleAdd} sx={addOrganizerSectionStyles}>
             <Box>
-              <Typography variant="subtitle2" fontWeight={700}>
-                Convidar novo organizador ({organizersCount}/{MAX_EVENT_ORGANIZERS})
+              <Typography variant="body2" fontWeight={700}>
+                Convidar organizador ({organizersCount}/{MAX_EVENT_ORGANIZERS})
               </Typography>
               <Typography variant="caption" color="text.secondary">
                 {isLimitReached
@@ -138,8 +135,8 @@ const EventTeam = ({ event, currentUserId }: EventTeamProps) => {
 
             <Box sx={addOrganizerRowStyles}>
               <TextField
+                size="small"
                 type="email"
-                label="E-mail do organizador"
                 placeholder="Ex: assessoria@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -150,9 +147,10 @@ const EventTeam = ({ event, currentUserId }: EventTeamProps) => {
               />
               <Button
                 type="submit"
-                variant="outlined"
+                size="small"
+                variant="contained"
                 disabled={isAdding || !email.trim() || isLimitReached}
-                startIcon={isAdding ? <CircularProgress size={16} color="inherit" /> : <AddPersonIcon fontSize="small" />}
+                startIcon={isAdding ? <CircularProgress size={15} color="inherit" /> : <AddPersonIcon sx={{ fontSize: 16 }} />}
                 sx={teamButtonStyles}
               >
                 {isAdding ? 'Adicionando...' : 'Adicionar'}
@@ -189,3 +187,4 @@ const EventTeam = ({ event, currentUserId }: EventTeamProps) => {
 }
 
 export default EventTeam
+
