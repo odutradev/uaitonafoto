@@ -1,4 +1,20 @@
-import type { EventPhase, EventType, PhotoVisibility, PinRotationMinutes } from '@actions/events/types'
+import type { EventPhase, EventPlanTier, EventType, PhotoVisibility, PinRotationMinutes } from '@actions/events/types'
+
+export const EVENT_PLAN_LIMITS: Record<EventPlanTier, { maxOrganizers: number; maxScreens: number }> = {
+  single: { maxOrganizers: 1, maxScreens: 2 },
+  essential: { maxOrganizers: 2, maxScreens: 3 },
+  pro: { maxOrganizers: 5, maxScreens: 4 }
+}
+
+export const getEventLimits = (event?: { planTier?: EventPlanTier; maxOrganizers?: number; maxScreens?: number } | null) => {
+  const tier: EventPlanTier = event?.planTier ?? 'single'
+  const fallback = EVENT_PLAN_LIMITS[tier] || EVENT_PLAN_LIMITS.single
+  return {
+    tier,
+    maxOrganizers: event?.maxOrganizers ?? fallback.maxOrganizers,
+    maxScreens: event?.maxScreens ?? fallback.maxScreens
+  }
+}
 
 export const eventTypeLabels: Record<EventType, string> = {
   birthday: 'Aniversário',

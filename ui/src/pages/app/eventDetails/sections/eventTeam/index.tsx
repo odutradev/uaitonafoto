@@ -17,7 +17,7 @@ import {
 } from '@mui/icons-material'
 
 import Modal from '@components/modal'
-import { MAX_EVENT_ORGANIZERS } from '@config/events'
+import { getEventLimits, MAX_EVENT_ORGANIZERS } from '@config/events'
 
 import useEventTeam from '../../hooks/useEventTeam'
 import {
@@ -44,8 +44,10 @@ const EventTeam = ({ event, currentUserId }: EventTeamProps) => {
   const [memberToRemove, setMemberToRemove] = useState<TeamMember | null>(null)
   const [isRemoving, setIsRemoving] = useState(false)
   const isCreator = event.myRole === 'creator'
+  const limits = getEventLimits(event)
+  const maxOrganizers = limits.maxOrganizers
   const organizersCount = members.filter((member) => member.role === 'organizer').length
-  const isLimitReached = organizersCount >= MAX_EVENT_ORGANIZERS
+  const isLimitReached = organizersCount >= maxOrganizers
 
   const handleAdd = async (submitEvent: FormEvent<HTMLFormElement>) => {
     submitEvent.preventDefault()
@@ -124,11 +126,11 @@ const EventTeam = ({ event, currentUserId }: EventTeamProps) => {
           <Box component="form" onSubmit={handleAdd} sx={addOrganizerSectionStyles}>
             <Box>
               <Typography variant="body2" fontWeight={700}>
-                Convidar organizador ({organizersCount}/{MAX_EVENT_ORGANIZERS})
+                Convidar organizador ({organizersCount}/{maxOrganizers})
               </Typography>
               <Typography variant="caption" color="text.secondary">
                 {isLimitReached
-                  ? 'Limite de 5 organizadores atingido para este evento.'
+                  ? `Limite de ${maxOrganizers} ${maxOrganizers === 1 ? 'organizador' : 'organizadores'} atingido para este evento.`
                   : 'Informe o e-mail de uma pessoa que já possui conta na plataforma.'}
               </Typography>
             </Box>

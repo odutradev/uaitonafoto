@@ -51,12 +51,17 @@ export interface EventScreenSlot {
   lastSeenAt?: string
 }
 
+export type EventPlanTier = 'single' | 'essential' | 'pro'
+
 export interface EventItem {
   id: string
   name: string
   description?: string
   type: EventType
   creditType?: EventCreditType
+  planTier?: EventPlanTier
+  maxOrganizers?: number
+  maxScreens?: number
   startsAt: string
   endsAt: string
   guestToken: string

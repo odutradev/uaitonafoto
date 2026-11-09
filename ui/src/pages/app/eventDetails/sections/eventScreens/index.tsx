@@ -22,7 +22,7 @@ import dayjs from 'dayjs'
 import { toast } from 'react-toastify'
 
 import Modal from '@components/modal'
-import { buildScreenLink, MAX_EVENT_SCREENS } from '@config/events'
+import { buildScreenLink, getEventLimits, MAX_EVENT_SCREENS } from '@config/events'
 
 import {
   compactIconButtonStyles,
@@ -86,7 +86,9 @@ const EventScreens = ({
 }: EventScreensProps) => {
   const screenLink = buildScreenLink(event.guestToken)
   const screens = event.screens ?? []
-  const isScreenLimitReached = screens.length >= MAX_EVENT_SCREENS
+  const limits = getEventLimits(event)
+  const maxScreens = limits.maxScreens
+  const isScreenLimitReached = screens.length >= maxScreens
 
   const [isManagingScreen, setIsManagingScreen] = useState(false)
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
@@ -168,11 +170,11 @@ const EventScreens = ({
                 Telões do evento
               </Typography>
               <Box component="span" sx={countBadgeStyles}>
-                {screens.length}/{MAX_EVENT_SCREENS}
+                {screens.length}/{maxScreens}
               </Box>
             </Box>
             <Typography variant="body2" color="text.secondary" sx={{ mt: 0.25 }}>
-              Gere até {MAX_EVENT_SCREENS} PINs e insira no navegador de cada telão para ativar a exibição.
+              Gere até {maxScreens} PINs e insira no navegador de cada telão para ativar a exibição.
             </Typography>
           </Box>
 
