@@ -82,29 +82,6 @@ export const shareButtonStyles: SxProps<Theme> = {
   width: { xs: '100%', sm: 'auto' }
 }
 
-export const summaryGridStyles: SxProps<Theme> = {
-  display: 'grid',
-  gridTemplateColumns: {
-    xs: '1fr',
-    sm: 'repeat(2, minmax(0, 1fr))',
-    md: 'repeat(4, minmax(0, 1fr))'
-  },
-  gap: 1.5,
-  pt: 2.5,
-  borderTop: 1,
-  borderColor: 'divider'
-}
-
-export const summaryItemStyles: SxProps<Theme> = {
-  p: 1.75,
-  borderRadius: '14px',
-  bgcolor: 'action.hover',
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 0.5,
-  minWidth: 0
-}
-
 export const pinBannerStyles: SxProps<Theme> = {
   display: 'flex',
   flexDirection: { xs: 'column', sm: 'row' },

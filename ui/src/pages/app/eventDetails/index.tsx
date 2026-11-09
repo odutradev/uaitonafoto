@@ -150,8 +150,7 @@ const EventDetails = () => {
       {activeTab === 'access' && (
         <ShareLink
           event={event}
-          onOpenScreen={openScreen}
-          onSave={save}
+          onGoToSettings={() => handleTabChange(null, 'settings')}
         />
       )}
       {activeTab === 'screens' && (
