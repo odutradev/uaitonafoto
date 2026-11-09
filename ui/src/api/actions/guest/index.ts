@@ -23,6 +23,7 @@ export const getGuestSession = async (guestToken: string): Promise<GuestSession>
 export const uploadGuestPhoto = async (guestToken: string, file: File): Promise<GuestPhoto> => {
   const formData = new FormData()
   formData.append('file', file)
+  formData.append('capturedAt', (file.lastModified || Date.now()).toString())
   const response = await guestApi.post<GuestPhoto>('/guest/photos', formData, withGuestToken(guestToken))
   return response.data
 }

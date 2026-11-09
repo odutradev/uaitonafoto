@@ -2,10 +2,13 @@ import { useRef } from 'react'
 import { Alert, Box, Button, Chip, Paper, Typography } from '@mui/material'
 import { AddAPhotoOutlined as CameraIcon } from '@mui/icons-material'
 import dayjs from 'dayjs'
+import { toast } from 'react-toastify'
 
 import { uploadButtonStyles, uploadHeaderStyles, uploadPaperStyles } from './styles'
 import type { ChangeEvent } from 'react'
 import type { GuestUploadProps } from './types'
+
+const MAX_PHOTO_AGE_MS = 5 * 60 * 1000
 
 const GuestUpload = ({
   event,
@@ -20,7 +23,17 @@ const GuestUpload = ({
   const handleFileChange = async (changeEvent: ChangeEvent<HTMLInputElement>) => {
     const file = changeEvent.target.files?.[0]
     changeEvent.target.value = ''
-    if (file) await onUpload(file)
+    if (!file) return
+
+    if (file.lastModified) {
+      const fileAgeMs = Date.now() - file.lastModified
+      if (fileAgeMs > MAX_PHOTO_AGE_MS || fileAgeMs < -60000) {
+        toast.error('Apenas fotos tiradas na hora com a câmera são permitidas. Não é possível selecionar fotos antigas da galeria.')
+        return
+      }
+    }
+
+    await onUpload(file)
   }
 
   return (
@@ -49,7 +62,8 @@ const GuestUpload = ({
       <input
         ref={inputRef}
         type="file"
-        accept="image/jpeg,image/png,image/webp"
+        accept="image/*"
+        capture="environment"
         hidden
         onChange={handleFileChange}
       />
@@ -62,8 +76,12 @@ const GuestUpload = ({
         onClick={() => inputRef.current?.click()}
         sx={uploadButtonStyles}
       >
-        {isUploading ? 'Enviando foto...' : 'Tirar ou escolher foto'}
+        {isUploading ? 'Enviando foto...' : 'Tirar foto'}
       </Button>
+
+      <Typography variant="caption" color="text.secondary" sx={{ textAlign: 'center', display: 'block' }}>
+        Abre a câmera na hora • Fotos antigas da galeria não são permitidas
+      </Typography>
     </Paper>
   )
 }
