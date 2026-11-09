@@ -3,6 +3,7 @@ import screenApi, { withScreenToken } from './screenClient'
 import type {
   ActivateScreenResponse,
   AlbumParams,
+  ApproveAllPhotosResponse,
   CreateEventPayload,
   EventGuest,
   EventItem,
@@ -120,6 +121,21 @@ export const getEventAlbum = async (id: string, params?: AlbumParams): Promise<P
 
 export const deleteEventPhoto = async (id: string, photoId: string): Promise<EventPhoto> => {
   const response = await api.delete<EventPhoto>(`/events/${id}/photos/${photoId}`)
+  return response.data
+}
+
+export const approveEventPhoto = async (id: string, photoId: string): Promise<EventPhoto> => {
+  const response = await api.patch<EventPhoto>(`/events/${id}/photos/${photoId}/approve`)
+  return response.data
+}
+
+export const rejectEventPhoto = async (id: string, photoId: string): Promise<EventPhoto> => {
+  const response = await api.patch<EventPhoto>(`/events/${id}/photos/${photoId}/reject`)
+  return response.data
+}
+
+export const approveAllEventPhotos = async (id: string): Promise<ApproveAllPhotosResponse> => {
+  const response = await api.post<ApproveAllPhotosResponse>(`/events/${id}/photos/approve-all`)
   return response.data
 }
 

@@ -13,6 +13,7 @@ export interface EventFormState {
   pin: string
   pinRotate: boolean
   pinRotationMinutes: PinRotationMinutes
+  moderationEnabled: boolean
   customization?: EventCustomization
 }
 

@@ -4,6 +4,7 @@ export type EventMemberRole = 'creator' | 'organizer'
 export type PhotoVisibility = 'during_event' | 'after_event'
 export type EventPhase = 'upcoming' | 'open' | 'closed' | 'expired'
 export type PinRotationMinutes = 5 | 15 | 30 | 60
+export type PhotoStatus = 'pending' | 'approved' | 'rejected'
 
 export interface EventCustomization {
   enabled: boolean
@@ -23,6 +24,7 @@ export interface EventSettings {
   pinRotate: boolean
   pinRotationMinutes: PinRotationMinutes
   pinUpdatedAt: string
+  moderationEnabled?: boolean
 }
 
 export interface EventMember {
@@ -111,6 +113,7 @@ export interface EventPhoto {
   likesCount: number
   likedByMe?: boolean
   mine?: boolean
+  status?: PhotoStatus
   createdAt: string
 }
 
@@ -143,6 +146,7 @@ export interface ScreenResponse {
 
 export interface AlbumParams extends PaginationParams {
   guestId?: string
+  status?: 'all' | 'pending' | 'approved' | 'rejected'
 }
 
 export interface ScreenParams {
@@ -154,4 +158,8 @@ export interface ResetLockoutsResponse {
   success: boolean
   clearedCount: number
   message: string
+}
+
+export interface ApproveAllPhotosResponse {
+  approvedCount: number
 }

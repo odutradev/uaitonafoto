@@ -21,7 +21,8 @@ export const buildInitialEventForm = (defaultCreditType: EventCreditType = 'paid
     pinEnabled: true,
     pin: generateRandomPin(),
     pinRotate: true,
-    pinRotationMinutes: 15
+    pinRotationMinutes: 15,
+    moderationEnabled: false
   }
 }
 
@@ -38,6 +39,7 @@ export const toEventForm = (event: EventItem): EventFormState => ({
   pin: event.settings.pin,
   pinRotate: event.settings.pinRotate,
   pinRotationMinutes: event.settings.pinRotationMinutes,
+  moderationEnabled: Boolean(event.settings.moderationEnabled),
   customization: event.customization
 })
 
@@ -65,7 +67,8 @@ export const toEventPayload = (form: EventFormState): CreateEventPayload => {
       pinEnabled: form.pinEnabled,
       pin: form.pin,
       pinRotate: form.pinRotate,
-      pinRotationMinutes: form.pinRotationMinutes
+      pinRotationMinutes: form.pinRotationMinutes,
+      moderationEnabled: form.moderationEnabled
     },
     customization: form.customization
   }

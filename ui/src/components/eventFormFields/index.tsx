@@ -1,5 +1,6 @@
 import {
   Box,
+  Chip,
   IconButton,
   InputAdornment,
   MenuItem,
@@ -119,6 +120,27 @@ const EventFormFields = ({
             </MenuItem>
           ))}
         </TextField>
+
+        <Box sx={pinCardBoxStyles}>
+          <Box sx={pinToggleRowStyles}>
+            <Box>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Typography variant="subtitle2" fontWeight={700}>
+                  Moderação prévia ("Fila de Aprovação")
+                </Typography>
+                <Chip size="small" label="Corporativo / Formal" variant="outlined" sx={{ fontSize: '0.7rem' }} />
+              </Box>
+              <Typography variant="caption" color="text.secondary">
+                Fotos enviadas pelos convidados só aparecem no telão após aprovação da equipe no painel.
+              </Typography>
+            </Box>
+            <Switch
+              checked={form.moderationEnabled}
+              onChange={(e) => onChange('moderationEnabled', e.target.checked)}
+              inputProps={{ 'aria-label': 'Ativar moderação prévia' }}
+            />
+          </Box>
+        </Box>
 
         <Box sx={pinCardBoxStyles}>
           <Typography variant="subtitle2" fontWeight={700}>
@@ -412,6 +434,27 @@ const EventFormFields = ({
           </Box>
         </>
       )}
+    </Box>
+
+    <Box sx={pinCardBoxStyles}>
+      <Box sx={pinToggleRowStyles}>
+        <Box>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Typography variant="subtitle2" fontWeight={700}>
+              Moderação prévia ("Fila de Aprovação")
+            </Typography>
+            <Chip size="small" label="Corporativo / Formal" variant="outlined" sx={{ fontSize: '0.7rem' }} />
+          </Box>
+          <Typography variant="caption" color="text.secondary">
+            Fotos enviadas pelos convidados só aparecem no telão após aprovação da equipe no painel do Álbum.
+          </Typography>
+        </Box>
+        <Switch
+          checked={form.moderationEnabled}
+          onChange={(e) => onChange('moderationEnabled', e.target.checked)}
+          inputProps={{ 'aria-label': 'Ativar moderação prévia' }}
+        />
+      </Box>
     </Box>
   </Box>
 )

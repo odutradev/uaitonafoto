@@ -106,3 +106,60 @@ export const deletePhotoButtonStyles: SxProps<Theme> = {
     bgcolor: 'rgba(255,255,255,0.16)'
   }
 }
+
+export const approvePhotoButtonStyles: SxProps<Theme> = {
+  bgcolor: 'success.main',
+  color: '#fff',
+  p: 0.6,
+  '&:hover': {
+    bgcolor: 'success.dark'
+  }
+}
+
+export const rejectPhotoButtonStyles: SxProps<Theme> = {
+  bgcolor: 'error.main',
+  color: '#fff',
+  p: 0.6,
+  '&:hover': {
+    bgcolor: 'error.dark'
+  }
+}
+
+export const moderationBarStyles: SxProps<Theme> = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  flexWrap: 'wrap',
+  gap: 1.5,
+  p: 1.5,
+  borderRadius: '16px',
+  bgcolor: 'action.hover',
+  border: 1,
+  borderColor: 'divider'
+}
+
+export const moderationTabsStyles: SxProps<Theme> = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: 1,
+  flexWrap: 'wrap'
+}
+
+export const photoStatusBadgeStyles = (status: 'pending' | 'approved' | 'rejected'): SxProps<Theme> => ({
+  position: 'absolute',
+  top: 8,
+  left: 8,
+  zIndex: 2,
+  fontWeight: 700,
+  fontSize: '0.7rem',
+  height: 22,
+  px: 0.8,
+  borderRadius: '999px',
+  color: '#fff',
+  bgcolor:
+    status === 'pending'
+      ? 'warning.dark'
+      : status === 'approved'
+        ? 'success.dark'
+        : 'error.dark'
+})
