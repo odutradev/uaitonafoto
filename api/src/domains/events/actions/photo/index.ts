@@ -10,6 +10,7 @@ import guestSessionMiddleware from '../../middlewares/guestSession'
 import { arePhotosVisible, canUploadPhotos, getEventPhase } from '../../utils/eventWindows'
 import { broadcastEvent } from '@realtime'
 import { removePhotoFile, storeEventPhoto } from '../../utils/photoStorage'
+import { getClientIdentity } from '../../utils/clientIdentity'
 import type { PhotoEntity } from '../../repositories/photos/types'
 import type { DetectedImageType } from '../../utils/types'
 
@@ -136,6 +137,8 @@ export const uploadPhoto = defineAction(
     const challengeId = typeof rawChallengeId === 'string' && rawChallengeId.trim() ? rawChallengeId.trim() : undefined
     const challengeTitle = typeof rawChallengeTitle === 'string' && rawChallengeTitle.trim() ? rawChallengeTitle.trim() : undefined
 
+    const client = getClientIdentity(defaultExpress?.req)
+
     try {
       const photo = await photoRepository.create({
         id: photoId,
@@ -147,8 +150,18 @@ export const uploadPhoto = defineAction(
         size: stored.size,
         status: isModerationOn ? 'pending' : 'approved',
         challengeId,
-        challengeTitle
+        challengeTitle,
+        ip: client.ip,
+        deviceId: client.deviceId
       })
+
+      void guestRepository.updateSession(guest.id, {
+        ip: client.ip,
+        deviceId: client.deviceId,
+        deviceFingerprint: client.fingerprint,
+        userAgent: client.userAgent,
+        lastActiveAt: new Date().toISOString()
+      }).catch(() => {})
 
       const [response] = await toPhotoResponses([photo], guest.id)
       if (isModerationOn) {

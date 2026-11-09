@@ -12,6 +12,8 @@ export interface PhotoEntity {
   status: PhotoStatus
   challengeId?: string
   challengeTitle?: string
+  ip?: string
+  deviceId?: string
   createdAt: string
 }
 

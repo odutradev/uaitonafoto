@@ -113,6 +113,8 @@ export const eventGuestSchema = z
     name: z.string().openapi({ example: 'Maria' }),
     photosCount: z.number().openapi({ example: 4 }),
     isBlocked: z.boolean().optional().default(false).openapi({ example: false }),
+    ip: z.string().optional().openapi({ example: '189.10.20.30' }),
+    lastActiveAt: z.string().optional().openapi({ example: '2026-12-20T21:30:00.000Z' }),
     createdAt: z.string().openapi({ example: '2026-12-20T21:30:00.000Z' })
   })
   .openapi('EventGuestResponse')

@@ -556,6 +556,8 @@ export const listEventGuests = defineAction(
       name: guest.name,
       photosCount: counts[guest.id] ?? 0,
       isBlocked: Boolean(guest.isBlocked),
+      ip: guest.ip,
+      lastActiveAt: guest.lastActiveAt,
       createdAt: guest.createdAt
     }))
   }
@@ -594,6 +596,8 @@ export const updateEventGuest = defineAction(
       name: updated.name,
       photosCount: count,
       isBlocked: Boolean(updated.isBlocked),
+      ip: updated.ip,
+      lastActiveAt: updated.lastActiveAt,
       createdAt: updated.createdAt
     }
   }
@@ -637,6 +641,8 @@ export const setEventGuestBlock = defineAction(
       name: updated.name,
       photosCount: count,
       isBlocked: Boolean(updated.isBlocked),
+      ip: updated.ip,
+      lastActiveAt: updated.lastActiveAt,
       createdAt: updated.createdAt
     }
   }

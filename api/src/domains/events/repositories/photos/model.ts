@@ -16,6 +16,8 @@ const photoSchema = new Schema<PhotoDocument>(
     status: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'approved' },
     challengeId: { type: String },
     challengeTitle: { type: String },
+    ip: { type: String },
+    deviceId: { type: String },
     createdAt: { type: String, default: () => new Date().toISOString() }
   },
   { timestamps: false, versionKey: false }

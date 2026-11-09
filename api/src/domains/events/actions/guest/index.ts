@@ -7,7 +7,9 @@ import { ensureCurrentEventPin } from '../../utils/eventPin'
 import { checkPinLockout, recordPinFailure, resetPinLockout } from '../../utils/pinLockout'
 import { getEventPhase } from '../../utils/eventWindows'
 import { signGuestToken } from '../../utils/guestToken'
+import { getClientIdentity } from '../../utils/clientIdentity'
 import type { EventEntity } from '../../repositories/events/types'
+import type { GuestEntity } from '../../repositories/guests/types'
 
 const toGuestEventInfo = (event: EventEntity): GuestEventInfo => ({
   name: event.name,
@@ -118,13 +120,52 @@ export const joinEvent = defineAction(
       })
     }
 
-    const guest = await guestRepository.create({ eventId: event.id, name: data.name })
+    const client = getClientIdentity(defaultExpress.req)
+
+    const existingGuest = await guestRepository.findExistingGuestForClient({
+      eventId: event.id,
+      deviceId: client.deviceId,
+      fingerprint: client.fingerprint,
+      ip: client.ip,
+      name: data.name
+    })
+
+    if (existingGuest?.isBlocked) {
+      return manageError({
+        code: 'forbidden',
+        details: 'Você foi bloqueado pela moderação deste evento.'
+      })
+    }
+
+    let guest: GuestEntity
+    let completedChallengeIds: string[] = []
+
+    if (existingGuest) {
+      const updated = await guestRepository.updateSession(existingGuest.id, {
+        name: data.name.trim(),
+        ip: client.ip,
+        deviceId: client.deviceId,
+        deviceFingerprint: client.fingerprint,
+        userAgent: client.userAgent
+      })
+      guest = updated ?? existingGuest
+      completedChallengeIds = await photoRepository.findCompletedChallengeIdsByGuest(guest.id)
+    } else {
+      guest = await guestRepository.create({
+        eventId: event.id,
+        name: data.name.trim(),
+        ip: client.ip,
+        deviceId: client.deviceId,
+        deviceFingerprint: client.fingerprint,
+        userAgent: client.userAgent
+      })
+    }
 
     return {
       guestToken: signGuestToken(guest.id, event.galleryExpiresAt),
       guest: { id: guest.id, name: guest.name },
       event: toGuestEventInfo(event),
-      completedChallengeIds: []
+      completedChallengeIds
     }
   }
 )
