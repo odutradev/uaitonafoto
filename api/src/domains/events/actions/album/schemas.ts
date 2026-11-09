@@ -144,3 +144,9 @@ export const challengeParamsSchema = z
   .openapi('ChallengeParams')
 
 export const challengeListResponseSchema = z.array(eventChallengeSchema).openapi('ChallengeListResponse')
+
+export const disconnectScreenResponseSchema = z
+  .object({
+    disconnected: z.boolean().openapi({ example: true, description: 'Indica que o telão foi desconectado e o slot foi removido' })
+  })
+  .openapi('DisconnectScreenResponse')

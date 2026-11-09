@@ -51,6 +51,7 @@ import {
   challengeListResponseSchema,
   challengeParamsSchema,
   createScreenSlotSchema,
+  disconnectScreenResponseSchema,
   eventGuestListResponseSchema,
   eventIdParamsSchema,
   eventPhotoParamsSchema,
@@ -76,6 +77,7 @@ import type {
   ChallengeListResponse,
   ChallengeParamsRequest,
   CreateScreenSlotRequest,
+  DisconnectScreenResponse,
   EventGuestListResponse,
   EventIdRequest,
   EventPhotoRequest,
@@ -317,6 +319,32 @@ export const getScreen = defineAction(
       nextSince: photos.at(-1)?.createdAt ?? query?.since,
       pin: event.settings.pinEnabled ? event.settings.pin : null
     }
+  }
+)
+
+export const disconnectScreen = defineAction(
+  {
+    method: 'post',
+    path: '/events/:id/screen/disconnect',
+    summary: 'Desconectar telão e remover seu slot, liberando a vaga no evento',
+    tags: ['Álbum e Telão'],
+    middlewares: [screenSessionMiddleware],
+    schema: { params: eventIdParamsSchema },
+    responses: {
+      200: { description: 'Telão desconectado e vaga liberada', schema: disconnectScreenResponseSchema },
+      401: { description: 'Credencial do telão inválida ou expirada' },
+      404: { description: 'Evento não encontrado' }
+    }
+  },
+  async ({ ids, params, manageError }: ManageRequestBody<EventIdRequest>): ManageRequestResponse<DisconnectScreenResponse> => {
+    if (!ids.screenId) return manageError({ code: 'unauthorized' })
+
+    const foundEvent = await eventRepository.findByIdOrGuestToken(params.id)
+    if (!foundEvent) return manageError({ code: 'not_found' })
+
+    await eventRepository.removeScreenSlot(foundEvent.id, ids.screenId)
+
+    return { disconnected: true }
   }
 )
 

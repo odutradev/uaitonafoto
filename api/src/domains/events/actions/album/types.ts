@@ -9,6 +9,7 @@ import type {
   challengeListResponseSchema,
   challengeParamsSchema,
   createScreenSlotSchema,
+  disconnectScreenResponseSchema,
   eventGuestListResponseSchema,
   eventIdParamsSchema,
   eventPhotoParamsSchema,
@@ -81,3 +82,5 @@ export type ChallengeParamsRequest = {
 }
 
 export type ChallengeListResponse = z.infer<typeof challengeListResponseSchema>
+
+export type DisconnectScreenResponse = z.infer<typeof disconnectScreenResponseSchema>
