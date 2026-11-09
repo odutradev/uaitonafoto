@@ -10,6 +10,8 @@ export type PhotoVisibility = 'during_event' | 'after_event'
 
 export type PinRotationMinutes = 5 | 15 | 30 | 60
 
+export type ChallengeSelectionMode = 'choose' | 'random'
+
 export interface EventSettings {
   uploadWindowHours: number
   galleryDurationDays: number
@@ -21,6 +23,7 @@ export interface EventSettings {
   pinUpdatedAt: string
   moderationEnabled?: boolean
   challengesEnabled?: boolean
+  challengesMode?: ChallengeSelectionMode
 }
 
 export interface EventChallenge {

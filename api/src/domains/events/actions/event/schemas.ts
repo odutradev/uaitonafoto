@@ -69,6 +69,10 @@ export const eventSettingsSchema = z
     challengesEnabled: z.boolean().default(false).optional().openapi({
       example: false,
       description: 'Indica se as missões fotográficas interativas estão ativadas'
+    }),
+    challengesMode: z.enum(['choose', 'random']).default('choose').optional().openapi({
+      example: 'choose',
+      description: 'Modo de seleção dos desafios: choose (escolha do convidado) ou random (sorteado aleatoriamente)'
     })
   })
   .openapi('EventSettings')

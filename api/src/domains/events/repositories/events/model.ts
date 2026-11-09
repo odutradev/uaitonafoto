@@ -36,7 +36,8 @@ const settingsSchema = new Schema(
     pinRotationMinutes: { type: Number, enum: [5, 15, 30, 60], default: 15 },
     pinUpdatedAt: { type: String, default: () => new Date().toISOString() },
     moderationEnabled: { type: Boolean, default: false },
-    challengesEnabled: { type: Boolean, default: false }
+    challengesEnabled: { type: Boolean, default: false },
+    challengesMode: { type: String, enum: ['choose', 'random'], default: 'choose' }
   },
   { _id: false }
 )

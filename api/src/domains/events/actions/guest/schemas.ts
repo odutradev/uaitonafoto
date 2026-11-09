@@ -26,6 +26,7 @@ export const guestEventInfoSchema = z
     }),
     customization: eventCustomizationSchema.optional(),
     challengesEnabled: z.boolean().default(false).optional(),
+    challengesMode: z.enum(['choose', 'random']).default('choose').optional(),
     challenges: z.array(eventChallengeSchema).default([]),
     phase: eventPhaseSchema
   })
@@ -55,7 +56,8 @@ export const joinEventResponseSchema = z
   .object({
     guestToken: z.string().openapi({ description: 'JWT de sessão do convidado (Authorization: Bearer)' }),
     guest: guestSchema,
-    event: guestEventInfoSchema
+    event: guestEventInfoSchema,
+    completedChallengeIds: z.array(z.string()).default([])
   })
   .openapi('JoinEventResponse')
 
@@ -63,6 +65,7 @@ export const guestSessionResponseSchema = z
   .object({
     guest: guestSchema,
     event: guestEventInfoSchema,
-    photosSent: z.number().openapi({ example: 3 })
+    photosSent: z.number().openapi({ example: 3 }),
+    completedChallengeIds: z.array(z.string()).default([])
   })
   .openapi('GuestSessionResponse')

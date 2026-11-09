@@ -21,6 +21,7 @@ const toGuestEventInfo = (event: EventEntity): GuestEventInfo => ({
   requiresPin: event.settings.pinEnabled,
   customization: event.customization,
   challengesEnabled: Boolean(event.settings.challengesEnabled),
+  challengesMode: event.settings.challengesMode ?? 'choose',
   challenges: event.settings.challengesEnabled
     ? (event.challenges?.filter((c) => c.active) ?? [])
     : [],
@@ -122,7 +123,8 @@ export const joinEvent = defineAction(
     return {
       guestToken: signGuestToken(guest.id, event.galleryExpiresAt),
       guest: { id: guest.id, name: guest.name },
-      event: toGuestEventInfo(event)
+      event: toGuestEventInfo(event),
+      completedChallengeIds: []
     }
   }
 )
@@ -145,12 +147,16 @@ export const getGuestSession = defineAction(
     if (!context) return manageError({ code: 'user_not_found' })
 
     const { guest, event } = context
-    const photosSent = await photoRepository.countByGuest(guest.id)
+    const [photosSent, completedChallengeIds] = await Promise.all([
+      photoRepository.countByGuest(guest.id),
+      photoRepository.findCompletedChallengeIdsByGuest(guest.id)
+    ])
 
     return {
       guest: { id: guest.id, name: guest.name },
       event: toGuestEventInfo(event),
-      photosSent
+      photosSent,
+      completedChallengeIds
     }
   }
 )

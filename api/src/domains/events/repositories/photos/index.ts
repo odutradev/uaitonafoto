@@ -23,6 +23,15 @@ export const photoRepository = {
 
   countByGuest: (guestId: string): Promise<number> => PhotoModel.countDocuments({ guestId }),
 
+  findCompletedChallengeIdsByGuest: async (guestId: string): Promise<string[]> => {
+    const ids = await PhotoModel.distinct('challengeId', {
+      guestId,
+      challengeId: { $exists: true, $ne: null },
+      status: { $ne: 'rejected' }
+    })
+    return (ids as string[]).filter(Boolean)
+  },
+
   countByGuestsOfEvent: async (eventId: string): Promise<Record<string, number>> => {
     const rows = await PhotoModel.aggregate<{ _id: string; count: number }>([
       { $match: { eventId } },
