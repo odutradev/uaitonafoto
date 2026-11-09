@@ -78,29 +78,29 @@ export const getLogoSvgString = ({
   const scheme = COLOR_SCHEMES[colorScheme]
   const bgHex = BACKGROUND_COLORS[backgroundColor].hex
 
-  let baseWidth = 280
+  let baseWidth = 320
   let baseHeight = 64
   let innerGraphic = ''
 
   if (type === 'horizontal') {
-    baseWidth = 280
+    baseWidth = 320
     baseHeight = 64
     innerGraphic = `
       <g>
         <rect x="4" y="4" width="56" height="56" rx="17" fill="${scheme.frameColor}" />
         <circle cx="37.5" cy="27.5" r="11" fill="${scheme.dotColor}" />
       </g>
-      <text x="74" y="45" font-family="'Bricolage Grotesque', system-ui, -apple-system, sans-serif" font-size="36" font-weight="800" letter-spacing="-0.045em" fill="${scheme.textColor}">uaiToNaFoto</text>
+      <text x="74" y="44" font-family="'Bricolage Grotesque', system-ui, -apple-system, sans-serif" font-size="34" font-weight="800" letter-spacing="-0.04em" fill="${scheme.textColor}">uaiToNaFoto</text>
     `
   } else if (type === 'vertical') {
-    baseWidth = 240
+    baseWidth = 280
     baseHeight = 180
     innerGraphic = `
-      <g transform="translate(70, 16)">
+      <g transform="translate(90, 16)">
         <rect x="4" y="4" width="92" height="92" rx="28" fill="${scheme.frameColor}" />
         <circle cx="59" cy="42" r="18" fill="${scheme.dotColor}" />
       </g>
-      <text x="120" y="152" text-anchor="middle" font-family="'Bricolage Grotesque', system-ui, -apple-system, sans-serif" font-size="32" font-weight="800" letter-spacing="-0.045em" fill="${scheme.textColor}">uaiToNaFoto</text>
+      <text x="140" y="152" text-anchor="middle" font-family="'Bricolage Grotesque', system-ui, -apple-system, sans-serif" font-size="32" font-weight="800" letter-spacing="-0.04em" fill="${scheme.textColor}">uaiToNaFoto</text>
     `
   } else if (type === 'symbol') {
     baseWidth = 100
@@ -110,10 +110,10 @@ export const getLogoSvgString = ({
       <circle cx="59" cy="42" r="18" fill="${scheme.dotColor}" />
     `
   } else if (type === 'wordmark') {
-    baseWidth = 215
-    baseHeight = 52
+    baseWidth = 260
+    baseHeight = 56
     innerGraphic = `
-      <text x="4" y="40" font-family="'Bricolage Grotesque', system-ui, -apple-system, sans-serif" font-size="38" font-weight="800" letter-spacing="-0.045em" fill="${scheme.textColor}">uaiToNaFoto</text>
+      <text x="10" y="42" font-family="'Bricolage Grotesque', system-ui, -apple-system, sans-serif" font-size="36" font-weight="800" letter-spacing="-0.04em" fill="${scheme.textColor}">uaiToNaFoto</text>
     `
   } else if (type === 'favicon') {
     baseWidth = 64

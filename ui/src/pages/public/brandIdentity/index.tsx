@@ -1039,17 +1039,22 @@ export const BrandIdentity = ({ lastUpdated = 'Novembro de 2026' }: BrandIdentit
 
                   {/* Quadro de Pré-visualização */}
                   <Box sx={previewCheckerboardStyles}>
-                    {/* Renderizamos o SVG como imagem embutida via base64 data URI */}
                     <Box
-                      component="img"
-                      src={`data:image/svg+xml;utf8,${encodeURIComponent(currentSvgRaw)}`}
-                      alt="Pré-visualização do Logo"
                       sx={{
-                        maxWidth: '85%',
-                        maxHeight: 260,
-                        objectFit: 'contain',
-                        filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.06))'
+                        width: '100%',
+                        maxWidth: '90%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.06))',
+                        '& svg': {
+                          maxWidth: '100%',
+                          height: 'auto',
+                          maxHeight: 240,
+                          display: 'block'
+                        }
                       }}
+                      dangerouslySetInnerHTML={{ __html: currentSvgRaw }}
                     />
                   </Box>
 
