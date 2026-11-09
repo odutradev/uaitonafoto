@@ -1629,16 +1629,16 @@
         recommendations: 'Conforme desenhado no project-resume.md, o Cloudflare R2 tem custo zero de transferência de saída.'
       },
       {
-        id: 'todo-websockets-realtime',
+        id: 'done-websockets-realtime',
         title: 'Atualização Instantânea via WebSockets ou SSE (Telão & Feed)',
         category: 'screen',
-        status: 'todo',
+        status: 'done',
         priority: 'P1',
         desc: 'Transmissão push em tempo real (<300ms) de novas fotos aprovadas diretamente para o telão sem polling constante.',
         businessImpact: 'Alto — Dá sensação mágica de foto imediata no telão',
         techComplexity: 'Alta',
         domain: 'API & Frontend',
-        progress: 'Pendente (Backlog Imediato)',
+        progress: '100% Entregue',
         checklist: [
           'Canal SSE (Server-Sent Events) ou Socket.IO por sala de evento (/rooms/:eventId)',
           'Broadcast imediato assim que a foto é persistida com sucesso',
@@ -1646,11 +1646,16 @@
           'Animação de entrada suave no telão quando a nova foto chega'
         ],
         files: [
+          'api/src/domains/events/utils/eventStream.ts',
+          'api/src/domains/events/actions/album/index.ts',
+          'api/src/domains/events/actions/photo/index.ts',
           'api/src/server.ts',
+          'ui/src/pages/app/eventScreen/hooks/useEventScreen.ts',
           'ui/src/pages/app/eventScreen/index.tsx',
+          'ui/src/pages/public/guestEvent/hooks/useGuestEvent.ts',
           'ui/src/pages/public/guestEvent/sections/guestPhotosFeed/index.tsx'
         ],
-        recommendations: 'SSE é muito mais simples e econômico que WebSockets para este caso de uso unidirecional (servidor -> telão).'
+        recommendations: 'Implementado com Server-Sent Events (SSE) nativo e econômico, com sala por evento (/rooms/:eventId), fallback por cursor e animação suave de entrada.'
       },
       {
         id: 'todo-agency-whitelabel',
