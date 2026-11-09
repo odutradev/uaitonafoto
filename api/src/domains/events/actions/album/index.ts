@@ -140,6 +140,11 @@ export const createScreenSlot = defineAction(
       })
     }
 
+    broadcastEvent(access.event.id, 'screen:create', {
+      slot,
+      screens: updated.screens
+    })
+
     return updated.screens
   }
 )
@@ -166,6 +171,11 @@ export const removeScreenSlot = defineAction(
 
     const updated = await eventRepository.removeScreenSlot(access.event.id, params.screenId)
     if (!updated) return manageError({ code: 'not_found' })
+
+    broadcastEvent(access.event.id, 'screen:disconnect', {
+      screenId: params.screenId,
+      screens: updated.screens
+    })
 
     return updated.screens
   }
@@ -264,6 +274,11 @@ export const activateScreen = defineAction(
     const activatedEvent = await eventRepository.activateScreenSlot(foundEvent.id, slot.id, new Date().toISOString())
     const event = await ensureCurrentEventPin(activatedEvent ?? foundEvent)
 
+    broadcastEvent(event.id, 'screen:activate', {
+      screenId: slot.id,
+      screens: event.screens
+    })
+
     return {
       screenToken: signScreenToken(event.id, slot.id, event.galleryExpiresAt),
       event: {
@@ -342,7 +357,12 @@ export const disconnectScreen = defineAction(
     const foundEvent = await eventRepository.findByIdOrGuestToken(params.id)
     if (!foundEvent) return manageError({ code: 'not_found' })
 
-    await eventRepository.removeScreenSlot(foundEvent.id, ids.screenId)
+    const updated = await eventRepository.removeScreenSlot(foundEvent.id, ids.screenId)
+
+    broadcastEvent(foundEvent.id, 'screen:disconnect', {
+      screenId: ids.screenId,
+      screens: updated?.screens ?? []
+    })
 
     return { disconnected: true }
   }
@@ -588,14 +608,16 @@ export const streamRoom = defineAction(
     schema: { params: eventIdParamsSchema },
     responses: {
       200: { description: 'Conexão SSE estabelecida por sala de evento' },
-      403: { description: 'Fotos ainda não liberadas' },
+      403: { description: 'Galeria encerrada' },
       404: { description: 'Evento não encontrado' }
     }
   },
   async ({ defaultExpress, params, manageError }: ManageRequestBody<EventIdRequest>): ManageRequestResponse<void> => {
     const foundEvent = await eventRepository.findByIdOrGuestToken(params.id)
     if (!foundEvent) return manageError({ code: 'not_found' })
-    if (!arePhotosVisible(foundEvent)) return manageError({ code: 'forbidden', details: 'Fotos ainda não liberadas' })
+    if (getEventPhase(foundEvent) === 'expired') {
+      return manageError({ code: 'forbidden', details: 'A galeria deste evento já foi encerrada.' })
+    }
 
     subscribeEventStream({
       eventId: foundEvent.id,
