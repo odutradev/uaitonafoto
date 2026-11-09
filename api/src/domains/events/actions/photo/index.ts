@@ -44,7 +44,7 @@ export const uploadPhoto = defineAction(
       403: { description: 'Envio de fotos fechado para este evento' }
     }
   },
-  async ({ ids, file, manageError }: ManageRequestBody): ManageRequestResponse<PhotoResponse> => {
+  async ({ ids, file, data, defaultExpress, manageError }: ManageRequestBody): ManageRequestResponse<PhotoResponse> => {
     if (!ids.guestId) return manageError({ code: 'unauthorized' })
 
     const context = await loadGuestContext(ids.guestId)
@@ -56,6 +56,23 @@ export const uploadPhoto = defineAction(
     }
 
     if (!file) return manageError({ code: 'bad_request', details: 'Arquivo de imagem obrigatório (campo "file")' })
+
+    const rawCapturedAt = (data as Record<string, unknown> | undefined)?.capturedAt ?? defaultExpress?.req?.body?.capturedAt
+    if (rawCapturedAt) {
+      const capturedAt = Number(rawCapturedAt)
+      if (!Number.isNaN(capturedAt)) {
+        const ageMs = Date.now() - capturedAt
+        const MAX_CAPTURE_AGE_MS = 10 * 60 * 1000
+        const MAX_FUTURE_TOLERANCE_MS = 2 * 60 * 1000
+
+        if (ageMs > MAX_CAPTURE_AGE_MS || ageMs < -MAX_FUTURE_TOLERANCE_MS) {
+          return manageError({
+            code: 'bad_request',
+            details: 'Apenas fotos tiradas na hora com a câmera são permitidas. Não é possível enviar fotos antigas.'
+          })
+        }
+      }
+    }
 
     const imageType = detectImageType(file.buffer)
     if (!imageType) return manageError({ code: 'bad_request', details: 'Conteúdo do arquivo não é uma imagem válida' })
