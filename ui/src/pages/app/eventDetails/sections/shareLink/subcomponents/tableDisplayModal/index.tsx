@@ -2,9 +2,9 @@ import { useState, useMemo } from 'react'
 import {
   Box,
   Button,
+  Chip,
   CircularProgress,
   Dialog,
-  Divider,
   FormControlLabel,
   IconButton,
   MenuItem,
@@ -20,7 +20,11 @@ import {
   PrintOutlined as PrintIcon,
   FavoriteOutlined as WeddingIcon,
   CelebrationOutlined as PartyIcon,
-  BusinessCenterOutlined as CorporateIcon
+  BusinessCenterOutlined as CorporateIcon,
+  CropFreeOutlined as MinimalIcon,
+  AutoAwesomeOutlined as NightlifeIcon,
+  ParkOutlined as RusticIcon,
+  QrCode2Outlined as DisplayHeaderIcon
 } from '@mui/icons-material'
 import { toast } from 'react-toastify'
 
@@ -30,10 +34,11 @@ import { exportTableDisplayPng } from './exportPng'
 import type {
   TableDisplayConfig,
   TableDisplayTemplateId,
-  PrintPageLayout
+  PrintPageLayout,
+  TableDisplayQrSize
 } from './types'
 import {
-  controlGroupStyles,
+  controlCardStyles,
   controlsSectionStyles,
   dialogActionButtonStyles,
   dialogActionsStyles,
@@ -55,8 +60,80 @@ interface TableDisplayModalProps {
 const DEFAULT_SUBTITLES: Record<TableDisplayTemplateId, string> = {
   wedding: 'Deixe sua lembrança deste dia tão especial',
   modern: 'Aponte a câmera e entre na foto!',
-  corporate: 'Compartilhe seus registros oficiais do evento'
+  corporate: 'Compartilhe seus registros oficiais do evento',
+  minimal: 'Aponte a câmera para enviar suas fotos',
+  party: 'Tire sua foto e apareça no telão agora!',
+  rustic: 'Guarde este momento com a gente'
 }
+
+const DEFAULT_TOP_BADGES: Record<TableDisplayTemplateId, string> = {
+  wedding: 'Lembrança Especial',
+  modern: 'Fotos ao vivo',
+  corporate: 'Galeria Oficial',
+  minimal: 'Fotos do Evento',
+  party: 'Fotos ao vivo no telão',
+  rustic: 'Memórias do Dia'
+}
+
+const QUICK_SUBTITLES = [
+  'Aponte a câmera e entre na foto!',
+  'Deixe sua lembrança deste dia tão especial',
+  'Envie suas fotos sem baixar nenhum aplicativo',
+  'Suas fotos ao vivo no telão do evento!'
+]
+
+interface TemplateMeta {
+  id: TableDisplayTemplateId
+  label: string
+  icon: React.ReactNode
+  accentColor: string
+  previewBg: string
+}
+
+const TEMPLATE_LIST: TemplateMeta[] = [
+  {
+    id: 'wedding',
+    label: 'Casamento',
+    icon: <WeddingIcon fontSize="small" />,
+    accentColor: '#9E7D47',
+    previewBg: '#FAF7F2'
+  },
+  {
+    id: 'modern',
+    label: 'Moderno',
+    icon: <PartyIcon fontSize="small" />,
+    accentColor: '#17140F',
+    previewBg: '#FFCF1F'
+  },
+  {
+    id: 'corporate',
+    label: 'Corporativo',
+    icon: <CorporateIcon fontSize="small" />,
+    accentColor: '#38BDF8',
+    previewBg: '#0F172A'
+  },
+  {
+    id: 'minimal',
+    label: 'Minimalista',
+    icon: <MinimalIcon fontSize="small" />,
+    accentColor: '#111827',
+    previewBg: '#FFFFFF'
+  },
+  {
+    id: 'party',
+    label: 'Festa/Neon',
+    icon: <NightlifeIcon fontSize="small" />,
+    accentColor: '#F43F5E',
+    previewBg: '#180B24'
+  },
+  {
+    id: 'rustic',
+    label: 'Rústico',
+    icon: <RusticIcon fontSize="small" />,
+    accentColor: '#4A5D4E',
+    previewBg: '#F5EFEB'
+  }
+]
 
 export const TableDisplayModal = ({
   open,
@@ -74,9 +151,14 @@ export const TableDisplayModal = ({
     template: initialTemplate,
     title: event.name || '',
     subtitle: DEFAULT_SUBTITLES[initialTemplate],
+    customFooter: event.customization?.agencyName || '',
+    topBadgeText: DEFAULT_TOP_BADGES[initialTemplate],
+    showTopBadge: true,
     showPin: Boolean(event.settings.pinEnabled),
     showSteps: true,
     showBranding: true,
+    showFrame: true,
+    qrSize: 'standard',
     pageLayout: 'a6'
   })
 
@@ -89,7 +171,11 @@ export const TableDisplayModal = ({
       subtitle:
         prev.subtitle === DEFAULT_SUBTITLES[prev.template]
           ? DEFAULT_SUBTITLES[template]
-          : prev.subtitle
+          : prev.subtitle,
+      topBadgeText:
+        prev.topBadgeText === DEFAULT_TOP_BADGES[prev.template]
+          ? DEFAULT_TOP_BADGES[template]
+          : prev.topBadgeText
     }))
   }
 
@@ -119,18 +205,35 @@ export const TableDisplayModal = ({
       <Dialog
         open={open}
         onClose={onClose}
-        maxWidth="md"
+        maxWidth="lg"
         fullWidth
         PaperProps={{ sx: dialogPaperStyles }}
       >
         <Box sx={dialogHeaderStyles}>
-          <Box>
-            <Typography variant="h6" fontWeight={700}>
-              Displays de Mesa para Impressão
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Gere cartões elegantes (A6 / 10x15cm) prontos para imprimir e colocar nas mesas dos convidados.
-            </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+            <Box
+              sx={{
+                width: 40,
+                height: 40,
+                borderRadius: '12px',
+                bgcolor: 'primary.main',
+                color: 'primary.contrastText',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0
+              }}
+            >
+              <DisplayHeaderIcon />
+            </Box>
+            <Box>
+              <Typography variant="h6" fontWeight={800} lineHeight={1.2}>
+                Displays de Mesa para Impressão
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Gere cartões elegantes prontos para imprimir e colocar nas mesas dos convidados.
+              </Typography>
+            </Box>
           </Box>
           <IconButton onClick={onClose} size="small" aria-label="Fechar">
             <CloseIcon fontSize="small" />
@@ -138,64 +241,61 @@ export const TableDisplayModal = ({
         </Box>
 
         <Box sx={dialogContentStyles}>
+          {/* Coluna Esquerda: Controles e Personalizações */}
           <Box sx={controlsSectionStyles}>
-            <Box sx={controlGroupStyles}>
-              <Typography variant="subtitle2" fontWeight={700}>
-                Modelo do Display
+            {/* Seção 1: Modelo do Display */}
+            <Box sx={controlCardStyles}>
+              <Typography variant="subtitle2" fontWeight={800}>
+                1. Escolha o Estilo do Display
               </Typography>
               <Box sx={templateSelectorGridStyles}>
-                <Box
-                  component="button"
-                  type="button"
-                  onClick={() => handleTemplateChange('wedding')}
-                  sx={templateOptionButtonStyles(config.template === 'wedding')}
-                >
-                  <WeddingIcon
-                    fontSize="small"
-                    sx={{ color: config.template === 'wedding' ? 'primary.main' : '#9E7D47' }}
-                  />
-                  <Typography variant="caption" fontWeight={700}>
-                    Casamento
-                  </Typography>
-                </Box>
-
-                <Box
-                  component="button"
-                  type="button"
-                  onClick={() => handleTemplateChange('modern')}
-                  sx={templateOptionButtonStyles(config.template === 'modern')}
-                >
-                  <PartyIcon
-                    fontSize="small"
-                    sx={{ color: config.template === 'modern' ? 'primary.main' : '#F5C30A' }}
-                  />
-                  <Typography variant="caption" fontWeight={700}>
-                    Moderno
-                  </Typography>
-                </Box>
-
-                <Box
-                  component="button"
-                  type="button"
-                  onClick={() => handleTemplateChange('corporate')}
-                  sx={templateOptionButtonStyles(config.template === 'corporate')}
-                >
-                  <CorporateIcon
-                    fontSize="small"
-                    sx={{ color: config.template === 'corporate' ? 'primary.main' : '#0284C7' }}
-                  />
-                  <Typography variant="caption" fontWeight={700}>
-                    Corporativo
-                  </Typography>
-                </Box>
+                {TEMPLATE_LIST.map((tpl) => {
+                  const isSelected = config.template === tpl.id
+                  return (
+                    <Box
+                      key={tpl.id}
+                      component="button"
+                      type="button"
+                      onClick={() => handleTemplateChange(tpl.id)}
+                      sx={templateOptionButtonStyles(isSelected)}
+                    >
+                      <Box
+                        sx={{
+                          width: 28,
+                          height: 28,
+                          borderRadius: '50%',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          bgcolor: tpl.previewBg,
+                          color: tpl.accentColor,
+                          border: '1px solid',
+                          borderColor: 'divider',
+                          boxShadow: '0 2px 5px rgba(0,0,0,0.1)'
+                        }}
+                      >
+                        {tpl.icon}
+                      </Box>
+                      <Typography
+                        variant="caption"
+                        fontWeight={isSelected ? 800 : 600}
+                        sx={{
+                          lineHeight: 1.2,
+                          textAlign: 'center'
+                        }}
+                      >
+                        {tpl.label}
+                      </Typography>
+                    </Box>
+                  )
+                })}
               </Box>
             </Box>
 
-            <Divider />
-
-            <Box sx={controlGroupStyles}>
-              <Typography variant="subtitle2" fontWeight={700}>
-                Textos do Cartão
+            {/* Seção 2: Textos e Mensagens */}
+            <Box sx={controlCardStyles}>
+              <Typography variant="subtitle2" fontWeight={800}>
+                2. Textos e Mensagens
               </Typography>
               <TextField
                 label="Título do Evento"
@@ -205,42 +305,75 @@ export const TableDisplayModal = ({
                 onChange={(e) => setConfig((prev) => ({ ...prev, title: e.target.value }))}
               />
               <TextField
-                label="Subtítulo / Mensagem"
+                label="Subtítulo / Chamada"
                 size="small"
                 fullWidth
                 value={config.subtitle}
                 onChange={(e) => setConfig((prev) => ({ ...prev, subtitle: e.target.value }))}
               />
-            </Box>
 
-            <Divider />
+              {/* Sugestões rápidas de subtítulo */}
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75 }}>
+                <Typography variant="caption" color="text.secondary" fontWeight={600}>
+                  Sugestões rápidas:
+                </Typography>
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                  {QUICK_SUBTITLES.map((text) => (
+                    <Chip
+                      key={text}
+                      label={text}
+                      size="small"
+                      variant={config.subtitle === text ? 'filled' : 'outlined'}
+                      color={config.subtitle === text ? 'primary' : 'default'}
+                      onClick={() => setConfig((prev) => ({ ...prev, subtitle: text }))}
+                      sx={{ fontSize: '0.72rem', cursor: 'pointer' }}
+                    />
+                  ))}
+                </Box>
+              </Box>
 
-            <Box sx={controlGroupStyles}>
-              <Typography variant="subtitle2" fontWeight={700}>
-                Formato de Impressão
-              </Typography>
-              <Select
+              <TextField
+                label="Hashtag ou Assessoria no rodapé"
+                placeholder="Ex: #CasamentoGabiERafa ou @assessoria"
                 size="small"
-                value={config.pageLayout}
-                onChange={(e) =>
-                  setConfig((prev) => ({
-                    ...prev,
-                    pageLayout: e.target.value as PrintPageLayout
-                  }))
-                }
-              >
-                <MenuItem value="a6">1 display por página (Tamanho A6 / 10x15cm)</MenuItem>
-                <MenuItem value="a4_double">2 displays por folha A4 (corte ao meio)</MenuItem>
-                <MenuItem value="a4_quad">4 displays por folha A4 (econômico)</MenuItem>
-              </Select>
+                fullWidth
+                value={config.customFooter || ''}
+                onChange={(e) => setConfig((prev) => ({ ...prev, customFooter: e.target.value }))}
+                helperText="Aparecerá no rodapé do display junto ao branding oficial"
+              />
             </Box>
 
-            <Divider />
-
-            <Box sx={controlGroupStyles}>
-              <Typography variant="subtitle2" fontWeight={700}>
-                Elementos Visuais
+            {/* Seção 3: Elementos e Detalhes Visuais */}
+            <Box sx={controlCardStyles}>
+              <Typography variant="subtitle2" fontWeight={800}>
+                3. Elementos do Display
               </Typography>
+
+              <FormControlLabel
+                control={
+                  <Switch
+                    size="small"
+                    checked={config.showTopBadge}
+                    onChange={(e) =>
+                      setConfig((prev) => ({ ...prev, showTopBadge: e.target.checked }))
+                    }
+                  />
+                }
+                label={<Typography variant="body2">Selo / Badge de destaque no topo</Typography>}
+              />
+
+              <FormControlLabel
+                control={
+                  <Switch
+                    size="small"
+                    checked={config.showFrame}
+                    onChange={(e) =>
+                      setConfig((prev) => ({ ...prev, showFrame: e.target.checked }))
+                    }
+                  />
+                }
+                label={<Typography variant="body2">Moldura / Borda decorativa</Typography>}
+              />
 
               {event.settings.pinEnabled && (
                 <FormControlLabel
@@ -286,26 +419,102 @@ export const TableDisplayModal = ({
                 }
                 label={<Typography variant="body2">Rodapé com marca / assessoria</Typography>}
               />
+
+              <Box sx={{ mt: 1, display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                <Typography variant="caption" color="text.secondary" fontWeight={600}>
+                  Destaque do QR Code:
+                </Typography>
+                <Select
+                  size="small"
+                  value={config.qrSize}
+                  onChange={(e) =>
+                    setConfig((prev) => ({
+                      ...prev,
+                      qrSize: e.target.value as TableDisplayQrSize
+                    }))
+                  }
+                >
+                  <MenuItem value="standard">Tamanho Normal (Equilibrado com instruções)</MenuItem>
+                  <MenuItem value="large">Tamanho Destacado (Maior alcance para leitura)</MenuItem>
+                </Select>
+              </Box>
+            </Box>
+
+            {/* Seção 4: Formato de Impressão */}
+            <Box sx={controlCardStyles}>
+              <Typography variant="subtitle2" fontWeight={800}>
+                4. Layout para Impressão
+              </Typography>
+              <Select
+                size="small"
+                value={config.pageLayout}
+                onChange={(e) =>
+                  setConfig((prev) => ({
+                    ...prev,
+                    pageLayout: e.target.value as PrintPageLayout
+                  }))
+                }
+              >
+                <MenuItem value="a6">1 display por página (Tamanho 10x15cm / A6)</MenuItem>
+                <MenuItem value="a4_double">2 displays por folha A4 (com guia de corte)</MenuItem>
+                <MenuItem value="a4_quad">4 displays por folha A4 (econômico)</MenuItem>
+              </Select>
             </Box>
           </Box>
 
+          {/* Coluna Direita: Pré-visualização Realista */}
           <Box sx={previewWrapperStyles}>
-            <Typography
-              variant="caption"
+            <Box
               sx={{
                 position: 'absolute',
-                top: 12,
-                left: 16,
-                fontWeight: 700,
-                color: 'text.secondary',
-                textTransform: 'uppercase',
-                letterSpacing: '0.05em'
+                top: 14,
+                left: 18,
+                right: 18,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                zIndex: 2
               }}
             >
-              Pré-visualização (10x15cm)
-            </Typography>
+              <Typography
+                variant="caption"
+                sx={{
+                  fontWeight: 800,
+                  color: 'text.secondary',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.08em',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 0.5
+                }}
+              >
+                <span>PRÉ-VISUALIZAÇÃO • 10x15CM</span>
+              </Typography>
+              <Chip
+                label="Porta-retrato A6"
+                size="small"
+                sx={{
+                  fontWeight: 700,
+                  fontSize: '0.7rem',
+                  height: 22,
+                  bgcolor: 'background.paper',
+                  border: '1px solid',
+                  borderColor: 'divider'
+                }}
+              />
+            </Box>
 
-            <Box sx={{ mt: 2 }}>
+            <Box
+              sx={{
+                mt: 4,
+                mb: 1,
+                filter: 'drop-shadow(0 16px 32px rgba(0, 0, 0, 0.18))',
+                transition: 'transform 0.2s ease',
+                '&:hover': {
+                  transform: 'scale(1.01)'
+                }
+              }}
+            >
               <TableDisplayCard
                 event={event}
                 guestUrl={guestUrl}
@@ -316,6 +525,7 @@ export const TableDisplayModal = ({
           </Box>
         </Box>
 
+        {/* Rodapé de Ações do Modal */}
         <Box sx={dialogActionsStyles}>
           <Button
             size="small"
@@ -328,7 +538,7 @@ export const TableDisplayModal = ({
           </Button>
 
           <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-            <Tooltip title="Baixa uma imagem em altíssima resolução (300 DPI) para enviar a uma gráfica ou compartilhar">
+            <Tooltip title="Gera imagem em alta resolução (300 DPI) com o QR Code nítido para envio a gráficas ou uso digital">
               <span>
                 <Button
                   size="small"
@@ -354,7 +564,14 @@ export const TableDisplayModal = ({
               variant="contained"
               startIcon={<PrintIcon sx={{ fontSize: 16 }} />}
               onClick={handlePrint}
-              sx={dialogActionButtonStyles}
+              sx={{
+                ...dialogActionButtonStyles,
+                bgcolor: 'primary.main',
+                color: 'primary.contrastText',
+                '&:hover': {
+                  bgcolor: 'primary.dark'
+                }
+              }}
             >
               Imprimir / Salvar PDF
             </Button>
@@ -362,6 +579,7 @@ export const TableDisplayModal = ({
         </Box>
       </Dialog>
 
+      {/* Regras CSS de Impressão Direta */}
       <style>{`
         @media print {
           body * {
@@ -390,6 +608,7 @@ export const TableDisplayModal = ({
         }
       `}</style>
 
+      {/* Estrutura Oculta que é ativada exclusivamente na Impressão */}
       <Box
         id="print-table-displays-root"
         sx={{
@@ -424,7 +643,7 @@ export const TableDisplayModal = ({
             sx={{
               display: 'grid',
               gridTemplateColumns: 'repeat(2, 1fr)',
-              gap: '20mm',
+              gap: '15mm',
               justifyItems: 'center',
               alignItems: 'center',
               minHeight: '100vh',
@@ -432,7 +651,7 @@ export const TableDisplayModal = ({
               boxSizing: 'border-box'
             }}
           >
-            <Box sx={{ borderRight: '1px dashed #cccccc', pr: '10mm' }}>
+            <Box sx={{ borderRight: '1px dashed #999999', pr: '8mm' }}>
               <TableDisplayCard
                 event={event}
                 guestUrl={guestUrl}
@@ -440,7 +659,7 @@ export const TableDisplayModal = ({
                 scale={0.95}
               />
             </Box>
-            <Box sx={{ pl: '10mm' }}>
+            <Box sx={{ pl: '8mm' }}>
               <TableDisplayCard
                 event={event}
                 guestUrl={guestUrl}
@@ -457,7 +676,7 @@ export const TableDisplayModal = ({
               display: 'grid',
               gridTemplateColumns: 'repeat(2, 1fr)',
               gridTemplateRows: 'repeat(2, 1fr)',
-              gap: '10mm',
+              gap: '8mm',
               justifyItems: 'center',
               alignItems: 'center',
               minHeight: '100vh',
@@ -469,8 +688,8 @@ export const TableDisplayModal = ({
               <Box
                 key={idx}
                 sx={{
-                  outline: '1px dashed #e0e0e0',
-                  outlineOffset: '5mm',
+                  outline: '1px dashed #aaaaaa',
+                  outlineOffset: '4mm',
                   m: '2mm'
                 }}
               >

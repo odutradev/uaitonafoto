@@ -3,7 +3,8 @@ import {
   CameraAltOutlined as CameraIcon,
   CloudUploadOutlined as UploadIcon,
   TvOutlined as TvIcon,
-  LockOutlined as LockIcon
+  LockOutlined as LockIcon,
+  AutoAwesomeOutlined as SparkleIcon
 } from '@mui/icons-material'
 import { QRCodeSVG } from 'qrcode.react'
 
@@ -18,10 +19,15 @@ export const TableDisplayCard = ({
 }: TableDisplayCardProps) => {
   const theme = TEMPLATE_THEMES[config.template]
   const isPinActive = config.showPin && event.settings.pinEnabled && Boolean(event.settings.pin)
-  const agencyName = event.customization?.agencyName?.trim()
+  const agencyOrCustom =
+    config.customFooter?.trim() ||
+    event.customization?.agencyName?.trim() ||
+    'uaitonafoto.com'
 
   const baseWidth = 380
   const baseHeight = 540
+  const qrPixelSize =
+    config.qrSize === 'large' ? Math.round(165 * scale) : Math.round(140 * scale)
 
   return (
     <Box
@@ -31,60 +37,186 @@ export const TableDisplayCard = ({
         width: `${baseWidth * scale}px`,
         minHeight: `${baseHeight * scale}px`,
         p: `${28 * scale}px`,
-        gap: `${16 * scale}px`,
+        gap: `${14 * scale}px`,
         position: 'relative'
       }}
     >
-      {config.template === 'wedding' && (
-        <Box
-          sx={{
-            position: 'absolute',
-            inset: `${10 * scale}px`,
-            border: `1px solid ${theme.borderColor}`,
-            borderRadius: '12px',
-            pointerEvents: 'none',
-            opacity: 0.8
-          }}
-        />
+      {/* Molduras decorativas opcionais */}
+      {config.showFrame && (
+        <>
+          {config.template === 'wedding' && (
+            <Box
+              sx={{
+                position: 'absolute',
+                inset: `${10 * scale}px`,
+                border: `1px solid ${theme.borderColor}`,
+                borderRadius: `${12 * scale}px`,
+                pointerEvents: 'none',
+                opacity: 0.85
+              }}
+            />
+          )}
+          {config.template === 'rustic' && (
+            <Box
+              sx={{
+                position: 'absolute',
+                inset: `${10 * scale}px`,
+                border: `1.5px dashed ${theme.borderColor}`,
+                borderRadius: `${12 * scale}px`,
+                pointerEvents: 'none',
+                opacity: 0.9
+              }}
+            />
+          )}
+          {config.template === 'minimal' && (
+            <Box
+              sx={{
+                position: 'absolute',
+                inset: `${8 * scale}px`,
+                border: `1px solid ${theme.borderColor}`,
+                borderRadius: `${12 * scale}px`,
+                pointerEvents: 'none',
+                opacity: 0.7
+              }}
+            />
+          )}
+          {config.template === 'party' && (
+            <Box
+              sx={{
+                position: 'absolute',
+                inset: `${10 * scale}px`,
+                border: `1px solid ${theme.borderColor}`,
+                borderRadius: `${12 * scale}px`,
+                pointerEvents: 'none',
+                opacity: 0.6
+              }}
+            />
+          )}
+          {config.template === 'corporate' && (
+            <Box
+              sx={{
+                position: 'absolute',
+                inset: `${10 * scale}px`,
+                border: `1px solid ${theme.borderColor}`,
+                borderRadius: `${12 * scale}px`,
+                pointerEvents: 'none',
+                opacity: 0.5
+              }}
+            />
+          )}
+        </>
       )}
 
+      {/* Topo / Cabeçalho do Cartão */}
       <Box sx={{ textAlign: 'center', zIndex: 1 }}>
-        {config.template === 'modern' && (
-          <Box
-            sx={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 0.8,
-              backgroundColor: theme.pinBg,
-              color: theme.pinColor,
-              px: `${12 * scale}px`,
-              py: `${3 * scale}px`,
-              borderRadius: '999px',
-              fontSize: `${11 * scale}px`,
-              fontWeight: 800,
-              letterSpacing: '0.04em',
-              textTransform: 'uppercase',
-              mb: `${8 * scale}px`
-            }}
-          >
-            <CameraIcon sx={{ fontSize: `${14 * scale}px` }} />
-            Fotos ao vivo
-          </Box>
-        )}
+        {config.showTopBadge && (
+          <>
+            {config.template === 'modern' && (
+              <Box
+                sx={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 0.8,
+                  backgroundColor: theme.pinBg,
+                  color: theme.pinColor,
+                  px: `${12 * scale}px`,
+                  py: `${3 * scale}px`,
+                  borderRadius: '999px',
+                  fontSize: `${11 * scale}px`,
+                  fontWeight: 800,
+                  letterSpacing: '0.04em',
+                  textTransform: 'uppercase',
+                  mb: `${8 * scale}px`
+                }}
+              >
+                <CameraIcon sx={{ fontSize: `${14 * scale}px` }} />
+                {config.topBadgeText || 'Fotos ao vivo'}
+              </Box>
+            )}
 
-        {config.template === 'corporate' && (
-          <Typography
-            sx={{
-              fontSize: `${11 * scale}px`,
-              fontWeight: 700,
-              letterSpacing: '0.12em',
-              textTransform: 'uppercase',
-              color: theme.accentColor,
-              mb: `${4 * scale}px`
-            }}
-          >
-            Galeria Interativa
-          </Typography>
+            {config.template === 'party' && (
+              <Box
+                sx={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 0.8,
+                  backgroundColor: theme.accentColor,
+                  color: '#FFFFFF',
+                  px: `${12 * scale}px`,
+                  py: `${3 * scale}px`,
+                  borderRadius: '999px',
+                  fontSize: `${11 * scale}px`,
+                  fontWeight: 800,
+                  letterSpacing: '0.04em',
+                  textTransform: 'uppercase',
+                  mb: `${8 * scale}px`
+                }}
+              >
+                <SparkleIcon sx={{ fontSize: `${14 * scale}px` }} />
+                {config.topBadgeText || 'Fotos ao vivo no telão'}
+              </Box>
+            )}
+
+            {config.template === 'corporate' && (
+              <Typography
+                sx={{
+                  fontSize: `${11 * scale}px`,
+                  fontWeight: 700,
+                  letterSpacing: '0.12em',
+                  textTransform: 'uppercase',
+                  color: theme.accentColor,
+                  mb: `${4 * scale}px`
+                }}
+              >
+                {config.topBadgeText || 'Galeria Interativa Oficial'}
+              </Typography>
+            )}
+
+            {config.template === 'wedding' && (
+              <Typography
+                sx={{
+                  fontSize: `${10 * scale}px`,
+                  fontWeight: 700,
+                  letterSpacing: '0.15em',
+                  textTransform: 'uppercase',
+                  color: theme.accentColor,
+                  mb: `${4 * scale}px`
+                }}
+              >
+                {config.topBadgeText || 'Lembrança Especial'}
+              </Typography>
+            )}
+
+            {config.template === 'rustic' && (
+              <Typography
+                sx={{
+                  fontSize: `${10 * scale}px`,
+                  fontWeight: 700,
+                  letterSpacing: '0.14em',
+                  textTransform: 'uppercase',
+                  color: theme.accentColor,
+                  mb: `${4 * scale}px`
+                }}
+              >
+                {config.topBadgeText || 'Memórias do Dia'}
+              </Typography>
+            )}
+
+            {config.template === 'minimal' && (
+              <Typography
+                sx={{
+                  fontSize: `${10 * scale}px`,
+                  fontWeight: 700,
+                  letterSpacing: '0.12em',
+                  textTransform: 'uppercase',
+                  color: theme.secondaryColor,
+                  mb: `${4 * scale}px`
+                }}
+              >
+                {config.topBadgeText || 'Fotos do Evento'}
+              </Typography>
+            )}
+          </>
         )}
 
         <Typography
@@ -92,7 +224,10 @@ export const TableDisplayCard = ({
           sx={{
             fontFamily: theme.titleFont,
             fontSize: `${22 * scale}px`,
-            fontWeight: config.template === 'wedding' ? 600 : 800,
+            fontWeight:
+              config.template === 'wedding' || config.template === 'rustic'
+                ? 600
+                : 800,
             lineHeight: 1.15,
             color: theme.color,
             wordBreak: 'break-word',
@@ -109,7 +244,10 @@ export const TableDisplayCard = ({
               color: theme.secondaryColor,
               mt: `${4 * scale}px`,
               fontWeight: 500,
-              fontStyle: config.template === 'wedding' ? 'italic' : 'normal',
+              fontStyle:
+                config.template === 'wedding' || config.template === 'rustic'
+                  ? 'italic'
+                  : 'normal',
               px: `${10 * scale}px`
             }}
           >
@@ -118,6 +256,7 @@ export const TableDisplayCard = ({
         )}
       </Box>
 
+      {/* Bloco Central: QR Code e PIN */}
       <Box
         sx={{
           display: 'flex',
@@ -129,6 +268,7 @@ export const TableDisplayCard = ({
         }}
       >
         <Box
+          id="table-display-qr-container"
           sx={{
             p: `${14 * scale}px`,
             backgroundColor: theme.qrBackground,
@@ -144,8 +284,9 @@ export const TableDisplayCard = ({
           }}
         >
           <QRCodeSVG
+            id="table-display-qr-svg"
             value={guestUrl}
-            size={Math.round(145 * scale)}
+            size={qrPixelSize}
             level="H"
             marginSize={0}
           />
@@ -184,6 +325,7 @@ export const TableDisplayCard = ({
         )}
       </Box>
 
+      {/* Passo a Passo */}
       {config.showSteps && (
         <Box
           sx={{
@@ -220,6 +362,7 @@ export const TableDisplayCard = ({
         </Box>
       )}
 
+      {/* Rodapé com Branding e Hashtag/Assessoria */}
       {config.showBranding && (
         <Box
           sx={{
@@ -242,15 +385,19 @@ export const TableDisplayCard = ({
             <span>fotos ao vivo</span>
           </Box>
 
-          {agencyName ? (
-            <Box component="span" sx={{ opacity: 0.9 }}>
-              {agencyName}
-            </Box>
-          ) : (
-            <Box component="span" sx={{ opacity: 0.7 }}>
-              uaitonafoto.com
-            </Box>
-          )}
+          <Box
+            component="span"
+            sx={{
+              opacity: 0.85,
+              fontWeight: 700,
+              maxWidth: `${180 * scale}px`,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap'
+            }}
+          >
+            {agencyOrCustom}
+          </Box>
         </Box>
       )}
     </Box>
@@ -265,7 +412,7 @@ interface StepItemProps {
   scale: number
 }
 
-const StepItem = ({ number, text, icon, theme, scale }: StepItemProps) => (
+const StepItem = ({ number, text, theme, scale }: StepItemProps) => (
   <Box sx={{ display: 'flex', alignItems: 'center', gap: `${8 * scale}px` }}>
     <Box
       sx={{
@@ -289,10 +436,7 @@ const StepItem = ({ number, text, icon, theme, scale }: StepItemProps) => (
         fontSize: `${11 * scale}px`,
         fontWeight: 600,
         color: theme.stepTextColor,
-        lineHeight: 1.2,
-        display: 'flex',
-        alignItems: 'center',
-        gap: `${4 * scale}px`
+        lineHeight: 1.2
       }}
     >
       {text}

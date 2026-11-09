@@ -37,65 +37,118 @@ export async function exportTableDisplayPng({
 
   const theme = TEMPLATE_THEMES[config.template]
 
+  // Fundo
   if (config.template === 'corporate') {
     const gradient = ctx.createLinearGradient(0, 0, 0, height)
     gradient.addColorStop(0, '#0F172A')
     gradient.addColorStop(1, '#1E293B')
+    ctx.fillStyle = gradient
+  } else if (config.template === 'party') {
+    const gradient = ctx.createLinearGradient(0, 0, 0, height)
+    gradient.addColorStop(0, '#130B1C')
+    gradient.addColorStop(1, '#200E2E')
     ctx.fillStyle = gradient
   } else {
     ctx.fillStyle = theme.background
   }
   ctx.fillRect(0, 0, width, height)
 
-  if (config.template === 'wedding') {
-    ctx.strokeStyle = '#D4C3AC'
-    ctx.lineWidth = 4
-    ctx.strokeRect(36, 36, width - 72, height - 72)
+  // Moldura / Borda externa
+  if (config.showFrame) {
+    if (config.template === 'wedding') {
+      ctx.strokeStyle = '#D4C3AC'
+      ctx.lineWidth = 4
+      ctx.strokeRect(36, 36, width - 72, height - 72)
 
-    ctx.strokeStyle = '#E6DCCD'
-    ctx.lineWidth = 2
-    ctx.strokeRect(48, 48, width - 96, height - 96)
-  } else if (config.template === 'modern') {
-    ctx.strokeStyle = '#17140F'
-    ctx.lineWidth = 14
-    ctx.strokeRect(20, 20, width - 40, height - 40)
-  } else if (config.template === 'corporate') {
-    ctx.strokeStyle = 'rgba(56, 189, 248, 0.3)'
-    ctx.lineWidth = 4
-    ctx.strokeRect(32, 32, width - 64, height - 64)
+      ctx.strokeStyle = '#E6DCCD'
+      ctx.lineWidth = 2
+      ctx.strokeRect(48, 48, width - 96, height - 96)
+    } else if (config.template === 'modern') {
+      ctx.strokeStyle = '#17140F'
+      ctx.lineWidth = 14
+      ctx.strokeRect(20, 20, width - 40, height - 40)
+    } else if (config.template === 'corporate') {
+      ctx.strokeStyle = 'rgba(56, 189, 248, 0.35)'
+      ctx.lineWidth = 4
+      ctx.strokeRect(32, 32, width - 64, height - 64)
+    } else if (config.template === 'minimal') {
+      ctx.strokeStyle = '#E5E7EB'
+      ctx.lineWidth = 3
+      ctx.strokeRect(28, 28, width - 56, height - 56)
+    } else if (config.template === 'party') {
+      ctx.strokeStyle = 'rgba(244, 63, 94, 0.45)'
+      ctx.lineWidth = 4
+      ctx.strokeRect(32, 32, width - 64, height - 64)
+    } else if (config.template === 'rustic') {
+      ctx.strokeStyle = '#C4B5A5'
+      ctx.lineWidth = 3
+      ctx.strokeRect(36, 36, width - 72, height - 72)
+    }
   }
 
   ctx.textAlign = 'center'
   ctx.textBaseline = 'top'
 
-  let currentY = 120
+  let currentY = 100
 
-  if (config.template === 'modern') {
-    ctx.fillStyle = '#17140F'
-    const pillW = 320
-    const pillH = 50
-    drawRoundedRect(ctx, width / 2 - pillW / 2, currentY, pillW, pillH, 25)
-    ctx.fill()
+  // Badge do topo
+  if (config.showTopBadge) {
+    const defaultBadgeText: Record<string, string> = {
+      modern: '📷  FOTOS AO VIVO NO TELÃO',
+      corporate: 'GALERIA INTERATIVA OFICIAL',
+      party: '✨  FOTOS AO VIVO NO TELÃO',
+      wedding: 'MOMENTOS ESPECIAIS',
+      minimal: 'REGISTROS DO EVENTO',
+      rustic: 'MEMÓRIAS DO DIA'
+    }
+    const badgeText = config.topBadgeText?.trim() || defaultBadgeText[config.template] || 'FOTOS AO VIVO'
 
-    ctx.fillStyle = '#FFCF1F'
-    ctx.font = 'bold 22px system-ui, -apple-system, sans-serif'
-    ctx.fillText('📷  FOTOS AO VIVO NO TELÃO', width / 2, currentY + 14)
-    currentY += 80
-  } else if (config.template === 'corporate') {
-    ctx.fillStyle = '#38BDF8'
-    ctx.font = 'bold 24px system-ui, -apple-system, sans-serif'
-    ctx.letterSpacing = '3px'
-    ctx.fillText('GALERIA INTERATIVA OFICIAL', width / 2, currentY)
-    ctx.letterSpacing = '0px'
-    currentY += 60
+    if (config.template === 'modern') {
+      ctx.fillStyle = '#17140F'
+      const pillW = 340
+      const pillH = 50
+      drawRoundedRect(ctx, width / 2 - pillW / 2, currentY, pillW, pillH, 25)
+      ctx.fill()
+
+      ctx.fillStyle = '#FFCF1F'
+      ctx.font = 'bold 22px system-ui, -apple-system, sans-serif'
+      ctx.fillText(badgeText, width / 2, currentY + 14)
+      currentY += 80
+    } else if (config.template === 'corporate') {
+      ctx.fillStyle = '#38BDF8'
+      ctx.font = 'bold 24px system-ui, -apple-system, sans-serif'
+      ctx.letterSpacing = '3px'
+      ctx.fillText(badgeText, width / 2, currentY)
+      ctx.letterSpacing = '0px'
+      currentY += 60
+    } else if (config.template === 'party') {
+      ctx.fillStyle = '#F43F5E'
+      const pillW = 360
+      const pillH = 50
+      drawRoundedRect(ctx, width / 2 - pillW / 2, currentY, pillW, pillH, 25)
+      ctx.fill()
+
+      ctx.fillStyle = '#FFFFFF'
+      ctx.font = 'bold 22px system-ui, -apple-system, sans-serif'
+      ctx.fillText(badgeText, width / 2, currentY + 14)
+      currentY += 80
+    } else {
+      ctx.fillStyle = theme.accentColor
+      ctx.font = 'bold 22px system-ui, -apple-system, sans-serif'
+      ctx.letterSpacing = '2px'
+      ctx.fillText(badgeText, width / 2, currentY)
+      ctx.letterSpacing = '0px'
+      currentY += 50
+    }
   } else {
     currentY += 20
   }
 
+  // Título
   const titleText = (config.title || event.name || 'Nome do Evento').trim()
   ctx.fillStyle = theme.color
   ctx.font =
-    config.template === 'wedding'
+    config.template === 'wedding' || config.template === 'rustic'
       ? 'bold 64px "Playfair Display", Georgia, serif'
       : 'bold 68px system-ui, -apple-system, sans-serif'
 
@@ -105,10 +158,11 @@ export async function exportTableDisplayPng({
     currentY += 76
   })
 
+  // Subtítulo
   if (config.subtitle?.trim()) {
     ctx.fillStyle = theme.secondaryColor
     ctx.font =
-      config.template === 'wedding'
+      config.template === 'wedding' || config.template === 'rustic'
         ? 'italic 36px Georgia, serif'
         : '500 36px system-ui, -apple-system, sans-serif'
     const subtitleLines = wrapText(ctx, config.subtitle.trim(), width - 240)
@@ -118,8 +172,11 @@ export async function exportTableDisplayPng({
     })
   }
 
-  const qrBoxSize = 540
-  const qrBoxY = Math.max(currentY + 40, 520)
+  // Caixa do QR Code
+  const isLargeQr = config.qrSize === 'large'
+  const qrBoxSize = isLargeQr ? 600 : 530
+  const qrSize = isLargeQr ? 520 : 450
+  const qrBoxY = Math.max(currentY + 40, 500)
   const qrBoxX = (width - qrBoxSize) / 2
 
   ctx.fillStyle = '#FFFFFF'
@@ -139,7 +196,7 @@ export async function exportTableDisplayPng({
     ctx.shadowColor = 'transparent'
   }
 
-  const qrSize = 460
+  // Desenha o QR Code real em alta resolução
   const qrImage = await loadQrCodeImage(guestUrl, qrSize)
   ctx.drawImage(
     qrImage,
@@ -150,6 +207,8 @@ export async function exportTableDisplayPng({
   )
 
   let nextSectionY = qrBoxY + qrBoxSize + 30
+
+  // PIN Badge
   if (config.showPin && event.settings.pinEnabled && event.settings.pin) {
     const pinBadgeW = 420
     const pinBadgeH = 64
@@ -174,6 +233,7 @@ export async function exportTableDisplayPng({
     nextSectionY += pinBadgeH + 30
   }
 
+  // Passos de instrução
   if (config.showSteps) {
     const stepsBoxW = width - 220
     const stepsBoxH = 210
@@ -213,6 +273,7 @@ export async function exportTableDisplayPng({
     })
   }
 
+  // Rodapé
   if (config.showBranding) {
     const footerY = height - 90
     ctx.strokeStyle = theme.borderColor
@@ -227,9 +288,12 @@ export async function exportTableDisplayPng({
     ctx.textAlign = 'left'
     ctx.fillText('uai to na foto • fotos ao vivo', 100, footerY + 24)
 
-    const agencyName = event.customization?.agencyName?.trim()
+    const customOrAgency =
+      config.customFooter?.trim() ||
+      event.customization?.agencyName?.trim() ||
+      'uaitonafoto.com'
     ctx.textAlign = 'right'
-    ctx.fillText(agencyName || 'uaitonafoto.com', width - 100, footerY + 24)
+    ctx.fillText(customOrAgency, width - 100, footerY + 24)
   }
 
   const blob = await new Promise<Blob | null>((resolve) =>
@@ -249,31 +313,49 @@ export async function exportTableDisplayPng({
   downloadBlob(blob, filename)
 }
 
-function loadQrCodeImage(url: string, size: number): Promise<HTMLImageElement> {
+function loadQrCodeImage(_url: string, size: number): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
-    const container = document.createElement('div')
-    container.style.position = 'fixed'
-    container.style.left = '-9999px'
-    document.body.appendChild(container)
+    // 1. Procura especificamente o SVG do QR Code pelo ID exclusivo
+    let svgElem = document.getElementById('table-display-qr-svg') as SVGElement | null
 
-    const svgElem = document.querySelector('.table-display-card svg')
-    let svgData = ''
-
-    if (svgElem) {
-      svgData = new XMLSerializer().serializeToString(svgElem)
-    } else {
-      svgData = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#fff"/></svg>`
+    // 2. Fallback: procura o SVG dentro do container do QR Code
+    if (!svgElem) {
+      svgElem = document.querySelector('#table-display-qr-container svg') as SVGElement | null
     }
 
-    if (container.parentNode) {
-      container.parentNode.removeChild(container)
+    // 3. Fallback genérico: busca SVG que NÃO seja ícone do MUI
+    if (!svgElem) {
+      const svgs = document.querySelectorAll('.table-display-card svg')
+      for (const s of Array.from(svgs)) {
+        if (!s.getAttribute('data-testid')?.includes('Icon')) {
+          svgElem = s as SVGElement
+          break
+        }
+      }
     }
+
+    if (!svgElem) {
+      reject(new Error('Elemento do QR Code não encontrado para gerar o arquivo'))
+      return
+    }
+
+    const serializer = new XMLSerializer()
+    let svgString = serializer.serializeToString(svgElem)
+
+    if (!svgString.includes('xmlns=')) {
+      svgString = svgString.replace('<svg ', '<svg xmlns="http://www.w3.org/2000/svg" ')
+    }
+
+    // Garante que o SVG rasterize no tamanho de alta resolução desejado (300 DPI)
+    svgString = svgString
+      .replace(/width="[^"]*"/, `width="${size}"`)
+      .replace(/height="[^"]*"/, `height="${size}"`)
 
     const img = new Image()
     img.crossOrigin = 'anonymous'
     img.onload = () => resolve(img)
-    img.onerror = (e) => reject(e)
-    img.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svgData)}`
+    img.onerror = () => reject(new Error('Erro ao converter QR Code para imagem'))
+    img.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svgString)}`
   })
 }
 
