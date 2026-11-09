@@ -96,6 +96,10 @@ export const getEventScreen = async (
   return response.data
 }
 
+export const disconnectEventScreen = async (id: string, screenToken: string): Promise<void> => {
+  await screenApi.post(`/events/${id}/screen/disconnect`, {}, withScreenToken(screenToken))
+}
+
 export const createEventScreen = async (id: string, name?: string): Promise<EventScreenSlot[]> => {
   const response = await api.post<EventScreenSlot[]>(`/events/${id}/screens`, {
     ...(name?.trim() ? { name: name.trim() } : {})

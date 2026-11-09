@@ -19,6 +19,7 @@ import {
 } from '@mui/icons-material'
 import { QRCodeSVG } from 'qrcode.react'
 import { useParams } from 'react-router-dom'
+import { toast } from 'react-toastify'
 
 import Logo from '@components/logo'
 import Modal from '@components/modal'
@@ -522,13 +523,14 @@ const EventScreen = () => {
         onClose={() => setIsDisconnectModalOpen(false)}
         variant="warning"
         title="Desconectar este telão?"
-        description="Este dispositivo deixará de exibir as fotos ao vivo. Para reconectá-lo, será necessário inserir o PIN novamente."
+        description="Este dispositivo deixará de exibir as fotos ao vivo e sua vaga será liberada no painel de gestão do evento."
         primaryAction={{
           label: 'Desconectar',
           color: 'error',
-          onClick: () => {
+          onClick: async () => {
             setIsDisconnectModalOpen(false)
-            disconnect()
+            await disconnect()
+            toast.info('Telão desconectado e vaga liberada com sucesso.')
           }
         }}
         secondaryAction={{

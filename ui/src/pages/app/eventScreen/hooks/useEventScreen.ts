@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-import { activateEventScreen, getEventScreen } from '@actions/events'
+import { activateEventScreen, disconnectEventScreen, getEventScreen } from '@actions/events'
 import {
   buildScreenStreamUrl,
   clearScreenCredential,
@@ -71,7 +71,13 @@ const useEventScreen = (eventId: string) => {
     [eventId, lockout]
   )
 
-  const disconnect = useCallback(() => {
+  const disconnect = useCallback(async () => {
+    if (screenToken) {
+      try {
+        await disconnectEventScreen(eventId, screenToken)
+      } catch {
+      }
+    }
     clearScreenCredential(eventId)
     cursorRef.current = undefined
     seenIdsRef.current.clear()
@@ -88,7 +94,7 @@ const useEventScreen = (eventId: string) => {
       window.clearTimeout(newArrivalTimerRef.current)
       newArrivalTimerRef.current = null
     }
-  }, [eventId])
+  }, [eventId, screenToken])
 
   const triggerNewPhotoArrival = useCallback(() => {
     setIsNewArrival(true)
