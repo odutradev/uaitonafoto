@@ -9,6 +9,7 @@ import {
   storeScreenCredential
 } from '@actions/events/screenClient'
 import { getErrorMessage } from '@config/events'
+import usePinLockout from '@hooks/usePinLockout'
 
 import type { EventPhoto, ScreenEventInfo } from '@actions/events/types'
 
@@ -33,6 +34,8 @@ const useEventScreen = (eventId: string) => {
   const seenIdsRef = useRef<Set<string>>(new Set())
   const newArrivalTimerRef = useRef<number | null>(null)
 
+  const lockout = usePinLockout({ scope: 'screen', targetId: eventId })
+
   useEffect(() => {
     cursorRef.current = undefined
     seenIdsRef.current.clear()
@@ -48,21 +51,24 @@ const useEventScreen = (eventId: string) => {
 
   const activate = useCallback(
     async (inputPin: string) => {
+      if (lockout.isLocked) return
       setIsActivating(true)
       setActivationError(null)
       try {
         const result = await activateEventScreen(eventId, inputPin)
+        lockout.resetLockout()
         storeScreenCredential(eventId, result.screenToken, result.event)
         setScreenToken(result.screenToken)
         setEvent(result.event)
         setPin(result.pin)
       } catch (error) {
+        lockout.recordFailure(error)
         setActivationError(getErrorMessage(error, 'Não foi possível ativar o telão.'))
       } finally {
         setIsActivating(false)
       }
     },
-    [eventId]
+    [eventId, lockout]
   )
 
   const disconnect = useCallback(() => {
@@ -251,6 +257,7 @@ const useEventScreen = (eventId: string) => {
     activationError,
     activate,
     disconnect,
+    lockout,
     event,
     pin,
     photos,

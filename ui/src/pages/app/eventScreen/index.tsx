@@ -72,6 +72,7 @@ const EventScreen = () => {
     activationError,
     activate,
     disconnect,
+    lockout,
     event,
     pin,
     photos,
@@ -106,7 +107,7 @@ const EventScreen = () => {
 
   const handleActivateSubmit = async (submitEvent: FormEvent<HTMLFormElement>) => {
     submitEvent.preventDefault()
-    if (!/^\d{4}$/.test(pinInput)) return
+    if (lockout.isLocked || !/^\d{4}$/.test(pinInput)) return
     await activate(pinInput)
   }
 
@@ -228,17 +229,38 @@ const EventScreen = () => {
               </Typography>
             </Box>
 
-            {activationError && (
+            {lockout.isPermanent ? (
+              <Alert severity="error" sx={{ width: '100%', textAlign: 'left' }}>
+                <Typography variant="subtitle2" fontWeight={800}>
+                  Telão bloqueado definitivamente
+                </Typography>
+                <Typography variant="body2" sx={{ mt: 0.5 }}>
+                  Limite de 10 tentativas incorretas atingido. Entre em contato com o organizador para gerar um novo PIN.
+                </Typography>
+              </Alert>
+            ) : lockout.isLocked ? (
+              <Alert severity="warning" sx={{ width: '100%', textAlign: 'left' }}>
+                <Typography variant="subtitle2" fontWeight={800}>
+                  Telão indisponível temporariamente
+                </Typography>
+                <Typography variant="body2" sx={{ mt: 0.5 }}>
+                  Tente novamente em{' '}
+                  <Typography component="span" fontWeight={900} sx={{ fontVariantNumeric: 'tabular-nums' }}>
+                    {lockout.formattedTime}
+                  </Typography>
+                </Typography>
+              </Alert>
+            ) : activationError ? (
               <Alert severity="error" sx={{ width: '100%', textAlign: 'left' }}>
                 {activationError}
               </Alert>
-            )}
+            ) : null}
 
             <PinInput
               value={pinInput}
               onChange={setPinInput}
               autoFocus
-              disabled={isActivating}
+              disabled={isActivating || lockout.isLocked}
               mask
               showMaskToggle
               slotSx={(theme) => ({
@@ -260,7 +282,7 @@ const EventScreen = () => {
               variant="contained"
               size="large"
               fullWidth
-              disabled={isActivating || !/^\d{4}$/.test(pinInput)}
+              disabled={isActivating || lockout.isLocked || !/^\d{4}$/.test(pinInput)}
               sx={{
                 bgcolor: brandColors.flashYellow,
                 color: brandColors.ink,
@@ -273,7 +295,13 @@ const EventScreen = () => {
                 }
               }}
             >
-              {isActivating ? 'Ativando...' : 'Ativar telão'}
+              {isActivating
+                ? 'Ativando...'
+                : lockout.isPermanent
+                  ? 'Bloqueado definitivamente'
+                  : lockout.isLocked
+                    ? `Tente novamente em ${lockout.formattedTime}`
+                    : 'Ativar telão'}
             </Button>
           </Box>
         </Box>
