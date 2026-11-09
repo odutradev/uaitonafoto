@@ -1,10 +1,11 @@
 import type { SxProps, Theme } from '@mui/material'
 
 export const dialogPaperStyles: SxProps<Theme> = {
-  borderRadius: '20px',
-  maxWidth: 540,
+  borderRadius: '24px',
+  maxWidth: 680,
   width: 'calc(100% - 32px)',
-  m: 2
+  m: { xs: 2, sm: 3 },
+  p: { xs: 0.5, sm: 1.5 }
 }
 
 export const dialogActionsStyles: SxProps<Theme> = {

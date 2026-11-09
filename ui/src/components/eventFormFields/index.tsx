@@ -60,29 +60,31 @@ const EventFormFields = ({
           </TextField>
         )}
 
-        <TextField
-          label="Nome do evento"
-          placeholder="Ex: Casamento Marina & Pedro"
-          value={form.name}
-          onChange={(e) => onChange('name', e.target.value)}
-          slotProps={{ htmlInput: { maxLength: 120 } }}
-          required
-          fullWidth
-        />
+        <Box sx={twoColsRowStyles}>
+          <TextField
+            label="Nome do evento"
+            placeholder="Ex: Casamento Marina & Pedro"
+            value={form.name}
+            onChange={(e) => onChange('name', e.target.value)}
+            slotProps={{ htmlInput: { maxLength: 120 } }}
+            required
+            fullWidth
+          />
 
-        <TextField
-          select
-          label="Tipo de evento"
-          value={form.type}
-          onChange={(e) => onChange('type', e.target.value as EventType)}
-          fullWidth
-        >
-          {Object.entries(eventTypeLabels).map(([value, label]) => (
-            <MenuItem key={value} value={value}>
-              {label}
-            </MenuItem>
-          ))}
-        </TextField>
+          <TextField
+            select
+            label="Tipo de evento"
+            value={form.type}
+            onChange={(e) => onChange('type', e.target.value as EventType)}
+            fullWidth
+          >
+            {Object.entries(eventTypeLabels).map(([value, label]) => (
+              <MenuItem key={value} value={value}>
+                {label}
+              </MenuItem>
+            ))}
+          </TextField>
+        </Box>
 
         <TextField
           label="Início do evento"
@@ -101,30 +103,32 @@ const EventFormFields = ({
   if (step === 1) {
     return (
       <Box sx={formFieldsStackStyles}>
-        <TextField
-          select
-          label="Fotos visíveis"
-          value={form.photoVisibility}
-          onChange={(e) => onChange('photoVisibility', e.target.value as PhotoVisibility)}
-          helperText="Quando as fotos aparecem no telão e no mural dos convidados."
-          fullWidth
-        >
-          {Object.entries(photoVisibilityLabels).map(([value, label]) => (
-            <MenuItem key={value} value={value}>
-              {label}
-            </MenuItem>
-          ))}
-        </TextField>
+        <Box sx={twoColsRowStyles}>
+          <TextField
+            select
+            label="Fotos visíveis"
+            value={form.photoVisibility}
+            onChange={(e) => onChange('photoVisibility', e.target.value as PhotoVisibility)}
+            helperText="Quando as fotos aparecem no telão e no mural."
+            fullWidth
+          >
+            {Object.entries(photoVisibilityLabels).map(([value, label]) => (
+              <MenuItem key={value} value={value}>
+                {label}
+              </MenuItem>
+            ))}
+          </TextField>
 
-        <TextField
-          label="Limite de fotos por convidado"
-          type="number"
-          value={form.maxPhotosPerGuest}
-          onChange={(e) => onChange('maxPhotosPerGuest', Number(e.target.value))}
-          slotProps={{ htmlInput: { min: 1, max: 100 } }}
-          helperText="Quantidade máxima de uploads permitida por celular."
-          fullWidth
-        />
+          <TextField
+            label="Limite de fotos por convidado"
+            type="number"
+            value={form.maxPhotosPerGuest}
+            onChange={(e) => onChange('maxPhotosPerGuest', Number(e.target.value))}
+            slotProps={{ htmlInput: { min: 1, max: 100 } }}
+            helperText="Quantidade máxima de uploads por celular."
+            fullWidth
+          />
+        </Box>
 
         <Box sx={pinCardBoxStyles}>
           <Typography variant="subtitle2" fontWeight={700}>
