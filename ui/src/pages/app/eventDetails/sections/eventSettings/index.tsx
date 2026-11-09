@@ -5,7 +5,6 @@ import {
   Box,
   Button,
   Card,
-  Chip,
   CircularProgress,
   Switch,
   Tab,
@@ -16,10 +15,8 @@ import {
 import {
   DeleteOutline as DeleteIcon,
   DesktopWindowsOutlined as ScreenIcon,
-  PaletteOutlined as PaletteIcon,
   PhoneIphoneOutlined as MobileIcon,
   SaveOutlined as SaveIcon,
-  StarOutline as ProIcon,
   Chat as WhatsAppIcon,
   SyncOutlined as SyncIcon
 } from '@mui/icons-material'
@@ -37,10 +34,12 @@ import {
   dangerCardStyles,
   dangerRowStyles,
   previewBoxStyles,
+  proBadgeStyles,
   settingsActionsRowStyles,
   settingsButtonStyles,
   settingsCardStyles,
-  settingsSectionStackStyles
+  settingsSectionStackStyles,
+  syncButtonStyles
 } from './styles'
 import type { FormEvent } from 'react'
 import type { EventFormState } from '@components/eventFormFields/types'
@@ -136,7 +135,7 @@ const EventSettings = ({ event, onSave, onDelete }: EventSettingsProps) => {
     <Box sx={settingsSectionStackStyles}>
       <Card elevation={0} component="form" onSubmit={handleSubmit} sx={settingsCardStyles}>
         <Box>
-          <Typography variant="h6" component="h2">
+          <Typography variant="subtitle1" fontWeight={700} component="h2">
             Dados e regras do evento
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mt: 0.25 }}>
@@ -146,41 +145,30 @@ const EventSettings = ({ event, onSave, onDelete }: EventSettingsProps) => {
 
         <EventFormFields form={form} onChange={setField} isEventStarted={isEventStarted(event.startsAt)} />
 
-        <Card elevation={0} sx={customizationCardStyles}>
+        <Box sx={customizationCardStyles}>
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 1 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-              <PaletteIcon sx={{ color: 'primary.main', fontSize: 26 }} />
-              <Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <Typography variant="subtitle1" fontWeight={700}>
-                    Selo White-Label para Cerimonial (B2B)
-                  </Typography>
-                  <Chip
-                    icon={<ProIcon sx={{ fontSize: '14px !important' }} />}
-                    label="PRO"
-                    size="small"
-                    sx={{
-                      height: 20,
-                      fontSize: '0.65rem',
-                      fontWeight: 800,
-                      bgcolor: 'primary.main',
-                      color: 'primary.contrastText'
-                    }}
-                  />
-                </Box>
-                <Typography variant="body2" color="text.secondary">
-                  Exibe a marca da sua assessoria no topo do telão e no aplicativo dos convidados (com botão direto para WhatsApp no app).
+            <Box>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Typography variant="body2" fontWeight={700}>
+                  Selo White-Label para Cerimonial
                 </Typography>
+                <Box component="span" sx={proBadgeStyles}>
+                  PRO
+                </Box>
               </Box>
+              <Typography variant="caption" color="text.secondary">
+                Exibe a marca da sua assessoria no topo do telão e no aplicativo dos convidados.
+              </Typography>
             </Box>
 
             {hasPlan && user?.customization && (
               <Button
                 variant="outlined"
+                color="inherit"
                 size="small"
-                startIcon={<SyncIcon fontSize="small" />}
+                startIcon={<SyncIcon sx={{ fontSize: 15 }} />}
                 onClick={handleApplyAgencyDefaults}
-                sx={{ borderRadius: '10px', textTransform: 'none' }}
+                sx={syncButtonStyles}
               >
                 Puxar dados da agência
               </Button>
@@ -191,26 +179,27 @@ const EventSettings = ({ event, onSave, onDelete }: EventSettingsProps) => {
             <Alert
               severity="warning"
               action={
-                <Button color="inherit" size="small" onClick={() => navigate('/app/billing')}>
+                <Button color="inherit" size="small" onClick={() => navigate('/app/billing')} sx={syncButtonStyles}>
                   Ver planos
                 </Button>
               }
-              sx={{ borderRadius: '12px' }}
+              sx={{ borderRadius: '10px' }}
             >
-              Esta funcionalidade é exclusiva para assinantes de planos de agência. Assine um plano para personalizar seus eventos.
+              Funcionalidade exclusiva para planos de agência. Assine um plano para personalizar seus eventos.
             </Alert>
           ) : (
             <>
               <Box sx={customizationSwitchRowStyles}>
                 <Box>
-                  <Typography variant="body1" fontWeight={600}>
-                    Ativar Selo White-Label neste evento
+                  <Typography variant="body2" fontWeight={600}>
+                    Ativar neste evento
                   </Typography>
                   <Typography variant="caption" color="text.secondary">
-                    Habilita o banner da assessoria com logotipo no topo do telão e com WhatsApp no app dos convidados.
+                    Habilita o banner da assessoria no telão e botão de WhatsApp no app dos convidados.
                   </Typography>
                 </Box>
                 <Switch
+                  size="small"
                   checked={isCustomEnabled}
                   onChange={(e) => updateCustomization({ enabled: e.target.checked })}
                   color="primary"
@@ -227,6 +216,7 @@ const EventSettings = ({ event, onSave, onDelete }: EventSettingsProps) => {
                     }}
                   >
                     <TextField
+                      size="small"
                       label="Nome da Assessoria / Cerimonial"
                       placeholder="Ex: Cerimonial Real & Eventos"
                       value={customConfig?.agencyName ?? ''}
@@ -234,6 +224,7 @@ const EventSettings = ({ event, onSave, onDelete }: EventSettingsProps) => {
                       fullWidth
                     />
                     <TextField
+                      size="small"
                       label="Tagline / Slogan"
                       placeholder="Ex: Assessoria & Organização de Casamentos"
                       value={customConfig?.agencyTagline ?? ''}
@@ -250,6 +241,7 @@ const EventSettings = ({ event, onSave, onDelete }: EventSettingsProps) => {
                     }}
                   >
                     <TextField
+                      size="small"
                       label="URL do Logotipo (quadrado ou ícone)"
                       placeholder="https://..."
                       value={customConfig?.agencyLogoUrl ?? ''}
@@ -257,6 +249,7 @@ const EventSettings = ({ event, onSave, onDelete }: EventSettingsProps) => {
                       fullWidth
                     />
                     <TextField
+                      size="small"
                       label="WhatsApp para Contato (DDD + Número)"
                       placeholder="Ex: 31999998888"
                       value={customConfig?.agencyWhatsapp ?? ''}
@@ -267,6 +260,7 @@ const EventSettings = ({ event, onSave, onDelete }: EventSettingsProps) => {
                   </Box>
 
                   <TextField
+                    size="small"
                     label="Mensagem inicial do WhatsApp (opcional)"
                     placeholder="Mensagem pré-preenchida que o cliente enviará ao clicar no botão..."
                     value={customConfig?.whatsappMessage ?? ''}
@@ -277,36 +271,25 @@ const EventSettings = ({ event, onSave, onDelete }: EventSettingsProps) => {
                   />
 
                   <Box sx={previewBoxStyles}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1 }}>
-                      <Typography variant="caption" sx={{ color: 'primary.main', fontWeight: 700, letterSpacing: 0.5, textTransform: 'uppercase' }}>
-                        {previewTab === 'screen' ? 'Pré-visualização no Telão (Ao Vivo)' : 'Pré-visualização no App dos Convidados'}
-                      </Typography>
-                      <Chip
-                        size="small"
-                        label={previewTab === 'screen' ? 'Sem botões interativos' : 'Com botão WhatsApp'}
-                        sx={{ height: 20, fontSize: '0.65rem' }}
-                      />
-                    </Box>
-
                     <Tabs
                       value={previewTab}
                       onChange={(_, val) => setPreviewTab(val)}
                       variant="fullWidth"
-                      sx={{ borderBottom: 1, borderColor: 'rgba(255, 184, 0, 0.2)', minHeight: 36 }}
+                      sx={{ borderBottom: 1, borderColor: 'rgba(255, 184, 0, 0.2)', minHeight: 34 }}
                     >
                       <Tab
-                        icon={<ScreenIcon sx={{ fontSize: '1rem' }} />}
+                        icon={<ScreenIcon sx={{ fontSize: '0.95rem' }} />}
                         iconPosition="start"
-                        label="No Telão"
+                        label="Prévia no Telão"
                         value="screen"
-                        sx={{ minHeight: 36, py: 0.5, textTransform: 'none', fontSize: '0.8rem' }}
+                        sx={{ minHeight: 34, py: 0.5, textTransform: 'none', fontSize: '0.78rem' }}
                       />
                       <Tab
-                        icon={<MobileIcon sx={{ fontSize: '1rem' }} />}
+                        icon={<MobileIcon sx={{ fontSize: '0.95rem' }} />}
                         iconPosition="start"
-                        label="No App dos Convidados"
+                        label="Prévia no App"
                         value="app"
-                        sx={{ minHeight: 36, py: 0.5, textTransform: 'none', fontSize: '0.8rem' }}
+                        sx={{ minHeight: 34, py: 0.5, textTransform: 'none', fontSize: '0.78rem' }}
                       />
                     </Tabs>
 
@@ -317,25 +300,24 @@ const EventSettings = ({ event, onSave, onDelete }: EventSettingsProps) => {
                         justifyContent: 'space-between',
                         flexWrap: 'wrap',
                         gap: 1.5,
-                        p: 1.5,
-                        borderRadius: '12px',
+                        p: 1.25,
+                        borderRadius: '10px',
                         bgcolor: 'rgba(0,0,0,0.6)',
-                        backdropFilter: 'blur(10px)',
-                        border: '1px solid rgba(255, 184, 0, 0.3)'
+                        border: '1px solid rgba(255, 184, 0, 0.25)'
                       }}
                     >
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25 }}>
                         <Avatar
                           src={customConfig?.agencyLogoUrl}
                           sx={{
-                            width: 36,
-                            height: 36,
+                            width: 32,
+                            height: 32,
                             border: '1.5px solid',
                             borderColor: 'primary.main',
                             bgcolor: 'rgba(255, 184, 0, 0.15)',
                             color: 'primary.main',
                             fontWeight: 800,
-                            fontSize: '0.85rem'
+                            fontSize: '0.8rem'
                           }}
                         >
                           {(customConfig?.agencyName || 'A')[0].toUpperCase()}
@@ -344,7 +326,7 @@ const EventSettings = ({ event, onSave, onDelete }: EventSettingsProps) => {
                           <Typography variant="body2" fontWeight={700} sx={{ color: '#fff', lineHeight: 1.2 }}>
                             {customConfig?.agencyName || 'Sua Assessoria'}
                           </Typography>
-                          <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.72rem' }}>
+                          <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.7rem' }}>
                             {customConfig?.agencyTagline || 'Assessoria & Cerimonial'}
                           </Typography>
                         </Box>
@@ -353,10 +335,13 @@ const EventSettings = ({ event, onSave, onDelete }: EventSettingsProps) => {
                       {previewTab === 'app' && (
                         <Button
                           size="small"
-                          startIcon={<WhatsAppIcon sx={{ fontSize: '16px !important' }} />}
+                          startIcon={<WhatsAppIcon sx={{ fontSize: '15px !important' }} />}
                           variant="contained"
                           sx={{
-                            borderRadius: '999px',
+                            minHeight: 30,
+                            px: 1.5,
+                            py: 0.4,
+                            borderRadius: '8px',
                             bgcolor: '#25D366',
                             color: '#fff',
                             fontWeight: 700,
@@ -370,23 +355,18 @@ const EventSettings = ({ event, onSave, onDelete }: EventSettingsProps) => {
                         </Button>
                       )}
                     </Box>
-
-                    <Typography variant="caption" color="text.secondary" sx={{ textAlign: 'center' }}>
-                      {previewTab === 'screen'
-                        ? 'No telão do evento, sua marca é exibida com destaque sem botões clicáveis.'
-                        : 'No celular dos convidados, o botão de WhatsApp permite iniciar conversa direta com a assessoria.'}
-                    </Typography>
                   </Box>
                 </Box>
               )}
             </>
           )}
-        </Card>
+        </Box>
 
         <Box sx={settingsActionsRowStyles}>
           {isDirty && (
             <Button
               type="button"
+              size="small"
               variant="outlined"
               disabled={isSaving}
               onClick={() => setForm(initialForm)}
@@ -398,9 +378,10 @@ const EventSettings = ({ event, onSave, onDelete }: EventSettingsProps) => {
 
           <Button
             type="submit"
+            size="small"
             variant="contained"
             disabled={!isDirty || isSaving}
-            startIcon={isSaving ? <CircularProgress size={18} color="inherit" /> : <SaveIcon fontSize="small" />}
+            startIcon={isSaving ? <CircularProgress size={15} color="inherit" /> : <SaveIcon sx={{ fontSize: 16 }} />}
             sx={settingsButtonStyles}
           >
             {isSaving ? 'Salvando...' : 'Salvar alterações'}
@@ -412,19 +393,20 @@ const EventSettings = ({ event, onSave, onDelete }: EventSettingsProps) => {
         <Card elevation={0} sx={dangerCardStyles}>
           <Box sx={dangerRowStyles}>
             <Box sx={{ minWidth: 0 }}>
-              <Typography variant="h6" component="h2" color="error.main">
+              <Typography variant="subtitle1" fontWeight={700} component="h2" color="error.main">
                 Excluir evento
               </Typography>
               <Typography variant="body2" color="text.secondary" sx={{ mt: 0.25 }}>
-                Remove permanentemente o evento, o mural de convidados e todas as fotos enviadas. Esta ação não pode ser desfeita.
+                Remove permanentemente o evento, o mural de convidados e todas as fotos enviadas.
               </Typography>
             </Box>
 
             <Button
               type="button"
+              size="small"
               color="error"
               variant="outlined"
-              startIcon={<DeleteIcon fontSize="small" />}
+              startIcon={<DeleteIcon sx={{ fontSize: 16 }} />}
               onClick={() => setIsDeleteModalOpen(true)}
               sx={settingsButtonStyles}
             >

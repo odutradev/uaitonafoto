@@ -3,8 +3,8 @@ import type { SxProps, Theme } from '@mui/material'
 export const formFieldsStackStyles: SxProps<Theme> = {
   display: 'flex',
   flexDirection: 'column',
-  gap: 2.25,
-  pt: 1
+  gap: 2,
+  pt: 0.5
 }
 
 export const twoColsRowStyles: SxProps<Theme> = {
@@ -16,9 +16,9 @@ export const twoColsRowStyles: SxProps<Theme> = {
 export const pinCardBoxStyles: SxProps<Theme> = {
   display: 'flex',
   flexDirection: 'column',
-  gap: 2,
-  p: 2,
-  borderRadius: '16px',
+  gap: 1.5,
+  p: 1.75,
+  borderRadius: '12px',
   border: 1,
   borderColor: 'divider',
   bgcolor: 'action.hover'
@@ -30,3 +30,4 @@ export const pinToggleRowStyles: SxProps<Theme> = {
   justifyContent: 'space-between',
   gap: 1.5
 }
+
