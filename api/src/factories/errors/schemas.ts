@@ -6,4 +6,6 @@ export const errorResponseSchema = z.object({
   details: z.unknown().optional().describe('Detalhes adicionais ou erros de validação')
 })
 
+export type ErrorResponse = z.infer<typeof errorResponseSchema>
+
 export default errorResponseSchema
