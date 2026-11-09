@@ -41,7 +41,7 @@ export const plansConfig: PlanConfig[] = [
     tag: 'Evento Único',
     name: 'Passe do Evento',
     title: 'Passe do Evento',
-    price: 14700,
+    price: 9900,
     currency: 'BRL',
     period: 'pagamento único',
     subBadge: 'Fotos e convidados ilimitados',

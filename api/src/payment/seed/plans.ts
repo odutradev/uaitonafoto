@@ -17,7 +17,7 @@ export const SEED_PLANS: SeedProduct[] = [
   {
     externalId: 'prod_b2c_event_pass',
     name: 'Passe Evento Completo',
-    price: 14700,
+    price: 9900,
     currency: 'BRL',
     description: '1 evento completo com fotos ilimitadas, 2 telões simultâneos, 1 convidado na equipe, moderação por PIN, display de mesa, download em .zip e galeria por 90 dias.'
   },
