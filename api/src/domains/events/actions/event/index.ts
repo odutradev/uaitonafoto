@@ -206,7 +206,9 @@ export const updateEvent = defineAction(
     if (!role) return manageError({ code: 'forbidden' })
 
     const startsAt = data.startsAt ?? event.startsAt
-    const endsAt = data.endsAt ?? event.endsAt
+    const durationHours = event.creditType === 'free' ? 4 : 8
+    const calculatedEndsAt = new Date(new Date(startsAt).getTime() + durationHours * 60 * 60 * 1000).toISOString()
+    const endsAt = data.endsAt ?? (data.startsAt ? calculatedEndsAt : event.endsAt)
     if (!isValidEventPeriod(startsAt, endsAt)) {
       return manageError({ code: 'bad_request', details: 'endsAt must be after startsAt' })
     }
