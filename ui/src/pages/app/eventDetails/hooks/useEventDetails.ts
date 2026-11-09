@@ -163,10 +163,18 @@ const useEventDetails = (eventId: string) => {
       eventSource.addEventListener('screen:create', (e: MessageEvent) => {
         if (!isActive) return
         try {
-          const data = JSON.parse(e.data) as { screens?: EventScreenSlot[] }
-          if (Array.isArray(data.screens)) {
-            setEvent((prev) => (prev ? { ...prev, screens: data.screens! } : prev))
+          const data = JSON.parse(e.data) as {
+            screens?: EventScreenSlot[]
+            historyEntry?: EventScreenHistoryEntry
           }
+          setEvent((prev) => {
+            if (!prev) return prev
+            const nextScreens = Array.isArray(data.screens) ? data.screens : prev.screens
+            const nextHistory = data.historyEntry
+              ? [data.historyEntry, ...(prev.screenHistory ?? [])].slice(0, 30)
+              : prev.screenHistory
+            return { ...prev, screens: nextScreens, screenHistory: nextHistory }
+          })
         } catch {
           refresh()
         }
@@ -175,10 +183,18 @@ const useEventDetails = (eventId: string) => {
       eventSource.addEventListener('screen:update', (e: MessageEvent) => {
         if (!isActive) return
         try {
-          const data = JSON.parse(e.data) as { screens?: EventScreenSlot[] }
-          if (Array.isArray(data.screens)) {
-            setEvent((prev) => (prev ? { ...prev, screens: data.screens! } : prev))
+          const data = JSON.parse(e.data) as {
+            screens?: EventScreenSlot[]
+            historyEntry?: EventScreenHistoryEntry
           }
+          setEvent((prev) => {
+            if (!prev) return prev
+            const nextScreens = Array.isArray(data.screens) ? data.screens : prev.screens
+            const nextHistory = data.historyEntry
+              ? [data.historyEntry, ...(prev.screenHistory ?? [])].slice(0, 30)
+              : prev.screenHistory
+            return { ...prev, screens: nextScreens, screenHistory: nextHistory }
+          })
         } catch {
           refresh()
         }
@@ -195,7 +211,7 @@ const useEventDetails = (eventId: string) => {
             if (!prev) return prev
             const nextScreens = Array.isArray(data.screens) ? data.screens : prev.screens
             const nextHistory = data.historyEntry
-              ? [...(prev.screenHistory ?? []).filter((h) => h.id !== data.historyEntry!.id), data.historyEntry]
+              ? [data.historyEntry, ...(prev.screenHistory ?? [])].slice(0, 30)
               : prev.screenHistory
             return {
               ...prev,
@@ -210,6 +226,7 @@ const useEventDetails = (eventId: string) => {
 
       eventSource.addEventListener('screen:block', handleScreenStatusChange)
       eventSource.addEventListener('screen:unblock', handleScreenStatusChange)
+      eventSource.addEventListener('lockout:reset', handleScreenStatusChange)
     } catch {
     }
 

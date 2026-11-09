@@ -142,9 +142,19 @@ export const createScreenSlot = defineAction(
       })
     }
 
+    const historyEntry: EventScreenHistoryEntry = {
+      id: randomUUID(),
+      screenId: slot.id,
+      name: slot.name,
+      action: 'created',
+      timestamp: new Date().toISOString()
+    }
+    await eventRepository.addScreenHistory(access.event.id, historyEntry)
+
     broadcastEvent(access.event.id, 'screen:create', {
       slot,
-      screens: updated.screens
+      screens: updated.screens,
+      historyEntry
     })
 
     return updated.screens
@@ -179,7 +189,7 @@ export const removeScreenSlot = defineAction(
       id: randomUUID(),
       screenId: params.screenId,
       name: slot?.name,
-      action: 'disconnected',
+      action: 'deleted',
       timestamp: new Date().toISOString()
     }
     await eventRepository.addScreenHistory(access.event.id, historyEntry)
@@ -217,6 +227,21 @@ export const updateScreenSlot = defineAction(
     const trimmedName = data?.name?.trim()
     const updated = await eventRepository.updateScreenSlotName(access.event.id, params.screenId, trimmedName || undefined)
     if (!updated) return manageError({ code: 'not_found' })
+
+    const historyEntry: EventScreenHistoryEntry = {
+      id: randomUUID(),
+      screenId: params.screenId,
+      name: trimmedName,
+      action: 'updated',
+      timestamp: new Date().toISOString()
+    }
+    await eventRepository.addScreenHistory(access.event.id, historyEntry)
+
+    broadcastEvent(access.event.id, 'screen:update', {
+      screenId: params.screenId,
+      screens: updated.screens,
+      historyEntry
+    })
 
     return updated.screens
   }
@@ -744,9 +769,22 @@ export const resetEventLockouts = defineAction(
 
     const clearedCount = resetPinLockoutsForTarget(targetIds, scope)
 
+    let historyEntry: EventScreenHistoryEntry | undefined
+    if (scope === 'all' || scope === 'screen') {
+      historyEntry = {
+        id: randomUUID(),
+        screenId: event.id,
+        name: 'Todos os telões',
+        action: 'unblocked',
+        timestamp: new Date().toISOString()
+      }
+      await eventRepository.addScreenHistory(event.id, historyEntry)
+    }
+
     broadcastEvent(event.id, 'lockout:reset', {
       scope,
       eventId: event.id,
+      historyEntry,
       timestamp: new Date().toISOString()
     })
 

@@ -45,10 +45,71 @@ import {
   screenSlotsGridStyles,
   statusPillStyles
 } from './styles'
-import type { EventScreenSlot } from '@actions/events/types'
+import type { EventScreenHistoryEntry, EventScreenSlot } from '@actions/events/types'
 import type { EventScreensProps } from './types'
 
 const SCREEN_ONLINE_TIMEOUT_MS = 30_000
+
+const getScreenHistoryMeta = (action: EventScreenHistoryEntry['action']) => {
+  switch (action) {
+    case 'created':
+      return {
+        label: 'Criado',
+        color: 'info' as const,
+        description: 'Slot de telão gerado',
+        icon: <AddIcon sx={{ color: 'info.main', fontSize: 18 }} />
+      }
+    case 'updated':
+      return {
+        label: 'Editado',
+        color: 'warning' as const,
+        description: 'Identificação do telão alterada',
+        icon: <EditIcon sx={{ color: 'warning.main', fontSize: 18 }} />
+      }
+    case 'deleted':
+      return {
+        label: 'Apagado',
+        color: 'error' as const,
+        description: 'Telão removido do evento',
+        icon: <DeleteIcon sx={{ color: 'error.main', fontSize: 18 }} />
+      }
+    case 'connected':
+      return {
+        label: 'Conectado',
+        color: 'success' as const,
+        description: 'Telão ativado com sucesso',
+        icon: <CheckCircleIcon sx={{ color: 'success.main', fontSize: 18 }} />
+      }
+    case 'disconnected':
+      return {
+        label: 'Desconectado',
+        color: 'default' as const,
+        description: 'Telão desconectado e vaga liberada',
+        icon: <PowerOffIcon sx={{ color: 'text.secondary', fontSize: 18 }} />
+      }
+    case 'blocked':
+      return {
+        label: 'Bloqueado',
+        color: 'error' as const,
+        description: 'Telão bloqueado pela organização',
+        icon: <LockIcon sx={{ color: 'error.main', fontSize: 18 }} />
+      }
+    case 'unblocked':
+      return {
+        label: 'Desbloqueado',
+        color: 'success' as const,
+        description: 'Acesso ao telão liberado',
+        icon: <LockOpenIcon sx={{ color: 'success.main', fontSize: 18 }} />
+      }
+    default:
+      return {
+        label: 'Registro',
+        color: 'default' as const,
+        description: 'Ação registrada no telão',
+        icon: <RefreshIcon sx={{ color: 'text.secondary', fontSize: 18 }} />
+      }
+  }
+}
 
 const getScreenStatusBadge = (slot: EventScreenSlot) => {
   if (slot.isBlocked) {
@@ -392,7 +453,7 @@ const EventScreens = ({
           <Box>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <Typography variant="h6" fontWeight={700}>
-                Histórico de Conexões
+                Histórico de Telões
               </Typography>
               {screenHistory.length > 0 && (
                 <Box component="span" sx={countBadgeStyles}>
@@ -401,7 +462,7 @@ const EventScreens = ({
               )}
             </Box>
             <Typography variant="caption" color="text.secondary">
-              Registro em tempo real dos telões que conectaram ou foram desconectados deste evento.
+              Registro em tempo real de criação, edição, conexões, desconexões e bloqueios dos telões.
             </Typography>
           </Box>
         </Box>
@@ -418,13 +479,13 @@ const EventScreens = ({
             }}
           >
             <Typography variant="body2" color="text.secondary">
-              Nenhum registro de conexão ou desconexão recente.
+              Nenhum registro de atividade recente dos telões.
             </Typography>
           </Box>
         ) : (
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
             {screenHistory.map((item) => {
-              const isConnect = item.action === 'connected'
+              const meta = getScreenHistoryMeta(item.action)
               return (
                 <Box
                   key={item.id}
@@ -438,28 +499,17 @@ const EventScreens = ({
                     borderRadius: '10px',
                     border: '1px solid',
                     borderColor: 'divider',
-                    bgcolor: (theme) =>
-                      theme.palette.mode === 'dark'
-                        ? isConnect
-                          ? 'rgba(34, 197, 94, 0.05)'
-                          : 'rgba(239, 68, 68, 0.05)'
-                        : isConnect
-                          ? '#f0fdf4'
-                          : '#fef2f2'
+                    bgcolor: 'action.hover'
                   }}
                 >
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25 }}>
-                    {isConnect ? (
-                      <CheckCircleIcon sx={{ color: 'success.main', fontSize: 18 }} />
-                    ) : (
-                      <PowerOffIcon sx={{ color: 'text.secondary', fontSize: 18 }} />
-                    )}
+                    {meta.icon}
                     <Box>
                       <Typography variant="subtitle2" fontWeight={700}>
                         {item.name || 'Telão'}
                       </Typography>
                       <Typography variant="caption" color="text.secondary">
-                        {isConnect ? 'Telão ativado com sucesso' : 'Telão desconectado e vaga liberada'}
+                        {meta.description}
                       </Typography>
                     </Box>
                   </Box>
@@ -467,9 +517,9 @@ const EventScreens = ({
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                     <Chip
                       size="small"
-                      color={isConnect ? 'success' : 'default'}
-                      variant={isConnect ? 'filled' : 'outlined'}
-                      label={isConnect ? 'Conectado' : 'Desconectado'}
+                      color={meta.color}
+                      variant="outlined"
+                      label={meta.label}
                       sx={{ height: 22, fontSize: '0.7rem', fontWeight: 700 }}
                     />
                     <Typography variant="caption" color="text.secondary" sx={{ fontVariantNumeric: 'tabular-nums' }}>
