@@ -79,6 +79,15 @@ export const eventRepository = {
     return { count, rows: docs.map(toEventEntity) }
   },
 
+  listAllByCreator: async (creatorId: string): Promise<EventEntity[]> => {
+    const docs = await EventModel.find({
+      members: { $elemMatch: { userId: creatorId, role: 'creator' } }
+    })
+      .sort({ createdAt: -1 })
+      .lean()
+    return docs.map(toEventEntity)
+  },
+
   update: async (id: string, { settings, ...data }: UpdateEventPayload): Promise<EventEntity | null> => {
     const set = { ...removeUndefined(data), ...flattenSettings(settings), updatedAt: new Date().toISOString() }
     const doc = await EventModel.findByIdAndUpdate(id, { $set: set }, { new: true, lean: true })
