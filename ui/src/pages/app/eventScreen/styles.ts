@@ -81,18 +81,27 @@ export const leftColumnStyles: SxProps<Theme> = {
   height: '100%'
 }
 
-export const mainCardStyles: SxProps<Theme> = (theme) => ({
+export const getMainCardStyles = (isNew = false): SxProps<Theme> => (theme) => ({
   flex: 1,
   bgcolor: theme.palette.mode === 'dark' ? brandColors.darkPaper : '#FFFFFF',
   borderRadius: '28px',
-  border: `1px solid ${theme.palette.divider}`,
+  border: isNew
+    ? `2px solid ${brandColors.flashYellow}`
+    : `1px solid ${theme.palette.divider}`,
   display: 'flex',
   flexDirection: 'column',
   overflow: 'hidden',
   position: 'relative',
   minHeight: 0,
-  boxShadow: theme.palette.mode === 'dark' ? 'none' : '0 8px 30px rgba(0, 0, 0, 0.06)'
+  boxShadow: isNew
+    ? '0 0 45px rgba(255, 214, 10, 0.45)'
+    : theme.palette.mode === 'dark'
+      ? 'none'
+      : '0 8px 30px rgba(0, 0, 0, 0.06)',
+  transition: 'box-shadow 0.5s ease, border-color 0.5s ease'
 })
+
+export const mainCardStyles: SxProps<Theme> = getMainCardStyles(false)
 
 export const photoContainerStyles: SxProps<Theme> = {
   flex: 1,
@@ -101,15 +110,34 @@ export const photoContainerStyles: SxProps<Theme> = {
   justifyContent: 'center',
   overflow: 'hidden',
   p: { xs: 1.5, md: 2.5 },
-  bgcolor: '#0E0C09'
+  bgcolor: '#0E0C09',
+  position: 'relative'
 }
 
-export const photoStyles: SxProps<Theme> = {
+export const getPhotoStyles = (isNew = false): SxProps<Theme> => ({
   width: '100%',
   height: '100%',
   objectFit: 'contain',
-  borderRadius: '16px'
-}
+  borderRadius: '16px',
+  animation: isNew ? 'photoEntrance 0.7s cubic-bezier(0.16, 1, 0.3, 1)' : 'none',
+  transition: 'transform 0.4s ease, opacity 0.4s ease',
+  '@keyframes photoEntrance': {
+    '0%': {
+      opacity: 0,
+      transform: 'scale(0.92)'
+    },
+    '60%': {
+      opacity: 1,
+      transform: 'scale(1.02)'
+    },
+    '100%': {
+      opacity: 1,
+      transform: 'scale(1)'
+    }
+  }
+})
+
+export const photoStyles: SxProps<Theme> = getPhotoStyles(false)
 
 export const yellowBannerStyles: SxProps<Theme> = {
   bgcolor: brandColors.flashYellow,

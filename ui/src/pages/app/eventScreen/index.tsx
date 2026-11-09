@@ -36,11 +36,11 @@ import {
   bannerTextStyles,
   contentGridStyles,
   controlsChipStyles,
+  getMainCardStyles,
+  getPhotoStyles,
   iconButtonStyles,
   leftColumnStyles,
-  mainCardStyles,
   photoContainerStyles,
-  photoStyles,
   qrFrameStyles,
   qrPinBadgeStyles,
   qrPinCodeStyles,
@@ -77,7 +77,9 @@ const EventScreen = () => {
     photos,
     currentIndex,
     selectPhoto,
-    currentPhoto
+    currentPhoto,
+    isLiveStreamConnected,
+    isNewArrival
   } = useEventScreen(eventIdentifier)
   const [pinInput, setPinInput] = useState('')
   const [isDisconnectModalOpen, setIsDisconnectModalOpen] = useState(false)
@@ -115,6 +117,37 @@ const EventScreen = () => {
       <Box component="header" sx={topBarStyles}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <Logo variant="auto" size="small" />
+          {isActivated && isLiveStreamConnected && (
+            <Tooltip title="Transmissão instantânea ativa via SSE (<300ms)">
+              <Box
+                sx={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 0.75,
+                  px: 1.5,
+                  py: 0.45,
+                  borderRadius: '9999px',
+                  bgcolor: 'rgba(34, 197, 94, 0.12)',
+                  border: '1px solid rgba(34, 197, 94, 0.35)',
+                  fontSize: '0.72rem',
+                  fontWeight: 800,
+                  color: '#22c55e',
+                  letterSpacing: '0.04em'
+                }}
+              >
+                <Box
+                  sx={{
+                    width: 7,
+                    height: 7,
+                    borderRadius: '50%',
+                    bgcolor: '#22c55e',
+                    boxShadow: '0 0 8px #22c55e'
+                  }}
+                />
+                AO VIVO
+              </Box>
+            </Tooltip>
+          )}
         </Box>
 
         {event?.customization?.enabled && (
@@ -247,16 +280,50 @@ const EventScreen = () => {
       ) : (
         <Box sx={contentGridStyles}>
           <Box sx={leftColumnStyles}>
-            <Box sx={mainCardStyles}>
+            <Box sx={getMainCardStyles(isNewArrival)}>
               {currentPhoto ? (
                 <>
                   <Box sx={photoContainerStyles}>
+                    {isNewArrival && (
+                      <Box
+                        sx={{
+                          position: 'absolute',
+                          top: 18,
+                          left: 18,
+                          bgcolor: brandColors.flashYellow,
+                          color: brandColors.ink,
+                          fontWeight: 900,
+                          fontSize: '0.8rem',
+                          letterSpacing: '0.04em',
+                          textTransform: 'uppercase',
+                          px: 2,
+                          py: 0.7,
+                          borderRadius: '9999px',
+                          boxShadow: '0 4px 20px rgba(0,0,0,0.4)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 1,
+                          animation: 'photoEntrance 0.5s ease',
+                          zIndex: 5
+                        }}
+                      >
+                        <Box
+                          sx={{
+                            width: 8,
+                            height: 8,
+                            borderRadius: '50%',
+                            bgcolor: brandColors.ink
+                          }}
+                        />
+                        Nova foto na festa!
+                      </Box>
+                    )}
                     <Box
                       key={currentPhoto.id}
                       component="img"
                       src={currentPhoto.url}
                       alt={`Foto de ${currentPhoto.guestName}`}
-                      sx={photoStyles}
+                      sx={getPhotoStyles(isNewArrival)}
                     />
                   </Box>
 

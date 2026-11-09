@@ -36,5 +36,8 @@ export const withScreenToken = (screenToken: string) => ({
   headers: { Authorization: `Bearer ${screenToken}` }
 })
 
+export const buildScreenStreamUrl = (eventId: string, screenToken: string): string =>
+  `${defaultConfig.baseURL}/events/${encodeURIComponent(eventId)}/screen/stream?token=${encodeURIComponent(screenToken)}`
+
 export default screenApi
 
