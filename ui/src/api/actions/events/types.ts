@@ -53,6 +53,14 @@ export interface EventScreenSlot {
   lastSeenAt?: string
 }
 
+export interface EventScreenHistoryEntry {
+  id: string
+  screenId: string
+  name?: string
+  action: 'connected' | 'disconnected'
+  timestamp: string
+}
+
 export type EventPlanTier = 'single' | 'essential' | 'pro'
 
 export interface EventItem {
@@ -76,6 +84,7 @@ export interface EventItem {
   challenges?: EventChallenge[]
   members: EventMember[]
   screens: EventScreenSlot[]
+  screenHistory?: EventScreenHistoryEntry[]
   myRole: EventMemberRole
   createdAt: string
   updatedAt: string

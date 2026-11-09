@@ -17,7 +17,7 @@ import {
 import { buildRoomStreamUrl } from '@actions/guest/client'
 import { getErrorMessage } from '@config/events'
 
-import type { EventItem, EventScreenSlot, UpdateEventPayload } from '@actions/events/types'
+import type { EventItem, EventScreenHistoryEntry, EventScreenSlot, UpdateEventPayload } from '@actions/events/types'
 
 const useEventDetails = (eventId: string) => {
   const navigate = useNavigate()
@@ -107,14 +107,27 @@ const useEventDetails = (eventId: string) => {
       eventSource.addEventListener('screen:disconnect', (e: MessageEvent) => {
         if (!isActive) return
         try {
-          const data = JSON.parse(e.data) as { screenId?: string; screens?: EventScreenSlot[] }
-          if (Array.isArray(data.screens)) {
-            setEvent((prev) => (prev ? { ...prev, screens: data.screens! } : prev))
-          } else if (data.screenId) {
-            setEvent((prev) =>
-              prev ? { ...prev, screens: (prev.screens ?? []).filter((s) => s.id !== data.screenId) } : prev
-            )
+          const data = JSON.parse(e.data) as {
+            screenId?: string
+            screens?: EventScreenSlot[]
+            historyEntry?: EventScreenHistoryEntry
           }
+          setEvent((prev) => {
+            if (!prev) return prev
+            const nextScreens = Array.isArray(data.screens)
+              ? data.screens
+              : data.screenId
+                ? (prev.screens ?? []).filter((s) => s.id !== data.screenId)
+                : prev.screens
+            const nextHistory = data.historyEntry
+              ? [data.historyEntry, ...(prev.screenHistory ?? [])].slice(0, 30)
+              : prev.screenHistory
+            return {
+              ...prev,
+              screens: nextScreens,
+              screenHistory: nextHistory
+            }
+          })
           toast.info('Um telão foi desconectado e a vaga foi liberada.')
         } catch {
           refresh()
@@ -124,12 +137,23 @@ const useEventDetails = (eventId: string) => {
       eventSource.addEventListener('screen:activate', (e: MessageEvent) => {
         if (!isActive) return
         try {
-          const data = JSON.parse(e.data) as { screens?: EventScreenSlot[] }
-          if (Array.isArray(data.screens)) {
-            setEvent((prev) => (prev ? { ...prev, screens: data.screens! } : prev))
-          } else {
-            refresh()
+          const data = JSON.parse(e.data) as {
+            screens?: EventScreenSlot[]
+            historyEntry?: EventScreenHistoryEntry
           }
+          setEvent((prev) => {
+            if (!prev) return prev
+            const nextScreens = Array.isArray(data.screens) ? data.screens : prev.screens
+            const nextHistory = data.historyEntry
+              ? [data.historyEntry, ...(prev.screenHistory ?? [])].slice(0, 30)
+              : prev.screenHistory
+            return {
+              ...prev,
+              screens: nextScreens,
+              screenHistory: nextHistory
+            }
+          })
+          toast.success('Um telão acabou de ser conectado!')
         } catch {
           refresh()
         }

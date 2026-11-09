@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   Card,
+  Chip,
   CircularProgress,
   IconButton,
   TextField,
@@ -11,11 +12,13 @@ import {
 } from '@mui/material'
 import {
   AddOutlined as AddIcon,
+  CheckCircleOutline as CheckCircleIcon,
   ContentCopyOutlined as CopyIcon,
   DeleteOutline as DeleteIcon,
   EditOutlined as EditIcon,
   LockOpenOutlined as LockOpenIcon,
   OpenInNewOutlined as OpenIcon,
+  PowerOffOutlined as PowerOffIcon,
   RefreshOutlined as RefreshIcon
 } from '@mui/icons-material'
 import dayjs from 'dayjs'
@@ -86,6 +89,7 @@ const EventScreens = ({
 }: EventScreensProps) => {
   const screenLink = buildScreenLink(event.guestToken)
   const screens = event.screens ?? []
+  const screenHistory = [...(event.screenHistory ?? [])].reverse()
   const limits = getEventLimits(event)
   const maxScreens = limits.maxScreens
   const isScreenLimitReached = screens.length >= maxScreens
@@ -335,6 +339,102 @@ const EventScreens = ({
                   <Typography variant="caption" color="text.secondary">
                     {badge.detail}
                   </Typography>
+                </Box>
+              )
+            })}
+          </Box>
+        )}
+      </Card>
+
+      <Card variant="outlined" sx={screenCardStyles}>
+        <Box sx={screenHeaderRowStyles}>
+          <Box>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Typography variant="h6" fontWeight={700}>
+                Histórico de Conexões
+              </Typography>
+              {screenHistory.length > 0 && (
+                <Box component="span" sx={countBadgeStyles}>
+                  {screenHistory.length}
+                </Box>
+              )}
+            </Box>
+            <Typography variant="caption" color="text.secondary">
+              Registro em tempo real dos telões que conectaram ou foram desconectados deste evento.
+            </Typography>
+          </Box>
+        </Box>
+
+        {screenHistory.length === 0 ? (
+          <Box
+            sx={{
+              p: 3,
+              textAlign: 'center',
+              borderRadius: '12px',
+              border: '1px dashed',
+              borderColor: 'divider',
+              bgcolor: 'action.hover'
+            }}
+          >
+            <Typography variant="body2" color="text.secondary">
+              Nenhum registro de conexão ou desconexão recente.
+            </Typography>
+          </Box>
+        ) : (
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+            {screenHistory.map((item) => {
+              const isConnect = item.action === 'connected'
+              return (
+                <Box
+                  key={item.id}
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    flexWrap: 'wrap',
+                    gap: 1.5,
+                    p: 1.5,
+                    borderRadius: '10px',
+                    border: '1px solid',
+                    borderColor: 'divider',
+                    bgcolor: (theme) =>
+                      theme.palette.mode === 'dark'
+                        ? isConnect
+                          ? 'rgba(34, 197, 94, 0.05)'
+                          : 'rgba(239, 68, 68, 0.05)'
+                        : isConnect
+                          ? '#f0fdf4'
+                          : '#fef2f2'
+                  }}
+                >
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25 }}>
+                    {isConnect ? (
+                      <CheckCircleIcon sx={{ color: 'success.main', fontSize: 18 }} />
+                    ) : (
+                      <PowerOffIcon sx={{ color: 'text.secondary', fontSize: 18 }} />
+                    )}
+                    <Box>
+                      <Typography variant="subtitle2" fontWeight={700}>
+                        {item.name || 'Telão'}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        {isConnect ? 'Telão ativado com sucesso' : 'Telão desconectado e vaga liberada'}
+                      </Typography>
+                    </Box>
+                  </Box>
+
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                    <Chip
+                      size="small"
+                      color={isConnect ? 'success' : 'default'}
+                      variant={isConnect ? 'filled' : 'outlined'}
+                      label={isConnect ? 'Conectado' : 'Desconectado'}
+                      sx={{ height: 22, fontSize: '0.7rem', fontWeight: 700 }}
+                    />
+                    <Typography variant="caption" color="text.secondary" sx={{ fontVariantNumeric: 'tabular-nums' }}>
+                      {dayjs(item.timestamp).format('DD/MM/YYYY [às] HH:mm:ss')}
+                    </Typography>
+                  </Box>
                 </Box>
               )
             })}
