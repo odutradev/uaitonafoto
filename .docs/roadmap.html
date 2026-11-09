@@ -1779,22 +1779,26 @@
         id: 'idea-gamification-missions',
         title: 'Gamificação: Missões Fotográficas Interativas',
         category: 'ai',
-        status: 'idea',
+        status: 'done',
         priority: 'P2',
-        desc: 'Desafios projetados no telão que desafiam os convidados a interagirem (ex: "Foto com o padrinho mais animado").',
+        desc: 'Desafios projetados no telão e no app de convidados para estimular fotos temáticas e engajamento dinâmico no evento.',
         businessImpact: 'Alto — Aumenta o volume de fotos enviadas em até 300%',
         techComplexity: 'Média',
         domain: 'Frontend & API',
-        progress: 'Sugestão Estratégica (v2.0)',
+        progress: '100% Entregue',
         checklist: [
-          'Lista de missões configuráveis pelo anfitrião ou sugestões por IA',
-          'Destaque no telão: "Missão da Rodada: Foto do melhor brinde!"',
-          'Medalha ou badge visual na foto que cumpre uma missão',
-          'Placar dos convidados mais participativos'
+          'Lista de desafios pré-definidos inteligente por tipo de evento (casamento, aniversário, corporativo, outros)',
+          'Toggle nas configurações do evento e aba dedicada de gestão de Desafios com CRUD e restauração de padrão',
+          'Botões duplos na tela do convidado: tirar foto normal ou cumprir desafio em modal com seleção',
+          'Destaque no telão ao vivo: badge comemorativo e mensagem personalizada de missão cumprida',
+          'Identificação das missões no mural de fotos do convidado e no painel do organizador'
         ],
         files: [
-          'ui/src/pages/app/eventScreen/index.tsx',
-          'ui/src/pages/public/guestEvent/index.tsx'
+          'api/src/domains/events/utils/defaultChallenges.ts',
+          'api/src/domains/events/actions/album/index.ts',
+          'ui/src/pages/app/eventDetails/sections/eventChallenges/index.tsx',
+          'ui/src/pages/public/guestEvent/sections/guestUpload/index.tsx',
+          'ui/src/pages/app/eventScreen/index.tsx'
         ],
         recommendations: 'Excelente para quebrar o gelo em mesas de casamento e eventos corporativos de fim de ano.'
       },

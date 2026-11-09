@@ -1,4 +1,11 @@
-import type { EventPhoto, EventPhase, EventType, PhotoVisibility, EventCustomization } from '@actions/events/types'
+import type {
+  EventPhoto,
+  EventPhase,
+  EventType,
+  PhotoVisibility,
+  EventCustomization,
+  EventChallenge
+} from '@actions/events/types'
 
 export interface GuestEventInfo {
   name: string
@@ -12,6 +19,8 @@ export interface GuestEventInfo {
   requiresPin: boolean
   phase: EventPhase
   customization?: EventCustomization
+  challengesEnabled?: boolean
+  challenges?: EventChallenge[]
 }
 
 export interface GuestProfile {

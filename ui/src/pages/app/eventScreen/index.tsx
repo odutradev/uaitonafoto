@@ -9,6 +9,7 @@ import {
   Typography
 } from '@mui/material'
 import {
+  EmojiEventsOutlined as ChallengeIcon,
   Favorite as LikeIcon,
   Fullscreen as FullscreenIcon,
   PhotoCameraOutlined as CameraIcon,
@@ -346,6 +347,33 @@ const EventScreen = () => {
                         Nova foto na festa!
                       </Box>
                     )}
+                    {currentPhoto.challengeTitle && (
+                      <Box
+                        sx={{
+                          position: 'absolute',
+                          top: 18,
+                          right: 18,
+                          bgcolor: '#f59e0b',
+                          color: brandColors.ink,
+                          fontWeight: 900,
+                          fontSize: '0.85rem',
+                          letterSpacing: '0.03em',
+                          textTransform: 'uppercase',
+                          px: 2,
+                          py: 0.7,
+                          borderRadius: '9999px',
+                          boxShadow: '0 4px 20px rgba(0,0,0,0.5)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 1,
+                          animation: 'photoEntrance 0.5s ease',
+                          zIndex: 6
+                        }}
+                      >
+                        <ChallengeIcon sx={{ fontSize: 20, color: brandColors.ink }} />
+                        Missão: {currentPhoto.challengeTitle}
+                      </Box>
+                    )}
                     <Box
                       key={currentPhoto.id}
                       component="img"
@@ -361,7 +389,9 @@ const EventScreen = () => {
                         {currentPhoto.guestName}
                       </Typography>
                       <Typography component="span" sx={bannerTextStyles}>
-                        entrou na foto
+                        {currentPhoto.challengeTitle
+                          ? `cumpriu a missão: "${currentPhoto.challengeTitle}"`
+                          : 'entrou na foto'}
                       </Typography>
                     </Box>
 

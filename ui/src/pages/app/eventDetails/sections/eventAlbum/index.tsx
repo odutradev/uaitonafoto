@@ -20,6 +20,7 @@ import {
   DeleteOutline as DeleteIcon,
   DoneAllOutlined as DoneAllIcon,
   DownloadOutlined as DownloadIcon,
+  EmojiEventsOutlined as ChallengeIcon,
   FavoriteBorder as LikeIcon,
   HourglassEmptyOutlined as PendingIcon,
   VerifiedOutlined as ApprovedIcon,
@@ -335,6 +336,34 @@ const EventAlbum = ({ event }: EventAlbumProps) => {
                         : photoStatus === 'approved'
                           ? 'Aprovada'
                           : 'Rejeitada'}
+                    </Box>
+                  )}
+
+                  {photo.challengeTitle && (
+                    <Box
+                      sx={{
+                        position: 'absolute',
+                        top: isModerationEnabled ? 32 : 8,
+                        left: 8,
+                        bgcolor: 'rgba(245, 158, 11, 0.95)',
+                        color: '#000',
+                        px: 1,
+                        py: 0.25,
+                        borderRadius: '6px',
+                        fontSize: '0.68rem',
+                        fontWeight: 800,
+                        zIndex: 2,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 0.5,
+                        maxWidth: 'calc(100% - 16px)',
+                        boxShadow: '0 2px 6px rgba(0,0,0,0.3)'
+                      }}
+                    >
+                      <ChallengeIcon sx={{ fontSize: 13 }} />
+                      <Typography component="span" noWrap sx={{ fontSize: '0.68rem', fontWeight: 800 }}>
+                        {photo.challengeTitle}
+                      </Typography>
                     </Box>
                   )}
 

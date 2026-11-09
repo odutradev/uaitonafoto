@@ -1,6 +1,7 @@
 import { Alert, Box, Button, IconButton, Paper, Typography } from '@mui/material'
 import {
   DeleteOutline as DeleteIcon,
+  EmojiEventsOutlined as ChallengeIcon,
   Favorite as LikedIcon,
   FavoriteBorder as LikeIcon
 } from '@mui/icons-material'
@@ -10,6 +11,7 @@ import Pagination from '@components/pagination'
 
 import {
   actionsStyles,
+  challengeChipStyles,
   feedGridStyles,
   feedSectionStyles,
   guestNameStyles,
@@ -53,6 +55,18 @@ const GuestPhotosFeed = ({
           <Box sx={feedGridStyles}>
             {photos.map((photo) => (
               <Paper key={photo.id} variant="outlined" sx={photoCardStyles}>
+                {photo.challengeTitle && (
+                  <Box sx={challengeChipStyles}>
+                    <ChallengeIcon sx={{ fontSize: 14, flexShrink: 0, color: '#ffb74d' }} />
+                    <Typography
+                      component="span"
+                      noWrap
+                      sx={{ fontSize: '0.75rem', fontWeight: 700, color: '#ffb74d', maxWidth: 160 }}
+                    >
+                      {photo.challengeTitle}
+                    </Typography>
+                  </Box>
+                )}
                 <Box component="img" src={photo.url} alt={`Foto de ${photo.guestName}`} loading="lazy" sx={photoImageStyles} />
                 <Box sx={photoBarStyles}>
                   <Typography variant="body2" sx={guestNameStyles}>

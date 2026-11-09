@@ -5,6 +5,6 @@ export interface GuestUploadProps {
   guest: GuestProfile
   photosSent: number
   isUploading: boolean
-  onUpload: (file: File) => Promise<void>
+  onUpload: (file: File, challengeId?: string, challengeTitle?: string) => Promise<void>
 }
 

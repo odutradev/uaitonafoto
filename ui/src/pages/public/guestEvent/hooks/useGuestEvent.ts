@@ -195,15 +195,19 @@ const useGuestEvent = (eventToken: string) => {
     }
   }
 
-  const upload = async (file: File) => {
+  const upload = async (file: File, challengeId?: string, challengeTitle?: string) => {
     if (!guestToken) return
     setIsUploading(true)
     try {
-      await uploadGuestPhoto(guestToken, file)
+      await uploadGuestPhoto(guestToken, file, challengeId, challengeTitle)
       setPhotosSent((count) => count + 1)
       setPage(1)
       await loadFeed(guestToken, 1)
-      toast.success('Foto enviada!')
+      if (challengeTitle) {
+        toast.success(`Desafio "${challengeTitle}" cumprido! Foto enviada!`)
+      } else {
+        toast.success('Foto enviada!')
+      }
     } catch (error) {
       toast.error(getErrorMessage(error, 'Não foi possível enviar a foto.'))
     } finally {
