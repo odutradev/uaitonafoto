@@ -316,25 +316,27 @@ const EventScreens = ({
                     </Box>
                   </Box>
 
-                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <Typography variant="caption" color="text.secondary" fontWeight={700}>
-                        PIN
-                      </Typography>
-                      <Typography sx={pinCodeTextStyles}>{slot.pin}</Typography>
-                      <Tooltip title="Copiar PIN">
-                        <IconButton
-                          size="small"
-                          onClick={() => handleCopyScreenPin(slot.pin)}
-                          disabled={isManagingScreen}
-                          aria-label="Copiar PIN"
-                          sx={compactIconButtonStyles}
-                        >
-                          <CopyIcon sx={{ fontSize: 15 }} />
-                        </IconButton>
-                      </Tooltip>
+                  {!slot.activatedAt && (
+                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1 }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Typography variant="caption" color="text.secondary" fontWeight={700}>
+                          PIN
+                        </Typography>
+                        <Typography sx={pinCodeTextStyles}>{slot.pin}</Typography>
+                        <Tooltip title="Copiar PIN">
+                          <IconButton
+                            size="small"
+                            onClick={() => handleCopyScreenPin(slot.pin)}
+                            disabled={isManagingScreen}
+                            aria-label="Copiar PIN"
+                            sx={compactIconButtonStyles}
+                          >
+                            <CopyIcon sx={{ fontSize: 15 }} />
+                          </IconButton>
+                        </Tooltip>
+                      </Box>
                     </Box>
-                  </Box>
+                  )}
 
                   <Typography variant="caption" color="text.secondary">
                     {badge.detail}
