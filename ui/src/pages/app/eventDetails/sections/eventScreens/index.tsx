@@ -3,7 +3,6 @@ import {
   Box,
   Button,
   Card,
-  Chip,
   CircularProgress,
   IconButton,
   TextField,
@@ -15,7 +14,6 @@ import {
   ContentCopyOutlined as CopyIcon,
   DeleteOutline as DeleteIcon,
   EditOutlined as EditIcon,
-  LiveTvOutlined as ScreenIcon,
   LockOpenOutlined as LockOpenIcon,
   OpenInNewOutlined as OpenIcon,
   RefreshOutlined as RefreshIcon
@@ -27,7 +25,10 @@ import Modal from '@components/modal'
 import { buildScreenLink, MAX_EVENT_SCREENS } from '@config/events'
 
 import {
+  compactIconButtonStyles,
+  countBadgeStyles,
   linkFieldBoxStyles,
+  linkIconActionsStyles,
   linkTextStyles,
   pinCodeTextStyles,
   screenActionButtonStyles,
@@ -36,9 +37,9 @@ import {
   screenHeaderRowStyles,
   screenSectionStackStyles,
   screenSlotCardStyles,
-  screenSlotFooterStyles,
   screenSlotHeaderStyles,
-  screenSlotsGridStyles
+  screenSlotsGridStyles,
+  statusPillStyles
 } from './styles'
 import type { EventScreenSlot } from '@actions/events/types'
 import type { EventScreensProps } from './types'
@@ -48,9 +49,8 @@ const SCREEN_ONLINE_TIMEOUT_MS = 30_000
 const getScreenStatusBadge = (slot: EventScreenSlot) => {
   if (!slot.activatedAt) {
     return {
-      label: 'Aguardando ativação',
-      color: 'default' as const,
-      variant: 'outlined' as const,
+      status: 'pending' as const,
+      label: 'Aguardando',
       detail: 'Aguardando inserção do PIN no navegador do telão'
     }
   }
@@ -60,17 +60,15 @@ const getScreenStatusBadge = (slot: EventScreenSlot) => {
 
   if (isOnline) {
     return {
+      status: 'online' as const,
       label: 'Online',
-      color: 'success' as const,
-      variant: 'filled' as const,
-      detail: `Conectado em tempo real · Sinal às ${dayjs(slot.lastSeenAt).format('HH:mm:ss')}`
+      detail: `Conectado · Sinal às ${dayjs(slot.lastSeenAt).format('HH:mm:ss')}`
     }
   }
 
   return {
+    status: 'offline' as const,
     label: 'Offline',
-    color: 'warning' as const,
-    variant: 'outlined' as const,
     detail: slot.lastSeenAt
       ? `Último sinal em ${dayjs(slot.lastSeenAt).format('DD/MM [às] HH:mm')}`
       : `Ativado em ${dayjs(slot.activatedAt).format('DD/MM [às] HH:mm')}`
@@ -166,79 +164,67 @@ const EventScreens = ({
         <Box sx={screenHeaderRowStyles}>
           <Box>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
-              <ScreenIcon fontSize="small" color="primary" />
-              <Typography variant="h6" component="h2">
+              <Typography variant="subtitle1" fontWeight={700} component="h2">
                 Telões do evento
               </Typography>
-              <Chip
-                size="small"
-                variant="outlined"
-                color={isScreenLimitReached ? 'warning' : 'default'}
-                label={`${screens.length}/${MAX_EVENT_SCREENS} configurados`}
-              />
-              {screens.some((slot) => !slot.activatedAt) && (
-                <Chip size="small" variant="outlined" color="info" label="Sincronizando em tempo real" />
-              )}
+              <Box component="span" sx={countBadgeStyles}>
+                {screens.length}/{MAX_EVENT_SCREENS}
+              </Box>
             </Box>
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-              A URL do telão é pública, mas exige ativação por PIN. Gere até {MAX_EVENT_SCREENS} PINs e insira no navegador de cada telão para liberar o acesso.
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.25 }}>
+              Gere até {MAX_EVENT_SCREENS} PINs e insira no navegador de cada telão para ativar a exibição.
             </Typography>
           </Box>
 
           <Box sx={screenHeaderActionsStyles}>
+            {onRefresh && (
+              <Tooltip title="Atualizar status dos telões">
+                <span>
+                  <IconButton
+                    size="small"
+                    onClick={handleRefresh}
+                    disabled={isRefreshing}
+                    aria-label="Atualizar status"
+                    sx={compactIconButtonStyles}
+                  >
+                    {isRefreshing ? (
+                      <CircularProgress size={16} color="inherit" />
+                    ) : (
+                      <RefreshIcon sx={{ fontSize: 18 }} />
+                    )}
+                  </IconButton>
+                </span>
+              </Tooltip>
+            )}
+
             {onUnlockLockouts && (
               <Tooltip title="Desbloqueia telões travados por tentativas excessivas de PIN">
                 <span>
                   <Button
+                    size="small"
                     variant="outlined"
                     color="inherit"
                     startIcon={
                       isUnlocking ? (
-                        <CircularProgress size={16} color="inherit" />
+                        <CircularProgress size={14} color="inherit" />
                       ) : (
-                        <LockOpenIcon fontSize="small" />
+                        <LockOpenIcon sx={{ fontSize: 16 }} />
                       )
                     }
                     onClick={handleUnlockLockouts}
                     disabled={isUnlocking}
-                    sx={screenActionButtonStyles}
+                    sx={{ ...screenActionButtonStyles, borderColor: 'divider', color: 'text.secondary' }}
                   >
-                    Desbloquear telões
+                    Desbloquear
                   </Button>
                 </span>
               </Tooltip>
             )}
 
-            {onRefresh && (
-              <Button
-                variant="outlined"
-                startIcon={
-                  isRefreshing ? (
-                    <CircularProgress size={16} color="inherit" />
-                  ) : (
-                    <RefreshIcon fontSize="small" />
-                  )
-                }
-                onClick={handleRefresh}
-                disabled={isRefreshing}
-                sx={screenActionButtonStyles}
-              >
-                Atualizar status
-              </Button>
-            )}
-
             <Button
-              variant="outlined"
-              startIcon={<OpenIcon fontSize="small" />}
-              onClick={onOpenScreen}
-              sx={screenActionButtonStyles}
-            >
-              Abrir telão
-            </Button>
-
-            <Button
+              size="small"
               variant="contained"
-              startIcon={<AddIcon fontSize="small" />}
+              startIcon={<AddIcon sx={{ fontSize: 16 }} />}
               onClick={handleOpenAddModal}
               disabled={isManagingScreen || isScreenLimitReached}
               sx={screenActionButtonStyles}
@@ -252,11 +238,28 @@ const EventScreens = ({
           <Typography variant="body2" sx={linkTextStyles} title={screenLink}>
             {screenLink}
           </Typography>
-          <Tooltip title="Copiar link do telão">
-            <IconButton size="small" onClick={handleCopyScreenLink} aria-label="Copiar link do telão">
-              <CopyIcon fontSize="small" />
-            </IconButton>
-          </Tooltip>
+          <Box sx={linkIconActionsStyles}>
+            <Tooltip title="Copiar link do telão">
+              <IconButton
+                size="small"
+                onClick={handleCopyScreenLink}
+                aria-label="Copiar link do telão"
+                sx={compactIconButtonStyles}
+              >
+                <CopyIcon sx={{ fontSize: 16 }} />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Abrir telão">
+              <IconButton
+                size="small"
+                onClick={onOpenScreen}
+                aria-label="Abrir telão"
+                sx={compactIconButtonStyles}
+              >
+                <OpenIcon sx={{ fontSize: 16 }} />
+              </IconButton>
+            </Tooltip>
+          </Box>
         </Box>
 
         {screens.length === 0 ? (
@@ -271,77 +274,65 @@ const EventScreens = ({
               return (
                 <Box key={slot.id} sx={screenSlotCardStyles}>
                   <Box sx={screenSlotHeaderStyles}>
-                    <Box sx={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, minWidth: 0 }}>
-                        <Typography variant="subtitle2" fontWeight={700} noWrap>
-                          {slot.name || `Telão ${index + 1}`}
-                        </Typography>
-                        <Tooltip title="Renomear telão">
-                          <IconButton
-                            size="small"
-                            onClick={() => handleOpenRenameModal(slot)}
-                            aria-label="Renomear telão"
-                            sx={{ p: 0.25, opacity: 0.7, '&:hover': { opacity: 1 } }}
-                          >
-                            <EditIcon sx={{ fontSize: 16 }} />
-                          </IconButton>
-                        </Tooltip>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 0 }}>
+                      <Typography variant="subtitle2" fontWeight={700} noWrap>
+                        {slot.name || `Telão ${index + 1}`}
+                      </Typography>
+                      <Box component="span" sx={statusPillStyles(badge.status)}>
+                        {badge.label}
                       </Box>
-                      {slot.name && (
-                        <Typography variant="caption" color="text.secondary">
-                          Telão {index + 1}
-                        </Typography>
-                      )}
                     </Box>
-                    <Chip
-                      size="small"
-                      color={badge.color}
-                      variant={badge.variant}
-                      label={badge.label}
-                    />
+
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.25, flexShrink: 0 }}>
+                      <Tooltip title="Renomear telão">
+                        <IconButton
+                          size="small"
+                          onClick={() => handleOpenRenameModal(slot)}
+                          disabled={isManagingScreen}
+                          aria-label="Renomear telão"
+                          sx={compactIconButtonStyles}
+                        >
+                          <EditIcon sx={{ fontSize: 16 }} />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Desconectar telão">
+                        <IconButton
+                          size="small"
+                          color="error"
+                          onClick={() => handleDisconnectScreen(slot.id)}
+                          disabled={isManagingScreen}
+                          aria-label="Desconectar telão"
+                          sx={{ ...compactIconButtonStyles, color: 'error.main' }}
+                        >
+                          <DeleteIcon sx={{ fontSize: 16 }} />
+                        </IconButton>
+                      </Tooltip>
+                    </Box>
                   </Box>
 
-                  <Box>
-                    <Typography variant="caption" color="text.secondary" fontWeight={700}>
-                      PIN DE ATIVAÇÃO
-                    </Typography>
-                    <Typography sx={pinCodeTextStyles}>{slot.pin}</Typography>
+                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Typography variant="caption" color="text.secondary" fontWeight={700}>
+                        PIN
+                      </Typography>
+                      <Typography sx={pinCodeTextStyles}>{slot.pin}</Typography>
+                      <Tooltip title="Copiar PIN">
+                        <IconButton
+                          size="small"
+                          onClick={() => handleCopyScreenPin(slot.pin)}
+                          disabled={isManagingScreen}
+                          aria-label="Copiar PIN"
+                          sx={compactIconButtonStyles}
+                        >
+                          <CopyIcon sx={{ fontSize: 15 }} />
+                        </IconButton>
+                      </Tooltip>
+                    </Box>
                   </Box>
 
                   <Typography variant="caption" color="text.secondary">
                     {badge.detail}
                   </Typography>
-
-                  <Box sx={screenSlotFooterStyles}>
-                    <Button
-                      size="small"
-                      variant="outlined"
-                      startIcon={<CopyIcon fontSize="small" />}
-                      onClick={() => handleCopyScreenPin(slot.pin)}
-                      disabled={isManagingScreen}
-                    >
-                      Copiar PIN
-                    </Button>
-                    <Button
-                      size="small"
-                      variant="outlined"
-                      startIcon={<EditIcon fontSize="small" />}
-                      onClick={() => handleOpenRenameModal(slot)}
-                      disabled={isManagingScreen}
-                    >
-                      Renomear
-                    </Button>
-                    <Button
-                      size="small"
-                      color="error"
-                      variant="outlined"
-                      startIcon={<DeleteIcon fontSize="small" />}
-                      onClick={() => handleDisconnectScreen(slot.id)}
-                      disabled={isManagingScreen}
-                    >
-                      Desconectar
-                    </Button>
-                  </Box>
                 </Box>
               )
             })}
@@ -421,4 +412,5 @@ const EventScreens = ({
 }
 
 export default EventScreens
+
 
