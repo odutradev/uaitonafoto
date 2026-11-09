@@ -48,12 +48,15 @@ export const plansConfig: PlanConfig[] = [
     description: 'Perfeito para noivos, aniversariantes e formaturas contratando para uma data especial.',
     features: [
       '1 evento completo com fotos ilimitadas',
-      'Duração do evento: 8 horas no mural e telão',
-      'Convidados ilimitados sem precisar baixar aplicativo',
-      'Modo Telão ao vivo sem marcas d\'água',
-      'Moderação de fotos com senha de segurança',
-      'Baixe todas as fotos em alta resolução (.zip)',
-      'Galeria ativa por 90 dias'
+      '8 horas de telão ao vivo e recepção de fotos',
+      '2 telões simultâneos com PIN individual',
+      '1 convidado na equipe organizadora',
+      'Convidados ilimitados sem app e sem cadastro',
+      'Moderação de fotos em tempo real com PIN',
+      'Missões fotográficas interativas',
+      'Display de mesa com QR Code para impressão',
+      'Download de todas as fotos em alta resolução (.zip)',
+      'Galeria online ativa por 90 dias'
     ],
     ctaText: 'Criar meu evento',
     ctaHref: 'prod_b2c_event_pass',
@@ -92,10 +95,12 @@ export const plansConfig: PlanConfig[] = [
     costPerEvent: 'R$ 61,75 por evento (58% de economia)',
     description: 'Para assessores e cerimonialistas que realizam eventos com frequência regular.',
     features: [
+      'Tudo que tem no Avulso, mais:',
       '4 eventos inclusos por mês',
-      'Sua própria marca no telão e no aplicativo',
+      '3 telões simultâneos por evento',
+      '2 convidados na equipe organizadora',
+      'Sua própria marca White-Label no telão e app',
       'Créditos acumulativos enquanto o plano estiver ativo',
-      'Acesso de moderação com senha para sua equipe',
       'Crédito extra avulso por R$ 69,00'
     ],
     ctaText: 'Assinar Essencial',
@@ -117,7 +122,10 @@ export const plansConfig: PlanConfig[] = [
     costPerEvent: 'R$ 44,70 por evento (70% de economia)',
     description: 'O melhor custo-benefício para agências consolidadas com múltiplos eventos por semana.',
     features: [
+      'Tudo que tem no Essencial, mais:',
       '10 eventos inclusos por mês',
+      '4 telões simultâneos por evento',
+      '5 convidados na equipe organizadora',
       'Sua marca em destaque para atrair novos clientes',
       'Botão direto para seu WhatsApp no mural de fotos',
       'Créditos acumulativos enquanto o plano estiver ativo',

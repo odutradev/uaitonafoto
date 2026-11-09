@@ -19,7 +19,7 @@ export const SEED_PLANS: SeedProduct[] = [
     name: 'Passe Evento Completo',
     price: 14700,
     currency: 'BRL',
-    description: 'Fotos e convidados ilimitados, Modo Telão liberado sem marca d\'água, moderação por PIN, download em .zip e galeria ativa por 90 dias.'
+    description: '1 evento completo com fotos ilimitadas, 2 telões simultâneos, 1 convidado na equipe, moderação por PIN, display de mesa, download em .zip e galeria por 90 dias.'
   },
   {
     externalId: 'prod_b2c_upsell_year',
@@ -33,7 +33,7 @@ export const SEED_PLANS: SeedProduct[] = [
     name: 'Plano Agência Essencial',
     price: 24700,
     currency: 'BRL',
-    description: 'Franquia de 4 eventos por mês, selo White-Label da assessoria, créditos acumulativos enquanto o plano estiver ativo e painel de moderação de equipe.',
+    description: 'Tudo do Avulso mais: 4 eventos/mês, 3 telões simultâneos, 2 convidados na equipe, personalização White-Label e créditos acumulativos.',
     cycle: ProductCycle.Monthly
   },
   {
@@ -41,7 +41,7 @@ export const SEED_PLANS: SeedProduct[] = [
     name: 'Plano Agência Pro',
     price: 44700,
     currency: 'BRL',
-    description: 'Franquia de 10 eventos por mês, selo White-Label da assessoria, créditos acumulativos enquanto o plano estiver ativo e painel de moderação de equipe.',
+    description: 'Tudo do Essencial mais: 10 eventos/mês, 4 telões simultâneos, 5 convidados na equipe, WhatsApp da assessoria no mural e destaque da marca.',
     cycle: ProductCycle.Monthly
   },
   {
