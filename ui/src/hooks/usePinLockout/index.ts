@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { CLIENT_DEVICE_ID_KEY, getClientDeviceId, getClientFingerprint } from '@/utils/deviceIdentity'
 import type { PinLockoutOptions, PinLockoutState, StoredPinLockout } from './types'
 
-export const CLIENT_DEVICE_ID_KEY = 'uaitonafoto:client_device_id'
+export { CLIENT_DEVICE_ID_KEY, getClientDeviceId, getClientFingerprint }
 export const PIN_LOCKOUT_STORAGE_PREFIX = 'uaitonafoto:lockout:'
 export const PIN_LOCKOUT_MAX_FREE_ATTEMPTS = 4
 export const PIN_LOCKOUT_PERMANENT_THRESHOLD = 10
@@ -12,22 +13,6 @@ export const PIN_LOCKOUT_DURATIONS: Record<number, number> = {
   7: 900,
   8: 3600,
   9: 3600
-}
-
-export const getClientDeviceId = (): string => {
-  try {
-    let id = localStorage.getItem(CLIENT_DEVICE_ID_KEY)
-    if (!id) {
-      id =
-        typeof crypto !== 'undefined' && crypto.randomUUID
-          ? crypto.randomUUID()
-          : `dev_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`
-      localStorage.setItem(CLIENT_DEVICE_ID_KEY, id)
-    }
-    return id
-  } catch {
-    return 'browser_device'
-  }
 }
 
 const getStorageKey = (scope: string, targetId: string): string =>

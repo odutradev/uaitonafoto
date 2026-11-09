@@ -200,5 +200,7 @@ export interface EventGuest {
   name: string
   photosCount: number
   isBlocked: boolean
+  ip?: string
+  lastActiveAt?: string
   createdAt: string
 }

@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 import defaultConfig from '@config/default'
-import { getClientDeviceId } from '@hooks/usePinLockout'
+import { getClientDeviceId, getClientFingerprint } from '@hooks/usePinLockout'
 
 import type { ScreenEventInfo } from './types'
 
@@ -12,6 +12,7 @@ const screenApi = axios.create({ baseURL: defaultConfig.baseURL })
 
 screenApi.interceptors.request.use((config) => {
   config.headers['x-client-device-id'] = getClientDeviceId()
+  config.headers['x-client-fingerprint'] = getClientFingerprint()
   return config
 })
 

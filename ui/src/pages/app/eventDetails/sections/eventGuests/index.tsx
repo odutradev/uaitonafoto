@@ -278,8 +278,15 @@ const EventGuests = ({ event }: EventGuestsProps) => {
                         <Typography variant="subtitle2" fontWeight={700} noWrap>
                           {guest.name}
                         </Typography>
-                        <Box component="span" sx={guestStatusPillStyles(guest.isBlocked)}>
-                          {guest.isBlocked ? 'Bloqueado' : 'Ativo'}
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, flexWrap: 'wrap' }}>
+                          <Box component="span" sx={guestStatusPillStyles(guest.isBlocked)}>
+                            {guest.isBlocked ? 'Bloqueado' : 'Ativo'}
+                          </Box>
+                          {guest.ip && guest.ip !== 'unknown' && (
+                            <Typography variant="caption" sx={{ fontSize: '0.6875rem', color: 'text.disabled' }}>
+                              {guest.ip}
+                            </Typography>
+                          )}
                         </Box>
                       </Box>
                     </Box>

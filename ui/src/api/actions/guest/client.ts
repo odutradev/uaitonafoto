@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 import defaultConfig from '@config/default'
-import { getClientDeviceId } from '@hooks/usePinLockout'
+import { getClientDeviceId, getClientFingerprint } from '@hooks/usePinLockout'
 
 export const GUEST_TOKEN_STORAGE_PREFIX = 'uaitonafoto:guest:'
 
@@ -9,6 +9,7 @@ const guestApi = axios.create({ baseURL: defaultConfig.baseURL })
 
 guestApi.interceptors.request.use((config) => {
   config.headers['x-client-device-id'] = getClientDeviceId()
+  config.headers['x-client-fingerprint'] = getClientFingerprint()
   return config
 })
 
