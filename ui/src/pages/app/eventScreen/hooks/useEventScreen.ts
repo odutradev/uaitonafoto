@@ -221,6 +221,12 @@ const useEventScreen = (eventId: string) => {
         }
       })
 
+      eventSource.addEventListener('lockout:reset', () => {
+        if (!isActive) return
+        lockout.resetLockout()
+        setActivationError(null)
+      })
+
       eventSource.onerror = () => {
         if (!isActive) return
         setIsLiveStreamConnected(false)

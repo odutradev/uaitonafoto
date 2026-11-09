@@ -149,3 +149,9 @@ export interface ScreenParams {
   since?: string
   limit?: number
 }
+
+export interface ResetLockoutsResponse {
+  success: boolean
+  clearedCount: number
+  message: string
+}

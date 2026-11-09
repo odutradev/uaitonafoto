@@ -10,6 +10,7 @@ import type {
   EventScreenSlot,
   Paginated,
   PaginationParams,
+  ResetLockoutsResponse,
   ScreenParams,
   ScreenResponse,
   TeamMember,
@@ -119,5 +120,13 @@ export const getEventAlbum = async (id: string, params?: AlbumParams): Promise<P
 
 export const deleteEventPhoto = async (id: string, photoId: string): Promise<EventPhoto> => {
   const response = await api.delete<EventPhoto>(`/events/${id}/photos/${photoId}`)
+  return response.data
+}
+
+export const resetEventLockouts = async (
+  id: string,
+  scope: 'all' | 'screen' | 'guest' = 'all'
+): Promise<ResetLockoutsResponse> => {
+  const response = await api.post<ResetLockoutsResponse>(`/events/${id}/lockout/reset`, { scope })
   return response.data
 }

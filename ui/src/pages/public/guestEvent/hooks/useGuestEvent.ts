@@ -166,6 +166,11 @@ const useGuestEvent = (eventToken: string) => {
           // Ignore parse error
         }
       })
+
+      eventSource.addEventListener('lockout:reset', () => {
+        if (!isActive) return
+        lockout.resetLockout()
+      })
     }
 
     return () => {
