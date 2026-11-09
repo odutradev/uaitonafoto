@@ -1,7 +1,17 @@
 import type { EventItem } from '@actions/events/types'
-import { downloadBlob } from '@/utils/download'
 import type { TableDisplayConfig } from './types'
 import { TEMPLATE_THEMES } from './templates/styles'
+
+const downloadBlob = (blob: Blob, filename: string): void => {
+  const blobUrl = window.URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = blobUrl
+  link.download = filename
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+  window.URL.revokeObjectURL(blobUrl)
+}
 
 interface ExportPngParams {
   event: EventItem

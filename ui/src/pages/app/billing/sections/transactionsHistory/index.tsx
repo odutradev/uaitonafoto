@@ -18,7 +18,7 @@ import { OpenInNew as PayNowIcon } from '@mui/icons-material'
 
 import Pagination from '@components/pagination'
 
-import { formatPriceInBrl } from '@pages/public/landingPage/sections/plans/utils'
+import { formatPriceInBrl } from '@config/formatters'
 import { Link as RouterLink } from 'react-router-dom'
 
 import {

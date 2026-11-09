@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 import defaultConfig from '@config/default'
-import { getClientDeviceId } from '@hooks/usePinLockout/utils'
+import { getClientDeviceId } from '@hooks/usePinLockout'
 
 export const GUEST_TOKEN_STORAGE_PREFIX = 'uaitonafoto:guest:'
 

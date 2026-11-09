@@ -1,7 +1,7 @@
 import { Box, Button, Card, Chip, Pagination, Stack, Typography } from '@mui/material'
 import { ReceiptLong as ReceiptLongIcon } from '@mui/icons-material'
 
-import { formatPriceInBrl } from '@pages/public/landingPage/sections/plans/utils'
+import { formatPriceInBrl } from '@config/formatters'
 
 import {
   badgeChipStyles,

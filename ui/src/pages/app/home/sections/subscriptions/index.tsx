@@ -14,7 +14,7 @@ import {
   Typography
 } from '@mui/material'
 
-import { formatPriceInBrl } from '@pages/public/landingPage/sections/plans/utils'
+import { formatPriceInBrl } from '@config/formatters'
 
 import {
   cancelButtonStyles,

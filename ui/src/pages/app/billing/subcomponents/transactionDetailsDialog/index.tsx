@@ -18,7 +18,7 @@ import {
 } from '@mui/icons-material'
 import { toast } from 'react-toastify'
 
-import { formatPriceInBrl } from '@pages/public/landingPage/sections/plans/utils'
+import { formatPriceInBrl } from '@config/formatters'
 
 import {
   dialogActionsStyles,

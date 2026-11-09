@@ -10,7 +10,7 @@ import {
 } from '@mui/material'
 
 import Modal from '@components/modal'
-import { formatPriceInBrl } from '@pages/public/landingPage/sections/plans/utils'
+import { formatPriceInBrl } from '@config/formatters'
 
 import {
   activePlanCardStyles,

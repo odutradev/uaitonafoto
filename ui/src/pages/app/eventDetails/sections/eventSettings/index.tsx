@@ -26,8 +26,7 @@ import {
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 
-import EventFormFields from '@components/eventFormFields'
-import { isValidEventPeriod, isValidEventPin, toEventForm, toEventPayload } from '@components/eventFormFields/utils'
+import EventFormFields, { isValidEventPeriod, isValidEventPin, toEventForm, toEventPayload } from '@components/eventFormFields'
 import { isEventStarted } from '@config/eventPhase'
 import Modal from '@components/modal'
 import useAuth from '@hooks/useAuth'

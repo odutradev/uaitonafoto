@@ -15,7 +15,7 @@ import {
   ShieldOutlined as ShieldIcon
 } from '@mui/icons-material'
 
-import { formatPriceInBrl } from '@pages/public/landingPage/sections/plans/utils'
+import { formatPriceInBrl } from '@config/formatters'
 
 import {
   cancelButtonStyles,
