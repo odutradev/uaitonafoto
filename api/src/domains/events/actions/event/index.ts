@@ -11,6 +11,7 @@ import { broadcastEvent } from '@realtime'
 import { purgeEventPhotos } from '../../utils/photoStorage'
 import { computeEventWindows, getEventMaxDurationHours, getEventMaxEndsAt, getEventPhase } from '../../utils/eventWindows'
 import type { EventCreditType, EventEntity, EventMemberRole, EventSettings } from '../../repositories/events/types'
+import { EVENT_PLAN_LIMITS, resolveUserPlanTier } from '../../utils/eventLimits'
 import {
   createEventSchema,
   eventParamsSchema,
@@ -39,28 +40,36 @@ const buildDefaultEventSettings = (creditType: EventCreditType = 'paid'): EventS
   challengesEnabled: false
 })
 
-const toEventResponse = (entity: EventEntity, myRole: EventMemberRole): EventResponse => ({
-  id: entity.id,
-  name: entity.name,
-  description: entity.description,
-  type: entity.type,
-  creditType: entity.creditType,
-  startsAt: entity.startsAt,
-  endsAt: entity.endsAt,
-  guestToken: entity.guestToken,
-  settings: entity.settings,
-  customization: entity.customization,
-  uploadsCloseAt: entity.uploadsCloseAt,
-  galleryExpiresAt: entity.galleryExpiresAt,
-  closedAt: entity.closedAt,
-  phase: getEventPhase(entity),
-  challenges: entity.challenges ?? [],
-  members: entity.members,
-  screens: entity.screens,
-  myRole,
-  createdAt: entity.createdAt,
-  updatedAt: entity.updatedAt
-})
+const toEventResponse = (entity: EventEntity, myRole: EventMemberRole): EventResponse => {
+  const tier = entity.planTier || 'single'
+  const limits = EVENT_PLAN_LIMITS[tier] || EVENT_PLAN_LIMITS.single
+
+  return {
+    id: entity.id,
+    name: entity.name,
+    description: entity.description,
+    type: entity.type,
+    creditType: entity.creditType,
+    planTier: tier,
+    maxOrganizers: limits.maxOrganizers,
+    maxScreens: limits.maxScreens,
+    startsAt: entity.startsAt,
+    endsAt: entity.endsAt,
+    guestToken: entity.guestToken,
+    settings: entity.settings,
+    customization: entity.customization,
+    uploadsCloseAt: entity.uploadsCloseAt,
+    galleryExpiresAt: entity.galleryExpiresAt,
+    closedAt: entity.closedAt,
+    phase: getEventPhase(entity),
+    challenges: entity.challenges ?? [],
+    members: entity.members,
+    screens: entity.screens,
+    myRole,
+    createdAt: entity.createdAt,
+    updatedAt: entity.updatedAt
+  }
+}
 
 import type { ManageRequestBody, ManageRequestResponse } from '@middlewares/manageRequest/types'
 import type {
@@ -125,11 +134,13 @@ export const createEvent = defineAction(
 
     const settings = { ...buildDefaultEventSettings(creditType), ...data.settings }
     const customization = data.customization ?? user.customization
+    const planTier = data.planTier ?? (await resolveUserPlanTier(user.id))
 
     try {
       const event = await eventRepository.create({
         ...data,
         creditType,
+        planTier,
         endsAt,
         settings,
         customization,

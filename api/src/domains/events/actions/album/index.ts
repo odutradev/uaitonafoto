@@ -17,6 +17,7 @@ import { removePhotoFile } from '../../utils/photoStorage'
 import { signScreenToken } from '../../utils/screenToken'
 import { toPhotoResponses } from '../photo'
 import { findMemberRole } from '../event'
+import { resolveEventLimits } from '../../utils/eventLimits'
 import type { TeamAccess } from '../../utils/types'
 import type { EventChallenge, EventType } from '../../repositories/events/types'
 
@@ -147,10 +148,12 @@ export const createScreenSlot = defineAction(
     const access = await loadTeamAccess(params.id, ids.userId)
     if ('error' in access) return manageError({ code: access.error })
 
-    if (access.event.screens.length >= MAX_ACTIVE_SCREENS) {
+    const { maxScreens } = await resolveEventLimits(access.event)
+
+    if (access.event.screens.length >= maxScreens) {
       return manageError({
         code: 'conflict',
-        details: 'Limite de 2 telões atingido. Desconecte um telão para gerar um novo PIN.'
+        details: `Limite de ${maxScreens} telões atingido para este evento. Desconecte um telão para gerar um novo PIN.`
       })
     }
 
@@ -163,11 +166,11 @@ export const createScreenSlot = defineAction(
       createdAt: new Date().toISOString()
     }
 
-    const updated = await eventRepository.addScreenSlot(access.event.id, slot, MAX_ACTIVE_SCREENS)
+    const updated = await eventRepository.addScreenSlot(access.event.id, slot, maxScreens)
     if (!updated) {
       return manageError({
         code: 'conflict',
-        details: 'Limite de 2 telões atingido. Desconecte um telão para gerar um novo PIN.'
+        details: `Limite de ${maxScreens} telões atingido para este evento. Desconecte um telão para gerar um novo PIN.`
       })
     }
 

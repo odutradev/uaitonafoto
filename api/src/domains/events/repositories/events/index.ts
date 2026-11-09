@@ -16,6 +16,7 @@ const toEventEntity = (doc: any): EventEntity => {
     ...rest,
     id: String(_id),
     creditType: rest.creditType ?? 'paid',
+    planTier: rest.planTier ?? 'single',
     customization: doc.customization ?? undefined,
     closedAt: doc.closedAt ?? undefined,
     screens,

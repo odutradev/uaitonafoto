@@ -59,6 +59,7 @@ const eventSchema = new Schema<EventDocument>(
     description: { type: String },
     type: { type: String, enum: ['birthday', 'wedding', 'corporate', 'other'], required: true },
     creditType: { type: String, enum: ['free', 'paid'], default: 'paid' },
+    planTier: { type: String, enum: ['single', 'essential', 'pro'], default: 'single' },
     startsAt: { type: String, required: true },
     endsAt: { type: String, required: true },
     guestToken: { type: String, required: true, unique: true, default: () => randomBytes(9).toString('base64url') },

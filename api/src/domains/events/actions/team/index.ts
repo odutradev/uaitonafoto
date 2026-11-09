@@ -2,6 +2,7 @@ import defineAction from '@factories/defineAction'
 import userRepository from '@domains/users/repositories'
 import eventRepository from '../../repositories/events'
 import { findMemberRole } from '../event'
+import { resolveEventLimits } from '../../utils/eventLimits'
 import type { EventEntity } from '../../repositories/events/types'
 
 const buildTeamResponse = async (event: EventEntity): Promise<TeamListResponse> => {
@@ -87,11 +88,12 @@ export const addOrganizer = defineAction(
     if (!event) return manageError({ code: 'not_found' })
     if (findMemberRole(event, ids.userId) !== 'creator') return manageError({ code: 'forbidden' })
 
+    const { maxOrganizers } = await resolveEventLimits(event)
     const organizersCount = event.members.filter((member) => member.role === 'organizer').length
-    if (organizersCount >= MAX_ORGANIZERS) {
+    if (organizersCount >= maxOrganizers) {
       return manageError({
         code: 'conflict',
-        details: `Limite de ${MAX_ORGANIZERS} organizadores atingido para este evento`
+        details: `Limite de ${maxOrganizers} ${maxOrganizers === 1 ? 'convidado' : 'convidados'} na equipe atingido para este evento`
       })
     }
 

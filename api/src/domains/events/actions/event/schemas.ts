@@ -9,6 +9,8 @@ export const eventTypeSchema = z.enum(['birthday', 'wedding', 'corporate', 'othe
 
 export const eventCreditTypeSchema = z.enum(['free', 'paid']).openapi({ example: 'paid' })
 
+export const eventPlanTierSchema = z.enum(['single', 'essential', 'pro']).openapi({ example: 'single' })
+
 export const eventMemberRoleSchema = z.enum(['creator', 'organizer']).openapi({ example: 'creator' })
 
 export const pinRotationMinutesSchema = z
@@ -112,6 +114,9 @@ export const eventSchema = z
     description: z.string().optional().openapi({ example: 'Celebração no Sítio Boa Vista' }),
     type: eventTypeSchema,
     creditType: eventCreditTypeSchema,
+    planTier: eventPlanTierSchema.default('single'),
+    maxOrganizers: z.number().int().openapi({ example: 1 }),
+    maxScreens: z.number().int().openapi({ example: 2 }),
     startsAt: z.string().openapi({ example: '2026-12-20T21:00:00.000Z' }),
     endsAt: z.string().openapi({ example: '2026-12-21T05:00:00.000Z' }),
     guestToken: z.string().openapi({ example: 'k3J9xQ2mZ1aB' }),
@@ -136,6 +141,7 @@ export const createEventSchema = z
     description: z.string().trim().max(500).optional(),
     type: eventTypeSchema,
     creditType: eventCreditTypeSchema.optional(),
+    planTier: eventPlanTierSchema.optional(),
     startsAt: z.string().datetime().openapi({ example: '2026-12-20T21:00:00.000Z' }),
     endsAt: z.string().datetime().optional().openapi({ example: '2026-12-21T05:00:00.000Z' }),
     customization: eventCustomizationSchema.optional(),
