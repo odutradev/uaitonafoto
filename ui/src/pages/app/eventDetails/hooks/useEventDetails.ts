@@ -2,7 +2,17 @@ import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 
-import { createEventScreen, deleteEvent, getEvent, removeEventScreen, updateEvent, updateEventScreen } from '@actions/events'
+import {
+  closeEvent,
+  createEventScreen,
+  deleteEvent,
+  getEvent,
+  removeEventScreen,
+  reopenEvent,
+  startEvent,
+  updateEvent,
+  updateEventScreen
+} from '@actions/events'
 import { getErrorMessage } from '@config/events'
 
 import type { EventItem, UpdateEventPayload } from '@actions/events/types'
@@ -139,7 +149,49 @@ const useEventDetails = (eventId: string) => {
     [eventId]
   )
 
-  return { event, isLoading, save, remove, addScreen, disconnectScreen, updateScreen, refresh }
+  const start = useCallback(async () => {
+    try {
+      const updated = await startEvent(eventId)
+      setEvent(updated)
+      toast.success('Evento iniciado! O sistema e telão estão ativos.')
+    } catch (error) {
+      toast.error(getErrorMessage(error, 'Não foi possível iniciar o evento.'))
+    }
+  }, [eventId])
+
+  const close = useCallback(async () => {
+    try {
+      const updated = await closeEvent(eventId)
+      setEvent(updated)
+      toast.success('Evento encerrado. A galeria está liberada!')
+    } catch (error) {
+      toast.error(getErrorMessage(error, 'Não foi possível encerrar o evento.'))
+    }
+  }, [eventId])
+
+  const reopen = useCallback(async () => {
+    try {
+      const updated = await reopenEvent(eventId)
+      setEvent(updated)
+      toast.success('Evento reaberto com sucesso!')
+    } catch (error) {
+      toast.error(getErrorMessage(error, 'Não foi possível reabrir o evento.'))
+    }
+  }, [eventId])
+
+  return {
+    event,
+    isLoading,
+    save,
+    remove,
+    addScreen,
+    disconnectScreen,
+    updateScreen,
+    refresh,
+    start,
+    close,
+    reopen
+  }
 }
 
 export default useEventDetails

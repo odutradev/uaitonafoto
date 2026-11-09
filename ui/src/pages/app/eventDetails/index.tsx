@@ -15,6 +15,7 @@ import useEventDetails from './hooks/useEventDetails'
 import EventAlbum from './sections/eventAlbum'
 import EventScreens from './sections/eventScreens'
 import EventSettings from './sections/eventSettings'
+import EventStatusControl from './sections/eventStatusControl'
 import EventTeam from './sections/eventTeam'
 import ShareLink from './sections/shareLink'
 import {
@@ -37,7 +38,19 @@ const EventDetails = () => {
   const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
   const { user } = useAuth()
-  const { event, isLoading, save, remove, addScreen, disconnectScreen, updateScreen, refresh } = useEventDetails(id)
+  const {
+    event,
+    isLoading,
+    save,
+    remove,
+    addScreen,
+    disconnectScreen,
+    updateScreen,
+    refresh,
+    start,
+    close,
+    reopen
+  } = useEventDetails(id)
 
   const rawTab = searchParams.get('tab')
   const activeTab: EventDetailsTab = isValidTab(rawTab) ? rawTab : 'access'
@@ -80,6 +93,13 @@ const EventDetails = () => {
       >
         Voltar para eventos
       </Button>
+
+      <EventStatusControl
+        event={event}
+        onStart={start}
+        onClose={close}
+        onReopen={reopen}
+      />
 
       <Box sx={tabsContainerStyles}>
         <Tabs
