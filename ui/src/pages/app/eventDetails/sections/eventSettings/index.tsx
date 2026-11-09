@@ -29,12 +29,19 @@ import Modal from '@components/modal'
 import useAuth from '@hooks/useAuth'
 
 import {
+  appBadgeCardStyles,
+  appMockupStyles,
+  appNotchBarStyles,
   customizationCardStyles,
   customizationSwitchRowStyles,
   dangerCardStyles,
   dangerRowStyles,
   previewBoxStyles,
+  previewTabsContainerStyles,
   proBadgeStyles,
+  screenBadgeStyles,
+  screenHeaderBarStyles,
+  screenMockupStyles,
   settingsActionsRowStyles,
   settingsButtonStyles,
   settingsCardStyles,
@@ -271,90 +278,179 @@ const EventSettings = ({ event, onSave, onDelete }: EventSettingsProps) => {
                   />
 
                   <Box sx={previewBoxStyles}>
-                    <Tabs
-                      value={previewTab}
-                      onChange={(_, val) => setPreviewTab(val)}
-                      variant="fullWidth"
-                      sx={{ borderBottom: 1, borderColor: 'rgba(255, 184, 0, 0.2)', minHeight: 34 }}
-                    >
-                      <Tab
-                        icon={<ScreenIcon sx={{ fontSize: '0.95rem' }} />}
-                        iconPosition="start"
-                        label="Prévia no Telão"
-                        value="screen"
-                        sx={{ minHeight: 34, py: 0.5, textTransform: 'none', fontSize: '0.78rem' }}
-                      />
-                      <Tab
-                        icon={<MobileIcon sx={{ fontSize: '0.95rem' }} />}
-                        iconPosition="start"
-                        label="Prévia no App"
-                        value="app"
-                        sx={{ minHeight: 34, py: 0.5, textTransform: 'none', fontSize: '0.78rem' }}
-                      />
-                    </Tabs>
+                    <Box sx={previewTabsContainerStyles}>
+                      <Tabs
+                        value={previewTab}
+                        onChange={(_, val) => setPreviewTab(val)}
+                        variant="fullWidth"
+                        sx={{ minHeight: 32 }}
+                      >
+                        <Tab
+                          icon={<ScreenIcon sx={{ fontSize: '0.95rem' }} />}
+                          iconPosition="start"
+                          label="Prévia no Telão"
+                          value="screen"
+                          sx={{ minHeight: 32, py: 0.5, textTransform: 'none', fontSize: '0.78rem', fontWeight: 700 }}
+                        />
+                        <Tab
+                          icon={<MobileIcon sx={{ fontSize: '0.95rem' }} />}
+                          iconPosition="start"
+                          label="Prévia no App dos Convidados"
+                          value="app"
+                          sx={{ minHeight: 32, py: 0.5, textTransform: 'none', fontSize: '0.78rem', fontWeight: 700 }}
+                        />
+                      </Tabs>
+                    </Box>
 
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        flexWrap: 'wrap',
-                        gap: 1.5,
-                        p: 1.25,
-                        borderRadius: '10px',
-                        bgcolor: 'rgba(0,0,0,0.6)',
-                        border: '1px solid rgba(255, 184, 0, 0.25)'
-                      }}
-                    >
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25 }}>
-                        <Avatar
-                          src={customConfig?.agencyLogoUrl}
+                    {previewTab === 'screen' ? (
+                      <Box sx={screenMockupStyles}>
+                        <Box sx={screenHeaderBarStyles}>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+                            <Box
+                              sx={{
+                                width: 8,
+                                height: 8,
+                                borderRadius: '50%',
+                                bgcolor: '#EF4444',
+                                boxShadow: '0 0 8px #EF4444'
+                              }}
+                            />
+                            <Typography
+                              variant="caption"
+                              sx={{ fontWeight: 800, letterSpacing: '0.06em', color: '#FCD34D' }}
+                            >
+                              AO VIVO NO TELÃO
+                            </Typography>
+                          </Box>
+                          <Typography variant="caption" sx={{ opacity: 0.7, fontWeight: 600 }}>
+                            Full HD 1080p
+                          </Typography>
+                        </Box>
+
+                        <Box sx={screenBadgeStyles}>
+                          <Avatar
+                            src={customConfig?.agencyLogoUrl}
+                            sx={{
+                              width: 34,
+                              height: 34,
+                              border: '2px solid #FFCF1F',
+                              bgcolor: 'primary.main',
+                              color: 'primary.contrastText',
+                              fontWeight: 800,
+                              fontSize: '0.85rem'
+                            }}
+                          >
+                            {(customConfig?.agencyName || 'A')[0].toUpperCase()}
+                          </Avatar>
+                          <Box>
+                            <Typography
+                              variant="body2"
+                              fontWeight={800}
+                              sx={{ color: '#FFFFFF', lineHeight: 1.15, fontSize: '0.85rem' }}
+                            >
+                              {customConfig?.agencyName || 'Sua Assessoria'}
+                            </Typography>
+                            <Typography
+                              variant="caption"
+                              sx={{ color: '#FDE68A', fontSize: '0.7rem', fontWeight: 600 }}
+                            >
+                              {customConfig?.agencyTagline || 'Assessoria & Cerimonial'}
+                            </Typography>
+                          </Box>
+                        </Box>
+
+                        <Box
                           sx={{
-                            width: 32,
-                            height: 32,
-                            border: '1.5px solid',
-                            borderColor: 'primary.main',
-                            bgcolor: 'rgba(255, 184, 0, 0.15)',
-                            color: 'primary.main',
-                            fontWeight: 800,
-                            fontSize: '0.8rem'
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            py: 0.5,
+                            opacity: 0.5
                           }}
                         >
-                          {(customConfig?.agencyName || 'A')[0].toUpperCase()}
-                        </Avatar>
-                        <Box>
-                          <Typography variant="body2" fontWeight={700} sx={{ color: '#fff', lineHeight: 1.2 }}>
-                            {customConfig?.agencyName || 'Sua Assessoria'}
-                          </Typography>
-                          <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.7rem' }}>
-                            {customConfig?.agencyTagline || 'Assessoria & Cerimonial'}
+                          <Typography variant="caption" sx={{ fontStyle: 'italic', color: '#FFFFFF' }}>
+                            [ O selo fica fixado no topo da transmissão enquanto as fotos dos convidados passam na tela ]
                           </Typography>
                         </Box>
                       </Box>
+                    ) : (
+                      <Box sx={appMockupStyles}>
+                        <Box sx={appNotchBarStyles}>
+                          <span>21:42</span>
+                          <Typography variant="caption" fontWeight={700}>
+                            {event.name || 'Galeria do Evento'}
+                          </Typography>
+                          <span>100% 🔋</span>
+                        </Box>
 
-                      {previewTab === 'app' && (
-                        <Button
-                          size="small"
-                          startIcon={<WhatsAppIcon sx={{ fontSize: '15px !important' }} />}
-                          variant="contained"
-                          sx={{
-                            minHeight: 30,
-                            px: 1.5,
-                            py: 0.4,
-                            borderRadius: '8px',
-                            bgcolor: '#25D366',
-                            color: '#fff',
-                            fontWeight: 700,
-                            fontSize: '0.75rem',
-                            textTransform: 'none',
-                            boxShadow: 'none',
-                            '&:hover': { bgcolor: '#20ba5a', boxShadow: 'none' }
-                          }}
+                        <Box sx={appBadgeCardStyles}>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25, minWidth: 0 }}>
+                            <Avatar
+                              src={customConfig?.agencyLogoUrl}
+                              sx={{
+                                width: 36,
+                                height: 36,
+                                border: '1.5px solid',
+                                borderColor: 'primary.main',
+                                bgcolor: 'primary.main',
+                                color: 'primary.contrastText',
+                                fontWeight: 800,
+                                fontSize: '0.85rem'
+                              }}
+                            >
+                              {(customConfig?.agencyName || 'A')[0].toUpperCase()}
+                            </Avatar>
+                            <Box sx={{ minWidth: 0 }}>
+                              <Typography
+                                variant="body2"
+                                fontWeight={800}
+                                sx={{ lineHeight: 1.2 }}
+                                noWrap
+                              >
+                                {customConfig?.agencyName || 'Sua Assessoria'}
+                              </Typography>
+                              <Typography
+                                variant="caption"
+                                color="text.secondary"
+                                sx={{ fontSize: '0.72rem' }}
+                                noWrap
+                              >
+                                {customConfig?.agencyTagline || 'Assessoria & Cerimonial'}
+                              </Typography>
+                            </Box>
+                          </Box>
+
+                          <Button
+                            size="small"
+                            startIcon={<WhatsAppIcon sx={{ fontSize: '15px !important' }} />}
+                            variant="contained"
+                            sx={{
+                              minHeight: 32,
+                              px: 1.75,
+                              py: 0.5,
+                              borderRadius: '8px',
+                              bgcolor: '#25D366',
+                              color: '#fff',
+                              fontWeight: 700,
+                              fontSize: '0.75rem',
+                              textTransform: 'none',
+                              boxShadow: '0 2px 8px rgba(37, 211, 102, 0.3)',
+                              '&:hover': { bgcolor: '#20ba5a' }
+                            }}
+                          >
+                            Falar no WhatsApp
+                          </Button>
+                        </Box>
+
+                        <Typography
+                          variant="caption"
+                          color="text.secondary"
+                          sx={{ textAlign: 'center', fontSize: '0.72rem' }}
                         >
-                          Falar no WhatsApp
-                        </Button>
-                      )}
-                    </Box>
+                          No mural do convidado, sua marca fica fixada no topo com botão direto para WhatsApp.
+                        </Typography>
+                      </Box>
+                    )}
                   </Box>
                 </Box>
               )}
