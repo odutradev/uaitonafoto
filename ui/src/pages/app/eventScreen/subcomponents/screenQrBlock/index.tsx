@@ -2,6 +2,7 @@ import { Box, Typography } from '@mui/material'
 import { QRCodeSVG } from 'qrcode.react'
 import { brandColors } from '@theme'
 import type { ReactNode } from 'react'
+import type { SxProps, Theme } from '@mui/material'
 
 export type ScreenQrVariant = 'horizontal' | 'stack' | 'column-fit' | 'mosaic' | 'lateral'
 
@@ -11,6 +12,7 @@ interface ScreenQrBlockProps {
   showPin: boolean
   variant?: ScreenQrVariant
   headerContent?: ReactNode
+  sx?: SxProps<Theme>
 }
 
 export const ScreenQrBlock = ({
@@ -18,7 +20,8 @@ export const ScreenQrBlock = ({
   pin,
   showPin,
   variant = 'horizontal',
-  headerContent
+  headerContent,
+  sx
 }: ScreenQrBlockProps) => {
   const isLateral = variant === 'lateral'
   const isStack = variant === 'stack' || variant === 'column-fit' || isLateral
@@ -26,33 +29,38 @@ export const ScreenQrBlock = ({
 
   return (
     <Box
-      sx={(theme) => ({
-        display: 'flex',
-        alignItems: 'center',
-        gap: isLateral ? '0.8cqh' : isStack ? '1.2cqh' : '2cqh',
-        bgcolor:
-          theme.palette.mode === 'dark' ? brandColors.darkPaper : '#FFFFFF',
-        border: `1px solid ${
-          theme.palette.mode === 'dark'
-            ? brandColors.darkBorder
-            : brandColors.lightBorder
-        }`,
-        boxShadow:
-          theme.palette.mode === 'dark'
-            ? 'none'
-            : '0 4px 24px rgba(0, 0, 0, 0.06)',
-        borderRadius: '2cqh',
-        p: isLateral ? '1.4cqh 1.2cqh' : '2cqh',
-        minHeight: 0,
-        minWidth: 0,
-        height: '100%',
-        boxSizing: 'border-box',
-        flexDirection: isStack ? 'column' : 'row',
-        justifyContent: 'center',
-        textAlign: isStack ? 'center' : 'left',
-        flex: isLateral || variant === 'column-fit' ? 1 : 'none',
-        gridColumn: isMosaic ? 'span 3' : 'auto'
-      })}
+      sx={[
+        (theme) => ({
+          display: 'flex',
+          alignItems: 'center',
+          gap: isLateral ? '0.8cqh' : isStack ? '1.2cqh' : '2cqh',
+          bgcolor:
+            theme.palette.mode === 'dark' ? brandColors.darkPaper : '#FFFFFF',
+          border: `1px solid ${
+            theme.palette.mode === 'dark'
+              ? brandColors.darkBorder
+              : brandColors.lightBorder
+          }`,
+          boxShadow:
+            theme.palette.mode === 'dark'
+              ? 'none'
+              : '0 4px 24px rgba(0, 0, 0, 0.06)',
+          borderRadius: '2cqh',
+          p: isLateral ? '1.4cqh 1.2cqh' : '2cqh',
+          minHeight: 0,
+          minWidth: 0,
+          height: '100%',
+          maxHeight: '100%',
+          overflow: 'hidden',
+          boxSizing: 'border-box',
+          flexDirection: isStack ? 'column' : 'row',
+          justifyContent: 'center',
+          textAlign: isStack ? 'center' : 'left',
+          flex: isLateral || variant === 'column-fit' ? 1 : 'none',
+          gridColumn: isMosaic ? 'span 3' : 'auto'
+        }),
+        ...(Array.isArray(sx) ? sx : [sx])
+      ]}
     >
       {/* Bloco branco do QRCode */}
       <Box
@@ -74,7 +82,7 @@ export const ScreenQrBlock = ({
             : variant === 'column-fit'
               ? { width: '52%', height: 'auto', maxHeight: 'none' }
               : isStack
-                ? { width: '46%', height: 'auto', maxHeight: 'none' }
+                ? { width: '52%', maxWidth: '34cqh', height: 'auto', maxHeight: '34cqh' }
                 : isMosaic
                   ? { height: '100%', maxHeight: '30cqh', width: 'auto' }
                   : { height: '100%', maxHeight: '24cqh', width: 'auto' })
