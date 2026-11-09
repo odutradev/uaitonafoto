@@ -41,7 +41,8 @@ export const buildInitialEventForm = (defaultCreditType: EventCreditType = 'paid
     pinRotate: true,
     pinRotationMinutes: 15,
     moderationEnabled: false,
-    challengesEnabled: false
+    challengesEnabled: false,
+    challengesMode: 'choose'
   }
 }
 
@@ -60,6 +61,7 @@ export const toEventForm = (event: EventItem): EventFormState => ({
   pinRotationMinutes: event.settings.pinRotationMinutes,
   moderationEnabled: Boolean(event.settings.moderationEnabled),
   challengesEnabled: Boolean(event.settings.challengesEnabled),
+  challengesMode: event.settings.challengesMode ?? 'choose',
   customization: event.customization
 })
 
@@ -89,7 +91,8 @@ export const toEventPayload = (form: EventFormState): CreateEventPayload => {
       pinRotate: form.pinRotate,
       pinRotationMinutes: form.pinRotationMinutes,
       moderationEnabled: form.moderationEnabled,
-      challengesEnabled: form.challengesEnabled
+      challengesEnabled: form.challengesEnabled,
+      challengesMode: form.challengesMode ?? 'choose'
     },
     customization: form.customization
   }
@@ -561,6 +564,27 @@ const EventFormFields = ({
           inputProps={{ 'aria-label': 'Ativar missões fotográficas' }}
         />
       </Box>
+
+      {form.challengesEnabled && (
+        <Box sx={{ mt: 2, pt: 2, borderTop: '1px solid', borderColor: 'divider' }}>
+          <TextField
+            select
+            fullWidth
+            size="small"
+            label="Distribuição dos desafios"
+            value={form.challengesMode ?? 'choose'}
+            onChange={(e) => onChange('challengesMode', e.target.value as 'choose' | 'random')}
+            helperText={
+              (form.challengesMode ?? 'choose') === 'choose'
+                ? 'O convidado vê a lista de missões disponíveis e escolhe qual quer cumprir.'
+                : 'O sistema sorteia uma missão surpresa automaticamente para o convidado.'
+            }
+          >
+            <MenuItem value="choose">Escolha livre (convidado escolhe da lista)</MenuItem>
+            <MenuItem value="random">Sorteio aleatório (missão sorteada automaticamente)</MenuItem>
+          </TextField>
+        </Box>
+      )}
     </Box>
   </Box>
 )

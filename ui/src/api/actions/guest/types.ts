@@ -20,6 +20,7 @@ export interface GuestEventInfo {
   phase: EventPhase
   customization?: EventCustomization
   challengesEnabled?: boolean
+  challengesMode?: 'choose' | 'random'
   challenges?: EventChallenge[]
 }
 
@@ -32,12 +33,14 @@ export interface JoinEventResponse {
   guestToken: string
   guest: GuestProfile
   event: GuestEventInfo
+  completedChallengeIds?: string[]
 }
 
 export interface GuestSession {
   guest: GuestProfile
   event: GuestEventInfo
   photosSent: number
+  completedChallengeIds?: string[]
 }
 
 export interface LikeResult {

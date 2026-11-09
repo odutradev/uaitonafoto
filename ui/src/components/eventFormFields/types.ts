@@ -15,6 +15,7 @@ export interface EventFormState {
   pinRotationMinutes: PinRotationMinutes
   moderationEnabled: boolean
   challengesEnabled: boolean
+  challengesMode?: 'choose' | 'random'
   customization?: EventCustomization
 }
 

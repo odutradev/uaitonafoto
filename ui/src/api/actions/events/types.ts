@@ -5,6 +5,7 @@ export type PhotoVisibility = 'during_event' | 'after_event'
 export type EventPhase = 'upcoming' | 'open' | 'closed' | 'expired'
 export type PinRotationMinutes = 5 | 15 | 30 | 60
 export type PhotoStatus = 'pending' | 'approved' | 'rejected'
+export type ChallengeSelectionMode = 'choose' | 'random'
 
 export interface EventCustomization {
   enabled: boolean
@@ -26,6 +27,7 @@ export interface EventSettings {
   pinUpdatedAt: string
   moderationEnabled?: boolean
   challengesEnabled?: boolean
+  challengesMode?: ChallengeSelectionMode
 }
 
 export interface EventChallenge {
