@@ -146,6 +146,7 @@ export const getPhotoStyles = (isNew = false, fit: ScreenPhotoFit = 'cover'): Sx
   maxWidth: '100%',
   maxHeight: '100%',
   objectFit: fit === 'cover' ? 'cover' : 'contain',
+  objectPosition: fit === 'cover' ? 'center 20%' : 'center center',
   borderRadius: fit === 'cover' ? '0px' : '16px',
   position: 'relative',
   zIndex: 1,

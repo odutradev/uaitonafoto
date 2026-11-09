@@ -19,6 +19,7 @@ import {
   Close as CloseIcon,
   EmojiEventsOutlined as ChallengeIcon,
   Replay as RepeatIcon,
+  ScreenRotationOutlined as ScreenRotationIcon,
   ShuffleOutlined as ShuffleIcon
 } from '@mui/icons-material'
 import dayjs from 'dayjs'
@@ -98,12 +99,14 @@ const GuestUpload = ({
 
   const handleNormalPhotoClick = () => {
     setSelectedChallenge(null)
+    toast.info('Dica: Tire a foto com o celular deitado (horizontal) para enquadrar perfeitamente no telão!', { autoClose: 3500 })
     inputRef.current?.click()
   }
 
   const handleSelectChallenge = (challenge: EventChallenge) => {
     setSelectedChallenge(challenge)
     setIsChallengeModalOpen(false)
+    toast.info('Dica: Tire a foto com o celular deitado (horizontal) para enquadrar perfeitamente no telão!', { autoClose: 3500 })
     setTimeout(() => {
       inputRef.current?.click()
     }, 150)
@@ -187,6 +190,32 @@ const GuestUpload = ({
             >
               <CloseIcon fontSize="small" />
             </IconButton>
+          </Box>
+        )}
+
+        {canUpload && (
+          <Box
+            sx={(theme) => ({
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1.5,
+              p: 1.5,
+              borderRadius: '16px',
+              bgcolor: theme.palette.mode === 'dark' ? 'rgba(255, 207, 31, 0.08)' : 'rgba(255, 207, 31, 0.15)',
+              border: '1px solid',
+              borderColor: theme.palette.mode === 'dark' ? 'rgba(255, 207, 31, 0.3)' : 'rgba(255, 207, 31, 0.5)',
+              textAlign: 'left'
+            })}
+          >
+            <ScreenRotationIcon sx={{ fontSize: 24, color: '#f59e0b', flexShrink: 0 }} />
+            <Box>
+              <Typography variant="caption" fontWeight={800} sx={{ display: 'block', color: 'text.primary', lineHeight: 1.25 }}>
+                Dica para brilhar no telão:
+              </Typography>
+              <Typography variant="caption" color="text.secondary" sx={{ display: 'block', lineHeight: 1.3 }}>
+                Tire a foto com o <strong>celular deitado (horizontal)</strong> para preencher o telão da festa sem cortes! Fotos em pé (verticais) serão ajustadas no centro.
+              </Typography>
+            </Box>
           </Box>
         )}
 
