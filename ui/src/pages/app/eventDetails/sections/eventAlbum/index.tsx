@@ -1,10 +1,8 @@
 import { useState } from 'react'
 import {
-  Badge,
   Box,
   Button,
   Card,
-  Chip,
   CircularProgress,
   IconButton,
   MenuItem,
@@ -21,10 +19,7 @@ import {
   DoneAllOutlined as DoneAllIcon,
   DownloadOutlined as DownloadIcon,
   EmojiEventsOutlined as ChallengeIcon,
-  FavoriteBorder as LikeIcon,
-  HourglassEmptyOutlined as PendingIcon,
-  VerifiedOutlined as ApprovedIcon,
-  BlockOutlined as RejectedIcon
+  FavoriteBorder as LikeIcon
 } from '@mui/icons-material'
 import dayjs from 'dayjs'
 import { toast } from 'react-toastify'
@@ -35,6 +30,30 @@ import Pagination from '@components/pagination'
 import { getErrorMessage } from '@config/events'
 
 import useEventAlbum, { type AlbumStatusFilter } from '../../hooks/useEventAlbum'
+
+import {
+  albumCardStyles,
+  albumHeaderRowStyles,
+  approveAllButtonStyles,
+  approvePhotoButtonStyles,
+  deletePhotoButtonStyles,
+  downloadZipButtonStyles,
+  guestFilterFieldStyles,
+  moderationBarStyles,
+  moderationFilterButtonStyles,
+  moderationTabsStyles,
+  photoCardStyles,
+  photoImageStyles,
+  photoOverlayNameStyles,
+  photoOverlayStyles,
+  photoStatusBadgeStyles,
+  photosGridStyles,
+  rejectPhotoButtonStyles,
+  stateBoxStyles,
+  stateIconWrapperStyles
+} from './styles'
+import type { EventPhoto } from '@actions/events/types'
+import type { EventAlbumProps } from './types'
 
 const downloadBlob = (blob: Blob, filename: string): void => {
   const blobUrl = window.URL.createObjectURL(blob)
@@ -64,26 +83,13 @@ const downloadPhotoFromUrl = async (url: string, filename: string): Promise<void
     document.body.removeChild(link)
   }
 }
-import {
-  albumCardStyles,
-  albumHeaderRowStyles,
-  approvePhotoButtonStyles,
-  deletePhotoButtonStyles,
-  guestFilterFieldStyles,
-  moderationBarStyles,
-  moderationTabsStyles,
-  photoCardStyles,
-  photoImageStyles,
-  photoOverlayNameStyles,
-  photoOverlayStyles,
-  photoStatusBadgeStyles,
-  photosGridStyles,
-  rejectPhotoButtonStyles,
-  stateBoxStyles,
-  stateIconWrapperStyles
-} from './styles'
-import type { EventPhoto } from '@actions/events/types'
-import type { EventAlbumProps } from './types'
+
+const MODERATION_FILTERS: readonly { value: AlbumStatusFilter; label: string }[] = [
+  { value: 'pending', label: 'Pendentes' },
+  { value: 'approved', label: 'Aprovadas' },
+  { value: 'rejected', label: 'Rejeitadas' },
+  { value: 'all', label: 'Todas' }
+]
 
 const EventAlbum = ({ event }: EventAlbumProps) => {
   const isEventEnded =
@@ -168,57 +174,16 @@ const EventAlbum = ({ event }: EventAlbumProps) => {
     <Card elevation={0} sx={albumCardStyles}>
       <Box sx={albumHeaderRowStyles}>
         <Box sx={{ minWidth: 0 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <Typography variant="h6" component="h2">
-              Álbum do evento
-            </Typography>
-            {isModerationEnabled && (
-              <Chip
-                size="small"
-                color="warning"
-                variant="outlined"
-                label="Moderação prévia ativa"
-                sx={{ fontWeight: 700, fontSize: '0.72rem' }}
-              />
-            )}
-          </Box>
+          <Typography variant="subtitle1" fontWeight={700} component="h2">
+            Álbum do evento
+          </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mt: 0.25 }}>
             {totalPhotosCount} {totalPhotosCount === 1 ? 'foto encontrada' : 'fotos encontradas'}
-            {isModerationEnabled && pendingCount > 0 && ` • ${pendingCount} aguardando aprovação`}
+            {isModerationEnabled && pendingCount > 0 && ` · ${pendingCount} aguardando aprovação`}
           </Typography>
         </Box>
 
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: 'wrap' }}>
-          {isEventEnded && (
-            <Tooltip
-              title={
-                totalPhotosCount === 0
-                  ? 'Nenhuma foto enviada para baixar'
-                  : 'Baixar todas as fotos do evento compactadas em um único arquivo .zip'
-              }
-            >
-              <span>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  size="small"
-                  startIcon={
-                    isDownloadingZip ? (
-                      <CircularProgress size={16} color="inherit" />
-                    ) : (
-                      <DownloadIcon fontSize="small" />
-                    )
-                  }
-                  onClick={handleDownloadZip}
-                  disabled={isDownloadingZip || totalPhotosCount === 0}
-                  sx={{ whiteSpace: 'nowrap', fontWeight: 700, borderRadius: '9999px', px: 2 }}
-                >
-                  {isDownloadingZip ? 'Gerando ZIP...' : 'Baixar álbum (.zip)'}
-                </Button>
-              </span>
-            </Tooltip>
-          )}
-
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
           {guests.length > 0 && (
             <TextField
               select
@@ -236,53 +201,61 @@ const EventAlbum = ({ event }: EventAlbumProps) => {
               ))}
             </TextField>
           )}
+
+          {isEventEnded && (
+            <Tooltip
+              title={
+                totalPhotosCount === 0
+                  ? 'Nenhuma foto enviada para baixar'
+                  : 'Baixar todas as fotos do evento compactadas em um único arquivo .zip'
+              }
+            >
+              <span>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  size="small"
+                  startIcon={
+                    isDownloadingZip ? (
+                      <CircularProgress size={15} color="inherit" />
+                    ) : (
+                      <DownloadIcon sx={{ fontSize: 16 }} />
+                    )
+                  }
+                  onClick={handleDownloadZip}
+                  disabled={isDownloadingZip || totalPhotosCount === 0}
+                  sx={downloadZipButtonStyles}
+                >
+                  {isDownloadingZip ? 'Gerando ZIP...' : 'Baixar álbum (.zip)'}
+                </Button>
+              </span>
+            </Tooltip>
+          )}
         </Box>
       </Box>
 
       {isModerationEnabled && (
         <Box sx={moderationBarStyles}>
           <Box sx={moderationTabsStyles}>
-            <Badge badgeContent={pendingCount} color="error">
-              <Chip
-                icon={<PendingIcon fontSize="small" />}
-                label="Fila de Aprovação"
-                color={statusFilter === 'pending' ? 'primary' : 'default'}
-                variant={statusFilter === 'pending' ? 'filled' : 'outlined'}
-                onClick={() => changeStatusFilter('pending')}
-                clickable
-                sx={{ fontWeight: 700 }}
-              />
-            </Badge>
+            {MODERATION_FILTERS.map((filter) => {
+              const isActive = statusFilter === filter.value
+              const label =
+                filter.value === 'pending' && pendingCount > 0
+                  ? `${filter.label} (${pendingCount})`
+                  : filter.label
 
-            <Chip
-              icon={<ApprovedIcon fontSize="small" />}
-              label="Aprovadas no Telão"
-              color={statusFilter === 'approved' ? 'success' : 'default'}
-              variant={statusFilter === 'approved' ? 'filled' : 'outlined'}
-              onClick={() => changeStatusFilter('approved')}
-              clickable
-              sx={{ fontWeight: 600 }}
-            />
-
-            <Chip
-              icon={<AlbumIcon fontSize="small" />}
-              label="Todas as Fotos"
-              color={statusFilter === 'all' ? 'primary' : 'default'}
-              variant={statusFilter === 'all' ? 'filled' : 'outlined'}
-              onClick={() => changeStatusFilter('all')}
-              clickable
-              sx={{ fontWeight: 600 }}
-            />
-
-            <Chip
-              icon={<RejectedIcon fontSize="small" />}
-              label="Rejeitadas"
-              color={statusFilter === 'rejected' ? 'error' : 'default'}
-              variant={statusFilter === 'rejected' ? 'filled' : 'outlined'}
-              onClick={() => changeStatusFilter('rejected')}
-              clickable
-              sx={{ fontWeight: 600 }}
-            />
+              return (
+                <Button
+                  key={filter.value}
+                  size="small"
+                  variant="text"
+                  onClick={() => changeStatusFilter(filter.value)}
+                  sx={moderationFilterButtonStyles(isActive)}
+                >
+                  {label}
+                </Button>
+              )
+            })}
           </Box>
 
           {statusFilter === 'pending' && pendingCount > 0 && (
@@ -294,18 +267,19 @@ const EventAlbum = ({ event }: EventAlbumProps) => {
                 isApprovingAll ? (
                   <CircularProgress size={14} color="inherit" />
                 ) : (
-                  <DoneAllIcon fontSize="small" />
+                  <DoneAllIcon sx={{ fontSize: 16 }} />
                 )
               }
               onClick={handleApproveAll}
               disabled={isApprovingAll}
-              sx={{ fontWeight: 700, borderRadius: '999px', px: 2 }}
+              sx={approveAllButtonStyles}
             >
               Aprovar todas ({pendingCount})
             </Button>
           )}
         </Box>
       )}
+
 
       {isLoading && (
         <Box sx={photosGridStyles}>
