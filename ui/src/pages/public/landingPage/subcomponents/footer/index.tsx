@@ -52,6 +52,12 @@ export const Footer = ({ data }: FooterProps) => {
           <Link component={RouterLink} to="/politica-de-cancelamento" color="text.secondary" sx={footerLinkItemStyles}>
             Cancelamento e Reembolso
           </Link>
+          <Typography variant="body2" color="text.secondary">
+            •
+          </Typography>
+          <Link component={RouterLink} to="/id" color="text.secondary" sx={footerLinkItemStyles}>
+            Identidade Visual
+          </Link>
         </Stack>
 
         {companyInfo && (

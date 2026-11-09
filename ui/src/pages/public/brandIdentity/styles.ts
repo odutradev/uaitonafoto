@@ -153,3 +153,4 @@ export const footerBoxStyles: SxProps<Theme> = {
   mt: 'auto',
   textAlign: 'center'
 }
+

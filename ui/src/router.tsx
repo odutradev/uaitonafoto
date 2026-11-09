@@ -5,6 +5,7 @@ import ResetPassword from '@pages/auth/resetPassword'
 import LandingPage from '@pages/public/landingPage'
 import TermsOfUse from '@pages/public/termsOfUse'
 import RefundPolicy from '@pages/public/refundPolicy'
+import BrandIdentity from '@pages/public/brandIdentity'
 import ErrorPage from '@pages/public/errorPage'
 import GuestEvent from '@pages/public/guestEvent'
 import NotFound from '@pages/public/notFound'
@@ -51,6 +52,9 @@ const appRouter = createBrowserRouter([
       { path: '/e/:token/screen', element: createElement(EventScreen) },
       { path: '/e/:token', element: createElement(GuestEvent) },
       { path: '/reset-password', element: createElement(ResetPassword) },
+      { path: '/id', element: createElement(BrandIdentity) },
+      { path: '/identidade', element: createElement(BrandIdentity) },
+      { path: '/brand', element: createElement(BrandIdentity) },
       { path: '/termos-de-uso', element: createElement(TermsOfUse) },
       { path: '/termos', element: createElement(TermsOfUse) },
       { path: '/politica-de-cancelamento', element: createElement(RefundPolicy) },
