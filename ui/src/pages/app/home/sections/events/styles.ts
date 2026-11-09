@@ -1,10 +1,5 @@
 import type { SxProps, Theme } from '@mui/material'
 
-export const sectionTitleStyles: SxProps<Theme> = {
-  mb: 2,
-  fontSize: { xs: '1.125rem', sm: '1.25rem' }
-}
-
 export const emptyStateStyles: SxProps<Theme> = {
   display: 'flex',
   flexDirection: 'column',
@@ -40,7 +35,6 @@ export const emptyButtonStyles: SxProps<Theme> = {
   width: { xs: '100%', sm: 'auto' },
   minHeight: 48
 }
-
 
 export const eventsGridStyles: SxProps<Theme> = {
   display: 'grid',

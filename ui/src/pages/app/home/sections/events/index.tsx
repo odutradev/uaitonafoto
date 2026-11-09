@@ -1,4 +1,4 @@
-﻿import { Box, Button, Card, CardActionArea, Chip, Paper, Skeleton, Typography } from '@mui/material'
+import { Box, Button, Card, CardActionArea, Chip, Paper, Skeleton, Typography } from '@mui/material'
 import { PhotoCameraOutlined as PhotoCameraIcon } from '@mui/icons-material'
 import dayjs from 'dayjs'
 
@@ -15,18 +15,13 @@ import {
   eventCardChipsStyles,
   eventCardNameStyles,
   eventCardStyles,
-  eventsGridStyles,
-  sectionTitleStyles
+  eventsGridStyles
 } from './styles'
 import type { EventsProps } from './types'
 
 const Events = ({ events, isLoading, onCreateEvent, onOpenEvent }: EventsProps) => {
   return (
     <Box component="section">
-      <Typography variant="h5" component="h2" sx={sectionTitleStyles}>
-        Meus eventos
-      </Typography>
-
       {isLoading && (
         <Box sx={eventsGridStyles}>
           <Skeleton variant="rounded" height={120} />
