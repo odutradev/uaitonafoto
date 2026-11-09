@@ -10,6 +10,7 @@
     "build": "tsup",
     "check": "tsc --noEmit",
     "seed": "tsx --conditions=import src/payment/seed/index.ts",
+    "webhook:secret": "tsx src/payment/scripts/generateWebhookSecret.ts",
     "start": "node --disable-warning=DEP0040 dist/server.js",
     "publish": "npx pub --bump-package --build --push"
   },
