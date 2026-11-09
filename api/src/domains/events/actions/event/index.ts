@@ -267,17 +267,19 @@ export const updateEvent = defineAction(
     const role = findMemberRole(event, ids.userId)
     if (!role) return manageError({ code: 'forbidden' })
 
-    if (data.startsAt && data.startsAt !== event.startsAt) {
-      const isAlreadyStarted = new Date(event.startsAt).getTime() <= Date.now()
-      if (isAlreadyStarted) {
-        return manageError({
-          code: 'bad_request',
-          details: 'A data e hora de início não podem ser alteradas após o início do evento.'
-        })
-      }
+    const isAlreadyStarted = new Date(event.startsAt).getTime() <= Date.now()
+    const isDifferentMinute = data.startsAt
+      ? Math.floor(new Date(data.startsAt).getTime() / 60_000) !== Math.floor(new Date(event.startsAt).getTime() / 60_000)
+      : false
+
+    if (data.startsAt && isAlreadyStarted && isDifferentMinute) {
+      return manageError({
+        code: 'bad_request',
+        details: 'A data e hora de início não podem ser alteradas após o início do evento.'
+      })
     }
 
-    const startsAt = data.startsAt ?? event.startsAt
+    const startsAt = isAlreadyStarted && !isDifferentMinute ? event.startsAt : (data.startsAt ?? event.startsAt)
     const durationHours = event.creditType === 'free' ? 4 : 8
     const calculatedEndsAt = new Date(new Date(startsAt).getTime() + durationHours * 60 * 60 * 1000).toISOString()
     const endsAt = data.endsAt ?? (data.startsAt ? calculatedEndsAt : event.endsAt)

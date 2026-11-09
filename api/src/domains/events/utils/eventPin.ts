@@ -1,4 +1,5 @@
 import { randomInt } from 'crypto'
+import { broadcastEvent } from '@realtime'
 import eventRepository from '../repositories/events'
 import type { EventEntity, EventSettings } from '../repositories/events/types'
 
@@ -30,8 +31,13 @@ export const ensureCurrentEventPin = async (event: EventEntity): Promise<EventEn
     settings: { pin, pinUpdatedAt }
   })
 
+  broadcastEvent(event.id, 'pin:change', {
+    pin: event.settings.pinEnabled ? pin : null
+  })
+
   return updated ?? {
     ...event,
     settings: { ...event.settings, pin, pinUpdatedAt }
   }
 }
+

@@ -426,17 +426,19 @@ export const getScreen = defineAction(
 
     const foundEvent = await eventRepository.findByIdOrGuestToken(params.id)
     if (!foundEvent) return manageError({ code: 'not_found' })
-    if (!arePhotosVisible(foundEvent)) return manageError({ code: 'forbidden', details: 'Fotos ainda não liberadas' })
+    const photosVisible = arePhotosVisible(foundEvent)
 
     const event = await ensureCurrentEventPin(foundEvent)
 
     await eventRepository.touchScreenLastSeen(event.id, ids.screenId, new Date().toISOString())
 
-    const photos = await photoRepository.listSince({
-      eventId: event.id,
-      since: query?.since,
-      limit: query?.limit ?? SCREEN_DEFAULT_LIMIT
-    })
+    const photos = photosVisible
+      ? await photoRepository.listSince({
+          eventId: event.id,
+          since: query?.since,
+          limit: query?.limit ?? SCREEN_DEFAULT_LIMIT
+        })
+      : []
 
     return {
       event: {
@@ -832,7 +834,6 @@ export const streamScreen = defineAction(
   async ({ defaultExpress, params, manageError }: ManageRequestBody<EventIdRequest>): ManageRequestResponse<void> => {
     const foundEvent = await eventRepository.findByIdOrGuestToken(params.id)
     if (!foundEvent) return manageError({ code: 'not_found' })
-    if (!arePhotosVisible(foundEvent)) return manageError({ code: 'forbidden', details: 'Fotos ainda não liberadas' })
 
     subscribeEventStream({
       eventId: foundEvent.id,
