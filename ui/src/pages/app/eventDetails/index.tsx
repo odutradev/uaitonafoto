@@ -162,7 +162,6 @@ const EventDetails = () => {
       {activeTab === 'access' && (
         <ShareLink
           event={event}
-          onGoToSettings={() => handleTabChange(null, 'settings')}
           onUnlockLockouts={() => unlockPin('guest')}
         />
       )}

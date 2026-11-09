@@ -4,7 +4,6 @@ import {
   Box,
   Button,
   Card,
-  Chip,
   CircularProgress,
   Typography
 } from '@mui/material'
@@ -22,7 +21,10 @@ import { brandColors } from '@theme'
 
 import {
   liveDotStyles,
+  modalButtonStyles,
+  statusActionButtonStyles,
   statusActionRowStyles,
+  statusBadgeStyles,
   statusControlCardStyles,
   statusHeaderRowStyles,
   statusInfoColumnStyles
@@ -66,76 +68,67 @@ const EventStatusControl = ({ event, onStart, onClose, onReopen }: EventStatusCo
       <Card elevation={0} sx={statusControlCardStyles}>
         <Box sx={statusInfoColumnStyles}>
           <Box sx={statusHeaderRowStyles}>
-            <Typography variant="h6" fontWeight={800} component="h1" sx={{ letterSpacing: '-0.02em' }}>
+            <Typography variant="h6" fontWeight={700} component="h1" sx={{ fontSize: '1.125rem' }}>
               {event.name}
             </Typography>
 
-            <Chip
-              size="small"
-              variant="outlined"
-              label={eventTypeLabels[event.type] ?? event.type}
-              sx={{ fontWeight: 600, fontSize: '0.75rem' }}
-            />
+            <Box component="span" sx={statusBadgeStyles}>
+              {eventTypeLabels[event.type] ?? event.type}
+            </Box>
 
             {phase === 'open' && (
-              <Chip
-                size="small"
-                icon={<Box sx={liveDotStyles} />}
-                label="AO VIVO"
+              <Box
+                component="span"
                 sx={{
-                  bgcolor: 'rgba(34, 197, 94, 0.15)',
+                  ...statusBadgeStyles,
+                  bgcolor: 'rgba(34, 197, 94, 0.12)',
                   color: '#22c55e',
-                  borderColor: 'rgba(34, 197, 94, 0.35)',
-                  fontWeight: 800,
-                  fontSize: '0.75rem',
-                  letterSpacing: '0.04em'
+                  borderColor: 'rgba(34, 197, 94, 0.3)'
                 }}
-              />
+              >
+                <Box sx={liveDotStyles} />
+                Ao vivo
+              </Box>
             )}
 
             {phase === 'upcoming' && (
-              <Chip
-                size="small"
-                color="primary"
-                variant="outlined"
-                label={eventPhaseLabels.upcoming}
-                sx={{ fontWeight: 700 }}
-              />
+              <Box
+                component="span"
+                sx={{
+                  ...statusBadgeStyles,
+                  color: 'primary.main',
+                  borderColor: 'rgba(255, 207, 31, 0.35)'
+                }}
+              >
+                {eventPhaseLabels.upcoming}
+              </Box>
             )}
 
             {phase === 'closed' && (
-              <Chip
-                size="small"
-                color="default"
-                variant="outlined"
-                label={eventPhaseLabels.closed}
-                sx={{ fontWeight: 700 }}
-              />
+              <Box component="span" sx={statusBadgeStyles}>
+                {eventPhaseLabels.closed}
+              </Box>
             )}
 
             {phase === 'expired' && (
-              <Chip
-                size="small"
-                color="default"
-                variant="outlined"
-                label={eventPhaseLabels.expired}
-                sx={{ fontWeight: 700 }}
-              />
+              <Box component="span" sx={statusBadgeStyles}>
+                {eventPhaseLabels.expired}
+              </Box>
             )}
           </Box>
 
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.8125rem' }}>
             {phase === 'upcoming' && (
-              <>Início previsto para <strong>{dayjs(event.startsAt).format('DD/MM/YYYY [às] HH:mm')}</strong> • Duração de {durationHours}h.</>
+              <>Início previsto para <strong>{dayjs(event.startsAt).format('DD/MM/YYYY [às] HH:mm')}</strong> · Duração de {durationHours}h</>
             )}
             {phase === 'open' && (
-              <>Evento iniciado às <strong>{dayjs(event.startsAt).format('HH:mm')}</strong> • Encerramento previsto para <strong>{dayjs(event.endsAt).format('DD/MM/YYYY [às] HH:mm')}</strong>.</>
+              <>Iniciado às <strong>{dayjs(event.startsAt).format('HH:mm')}</strong> · Encerramento às <strong>{dayjs(event.endsAt).format('DD/MM/YYYY HH:mm')}</strong></>
             )}
             {phase === 'closed' && canReopen && (
-              <>Evento encerrado • Janela de {durationHours}h ativa (restam <strong>{remaining ? `${remaining.hours}h ${remaining.minutes}min` : ''}</strong> para reabertura).</>
+              <>Evento encerrado · Janela de {durationHours}h ativa (restam <strong>{remaining ? `${remaining.hours}h ${remaining.minutes}min` : ''}</strong> para reabertura)</>
             )}
             {phase === 'closed' && !canReopen && (
-              <>Evento encerrado definitivamente • Galeria de fotos liberada.</>
+              <>Evento encerrado · Galeria de fotos liberada</>
             )}
             {phase === 'expired' && <>A galeria deste evento expirou.</>}
           </Typography>
@@ -145,20 +138,19 @@ const EventStatusControl = ({ event, onStart, onClose, onReopen }: EventStatusCo
           {phase === 'upcoming' && (
             <Button
               variant="contained"
-              size="medium"
-              startIcon={<StartIcon />}
+              size="small"
+              startIcon={<StartIcon fontSize="small" />}
               onClick={() => setIsStartModalOpen(true)}
               sx={{
+                ...statusActionButtonStyles,
                 bgcolor: brandColors.flashYellow,
                 color: brandColors.ink,
-                fontWeight: 800,
-                borderRadius: '12px',
                 '&:hover': {
                   bgcolor: '#F5C30A'
                 }
               }}
             >
-              Iniciar evento agora
+              Iniciar evento
             </Button>
           )}
 
@@ -166,10 +158,10 @@ const EventStatusControl = ({ event, onStart, onClose, onReopen }: EventStatusCo
             <Button
               variant="outlined"
               color="error"
-              size="medium"
-              startIcon={<CloseIcon />}
+              size="small"
+              startIcon={<CloseIcon fontSize="small" />}
               onClick={() => setIsCloseModalOpen(true)}
-              sx={{ borderRadius: '12px', fontWeight: 800 }}
+              sx={statusActionButtonStyles}
             >
               Encerrar evento
             </Button>
@@ -179,10 +171,10 @@ const EventStatusControl = ({ event, onStart, onClose, onReopen }: EventStatusCo
             <Button
               variant="contained"
               color="primary"
-              size="medium"
-              startIcon={<ReopenIcon />}
+              size="small"
+              startIcon={<ReopenIcon fontSize="small" />}
               onClick={() => setIsReopenModalOpen(true)}
-              sx={{ borderRadius: '12px', fontWeight: 800 }}
+              sx={statusActionButtonStyles}
             >
               Reabrir evento
             </Button>
@@ -196,33 +188,36 @@ const EventStatusControl = ({ event, onStart, onClose, onReopen }: EventStatusCo
         title="Iniciar evento manualmente?"
       >
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 1 }}>
-          <Typography variant="body1">
+          <Typography variant="body2">
             Deseja iniciar o evento <strong>{event.name}</strong> agora?
           </Typography>
-          <Alert severity="info" sx={{ borderRadius: '12px' }}>
+          <Alert severity="info" sx={{ borderRadius: '10px' }}>
             A data e hora de início será atualizada para o momento atual e o evento ficará liberado para fotos e telão ao vivo pelas próximas <strong>{durationHours} horas</strong>.
           </Alert>
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="caption" color="text.secondary">
             <strong>Atenção:</strong> a partir do momento em que o evento for iniciado, a data e hora de início não poderão mais ser alteradas.
           </Typography>
 
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1.5, mt: 1 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1, mt: 1 }}>
             <Button
               variant="outlined"
+              size="small"
               onClick={() => setIsStartModalOpen(false)}
               disabled={isSubmitting}
+              sx={modalButtonStyles}
             >
               Cancelar
             </Button>
             <Button
               variant="contained"
-              startIcon={isSubmitting ? <CircularProgress size={18} color="inherit" /> : <StartIcon />}
+              size="small"
+              startIcon={isSubmitting ? <CircularProgress size={16} color="inherit" /> : <StartIcon fontSize="small" />}
               onClick={handleConfirmStart}
               disabled={isSubmitting}
               sx={{
+                ...modalButtonStyles,
                 bgcolor: brandColors.flashYellow,
                 color: brandColors.ink,
-                fontWeight: 800,
                 '&:hover': { bgcolor: '#F5C30A' }
               }}
             >
@@ -238,10 +233,10 @@ const EventStatusControl = ({ event, onStart, onClose, onReopen }: EventStatusCo
         title="Encerrar evento?"
       >
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 1 }}>
-          <Typography variant="body1">
+          <Typography variant="body2">
             Tem certeza de que deseja encerrar o evento <strong>{event.name}</strong>?
           </Typography>
-          <Alert severity="warning" sx={{ borderRadius: '12px' }}>
+          <Alert severity="warning" sx={{ borderRadius: '10px' }}>
             Ao encerrar o evento:
             <Box component="ul" sx={{ pl: 2.5, m: 0, mt: 0.5 }}>
               <li>Os convidados <strong>não poderão mais enviar fotos</strong>.</li>
@@ -250,21 +245,24 @@ const EventStatusControl = ({ event, onStart, onClose, onReopen }: EventStatusCo
             </Box>
           </Alert>
 
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1.5, mt: 1 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1, mt: 1 }}>
             <Button
               variant="outlined"
+              size="small"
               onClick={() => setIsCloseModalOpen(false)}
               disabled={isSubmitting}
+              sx={modalButtonStyles}
             >
               Cancelar
             </Button>
             <Button
               variant="contained"
               color="error"
-              startIcon={isSubmitting ? <CircularProgress size={18} color="inherit" /> : <CloseIcon />}
+              size="small"
+              startIcon={isSubmitting ? <CircularProgress size={16} color="inherit" /> : <CloseIcon fontSize="small" />}
               onClick={handleConfirmClose}
               disabled={isSubmitting}
-              sx={{ fontWeight: 800 }}
+              sx={modalButtonStyles}
             >
               {isSubmitting ? 'Encerrando...' : 'Confirmar encerramento'}
             </Button>
@@ -278,29 +276,32 @@ const EventStatusControl = ({ event, onStart, onClose, onReopen }: EventStatusCo
         title="Reabrir evento?"
       >
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 1 }}>
-          <Typography variant="body1">
+          <Typography variant="body2">
             Deseja reabrir o evento <strong>{event.name}</strong>?
           </Typography>
-          <Alert severity="success" sx={{ borderRadius: '12px' }}>
+          <Alert severity="success" sx={{ borderRadius: '10px' }}>
             O evento será reativado e o envio de fotos voltará a ficar disponível para os convidados até o término das <strong>{durationHours} horas</strong> do evento
             {remaining ? ` (restam aproximadamente ${remaining.hours}h ${remaining.minutes}min)` : ''}.
           </Alert>
 
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1.5, mt: 1 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1, mt: 1 }}>
             <Button
               variant="outlined"
+              size="small"
               onClick={() => setIsReopenModalOpen(false)}
               disabled={isSubmitting}
+              sx={modalButtonStyles}
             >
               Cancelar
             </Button>
             <Button
               variant="contained"
               color="primary"
-              startIcon={isSubmitting ? <CircularProgress size={18} color="inherit" /> : <ReopenIcon />}
+              size="small"
+              startIcon={isSubmitting ? <CircularProgress size={16} color="inherit" /> : <ReopenIcon fontSize="small" />}
               onClick={handleConfirmReopen}
               disabled={isSubmitting}
-              sx={{ fontWeight: 800 }}
+              sx={modalButtonStyles}
             >
               {isSubmitting ? 'Reabrindo...' : 'Reabrir evento'}
             </Button>
@@ -312,4 +313,5 @@ const EventStatusControl = ({ event, onStart, onClose, onReopen }: EventStatusCo
 }
 
 export default EventStatusControl
+
 

@@ -3,17 +3,19 @@ import type { SxProps, Theme } from '@mui/material'
 export const pageStyles: SxProps<Theme> = {
   display: 'flex',
   flexDirection: 'column',
-  gap: { xs: 2.5, sm: 3 },
+  gap: 2,
   width: '100%',
   minWidth: 0
 }
 
 export const backButtonStyles: SxProps<Theme> = {
   alignSelf: 'flex-start',
-  minHeight: 36,
-  px: 1.5,
-  py: 0.5,
-  fontSize: '0.875rem',
+  minHeight: 32,
+  px: 1,
+  py: 0.25,
+  borderRadius: '8px',
+  fontSize: '0.8125rem',
+  fontWeight: 600,
   color: 'text.secondary'
 }
 
@@ -25,23 +27,24 @@ export const tabsContainerStyles: SxProps<Theme> = {
 
 export const tabsStyles: SxProps<Theme> = {
   width: '100%',
-  minHeight: 44,
+  minHeight: 40,
   '& .MuiTabs-flexContainer': {
     width: '100%'
   },
   '& .MuiTabs-indicator': {
-    height: 3,
-    borderRadius: '3px 3px 0 0'
+    height: 2,
+    borderRadius: '2px 2px 0 0'
   }
 }
 
 export const tabItemStyles: SxProps<Theme> = {
   flex: 1,
   maxWidth: 'none',
-  minHeight: 44,
-  py: 1,
-  px: 2,
+  minHeight: 40,
+  py: 0.75,
+  px: 1.5,
   textTransform: 'none',
-  fontWeight: 700,
-  fontSize: '0.9rem'
+  fontWeight: 600,
+  fontSize: '0.84rem'
 }
+
