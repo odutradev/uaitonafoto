@@ -1,10 +1,17 @@
 export type ScreenLayoutMode = 'classic' | 'side-hub' | 'social-feed'
+export type ScreenPhotoFit = 'cover' | 'contain'
 
 export interface ScreenLayoutOption {
   id: ScreenLayoutMode
   label: string
   subtitle: string
   tag?: string
+}
+
+export interface ScreenPhotoFitOption {
+  id: ScreenPhotoFit
+  label: string
+  subtitle: string
 }
 
 export const SCREEN_LAYOUT_OPTIONS: ScreenLayoutOption[] = [
@@ -25,5 +32,18 @@ export const SCREEN_LAYOUT_OPTIONS: ScreenLayoutOption[] = [
     label: 'Clássico',
     subtitle: 'Foto central ampla com miniaturas no rodapé e coluna de QR Code na direita.',
     tag: 'Tradicional'
+  }
+]
+
+export const SCREEN_PHOTO_FIT_OPTIONS: ScreenPhotoFitOption[] = [
+  {
+    id: 'cover',
+    label: 'Preencher Telão (Sem bordas)',
+    subtitle: 'A foto preenche todo o card sem faixas ou bordas laterais.'
+  },
+  {
+    id: 'contain',
+    label: 'Ajustar Foto Completa',
+    subtitle: 'Exibe a foto inteira sem nenhum corte nas extremidades.'
   }
 ]

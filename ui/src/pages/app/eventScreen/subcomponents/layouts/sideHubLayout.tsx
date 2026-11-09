@@ -21,6 +21,7 @@ import {
   thumbnailImgStyles
 } from '../../styles'
 import type { EventPhoto } from '@actions/events/types'
+import type { ScreenPhotoFit } from '../../types'
 
 const RECENT_SLOTS_COUNT = 6
 
@@ -33,6 +34,7 @@ interface SideHubLayoutProps {
   guestLink: string
   pin: string | null
   showPin: boolean
+  photoFit: ScreenPhotoFit
 }
 
 export const SideHubLayout = ({
@@ -43,13 +45,14 @@ export const SideHubLayout = ({
   onSelectPhoto,
   guestLink,
   pin,
-  showPin
+  showPin,
+  photoFit
 }: SideHubLayoutProps) => {
   return (
     <Box sx={contentGridStyles}>
       {/* Coluna da esquerda: Palco da foto com altura total máxima */}
       <Box sx={leftColumnStyles}>
-        <ScreenPhotoStage currentPhoto={currentPhoto} isNewArrival={isNewArrival} />
+        <ScreenPhotoStage currentPhoto={currentPhoto} isNewArrival={isNewArrival} photoFit={photoFit} />
       </Box>
 
       {/* Coluna da direita: Hub com QR Code + Fotos Recentes */}

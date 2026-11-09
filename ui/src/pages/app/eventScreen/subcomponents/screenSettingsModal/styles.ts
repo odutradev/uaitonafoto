@@ -1,6 +1,37 @@
 import { brandColors } from '@theme'
 import type { SxProps, Theme } from '@mui/material'
 
+export const modalDialogPaperStyles: SxProps<Theme> = (theme) => ({
+  borderRadius: '24px',
+  bgcolor: theme.palette.mode === 'dark' ? brandColors.darkPaper : '#FFFFFF',
+  color: 'text.primary',
+  maxWidth: 480,
+  width: 'calc(100% - 32px)',
+  maxHeight: '88vh',
+  display: 'flex',
+  flexDirection: 'column',
+  m: 2,
+  p: { xs: 2.5, sm: 3 },
+  position: 'relative',
+  overflow: 'hidden',
+  boxShadow: theme.palette.mode === 'dark' ? '0 16px 40px rgba(0, 0, 0, 0.6)' : '0 16px 40px rgba(0, 0, 0, 0.15)'
+})
+
+export const modalBodyStyles: SxProps<Theme> = {
+  flex: 1,
+  overflowY: 'auto',
+  pr: 0.75,
+  mr: -0.75,
+  my: 1.5,
+  '&::-webkit-scrollbar': {
+    width: '6px'
+  },
+  '&::-webkit-scrollbar-thumb': {
+    bgcolor: 'rgba(255, 207, 31, 0.4)',
+    borderRadius: '9999px'
+  }
+}
+
 export const settingsSectionStyles: SxProps<Theme> = {
   display: 'flex',
   flexDirection: 'column',
@@ -18,7 +49,7 @@ export const settingsSectionTitleStyles: SxProps<Theme> = {
 }
 
 export const getLayoutCardStyles = (isSelected: boolean): SxProps<Theme> => (theme) => ({
-  p: 2,
+  p: 1.75,
   borderRadius: '16px',
   cursor: 'pointer',
   transition: 'all 0.2s ease',
@@ -46,7 +77,7 @@ export const settingRowStyles: SxProps<Theme> = (theme) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
-  p: 2,
+  p: 1.75,
   borderRadius: '16px',
   bgcolor: theme.palette.mode === 'dark' ? brandColors.darkSurface : brandColors.sand,
   border: `1px solid ${theme.palette.divider}`,

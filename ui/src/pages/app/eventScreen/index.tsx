@@ -36,10 +36,11 @@ import {
   topBarStyles
 } from './styles'
 import type { FormEvent } from 'react'
-import type { ScreenLayoutMode } from './types'
+import type { ScreenLayoutMode, ScreenPhotoFit } from './types'
 
 const SCREEN_SHOW_PIN_STORAGE_KEY = 'uaitonafoto:screen:show_pin'
 const SCREEN_LAYOUT_STORAGE_KEY = 'uaitonafoto:screen:layout'
+const SCREEN_PHOTO_FIT_STORAGE_KEY = 'uaitonafoto:screen:photo_fit'
 
 const EventScreen = () => {
   const { token, id } = useParams()
@@ -70,6 +71,13 @@ const EventScreen = () => {
     }
     return 'side-hub'
   })
+  const [photoFit, setPhotoFit] = useState<ScreenPhotoFit>(() => {
+    const stored = localStorage.getItem(SCREEN_PHOTO_FIT_STORAGE_KEY) as ScreenPhotoFit | null
+    if (stored && ['cover', 'contain'].includes(stored)) {
+      return stored
+    }
+    return 'cover'
+  })
   const [showPin, setShowPin] = useState<boolean>(() => {
     const stored = localStorage.getItem(SCREEN_SHOW_PIN_STORAGE_KEY)
     return stored !== null ? stored === 'true' : true
@@ -86,6 +94,11 @@ const EventScreen = () => {
   const handleLayoutChange = (mode: ScreenLayoutMode) => {
     setLayoutMode(mode)
     localStorage.setItem(SCREEN_LAYOUT_STORAGE_KEY, mode)
+  }
+
+  const handlePhotoFitChange = (fit: ScreenPhotoFit) => {
+    setPhotoFit(fit)
+    localStorage.setItem(SCREEN_PHOTO_FIT_STORAGE_KEY, fit)
   }
 
   const handleFullscreen = () => {
@@ -291,6 +304,7 @@ const EventScreen = () => {
           guestLink={guestLink}
           pin={pin}
           showPin={showPin}
+          photoFit={photoFit}
         />
       ) : layoutMode === 'classic' ? (
         <ClassicLayout
@@ -302,6 +316,7 @@ const EventScreen = () => {
           guestLink={guestLink}
           pin={pin}
           showPin={showPin}
+          photoFit={photoFit}
         />
       ) : (
         <SideHubLayout
@@ -313,6 +328,7 @@ const EventScreen = () => {
           guestLink={guestLink}
           pin={pin}
           showPin={showPin}
+          photoFit={photoFit}
         />
       )}
 
@@ -321,6 +337,8 @@ const EventScreen = () => {
         onClose={() => setIsSettingsModalOpen(false)}
         layout={layoutMode}
         onChangeLayout={handleLayoutChange}
+        photoFit={photoFit}
+        onChangePhotoFit={handlePhotoFitChange}
         showPin={showPin}
         onTogglePin={handleTogglePinVisibility}
         hasPin={Boolean(pin)}

@@ -69,3 +69,4 @@ export const ScreenQrCard = ({
 }
 
 export default ScreenQrCard
+

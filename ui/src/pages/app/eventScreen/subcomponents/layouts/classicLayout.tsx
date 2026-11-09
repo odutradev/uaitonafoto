@@ -10,6 +10,7 @@ import {
   thumbnailsRowStyles
 } from '../../styles'
 import type { EventPhoto } from '@actions/events/types'
+import type { ScreenPhotoFit } from '../../types'
 
 const THUMBNAIL_SLOTS_COUNT = 6
 
@@ -22,6 +23,7 @@ interface ClassicLayoutProps {
   guestLink: string
   pin: string | null
   showPin: boolean
+  photoFit: ScreenPhotoFit
 }
 
 export const ClassicLayout = ({
@@ -32,12 +34,13 @@ export const ClassicLayout = ({
   onSelectPhoto,
   guestLink,
   pin,
-  showPin
+  showPin,
+  photoFit
 }: ClassicLayoutProps) => {
   return (
     <Box sx={contentGridStyles}>
       <Box sx={leftColumnStyles}>
-        <ScreenPhotoStage currentPhoto={currentPhoto} isNewArrival={isNewArrival} />
+        <ScreenPhotoStage currentPhoto={currentPhoto} isNewArrival={isNewArrival} photoFit={photoFit} />
 
         <Box sx={thumbnailsRowStyles}>
           {Array.from({ length: THUMBNAIL_SLOTS_COUNT }).map((_, slotIndex) => {

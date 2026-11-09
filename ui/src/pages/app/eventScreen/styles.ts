@@ -103,16 +103,29 @@ export const getMainCardStyles = (isNew = false): SxProps<Theme> => (theme) => (
 
 export const mainCardStyles: SxProps<Theme> = getMainCardStyles(false)
 
+import type { ScreenPhotoFit } from './types'
+
 export const photoContainerStyles: SxProps<Theme> = {
   flex: 1,
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
   overflow: 'hidden',
-  p: { xs: 1.5, md: 2.5 },
+  p: 0,
   bgcolor: '#0E0C09',
   position: 'relative'
 }
+
+export const getPhotoContainerStyles = (fit: ScreenPhotoFit = 'cover'): SxProps<Theme> => ({
+  flex: 1,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  overflow: 'hidden',
+  p: fit === 'cover' ? 0 : { xs: 1.5, md: 2.5 },
+  bgcolor: '#0E0C09',
+  position: 'relative'
+})
 
 export const photoBackdropStyles: SxProps<Theme> = {
   position: 'absolute',
@@ -127,16 +140,16 @@ export const photoBackdropStyles: SxProps<Theme> = {
   zIndex: 0
 }
 
-export const getPhotoStyles = (isNew = false): SxProps<Theme> => ({
+export const getPhotoStyles = (isNew = false, fit: ScreenPhotoFit = 'cover'): SxProps<Theme> => ({
   width: '100%',
   height: '100%',
   maxWidth: '100%',
   maxHeight: '100%',
-  objectFit: 'contain',
-  borderRadius: '16px',
+  objectFit: fit === 'cover' ? 'cover' : 'contain',
+  borderRadius: fit === 'cover' ? '0px' : '16px',
   position: 'relative',
   zIndex: 1,
-  boxShadow: '0 12px 40px rgba(0, 0, 0, 0.45)',
+  boxShadow: fit === 'cover' ? 'none' : '0 12px 40px rgba(0, 0, 0, 0.45)',
   animation: isNew ? 'photoEntrance 0.7s cubic-bezier(0.16, 1, 0.3, 1)' : 'none',
   transition: 'transform 0.4s ease, opacity 0.4s ease',
   '@keyframes photoEntrance': {

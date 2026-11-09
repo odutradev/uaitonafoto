@@ -25,6 +25,7 @@ import {
   socialFeedRightColumnStyles
 } from '../../styles'
 import type { EventPhoto } from '@actions/events/types'
+import type { ScreenPhotoFit } from '../../types'
 
 const FEED_MAX_ITEMS = 5
 
@@ -37,6 +38,7 @@ interface SocialFeedLayoutProps {
   guestLink: string
   pin: string | null
   showPin: boolean
+  photoFit: ScreenPhotoFit
 }
 
 export const SocialFeedLayout = ({
@@ -47,7 +49,8 @@ export const SocialFeedLayout = ({
   onSelectPhoto,
   guestLink,
   pin,
-  showPin
+  showPin,
+  photoFit
 }: SocialFeedLayoutProps) => {
   return (
     <Box sx={contentGridStyles}>
@@ -104,7 +107,7 @@ export const SocialFeedLayout = ({
 
       {/* Coluna 2: Palco Central da Foto */}
       <Box sx={socialFeedCenterStyles}>
-        <ScreenPhotoStage currentPhoto={currentPhoto} isNewArrival={isNewArrival} />
+        <ScreenPhotoStage currentPhoto={currentPhoto} isNewArrival={isNewArrival} photoFit={photoFit} />
       </Box>
 
       {/* Coluna 3: Feed ao Vivo */}

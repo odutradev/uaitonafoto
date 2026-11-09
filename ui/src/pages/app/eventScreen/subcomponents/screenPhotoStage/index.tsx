@@ -1,6 +1,5 @@
 import { Box, Typography } from '@mui/material'
 import {
-  EmojiEventsOutlined as ChallengeIcon,
   Favorite as LikeIcon,
   PhotoCameraOutlined as CameraIcon
 } from '@mui/icons-material'
@@ -14,34 +13,43 @@ import {
   bannerTextRowStyles,
   bannerTextStyles,
   getMainCardStyles,
+  getPhotoContainerStyles,
   getPhotoStyles,
   photoBackdropStyles,
-  photoContainerStyles,
   waitingEmptyStyles,
   yellowBannerStyles
 } from '../../styles'
 import type { EventPhoto } from '@actions/events/types'
+import type { ScreenPhotoFit } from '../../types'
 
 interface ScreenPhotoStageProps {
   currentPhoto: EventPhoto | null
   isNewArrival: boolean
+  photoFit?: ScreenPhotoFit
 }
 
-export const ScreenPhotoStage = ({ currentPhoto, isNewArrival }: ScreenPhotoStageProps) => {
+export const ScreenPhotoStage = ({
+  currentPhoto,
+  isNewArrival,
+  photoFit = 'cover'
+}: ScreenPhotoStageProps) => {
   return (
     <Box sx={getMainCardStyles(isNewArrival)}>
       {currentPhoto ? (
         <>
-          <Box sx={photoContainerStyles}>
-            {/* Backdrop desfocado dinâmico para preencher qualquer proporção sem faixas pretas vazias */}
-            <Box
-              component="img"
-              src={currentPhoto.url}
-              alt=""
-              aria-hidden="true"
-              sx={photoBackdropStyles}
-            />
+          <Box sx={getPhotoContainerStyles(photoFit)}>
+            {/* Se photoFit for contain, renderiza backdrop sutil para quem desejar ver a imagem inteira */}
+            {photoFit === 'contain' && (
+              <Box
+                component="img"
+                src={currentPhoto.url}
+                alt=""
+                aria-hidden="true"
+                sx={photoBackdropStyles}
+              />
+            )}
 
+            {/* Apenas o badge de evento recém-chegado (sem duplicar o texto da missão sobre a foto) */}
             {isNewArrival && (
               <Box
                 sx={{
@@ -77,44 +85,17 @@ export const ScreenPhotoStage = ({ currentPhoto, isNewArrival }: ScreenPhotoStag
               </Box>
             )}
 
-            {currentPhoto.challengeTitle && (
-              <Box
-                sx={{
-                  position: 'absolute',
-                  top: 18,
-                  right: 18,
-                  bgcolor: '#f59e0b',
-                  color: brandColors.ink,
-                  fontWeight: 900,
-                  fontSize: '0.85rem',
-                  letterSpacing: '0.03em',
-                  textTransform: 'uppercase',
-                  px: 2,
-                  py: 0.7,
-                  borderRadius: '9999px',
-                  boxShadow: '0 4px 20px rgba(0,0,0,0.5)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 1,
-                  animation: 'photoEntrance 0.5s ease',
-                  zIndex: 6
-                }}
-              >
-                <ChallengeIcon sx={{ fontSize: 20, color: brandColors.ink }} />
-                Missão: {currentPhoto.challengeTitle}
-              </Box>
-            )}
-
-            {/* Foto principal nítida */}
+            {/* Foto principal: em 'cover' preenche todo o espaço sem nenhuma borda */}
             <Box
               key={currentPhoto.id}
               component="img"
               src={currentPhoto.url}
               alt={`Foto de ${currentPhoto.guestName}`}
-              sx={getPhotoStyles(isNewArrival)}
+              sx={getPhotoStyles(isNewArrival, photoFit)}
             />
           </Box>
 
+          {/* Banner inferior oficial com o convidado e missão cumprida (sem duplicações no topo) */}
           <Box sx={yellowBannerStyles}>
             <Box sx={bannerTextRowStyles}>
               <Typography component="span" sx={bannerAuthorStyles}>
