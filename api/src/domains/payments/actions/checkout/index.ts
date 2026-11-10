@@ -1,4 +1,5 @@
 import env from '@config/env'
+import { PaymentMethod } from '@abacatepay/types/v2'
 import { getPaymentClient } from '@payment'
 import { getPlanByProductId } from '@payment/plans'
 import defineAction from '@factories/defineAction'
@@ -31,13 +32,16 @@ const createGatewayCheckout = async ({
 
   const customerId = customerResponse.data.id
 
+  const isPixOnly = env.ABACATEPAY_PIX_ONLY === 'true'
+
   const body = {
     items: [{ id: plan.abacateProductId, quantity: 1 }],
     customerId,
     externalId: transactionId,
     returnUrl,
     completionUrl,
-    metadata: { transactionId, userId: user.id, planId: plan.id }
+    metadata: { transactionId, userId: user.id, planId: plan.id },
+    ...(isPixOnly ? { methods: [PaymentMethod.Pix] } : {})
   }
 
   const checkoutResponse =
