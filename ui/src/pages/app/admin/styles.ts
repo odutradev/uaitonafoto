@@ -50,7 +50,7 @@ export const chartsGridStyles: SxProps<Theme> = {
   display: 'grid',
   gridTemplateColumns: {
     xs: '1fr',
-    lg: '2fr 1fr'
+    md: 'repeat(2, minmax(0, 1fr))'
   },
   gap: 2.5
 }
