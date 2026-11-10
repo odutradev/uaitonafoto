@@ -19,6 +19,7 @@ import Home from '@pages/app/home'
 import Logs from '@pages/app/logs'
 import Profile from '@pages/app/profile'
 import Customization from '@pages/app/customization'
+import AdminDashboard from '@pages/app/admin'
 
 const appRouter = createBrowserRouter([
   {
@@ -43,7 +44,13 @@ const appRouter = createBrowserRouter([
               { path: 'customization', element: createElement(Customization) },
               { path: 'billing', element: createElement(Billing) },
               { path: 'profile', element: createElement(Profile) },
-              { path: 'logs', element: createElement(Logs) }
+              { path: 'logs', element: createElement(Logs) },
+              {
+                element: createElement(AuthRoute, { access: 'admin' }),
+                children: [
+                  { path: 'admin', element: createElement(AdminDashboard) }
+                ]
+              }
             ]
           }
         ]
