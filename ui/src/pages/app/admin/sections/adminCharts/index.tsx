@@ -64,7 +64,7 @@ export const AdminCharts = ({ metrics, isLoading }: AdminChartsProps) => {
             Evolução da plataforma
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Novos cadastros de usuários, eventos criados e transações nos últimos meses
+            Novos cadastros de usuários, eventos criados e transações no período selecionado
           </Typography>
         </Box>
 

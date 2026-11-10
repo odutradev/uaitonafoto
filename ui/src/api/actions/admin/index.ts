@@ -4,12 +4,13 @@ import type {
   AddCreditsPayload,
   AddCreditsResponse,
   AdminMetrics,
+  AdminMetricsParams,
   ListAdminUsersParams,
   PaginatedAdminUsersResponse
 } from './types'
 
-export const getAdminMetrics = async (): Promise<AdminMetrics> => {
-  const response = await api.get<AdminMetrics>('/admin/metrics')
+export const getAdminMetrics = async (params?: AdminMetricsParams): Promise<AdminMetrics> => {
+  const response = await api.get<AdminMetrics>('/admin/metrics', { params })
   return response.data
 }
 

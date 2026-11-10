@@ -12,6 +12,7 @@ import {
   addAdminUserCreditsBodySchema,
   addAdminUserCreditsParamsSchema,
   addAdminUserCreditsResponseSchema,
+  adminMetricsQuerySchema,
   adminMetricsResponseSchema,
   listAdminUsersQuerySchema,
   listAdminUsersResponseSchema
@@ -20,7 +21,9 @@ import type {
   AddAdminUserCreditsBody,
   AddAdminUserCreditsParams,
   AddAdminUserCreditsResponse,
+  AdminMetricsQuery,
   AdminMetricsResponse,
+  AdminPeriod,
   AdminUserItem,
   ListAdminUsersQuery,
   ListAdminUsersResponse
@@ -49,18 +52,81 @@ const getRecentMonthsBuckets = (count = 6) => {
   return buckets
 }
 
+interface PeriodBucket {
+  label: string
+  start: string
+  end: string
+}
+
+const getPeriodBucketsAndRange = (
+  period: AdminPeriod = '30d'
+): { buckets: PeriodBucket[]; periodStart: string } => {
+  const now = new Date()
+  const buckets: PeriodBucket[] = []
+
+  if (period === '7d') {
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i)
+      const start = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 0, 0, 0, 0).toISOString()
+      const end = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 23, 59, 59, 999).toISOString()
+      const dayStr = String(d.getDate()).padStart(2, '0')
+      const monthStr = MONTH_NAMES[d.getMonth()]
+      buckets.push({ label: `${dayStr}/${monthStr}`, start, end })
+    }
+    return { buckets, periodStart: buckets[0].start }
+  }
+
+  if (period === '30d') {
+    for (let i = 5; i >= 0; i--) {
+      const dStart = new Date(now.getFullYear(), now.getMonth(), now.getDate() - (i + 1) * 5 + 1)
+      const dEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i * 5)
+      const start = new Date(dStart.getFullYear(), dStart.getMonth(), dStart.getDate(), 0, 0, 0, 0).toISOString()
+      const end = new Date(dEnd.getFullYear(), dEnd.getMonth(), dEnd.getDate(), 23, 59, 59, 999).toISOString()
+      const label = `${String(dStart.getDate()).padStart(2, '0')}/${MONTH_NAMES[dStart.getMonth()]}`
+      buckets.push({ label, start, end })
+    }
+    return { buckets, periodStart: buckets[0].start }
+  }
+
+  if (period === '90d') {
+    const months = getRecentMonthsBuckets(3)
+    return { buckets: months, periodStart: months[0].start }
+  }
+
+  if (period === '6m') {
+    const months = getRecentMonthsBuckets(6)
+    return { buckets: months, periodStart: months[0].start }
+  }
+
+  if (period === '12m') {
+    const months = getRecentMonthsBuckets(12)
+    return { buckets: months, periodStart: months[0].start }
+  }
+
+  // 'all'
+  const months = getRecentMonthsBuckets(12)
+  return { buckets: months, periodStart: new Date(0).toISOString() }
+}
+
 export const getAdminMetrics = defineAction(
   {
     method: 'get',
     path: '/admin/metrics',
-    summary: 'Obter métricas gerais da plataforma para administradores',
+    summary: 'Obter métricas gerais da plataforma para administradores com filtro de período',
     tags: ['Admin', 'Sistema'],
     authenticate: true,
+    schema: {
+      query: adminMetricsQuerySchema
+    },
     responses: {
       200: { description: 'Métricas gerais da plataforma', schema: adminMetricsResponseSchema }
     }
   },
-  async ({ ids, manageError }: ManageRequestBody): ManageRequestResponse<AdminMetricsResponse> => {
+  async ({
+    ids,
+    query,
+    manageError
+  }: ManageRequestBody<{ query?: AdminMetricsQuery }>): ManageRequestResponse<AdminMetricsResponse> => {
     if (!ids.userId) return manageError({ code: 'unauthorized' })
 
     const caller = await userRepository.findById(ids.userId)
@@ -68,7 +134,8 @@ export const getAdminMetrics = defineAction(
       return manageError({ code: 'forbidden' })
     }
 
-    const monthBuckets = getRecentMonthsBuckets(6)
+    const selectedPeriod: AdminPeriod = query?.period || '30d'
+    const { buckets, periodStart } = getPeriodBucketsAndRange(selectedPeriod)
 
     const [
       totalUsers,
@@ -83,7 +150,12 @@ export const getAdminMetrics = defineAction(
       plansDistAgg,
       totalPaidTransactions,
       revenueAgg,
-      timelineResults
+      timelineResults,
+      newUsersInPeriod,
+      newEventsInPeriod,
+      photosInPeriod,
+      revenueInPeriodAgg,
+      paidTxInPeriod
     ] = await Promise.all([
       UserModel.countDocuments(),
       UserModel.countDocuments({ role: 'admin' }),
@@ -116,7 +188,7 @@ export const getAdminMetrics = defineAction(
         { $group: { _id: null, total: { $sum: '$amount' } } }
       ]),
       Promise.all(
-        monthBuckets.map(async (bucket) => {
+        buckets.map(async (bucket) => {
           const [newUsers, newEvents, transactions] = await Promise.all([
             UserModel.countDocuments({ createdAt: { $gte: bucket.start, $lte: bucket.end } }),
             EventModel.countDocuments({ createdAt: { $gte: bucket.start, $lte: bucket.end } }),
@@ -132,7 +204,15 @@ export const getAdminMetrics = defineAction(
             transactions
           }
         })
-      )
+      ),
+      UserModel.countDocuments({ createdAt: { $gte: periodStart } }),
+      EventModel.countDocuments({ createdAt: { $gte: periodStart } }),
+      PhotoModel.countDocuments({ createdAt: { $gte: periodStart } }),
+      TransactionModel.aggregate([
+        { $match: { status: 'PAID', createdAt: { $gte: periodStart } } },
+        { $group: { _id: null, total: { $sum: '$amount' } } }
+      ]),
+      TransactionModel.countDocuments({ status: 'PAID', createdAt: { $gte: periodStart } })
     ])
 
     const totalPaidCredits = creditsAgg[0]?.totalPaid ?? 0
@@ -146,6 +226,14 @@ export const getAdminMetrics = defineAction(
     }))
 
     return {
+      period: selectedPeriod,
+      periodSummary: {
+        newUsers: newUsersInPeriod,
+        newEvents: newEventsInPeriod,
+        photosUploaded: photosInPeriod,
+        revenue: revenueInPeriodAgg[0]?.total ?? 0,
+        paidTransactions: paidTxInPeriod
+      },
       users: {
         total: totalUsers,
         admins: adminsCount,

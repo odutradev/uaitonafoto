@@ -8,10 +8,12 @@ import {
   listAdminUsers,
   type AddCreditsPayload,
   type AdminMetrics,
+  type AdminPeriod,
   type AdminUserItem
 } from '@actions/admin'
 
 export const useAdminDashboard = () => {
+  const [period, setPeriod] = useState<AdminPeriod>('30d')
   const [metrics, setMetrics] = useState<AdminMetrics | null>(null)
   const [isLoadingMetrics, setIsLoadingMetrics] = useState(true)
 
@@ -40,14 +42,14 @@ export const useAdminDashboard = () => {
   const fetchMetrics = useCallback(async () => {
     try {
       setIsLoadingMetrics(true)
-      const data = await getAdminMetrics()
+      const data = await getAdminMetrics({ period })
       setMetrics(data)
     } catch {
       toast.error('Não foi possível carregar as métricas administrativas.')
     } finally {
       setIsLoadingMetrics(false)
     }
-  }, [])
+  }, [period])
 
   const fetchUsers = useCallback(async () => {
     try {
@@ -111,6 +113,8 @@ export const useAdminDashboard = () => {
   }
 
   return {
+    period,
+    setPeriod,
     metrics,
     isLoadingMetrics,
     users,

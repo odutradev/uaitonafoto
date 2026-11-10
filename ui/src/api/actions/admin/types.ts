@@ -1,6 +1,20 @@
 import type { PaginationMeta } from '@actions/payments/types'
 
+export type AdminPeriod = '7d' | '30d' | '90d' | '6m' | '12m' | 'all'
+
+export interface AdminMetricsParams {
+  period?: AdminPeriod
+}
+
 export interface AdminMetrics {
+  period: AdminPeriod
+  periodSummary: {
+    newUsers: number
+    newEvents: number
+    photosUploaded: number
+    revenue: number
+    paidTransactions: number
+  }
   users: {
     total: number
     admins: number

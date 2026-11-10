@@ -3,12 +3,16 @@ import type {
   addAdminUserCreditsBodySchema,
   addAdminUserCreditsParamsSchema,
   addAdminUserCreditsResponseSchema,
+  adminMetricsQuerySchema,
   adminMetricsResponseSchema,
+  adminPeriodSchema,
   adminUserItemSchema,
   listAdminUsersQuerySchema,
   listAdminUsersResponseSchema
 } from './schemas'
 
+export type AdminPeriod = z.infer<typeof adminPeriodSchema>
+export type AdminMetricsQuery = z.infer<typeof adminMetricsQuerySchema>
 export type AdminMetricsResponse = z.infer<typeof adminMetricsResponseSchema>
 
 export type AdminUserItem = z.infer<typeof adminUserItemSchema>

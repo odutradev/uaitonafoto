@@ -5,8 +5,27 @@ import { createPaginatedSchema, paginationQuerySchema } from '@factories/paginat
 
 extendZodWithOpenApi(z)
 
+export const adminPeriodSchema = z
+  .enum(['7d', '30d', '90d', '6m', '12m', 'all'])
+  .default('30d')
+  .openapi({ example: '30d', description: 'Período de análise das métricas' })
+
+export const adminMetricsQuerySchema = z
+  .object({
+    period: adminPeriodSchema.optional()
+  })
+  .openapi('AdminMetricsQuery')
+
 export const adminMetricsResponseSchema = z
   .object({
+    period: adminPeriodSchema,
+    periodSummary: z.object({
+      newUsers: z.number().openapi({ example: 8 }),
+      newEvents: z.number().openapi({ example: 5 }),
+      photosUploaded: z.number().openapi({ example: 420 }),
+      revenue: z.number().openapi({ example: 125000 }),
+      paidTransactions: z.number().openapi({ example: 4 })
+    }),
     users: z.object({
       total: z.number().openapi({ example: 42 }),
       admins: z.number().openapi({ example: 2 }),
