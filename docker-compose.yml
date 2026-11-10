@@ -26,6 +26,7 @@ services:
       - EMAIL_PASS=${EMAIL_PASS}
       - EMAIL_FROM=${EMAIL_FROM}
       - ABACATEPAY_API_KEY=${ABACATEPAY_API_KEY}
+      - ABACATEPAY_PIX_ONLY=${ABACATEPAY_PIX_ONLY}
       - ABACATEPAY_WEBHOOK_SECRET=${ABACATEPAY_WEBHOOK_SECRET}
     healthcheck:
       test: ["CMD", "node", "healthcheck.js"]
