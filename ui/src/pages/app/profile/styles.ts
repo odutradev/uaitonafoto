@@ -16,3 +16,11 @@ export const headerBoxStyles: SxProps<Theme> = {
 export const pageTitleStyles: SxProps<Theme> = {
   fontSize: { xs: '1.75rem', sm: '2.25rem' }
 }
+
+export const footerStyles: SxProps<Theme> = {
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  pt: 1,
+  pb: 2
+}

@@ -1,9 +1,10 @@
 import { Box, Typography } from '@mui/material'
 
+import { version } from '@config/default'
 import useProfile from './hooks/useProfile'
 import ProfileDetailsForm from './sections/profileDetailsForm'
 import UserOverview from './sections/userOverview'
-import { headerBoxStyles, pageTitleStyles, profilePageStyles } from './styles'
+import { footerStyles, headerBoxStyles, pageTitleStyles, profilePageStyles } from './styles'
 
 const Profile = () => {
   const {
@@ -44,6 +45,12 @@ const Profile = () => {
         onReset={handleResetChanges}
         onSendPasswordReset={handleSendPasswordReset}
       />
+
+      <Box component="footer" sx={footerStyles}>
+        <Typography variant="caption" color="text.secondary">
+          uaiToNaFoto • Versão {version}
+        </Typography>
+      </Box>
     </Box>
   )
 }
