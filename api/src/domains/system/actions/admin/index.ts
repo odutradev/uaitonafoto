@@ -245,13 +245,15 @@ export const getAdminMetrics = defineAction(
         total: totalEvents,
         active: activeEvents,
         closed: closedEvents,
-        totalPhotos
+        totalPhotos,
+        avgPhotosPerEvent: totalEvents > 0 ? Math.round(totalPhotos / totalEvents) : 0
       },
       plans: {
         activeSubscriptions: activeSubs,
         cancelledSubscriptions: cancelledSubs,
         totalRevenue,
         totalTransactions: totalPaidTransactions,
+        averageTicket: totalPaidTransactions > 0 ? Math.round(totalRevenue / totalPaidTransactions) : 0,
         distribution
       },
       timeline: timelineResults

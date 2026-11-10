@@ -27,12 +27,14 @@ export interface AdminMetrics {
     active: number
     closed: number
     totalPhotos: number
+    avgPhotosPerEvent: number
   }
   plans: {
     activeSubscriptions: number
     cancelledSubscriptions: number
     totalRevenue: number
     totalTransactions: number
+    averageTicket: number
     distribution: Array<{ name: string; count: number }>
   }
   timeline: Array<{

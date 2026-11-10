@@ -37,13 +37,15 @@ export const adminMetricsResponseSchema = z
       total: z.number().openapi({ example: 28 }),
       active: z.number().openapi({ example: 18 }),
       closed: z.number().openapi({ example: 10 }),
-      totalPhotos: z.number().openapi({ example: 1420 })
+      totalPhotos: z.number().openapi({ example: 1420 }),
+      avgPhotosPerEvent: z.number().openapi({ example: 51 })
     }),
     plans: z.object({
       activeSubscriptions: z.number().openapi({ example: 8 }),
       cancelledSubscriptions: z.number().openapi({ example: 2 }),
       totalRevenue: z.number().openapi({ example: 345000 }), // centavos
       totalTransactions: z.number().openapi({ example: 24 }),
+      averageTicket: z.number().openapi({ example: 14375 }), // centavos
       distribution: z.array(
         z.object({
           name: z.string().openapi({ example: 'Plano Pro' }),

@@ -1,10 +1,12 @@
 import { Box, Card, Skeleton, Stack, Typography } from '@mui/material'
 import {
+  AutoAwesomeOutlined as EngagementIcon,
   EventAvailableOutlined as EventIcon,
   MonetizationOnOutlined as MoneyIcon,
   PeopleAltOutlined as UsersIcon,
   PhotoCameraOutlined as PhotoIcon,
   StarsOutlined as CreditsIcon,
+  TrendingUpOutlined as TicketIcon,
   WorkspacePremiumOutlined as PlanIcon
 } from '@mui/icons-material'
 
@@ -27,7 +29,7 @@ export const AdminKpis = ({ metrics, isLoading }: AdminKpisProps) => {
   if (isLoading || !metrics) {
     return (
       <Box sx={kpiGridStyles}>
-        {Array.from({ length: 5 }).map((_, index) => (
+        {Array.from({ length: 8 }).map((_, index) => (
           <Card key={index} elevation={0} sx={kpiCardStyles}>
             <Skeleton variant="text" width="60%" height={24} />
             <Skeleton variant="text" width="40%" height={40} />
@@ -83,7 +85,22 @@ export const AdminKpis = ({ metrics, isLoading }: AdminKpisProps) => {
           {events.totalPhotos.toLocaleString('pt-BR')}
         </Typography>
         <Typography variant="caption" color="text.secondary">
-          Total de uploads recebidos nos eventos
+          Total de fotos enviadas por convidados
+        </Typography>
+      </Card>
+
+      <Card elevation={0} sx={kpiCardStyles}>
+        <Stack direction="row" alignItems="center" justifyContent="space-between">
+          <Typography variant="caption" color="text.secondary" fontWeight={700}>
+            MÉDIA DE ENGAJAMENTO
+          </Typography>
+          <EngagementIcon fontSize="small" color="info" />
+        </Stack>
+        <Typography variant="h4" fontWeight={800}>
+          {events.avgPhotosPerEvent}
+        </Typography>
+        <Typography variant="caption" color="text.secondary">
+          Fotos enviadas por evento em média
         </Typography>
       </Card>
 
@@ -98,7 +115,7 @@ export const AdminKpis = ({ metrics, isLoading }: AdminKpisProps) => {
           {plans.activeSubscriptions}
         </Typography>
         <Typography variant="caption" color="text.secondary">
-          {plans.cancelledSubscriptions} canceladas • {plans.totalTransactions} pagamentos confirmados
+          {plans.cancelledSubscriptions} canceladas • {plans.totalTransactions} transações pagas
         </Typography>
       </Card>
 
@@ -113,7 +130,7 @@ export const AdminKpis = ({ metrics, isLoading }: AdminKpisProps) => {
           {users.totalPaidCredits + users.totalFreeCredits}
         </Typography>
         <Typography variant="caption" color="text.secondary">
-          {users.totalPaidCredits} pagos • {users.totalFreeCredits} cortesia / degustação
+          {users.totalPaidCredits} pagos • {users.totalFreeCredits} cortesia / teste
         </Typography>
       </Card>
 
@@ -129,6 +146,21 @@ export const AdminKpis = ({ metrics, isLoading }: AdminKpisProps) => {
         </Typography>
         <Typography variant="caption" color="text.secondary">
           Total arrecadado em assinaturas e compras
+        </Typography>
+      </Card>
+
+      <Card elevation={0} sx={kpiCardStyles}>
+        <Stack direction="row" alignItems="center" justifyContent="space-between">
+          <Typography variant="caption" color="text.secondary" fontWeight={700}>
+            TICKET MÉDIO (AOV)
+          </Typography>
+          <TicketIcon fontSize="small" color="secondary" />
+        </Stack>
+        <Typography variant="h4" fontWeight={800}>
+          {formatCurrencyBrl(plans.averageTicket)}
+        </Typography>
+        <Typography variant="caption" color="text.secondary">
+          Valor médio por transação confirmada
         </Typography>
       </Card>
     </Box>
