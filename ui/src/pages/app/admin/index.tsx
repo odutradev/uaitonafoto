@@ -30,7 +30,9 @@ export const AdminDashboard = () => {
     users,
     totalUsers,
     page,
+    limit,
     totalPages,
+    setLimit,
     isLoadingUsers,
     searchInput,
     setSearchInput,
@@ -98,6 +100,7 @@ export const AdminDashboard = () => {
         users={users}
         totalUsers={totalUsers}
         page={page}
+        limit={limit}
         totalPages={totalPages}
         isLoading={isLoadingUsers}
         searchInput={searchInput}
@@ -105,6 +108,7 @@ export const AdminDashboard = () => {
         onSearchChange={setSearchInput}
         onRoleFilterChange={setRoleFilter}
         onPageChange={setPage}
+        onLimitChange={setLimit}
         onAddCredits={handleOpenAddCredits}
       />
 

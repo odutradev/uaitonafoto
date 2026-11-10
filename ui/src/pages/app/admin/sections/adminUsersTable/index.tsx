@@ -7,7 +7,6 @@ import {
   CircularProgress,
   InputAdornment,
   MenuItem,
-  Pagination,
   Select,
   Stack,
   Table,
@@ -15,6 +14,7 @@ import {
   TableCell,
   TableContainer,
   TableHead,
+  TablePagination,
   TableRow,
   TextField,
   Tooltip,
@@ -32,6 +32,7 @@ interface AdminUsersTableProps {
   users: AdminUserItem[]
   totalUsers: number
   page: number
+  limit: number
   totalPages: number
   isLoading: boolean
   searchInput: string
@@ -39,6 +40,7 @@ interface AdminUsersTableProps {
   onSearchChange: (value: string) => void
   onRoleFilterChange: (role: 'all' | 'admin' | 'user') => void
   onPageChange: (newPage: number) => void
+  onLimitChange: (newLimit: number) => void
   onAddCredits: (user: AdminUserItem) => void
 }
 
@@ -57,13 +59,14 @@ export const AdminUsersTable = ({
   users,
   totalUsers,
   page,
-  totalPages,
+  limit,
   isLoading,
   searchInput,
   roleFilter,
   onSearchChange,
   onRoleFilterChange,
   onPageChange,
+  onLimitChange,
   onAddCredits
 }: AdminUsersTableProps) => {
   return (
@@ -241,17 +244,29 @@ export const AdminUsersTable = ({
         </Table>
       </TableContainer>
 
-      {totalPages > 1 && (
-        <Box sx={{ display: 'flex', justifyContent: 'center', pt: 1 }}>
-          <Pagination
-            count={totalPages}
-            page={page}
-            onChange={(_, newPage) => onPageChange(newPage)}
-            color="primary"
-            shape="rounded"
-          />
-        </Box>
-      )}
+      <TablePagination
+        component="div"
+        count={totalUsers}
+        page={Math.max(0, page - 1)}
+        onPageChange={(_, newPage) => onPageChange(newPage + 1)}
+        rowsPerPage={limit}
+        onRowsPerPageChange={(e) => onLimitChange(parseInt(e.target.value, 10))}
+        rowsPerPageOptions={[5, 10, 20, 50]}
+        labelRowsPerPage="Usuários por página:"
+        labelDisplayedRows={({ from, to, count }) =>
+          `${from}–${to} de ${count !== -1 ? count : `mais de ${to}`}`
+        }
+        disabled={isLoading}
+        sx={{
+          borderTop: 1,
+          borderColor: 'divider',
+          '.MuiTablePagination-toolbar': {
+            flexWrap: 'wrap',
+            justifyContent: { xs: 'center', sm: 'flex-end' },
+            px: 1
+          }
+        }}
+      />
     </Card>
   )
 }

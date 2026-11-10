@@ -20,6 +20,7 @@ export const useAdminDashboard = () => {
   const [users, setUsers] = useState<AdminUserItem[]>([])
   const [totalUsers, setTotalUsers] = useState(0)
   const [page, setPage] = useState(1)
+  const [limit, setLimit] = useState(10)
   const [totalPages, setTotalPages] = useState(1)
   const [isLoadingUsers, setIsLoadingUsers] = useState(true)
 
@@ -56,7 +57,7 @@ export const useAdminDashboard = () => {
       setIsLoadingUsers(true)
       const res = await listAdminUsers({
         page,
-        limit: 10,
+        limit,
         search: debouncedSearch || undefined,
         role: roleFilter === 'all' ? undefined : roleFilter
       })
@@ -68,7 +69,7 @@ export const useAdminDashboard = () => {
     } finally {
       setIsLoadingUsers(false)
     }
-  }, [page, debouncedSearch, roleFilter])
+  }, [page, limit, debouncedSearch, roleFilter])
 
   useEffect(() => {
     fetchMetrics()
@@ -120,7 +121,12 @@ export const useAdminDashboard = () => {
     users,
     totalUsers,
     page,
+    limit,
     totalPages,
+    setLimit: (newLimit: number) => {
+      setLimit(newLimit)
+      setPage(1)
+    },
     isLoadingUsers,
     searchInput,
     setSearchInput,
