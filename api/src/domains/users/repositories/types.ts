@@ -46,3 +46,10 @@ export interface UpdateUserPayload {
   role?: UserRole
   customization?: UserCustomization
 }
+
+export interface ListUsersParams {
+  limit?: number
+  offset?: number
+  search?: string
+  role?: UserRole
+}

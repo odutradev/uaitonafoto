@@ -1,6 +1,6 @@
 import { removeUndefined } from '@utils/object'
 import UserModel from './model'
-import type { CreditType, UpdateUserPayload, UpsertUserPayload, UserEntity } from './types'
+import type { CreditType, ListUsersParams, UpdateUserPayload, UpsertUserPayload, UserEntity } from './types'
 
 const toUserEntity = (doc: any): UserEntity => ({
   id: String(doc._id || doc.id),
@@ -149,6 +149,35 @@ export const userRepository = {
 
     if (!doc) return null
     return toUserEntity(doc)
+  },
+
+  listPaginated: async ({
+    limit = 20,
+    offset = 0,
+    search,
+    role
+  }: ListUsersParams = {}): Promise<{ rows: UserEntity[]; count: number }> => {
+    const filter: Record<string, unknown> = {}
+
+    if (role) {
+      filter.role = role
+    }
+
+    if (search?.trim()) {
+      const sanitized = search.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+      const regex = new RegExp(sanitized, 'i')
+      filter.$or = [{ name: regex }, { fullName: regex }, { email: regex }]
+    }
+
+    const [docs, count] = await Promise.all([
+      UserModel.find(filter).sort({ createdAt: -1 }).skip(offset).limit(limit).lean(),
+      UserModel.countDocuments(filter)
+    ])
+
+    return {
+      rows: docs.map(toUserEntity),
+      count
+    }
   }
 }
 

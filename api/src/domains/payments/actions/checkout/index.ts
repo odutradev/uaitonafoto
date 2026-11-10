@@ -48,7 +48,7 @@ const createGatewayCheckout = async ({
     returnUrl,
     completionUrl,
     metadata: { transactionId, userId: user.id, planId: plan.id },
-    ...(isPixOnly ? { methods: [PaymentMethod.Pix] } : {})
+    ...(isPixOnly ? { methods: [PaymentMethod.Pix] as (PaymentMethod.Pix | PaymentMethod.Card)[] } : {})
   }
 
   const checkoutResponse =
