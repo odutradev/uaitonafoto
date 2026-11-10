@@ -19,3 +19,4 @@ export type ListAdminUsersResponse = z.infer<typeof listAdminUsersResponseSchema
 export type AddAdminUserCreditsParams = z.infer<typeof addAdminUserCreditsParamsSchema>
 export type AddAdminUserCreditsBody = z.infer<typeof addAdminUserCreditsBodySchema>
 export type AddAdminUserCreditsResponse = z.infer<typeof addAdminUserCreditsResponseSchema>
+

@@ -176,3 +176,4 @@ export const AdminCharts = ({ metrics, isLoading }: AdminChartsProps) => {
 }
 
 export default AdminCharts
+

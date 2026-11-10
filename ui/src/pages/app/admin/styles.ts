@@ -90,3 +90,4 @@ export const tableContainerStyles: SxProps<Theme> = {
   border: 1,
   borderColor: 'divider'
 }
+

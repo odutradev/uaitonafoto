@@ -14,3 +14,4 @@ export interface AdminDashboardState {
   isAddCreditsOpen: boolean
   isSubmittingCredits: boolean
 }
+

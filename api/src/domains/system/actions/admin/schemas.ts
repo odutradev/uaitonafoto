@@ -99,3 +99,4 @@ export const addAdminUserCreditsResponseSchema = z
     message: z.string().openapi({ example: 'Créditos adicionados com sucesso.' })
   })
   .openapi('AddAdminUserCreditsResponse')
+
