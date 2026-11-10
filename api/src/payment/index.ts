@@ -20,6 +20,10 @@ const payment: PaymentModule = {
 
       logger.success('Connected: AbacatePay payment gateway ready')
 
+      if (env.ABACATEPAY_PIX_ONLY === 'true') {
+        logger.info('[initializePayment] ABACATEPAY_PIX_ONLY ativo: pagamentos configurados exclusivamente para PIX')
+      }
+
       await syncPlansCache(payment.client)
 
       return { client: payment.client }

@@ -1,4 +1,5 @@
 import env from '@config/env'
+import createLogger from '@utils/logger'
 import { PaymentMethod } from '@abacatepay/types/v2'
 import { getPaymentClient } from '@payment'
 import { getPlanByProductId } from '@payment/plans'
@@ -11,6 +12,8 @@ import { checkoutResponseSchema, createCheckoutBodySchema } from './schemas'
 
 import type { ManageRequestBody, ManageRequestResponse } from '@middlewares/manageRequest/types'
 import type { CheckoutResponse, CreateCheckoutRequest, GatewayCheckoutParams, GatewayCheckoutResult } from './types'
+
+const logger = createLogger('payment:checkout')
 
 const createGatewayCheckout = async ({
   plan,
@@ -34,6 +37,10 @@ const createGatewayCheckout = async ({
 
   const isPixOnly = env.ABACATEPAY_PIX_ONLY === 'true'
 
+  if (isPixOnly) {
+    logger.info(`[createGatewayCheckout] ABACATEPAY_PIX_ONLY ativo: gerando checkout (${plan.name}) exclusivo para PIX`)
+  }
+
   const body = {
     items: [{ id: plan.abacateProductId, quantity: 1 }],
     customerId,
@@ -50,10 +57,13 @@ const createGatewayCheckout = async ({
       : await client.checkouts.create(body)
 
   if (checkoutResponse.error || !checkoutResponse.data) {
+    logger.error(`[createGatewayCheckout] Falha ao criar checkout (plano: ${plan.id}, pixOnly: ${isPixOnly}):`, checkoutResponse.error)
     throw new Error(`Failed to create AbacatePay checkout: ${checkoutResponse.error}`)
   }
 
   const { id, url, methods, devMode } = checkoutResponse.data
+
+  logger.info(`[createGatewayCheckout] Checkout criado com sucesso: id=${id}, methods=${JSON.stringify(methods ?? [])}`)
 
   return {
     customerId,
