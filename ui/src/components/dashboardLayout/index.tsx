@@ -12,6 +12,7 @@ import {
 } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 import {
+  AdminPanelSettingsOutlined as AdminIcon,
   ArrowForwardIos as ArrowIcon,
   Close as CloseIcon,
   HistoryOutlined as LogsIcon,
@@ -78,7 +79,10 @@ const SidebarContent = ({
       ? [{ label: 'Personalização', path: '/app/customization', icon: <PaletteIcon fontSize="small" /> }]
       : []),
     { label: 'Plano e transações', path: '/app/billing', icon: <BillingIcon fontSize="small" /> },
-    { label: 'Logs de atividade', path: '/app/logs', icon: <LogsIcon fontSize="small" /> }
+    { label: 'Logs de atividade', path: '/app/logs', icon: <LogsIcon fontSize="small" /> },
+    ...(isAdmin
+      ? [{ label: 'Gestão geral', path: '/app/admin', icon: <AdminIcon fontSize="small" /> }]
+      : [])
   ]
 
   return (

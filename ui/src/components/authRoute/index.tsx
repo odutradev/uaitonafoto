@@ -8,11 +8,21 @@ const PRIVATE_FALLBACK = '/signin'
 const GUEST_FALLBACK = '/app'
 
 const AuthRoute = ({ access }: AuthRouteProps) => {
-  const isAuthenticated = useAuthStore((state) => Boolean(state.auth.user))
+  const user = useAuthStore((state) => state.auth.user)
+  const isAuthenticated = Boolean(user)
   const location = useLocation()
 
   if (access === 'private' && !isAuthenticated) {
     return <Navigate to={PRIVATE_FALLBACK} replace />
+  }
+
+  if (access === 'admin') {
+    if (!isAuthenticated) {
+      return <Navigate to={PRIVATE_FALLBACK} replace />
+    }
+    if (user?.role !== 'admin') {
+      return <Navigate to={GUEST_FALLBACK} replace />
+    }
   }
 
   if (access === 'guest' && isAuthenticated) {
