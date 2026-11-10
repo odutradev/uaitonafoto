@@ -63,6 +63,13 @@ export const serverEnvSchema = z.object({
   ABACATEPAY_WEBHOOK_SECRET: z
     .string()
     .min(1, 'ABACATEPAY_WEBHOOK_SECRET não pode ser vazio'),
+  ABACATEPAY_PIX_ONLY: z
+    .preprocess(
+      (val) => (val === '' ? undefined : val),
+      z.enum(['true', 'false'], {
+        errorMap: () => ({ message: "ABACATEPAY_PIX_ONLY deve ser 'true' ou 'false'" })
+      }).optional()
+    ),
   CHECKOUT_EXPIRATION_HOURS: z.coerce
     .number()
     .positive()
