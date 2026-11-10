@@ -1,9 +1,53 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import fs from 'fs'
 import path from 'path'
+import react from '@vitejs/plugin-react'
+import { defineConfig } from 'vite'
+
+const resolveAppVersion = (): string => {
+  const candidates = [
+    path.resolve(__dirname, 'uaitonafoto-package.json'),
+    path.resolve(__dirname, '../uaitonafoto-package.json'),
+    path.resolve(__dirname, '../package.json'),
+    path.resolve(process.cwd(), 'uaitonafoto-package.json'),
+    path.resolve(process.cwd(), '../uaitonafoto-package.json'),
+    path.resolve(process.cwd(), 'package.json')
+  ]
+
+  for (const candidate of candidates) {
+    try {
+      if (fs.existsSync(candidate)) {
+        const parsed = JSON.parse(fs.readFileSync(candidate, 'utf-8'))
+        if (parsed.name === 'uaitonafoto' && parsed.version) {
+          return parsed.version
+        }
+        if (parsed.version && !parsed.name?.includes('api') && !parsed.name?.includes('ui')) {
+          return parsed.version
+        }
+      }
+    } catch {}
+  }
+
+  for (const candidate of candidates) {
+    try {
+      if (fs.existsSync(candidate)) {
+        const parsed = JSON.parse(fs.readFileSync(candidate, 'utf-8'))
+        if (parsed.version) {
+          return parsed.version
+        }
+      }
+    } catch {}
+  }
+
+  return '1.0.0'
+}
+
+const appVersion = resolveAppVersion()
 
 export default defineConfig({
   plugins: [react()],
+  define: {
+    'import.meta.env.VITE_APP_VERSION': JSON.stringify(appVersion)
+  },
   resolve: {
     alias: {
       '@mui/styled-engine': '@mui/styled-engine-sc',
