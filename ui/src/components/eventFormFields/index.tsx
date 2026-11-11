@@ -2,7 +2,13 @@ import { Box, IconButton, InputAdornment, MenuItem, Switch, TextField, Tooltip, 
 import { RefreshOutlined as RefreshIcon } from "@mui/icons-material";
 import dayjs from "dayjs";
 
-import { eventTypeLabels, photoVisibilityLabels, pinRotationLabels } from "@assets/data/events";
+import {
+  defaultUploadCooldownSeconds,
+  eventTypeLabels,
+  photoVisibilityLabels,
+  pinRotationLabels,
+  uploadCooldownLabels
+} from "@assets/data/events";
 import { generateRandomPin } from "@utils/functions/events";
 
 import { formFieldsStackStyles, pinCardBoxStyles, pinToggleRowStyles, twoColsRowStyles } from "./styles";
@@ -36,7 +42,8 @@ export const buildInitialEventForm = (defaultCreditType: EventCreditType = "paid
     pinRotationMinutes: 15,
     moderationEnabled: false,
     challengesEnabled: false,
-    challengesMode: "choose"
+    challengesMode: "choose",
+    uploadCooldownSeconds: defaultUploadCooldownSeconds
   };
 };
 
@@ -56,6 +63,7 @@ export const toEventForm = (event: EventItem): EventFormState => ({
   moderationEnabled: Boolean(event.settings.moderationEnabled),
   challengesEnabled: Boolean(event.settings.challengesEnabled),
   challengesMode: event.settings.challengesMode ?? "choose",
+  uploadCooldownSeconds: event.settings.uploadCooldownSeconds ?? defaultUploadCooldownSeconds,
   customization: event.customization
 });
 
@@ -85,7 +93,8 @@ export const toEventPayload = (form: EventFormState): CreateEventPayload => {
       pinRotationMinutes: form.pinRotationMinutes,
       moderationEnabled: form.moderationEnabled,
       challengesEnabled: form.challengesEnabled,
-      challengesMode: form.challengesMode ?? "choose"
+      challengesMode: form.challengesMode ?? "choose",
+      uploadCooldownSeconds: form.uploadCooldownSeconds ?? defaultUploadCooldownSeconds
     },
     customization: form.customization
   };
@@ -186,6 +195,21 @@ const EventFormFields = ({
         >
           {Object.entries(photoVisibilityLabels).map(([value, label]) => (
             <MenuItem key={value} value={value}>
+              {label}
+            </MenuItem>
+          ))}
+        </TextField>
+
+        <TextField
+          select
+          label="Intervalo entre fotos"
+          value={form.uploadCooldownSeconds}
+          onChange={(e) => onChange("uploadCooldownSeconds", Number(e.target.value))}
+          helperText="Tempo mínimo que cada convidado espera entre uma foto e outra."
+          fullWidth
+        >
+          {Object.entries(uploadCooldownLabels).map(([value, label]) => (
+            <MenuItem key={value} value={Number(value)}>
               {label}
             </MenuItem>
           ))}
@@ -526,6 +550,21 @@ const EventFormFields = ({
           </>
         )}
       </Box>
+
+      <TextField
+        select
+        label="Intervalo entre fotos"
+        value={form.uploadCooldownSeconds}
+        onChange={(e) => onChange("uploadCooldownSeconds", Number(e.target.value))}
+        helperText="Tempo mínimo que cada convidado espera entre uma foto e outra."
+        fullWidth
+      >
+        {Object.entries(uploadCooldownLabels).map(([value, label]) => (
+          <MenuItem key={value} value={Number(value)}>
+            {label}
+          </MenuItem>
+        ))}
+      </TextField>
 
       <Box sx={pinCardBoxStyles}>
         <Box sx={pinToggleRowStyles}>

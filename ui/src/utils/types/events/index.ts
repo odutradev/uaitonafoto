@@ -29,6 +29,7 @@ export interface EventSettings {
   moderationEnabled?: boolean;
   challengesEnabled?: boolean;
   challengesMode?: ChallengeSelectionMode;
+  uploadCooldownSeconds?: number;
 }
 
 export interface EventChallenge {

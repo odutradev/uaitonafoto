@@ -22,6 +22,7 @@ export interface GuestEventInfo {
   challengesEnabled?: boolean;
   challengesMode?: "choose" | "random";
   challenges?: EventChallenge[];
+  uploadCooldownSeconds?: number;
 }
 
 export interface GuestProfile {
@@ -40,6 +41,7 @@ export interface GuestSession {
   guest: GuestProfile;
   event: GuestEventInfo;
   photosSent: number;
+  nextUploadAt?: string;
   completedChallengeIds?: string[];
 }
 
