@@ -53,7 +53,7 @@ export const Wall = styled("div")`
 `;
 
 export const ScreenSlot = styled("div")`
-  transition: transform 0.2s linear;
+  transition: transform 0.15s linear;
 
   &[data-position="center"] {
     grid-column: 1 / -1;
@@ -82,7 +82,7 @@ export const ScreenSlot = styled("div")`
 export const ScreenPhoto = styled("div")`
   position: absolute;
   inset: 0;
-  animation: ${swap} 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: ${swap} 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
 `;
 
 export const Mosaic = styled("div")`
@@ -99,7 +99,7 @@ export const Mosaic = styled("div")`
     overflow: hidden;
     border: 2px solid ${brandColors.paper};
     border-radius: 8px;
-    animation: ${swap} 0.6s ease both;
+    animation: ${swap} 0.4s ease-out both;
   }
 
   [data-position="center"] & {

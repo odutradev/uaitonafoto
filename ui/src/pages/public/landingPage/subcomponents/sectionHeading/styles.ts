@@ -57,7 +57,7 @@ export const Mark = styled("span")`
   background-size: 0% 0.16em;
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
-  transition: background-size 1s cubic-bezier(0.16, 1, 0.3, 1) 0.35s;
+  transition: background-size 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.15s;
 
   [data-visible="true"] & {
     background-size: 100% 0.16em;

@@ -40,7 +40,7 @@ import {
 
 import type { CSSProperties, PointerEvent as ReactPointerEvent, ReactNode } from "react";
 
-const cycleInterval = 2800;
+const cycleInterval = 2400;
 
 const renderEmphasis = (text: string, phrases: string[]): ReactNode[] =>
   phrases.reduce<ReactNode[]>(

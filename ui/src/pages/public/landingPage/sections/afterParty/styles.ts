@@ -3,7 +3,7 @@ import { keyframes, styled } from "@mui/material/styles";
 import { brandColors, landingColors } from "@styles/theme";
 
 const drop = keyframes`
-  from { opacity: 0; transform: translateY(-40px) rotate(calc(var(--rot) * 3)) scale(0.9); }
+  from { opacity: 0; transform: translateY(-18px) rotate(calc(var(--rot) * 2)) scale(0.96); }
   to { opacity: 1; transform: rotate(var(--rot)); }
 `;
 
@@ -225,8 +225,8 @@ export const Polaroid = styled("figure")`
   color: ${brandColors.ink};
   box-shadow: 0 24px 40px -18px ${landingColors.shadowDeep};
   transform: rotate(var(--rot));
-  animation: ${drop} 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) both;
-  animation-delay: calc(var(--i) * 90ms);
+  animation: ${drop} 0.45s cubic-bezier(0.34, 1.4, 0.64, 1) both;
+  animation-delay: calc(var(--i) * 50ms);
   transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 
   &:hover {

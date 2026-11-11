@@ -36,7 +36,7 @@ const LiveEvent = () => {
 
   useEffect(() => {
     if (!isWallVisible) return;
-    const timer = window.setInterval(() => setTick((value) => value + 1), 2200);
+    const timer = window.setInterval(() => setTick((value) => value + 1), 2000);
     return () => window.clearInterval(timer);
   }, [isWallVisible]);
 
@@ -61,7 +61,7 @@ const LiveEvent = () => {
             const position = positions[index];
             return (
               <ScreenSlot key={screen.label} data-position={position}>
-                <Reveal effect="zoom" delay={index * 120}>
+                <Reveal effect="zoom" delay={index * 50}>
                   <ScreenFrame label={`telão ${screen.label}`} pin={screen.pin}>
                     <ScreenPhoto key={`${photo.id}-${tick}`}>
                       <ScenePhoto kind={photo.kind} tone={photo.tone} author={photo.author} caption={photo.caption} />
@@ -100,14 +100,14 @@ const LiveEvent = () => {
               <p>{live.missionsText}</p>
             </MissionsCopy>
           </Reveal>
-          <Reveal effect="fade" delay={150}>
+          <Reveal effect="fade" delay={60}>
             <Marquee rows={live.missions} duration={36} />
           </Reveal>
         </Missions>
 
         <Highlights>
           {live.highlights.map((item, index) => (
-            <Reveal key={item.title} delay={index * 100}>
+            <Reveal key={item.title} delay={index * 50}>
               <Highlight>
                 <strong>{item.title}</strong>
                 <span>{item.text}</span>

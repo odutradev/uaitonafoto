@@ -69,7 +69,7 @@ const Plans = () => {
 
         <Grid style={{ "--columns": Math.min(plans.length, 4) } as CSSProperties}>
           {plans.map((plan, index) => (
-            <Reveal key={plan.id} delay={index * 90}>
+            <Reveal key={plan.id} delay={index * 50}>
               <PlanCard data-highlighted={plan.highlighted}>
                 {plan.badge && <Popular>{plan.badge}</Popular>}
                 <Tag>{plan.tag}</Tag>
@@ -144,7 +144,7 @@ const Plans = () => {
 
         <Audiences>
           {data.audiences.map((audience, index) => (
-            <Reveal key={audience.title} delay={index * 80} effect="fade">
+            <Reveal key={audience.title} delay={index * 50} effect="fade">
               <Audience>
                 <strong>{audience.title}</strong>
                 <p>{audience.text}</p>

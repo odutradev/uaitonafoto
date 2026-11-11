@@ -42,8 +42,8 @@ import type { Decision, DecidedPhoto, OrganizerStats } from "./types";
 
 import type { CSSProperties } from "react";
 
-const autoDecideDelay = 3400;
-const exitDuration = 480;
+const autoDecideDelay = 2600;
+const exitDuration = 340;
 const bulletIcons = [ShieldIcon, GroupsIcon, TvIcon];
 
 const OrganizerView = () => {
@@ -104,7 +104,7 @@ const OrganizerView = () => {
             {organizer.bullets.map((bullet, index) => {
               const Icon = bulletIcons[index % bulletIcons.length];
               return (
-                <Reveal key={bullet.title} delay={index * 90} effect="slideRight">
+                <Reveal key={bullet.title} delay={index * 50} effect="slideRight">
                   <Bullet>
                     <span>
                       <Icon fontSize="small" />

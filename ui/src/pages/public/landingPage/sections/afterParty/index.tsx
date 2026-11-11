@@ -34,7 +34,7 @@ import type { DownloadState } from "./types";
 
 import type { ChangeEvent, CSSProperties } from "react";
 
-const guestCycle = 5000;
+const guestCycle = 4000;
 const rotations = ["-3deg", "2deg", "-1.5deg", "3deg"];
 
 const AfterParty = () => {
@@ -60,7 +60,7 @@ const AfterParty = () => {
   useEffect(() => {
     if (downloadState !== "running") return;
     const timer = window.setInterval(() => {
-      setDownloadProgress((value) => Math.min(1, value + 0.04));
+      setDownloadProgress((value) => Math.min(1, value + 0.07));
     }, 60);
     return () => window.clearInterval(timer);
   }, [downloadState]);
@@ -174,7 +174,7 @@ const AfterParty = () => {
             </Card>
           </Reveal>
 
-          <Reveal effect="slideLeft" delay={120}>
+          <Reveal effect="slideLeft" delay={60}>
             <Card>
               <h3>baixe tudo em alta, num único .zip.</h3>
               <p>Todas as fotos originais, com quem tirou e quando.</p>
