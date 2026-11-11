@@ -1,22 +1,11 @@
 import { Box, Button, Card, CircularProgress, Typography } from '@mui/material'
 
-import {
-  claimButtonStyles,
-  kpiCardStyles,
-  kpiGridStyles,
-  kpiValueStyles,
-  trialRowStyles
-} from './styles'
-import type { BillingSummaryProps } from './types'
+import { claimButtonStyles, kpiCardStyles, kpiGridStyles, kpiValueStyles, trialRowStyles } from './styles'
+import useBillingPage from '@pages/app/billing/hook'
 
-const BillingSummary = ({
-  paidCredits,
-  freeCredits,
-  freeTrialClaimed,
-  isCheckingOutFreeTrial,
-  isCheckoutBusy,
-  onClaimFreeTrial
-}: BillingSummaryProps) => {
+const BillingSummary = () => {
+  const { paidCredits, freeCredits, freeTrialClaimed, isCheckingOutFreeTrial, isCheckoutBusy, handleClaimFreeTrial: onClaimFreeTrial } = useBillingPage()
+
   return (
     <Box component="section" sx={kpiGridStyles}>
       <Card elevation={0} sx={kpiCardStyles}>

@@ -1,28 +1,12 @@
 import { useState } from 'react'
-import {
-  Alert,
-  Box,
-  Button,
-  Card,
-  Chip,
-  CircularProgress,
-  Typography
-} from '@mui/material'
+import { Alert, Box, Button, Card, Chip, CircularProgress, Typography } from '@mui/material'
 
 import Modal from '@components/modal'
 import { formatPriceInBrl } from '@utils/functions/formatters'
 
-import {
-  activePlanCardStyles,
-  cancelButtonStyles,
-  metaItemsStyles,
-  metaRowStyles,
-  sectionBoxStyles,
-  titleChipsRowStyles,
-  topHeaderRowStyles
-} from './styles'
+import { activePlanCardStyles, cancelButtonStyles, metaItemsStyles, metaRowStyles, sectionBoxStyles, titleChipsRowStyles, topHeaderRowStyles } from './styles'
 import type { SubscriptionItem, SubscriptionStatus } from '@utils/types/payments'
-import type { CurrentPlanCardProps } from './types'
+import useBillingPage from '@pages/app/billing/hook'
 
 const formatDatePtBr = (isoDate?: string): string => {
   if (!isoDate) return '-'
@@ -43,12 +27,9 @@ const getStatusProps = (status: SubscriptionStatus) => {
   return { label: 'Cancelada', color: 'default' as const }
 }
 
-const CurrentPlanCard = ({
-  subscriptions,
-  cancellingId,
-  isCheckoutBusy,
-  onCancelSubscription
-}: CurrentPlanCardProps) => {
+const CurrentPlanCard = () => {
+  const { subscriptions, cancellingSubscriptionId: cancellingId, isCheckoutBusy, handleCancelSubscription: onCancelSubscription } = useBillingPage()
+
   const [confirmTarget, setConfirmTarget] = useState<SubscriptionItem | null>(null)
 
   const currentSubscriptions = subscriptions.filter((sub) => sub.status !== 'CANCELLED')

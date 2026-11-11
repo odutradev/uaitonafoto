@@ -1,7 +1,7 @@
 import { Box, Button, CircularProgress, Typography } from '@mui/material'
 import { Refresh as RefreshIcon } from '@mui/icons-material'
 
-import useBilling from './hooks/useBilling'
+import useBillingPage, { BillingPageProvider } from './hook'
 import BillingSummary from './sections/billingSummary'
 import CreditsAndPlans from './sections/creditsAndPlans'
 import CurrentPlanCard from './sections/currentPlanCard'
@@ -10,47 +10,10 @@ import TransactionDetailsDialog from './subcomponents/transactionDetailsDialog'
 import CheckoutConfirmationDialog from './subcomponents/checkoutConfirmationDialog'
 import { billingPageStyles, headerButtonStyles, headerRowStyles, pageTitleStyles } from './styles'
 
-const FREE_PLAN_ID = 'free_trial'
-
-const Billing = () => {
-  const {
-    user,
-    plans,
-    subscriptions,
-    purchases,
-    creditUsages,
-    transactions,
-    transactionsPage,
-    transactionsTotal,
-    transactionsTotalPages,
-    statusFilter,
-    typeFilter,
-    directionFilter,
-    isLoadingInitial,
-    isLoadingTransactions,
-    checkoutPlanId,
-    cancellingSubscriptionId,
-    selectedTransaction,
-    confirmingPlan,
-    setSelectedTransaction,
-    handleStatusFilterChange,
-    handleTypeFilterChange,
-    handleDirectionFilterChange,
-    handlePageChange,
-    handleRefreshAll,
-    startCheckout,
-    handleOpenCheckoutConfirmation,
-    handleCloseCheckoutConfirmation,
-    handleConfirmCheckout,
-    handleCancelSubscription
-  } = useBilling()
+const BillingContent = () => {
+  const { user, isLoadingInitial, isLoadingTransactions, handleRefreshAll } = useBillingPage()
 
   if (!user) return null
-
-  const hasActiveSubscription = subscriptions.some((sub) => sub.status === 'ACTIVE')
-  const activeSubscriptionPlanIds = subscriptions
-    .filter((sub) => sub.status !== 'CANCELLED')
-    .map((sub) => sub.planId)
 
   return (
     <Box sx={billingPageStyles}>
@@ -78,63 +41,25 @@ const Billing = () => {
         </Button>
       </Box>
 
-      <BillingSummary
-        paidCredits={user.paidCredits}
-        freeCredits={user.freeCredits}
-        freeTrialClaimed={Boolean(user.freeTrialClaimedAt)}
-        isCheckingOutFreeTrial={checkoutPlanId === FREE_PLAN_ID}
-        isCheckoutBusy={checkoutPlanId !== null}
-        onClaimFreeTrial={() => startCheckout(FREE_PLAN_ID)}
-      />
+      <BillingSummary />
 
-      <CurrentPlanCard
-        subscriptions={subscriptions}
-        cancellingId={cancellingSubscriptionId}
-        isCheckoutBusy={checkoutPlanId !== null}
-        onCancelSubscription={handleCancelSubscription}
-      />
+      <CurrentPlanCard />
 
-      <CreditsAndPlans
-        plans={plans}
-        isLoading={isLoadingInitial}
-        checkoutPlanId={checkoutPlanId}
-        activeSubscriptionPlanIds={activeSubscriptionPlanIds}
-        hasActiveSubscription={hasActiveSubscription}
-        onSelectPlan={handleOpenCheckoutConfirmation}
-      />
+      <CreditsAndPlans />
 
-      <TransactionsHistory
-        purchases={purchases}
-        creditUsages={creditUsages}
-        transactions={transactions}
-        page={transactionsPage}
-        total={transactionsTotal}
-        totalPages={transactionsTotalPages}
-        statusFilter={statusFilter}
-        typeFilter={typeFilter}
-        directionFilter={directionFilter}
-        isLoading={isLoadingTransactions}
-        onStatusFilterChange={handleStatusFilterChange}
-        onTypeFilterChange={handleTypeFilterChange}
-        onDirectionFilterChange={handleDirectionFilterChange}
-        onPageChange={handlePageChange}
-        onSelectTransaction={setSelectedTransaction}
-      />
+      <TransactionsHistory />
 
-      <TransactionDetailsDialog
-        transaction={selectedTransaction}
-        onClose={() => setSelectedTransaction(null)}
-      />
+      <TransactionDetailsDialog />
 
-      <CheckoutConfirmationDialog
-        plan={confirmingPlan}
-        open={Boolean(confirmingPlan)}
-        isLoading={checkoutPlanId !== null}
-        onClose={handleCloseCheckoutConfirmation}
-        onConfirm={handleConfirmCheckout}
-      />
+      <CheckoutConfirmationDialog />
     </Box>
   )
 }
+
+const Billing = () => (
+  <BillingPageProvider>
+    <BillingContent />
+  </BillingPageProvider>
+)
 
 export default Billing
