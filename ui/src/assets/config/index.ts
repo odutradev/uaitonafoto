@@ -7,7 +7,7 @@ interface DefaultConfig {
 }
 
 export const isProduction = import.meta.env.PROD || import.meta.env.VITE_PRODUCTION === 'true'
-const rawBaseURL = import.meta.env.VITE_BASE_URL || import.meta.env.VITE_API_URL || 'http://localhost:3000'
+const rawBaseURL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
 const normalizedBaseURL = rawBaseURL.replace(/^(https?):\/([^/])/, '$1://$2')
 const baseURL = normalizedBaseURL.replace(/\/+$/, '')
 
