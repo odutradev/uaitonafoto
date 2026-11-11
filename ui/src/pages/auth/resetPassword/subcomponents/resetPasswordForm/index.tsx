@@ -12,18 +12,11 @@ import {
   themeToggleStyles,
   titleStyles
 } from './styles'
-import type { ResetPasswordFormProps } from './types'
+import useResetPasswordPage from '@pages/auth/resetPassword/hook'
 
-export const ResetPasswordForm = ({
-  token,
-  email,
-  setEmail,
-  password,
-  setPassword,
-  submitting,
-  submitted,
-  onSubmit
-}: ResetPasswordFormProps) => {
+export const ResetPasswordForm = () => {
+  const { token, email, setEmail, password, setPassword, submitting, submitted, handleSubmit: onSubmit } = useResetPasswordPage()
+
   return (
     <Container maxWidth="xs">
       <Box sx={resetWrapperStyles}>

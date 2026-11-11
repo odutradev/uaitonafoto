@@ -3,19 +3,10 @@ import { useNavigate } from 'react-router-dom'
 import { confirmPasswordReset, requestPasswordReset } from '@actions/auth'
 import useQueryParams from '@hooks/useQueryParams'
 import type { FormEvent } from 'react'
+import type { UseResetPasswordPageReturn } from './types'
+import createPageContext from '@utils/functions/createPageContext'
 
-export interface UseResetPasswordFormReturn {
-  token?: string
-  email: string
-  setEmail: (value: string) => void
-  password: string
-  setPassword: (value: string) => void
-  submitting: boolean
-  submitted: boolean
-  handleSubmit: (event: FormEvent<HTMLFormElement>) => Promise<void>
-}
-
-export const useResetPasswordForm = (): UseResetPasswordFormReturn => {
+const useResetPasswordPageState = (): UseResetPasswordPageReturn => {
   const { token } = useQueryParams<{ token?: string }>()
   const navigate = useNavigate()
   const [email, setEmail] = useState('')
@@ -53,5 +44,10 @@ export const useResetPasswordForm = (): UseResetPasswordFormReturn => {
   }
 }
 
-export default useResetPasswordForm
+const { PageProvider: ResetPasswordPageProvider, usePage: useResetPasswordPage } = createPageContext(
+  useResetPasswordPageState,
+  'useResetPasswordPage'
+)
 
+export { ResetPasswordPageProvider }
+export default useResetPasswordPage

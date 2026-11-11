@@ -5,7 +5,7 @@ import GoogleIcon from '@components/googleIcon'
 import Logo from '@components/logo'
 import ThemeToggle from '@components/themeToggle'
 
-import { useAuthForm } from './hooks/useAuthForm'
+import useAuthPage, { AuthPageProvider } from './hook'
 import {
   authCardStyles,
   authWrapperStyles,
@@ -18,9 +18,8 @@ import {
   switchLinkBoxStyles,
   themeToggleWrapperStyles
 } from './styles'
-import type { AuthPageProps } from './types'
 
-export const AuthPage = ({ initialMode }: AuthPageProps) => {
+const AuthPageContent = () => {
   const location = useLocation()
   const {
     isSignUp,
@@ -37,7 +36,7 @@ export const AuthPage = ({ initialMode }: AuthPageProps) => {
     submitting,
     handleSubmit,
     handleGoogleLogin
-  } = useAuthForm({ initialMode })
+  } = useAuthPage()
 
   return (
     <Box sx={authWrapperStyles}>
@@ -194,6 +193,12 @@ export const AuthPage = ({ initialMode }: AuthPageProps) => {
     </Box>
   )
 }
+
+export const AuthPage = () => (
+  <AuthPageProvider>
+    <AuthPageContent />
+  </AuthPageProvider>
+)
 
 export default AuthPage
 

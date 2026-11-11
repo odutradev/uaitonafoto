@@ -2,7 +2,9 @@ import { useState, useEffect, useCallback } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import useAuth from '@hooks/useAuth'
 import type { FormEvent } from 'react'
-import type { AuthMode, UseAuthFormOptions, UseAuthFormReturn } from '@pages/auth/authPage/types'
+import type { AuthMode } from '@pages/auth/authPage/types'
+import createPageContext from '@utils/functions/createPageContext'
+import type { UseAuthPageReturn } from './types'
 
 const getFirebaseErrorMessage = (error: unknown, mode: AuthMode): string => {
   if (typeof error === 'object' && error !== null && 'code' in error) {
@@ -36,17 +38,14 @@ const getFirebaseErrorMessage = (error: unknown, mode: AuthMode): string => {
     : 'Ocorreu um erro ao entrar. Tente novamente.'
 }
 
-export const useAuthForm = (options?: UseAuthFormOptions): UseAuthFormReturn => {
+const useAuthPageState = (): UseAuthPageReturn => {
   const { loginWithEmail, registerWithEmail, loginWithGoogle } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
 
   const resolveModeFromPath = useCallback((): AuthMode => {
-    if (options?.initialMode) {
-      return options.initialMode
-    }
     return location.pathname.includes('signup') ? 'signup' : 'signin'
-  }, [location.pathname, options?.initialMode])
+  }, [location.pathname])
 
   const [mode, setModeState] = useState<AuthMode>(resolveModeFromPath)
   const [name, setName] = useState('')
@@ -175,5 +174,10 @@ export const useAuthForm = (options?: UseAuthFormOptions): UseAuthFormReturn => 
   }
 }
 
-export default useAuthForm
+const { PageProvider: AuthPageProvider, usePage: useAuthPage } = createPageContext(
+  useAuthPageState,
+  'useAuthPage'
+)
 
+export { AuthPageProvider }
+export default useAuthPage

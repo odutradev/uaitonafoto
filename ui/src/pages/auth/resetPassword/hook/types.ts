@@ -1,6 +1,6 @@
 import type { FormEvent } from 'react'
 
-export interface ResetPasswordFormProps {
+export interface UseResetPasswordPageReturn {
   token?: string
   email: string
   setEmail: (value: string) => void
@@ -8,6 +8,5 @@ export interface ResetPasswordFormProps {
   setPassword: (value: string) => void
   submitting: boolean
   submitted: boolean
-  onSubmit: (event: FormEvent<HTMLFormElement>) => Promise<void>
+  handleSubmit: (event: FormEvent<HTMLFormElement>) => Promise<void>
 }
-
