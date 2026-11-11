@@ -9,19 +9,22 @@ import {
   sectionsStackStyles,
   securityRowStyles
 } from './styles'
-import type { ProfileDetailsFormProps } from './types'
+import useProfilePage from '@pages/app/profile/hook'
 
-const ProfileDetailsForm = ({
-  email,
-  values,
-  isDirty,
-  isSaving,
-  isSendingReset,
-  onChangeField,
-  onSubmit,
-  onReset,
-  onSendPasswordReset
-}: ProfileDetailsFormProps) => {
+const ProfileDetailsForm = () => {
+  const {
+    user,
+    values,
+    isDirty,
+    isSaving,
+    isSendingReset,
+    setField: onChangeField,
+    handleSubmit: onSubmit,
+    handleResetChanges: onReset,
+    handleSendPasswordReset: onSendPasswordReset
+  } = useProfilePage()
+  const email = user?.email ?? ''
+
   return (
     <Box sx={sectionsStackStyles}>
       <Card component="form" onSubmit={onSubmit} elevation={0} sx={formCardStyles}>

@@ -1,23 +1,13 @@
 import { Box, Typography } from '@mui/material'
 
-import { version } from '@assets/config'
-import useProfile from './hooks/useProfile'
+import { footerStyles, headerBoxStyles, pageTitleStyles, profilePageStyles } from './styles'
+import useProfilePage, { ProfilePageProvider } from './hook'
 import ProfileDetailsForm from './sections/profileDetailsForm'
 import UserOverview from './sections/userOverview'
-import { footerStyles, headerBoxStyles, pageTitleStyles, profilePageStyles } from './styles'
+import { version } from '@assets/config'
 
-const Profile = () => {
-  const {
-    user,
-    values,
-    isDirty,
-    isSaving,
-    isSendingReset,
-    setField,
-    handleSubmit,
-    handleResetChanges,
-    handleSendPasswordReset
-  } = useProfile()
+const ProfileContent = () => {
+  const { user } = useProfilePage()
 
   if (!user) return null
 
@@ -32,19 +22,9 @@ const Profile = () => {
         </Typography>
       </Box>
 
-      <UserOverview user={user} />
+      <UserOverview />
 
-      <ProfileDetailsForm
-        email={user.email}
-        values={values}
-        isDirty={isDirty}
-        isSaving={isSaving}
-        isSendingReset={isSendingReset}
-        onChangeField={setField}
-        onSubmit={handleSubmit}
-        onReset={handleResetChanges}
-        onSendPasswordReset={handleSendPasswordReset}
-      />
+      <ProfileDetailsForm />
 
       <Box component="footer" sx={footerStyles}>
         <Typography variant="caption" color="text.secondary">
@@ -54,5 +34,11 @@ const Profile = () => {
     </Box>
   )
 }
+
+const Profile = () => (
+  <ProfilePageProvider>
+    <ProfileContent />
+  </ProfilePageProvider>
+)
 
 export default Profile

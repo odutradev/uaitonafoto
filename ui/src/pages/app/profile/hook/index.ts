@@ -1,12 +1,16 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { toast } from 'react-toastify'
 
+import createPageContext from '@utils/functions/createPageContext'
+import useAction from '@hooks/useAction'
+
 import { getMeData, requestPasswordReset, updateMeData } from '@actions/auth'
 import useAuthStore from '@stores/auth'
 
 import type { FormEvent } from 'react'
 import type { AuthUser } from '@stores/auth/types'
-import type { ProfileFormValues, UseProfileReturn } from '@pages/app/profile/types'
+import type { ProfileFormValues } from '@pages/app/profile/types'
+import type { UseProfilePageReturn } from './types'
 
 const toFormValues = (user: AuthUser | null): ProfileFormValues => ({
   name: user?.name ?? '',
@@ -14,7 +18,8 @@ const toFormValues = (user: AuthUser | null): ProfileFormValues => ({
   phone: user?.phone ?? ''
 })
 
-export const useProfile = (): UseProfileReturn => {
+const useProfilePageState = (): UseProfilePageReturn => {
+  const runAction = useAction()
   const user = useAuthStore((state) => state.auth.user)
   const updateUser = useAuthStore((state) => state.updateUser)
 
@@ -73,37 +78,39 @@ export const useProfile = (): UseProfileReturn => {
       }
 
       setIsSaving(true)
-      try {
-        const updated = await updateMeData({
-          name: trimmedName,
-          fullName: values.fullName.trim() || undefined,
-          phone: digitsOnlyPhone || undefined
-        })
-        updateUser(updated)
-        setValues(toFormValues(updated))
-        toast.success('Perfil atualizado com sucesso!')
-      } catch {
-        toast.error('Não foi possível salvar as alterações do perfil.')
-      } finally {
-        setIsSaving(false)
-      }
+      await runAction({
+        action: () =>
+          updateMeData({
+            name: trimmedName,
+            fullName: values.fullName.trim() || undefined,
+            phone: digitsOnlyPhone || undefined
+          }),
+        toastMessages: { success: 'Perfil atualizado com sucesso!', error: 'Não foi possível salvar as alterações do perfil.' },
+        shouldUseApiError: false,
+        callback: (updated) => {
+          updateUser(updated)
+          setValues(toFormValues(updated))
+        }
+      })
+      setIsSaving(false)
     },
-    [updateUser, values]
+    [runAction, updateUser, values]
   )
 
   const handleSendPasswordReset = useCallback(async () => {
     if (!user?.email) return
 
     setIsSendingReset(true)
-    try {
-      await requestPasswordReset({ email: user.email })
-      toast.success(`Enviamos um link de redefinição de senha para ${user.email}.`)
-    } catch {
-      toast.error('Não foi possível enviar o e-mail de redefinição agora.')
-    } finally {
-      setIsSendingReset(false)
-    }
-  }, [user?.email])
+    await runAction({
+      action: () => requestPasswordReset({ email: user.email }),
+      toastMessages: {
+        success: `Enviamos um link de redefinição de senha para ${user.email}.`,
+        error: 'Não foi possível enviar o e-mail de redefinição agora.'
+      },
+      shouldUseApiError: false
+    })
+    setIsSendingReset(false)
+  }, [runAction, user?.email])
 
   return {
     user,
@@ -118,4 +125,10 @@ export const useProfile = (): UseProfileReturn => {
   }
 }
 
-export default useProfile
+const { PageProvider: ProfilePageProvider, usePage: useProfilePage } = createPageContext(
+  useProfilePageState,
+  'useProfilePage'
+)
+
+export { ProfilePageProvider }
+export default useProfilePage
