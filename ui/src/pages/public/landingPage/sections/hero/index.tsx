@@ -5,8 +5,8 @@ import { Link as RouterLink } from "react-router-dom";
 import { QRCodeSVG } from "qrcode.react";
 
 import useLandingPage from "@pages/public/landingPage/hook";
-import ScenePhoto from "@pages/public/landingPage/subcomponents/scenePhoto";
-import PhoneFrame from "@pages/public/landingPage/subcomponents/phoneFrame";
+import ScenePhoto from "@components/scenePhoto";
+import PhoneFrame from "@components/phoneFrame";
 import { brandColors } from "@styles/theme";
 
 import {

@@ -5,8 +5,8 @@ import useScrollProgress from "@hooks/useScrollProgress";
 import useLandingPage from "@pages/public/landingPage/hook";
 import Marquee from "@pages/public/landingPage/subcomponents/marquee";
 import Reveal from "@pages/public/landingPage/subcomponents/reveal";
-import ScenePhoto from "@pages/public/landingPage/subcomponents/scenePhoto";
-import ScreenFrame from "@pages/public/landingPage/subcomponents/screenFrame";
+import ScenePhoto from "@components/scenePhoto";
+import ScreenFrame from "@components/screenFrame";
 import SectionHeading from "@pages/public/landingPage/subcomponents/sectionHeading";
 
 import {

@@ -3,9 +3,9 @@ import { QRCodeSVG } from "qrcode.react";
 
 import useScrollProgress from "@hooks/useScrollProgress";
 import useLandingPage from "@pages/public/landingPage/hook";
-import PhoneFrame from "@pages/public/landingPage/subcomponents/phoneFrame";
-import ScenePhoto from "@pages/public/landingPage/subcomponents/scenePhoto";
-import ScreenFrame from "@pages/public/landingPage/subcomponents/screenFrame";
+import PhoneFrame from "@components/phoneFrame";
+import ScenePhoto from "@components/scenePhoto";
+import ScreenFrame from "@components/screenFrame";
 import { brandColors } from "@styles/theme";
 
 import {

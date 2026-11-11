@@ -1,4 +1,4 @@
-import type { SceneKind, SceneTone } from "@pages/public/landingPage/subcomponents/scenePhoto/types";
+import type { SceneKind, SceneTone } from "@components/scenePhoto/types";
 
 export interface LinkItem {
   text: string;
