@@ -19,8 +19,11 @@ import { buildRoomStreamUrl } from '@utils/api/guest'
 import { getErrorMessage } from '@utils/functions/events'
 
 import type { EventItem, EventScreenHistoryEntry, EventScreenSlot, UpdateEventPayload } from '@utils/types/events'
+import useAction from '@hooks/useAction'
+import type { LockoutScope, UseEventDetailsDataReturn } from './types'
 
-const useEventDetails = (eventId: string) => {
+const useEventDetailsData = (eventId: string): UseEventDetailsDataReturn => {
+  const runAction = useAction()
   const navigate = useNavigate()
   const [event, setEvent] = useState<EventItem | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -67,25 +70,23 @@ const useEventDetails = (eventId: string) => {
 
   const save = useCallback(
     async (payload: UpdateEventPayload) => {
-      try {
-        setEvent(await updateEvent(eventId, payload))
-        toast.success('Evento atualizado!')
-      } catch (error) {
-        toast.error(getErrorMessage(error, 'Não foi possível atualizar o evento.'))
-      }
+      await runAction({
+        action: async () => {
+          setEvent(await updateEvent(eventId, payload))
+        },
+        toastMessages: { success: 'Evento atualizado!', error: 'Não foi possível atualizar o evento.' }
+      })
     },
-    [eventId]
+    [eventId, runAction]
   )
 
   const remove = useCallback(async () => {
-    try {
-      await deleteEvent(eventId)
-      toast.success('Evento excluído.')
-      navigate('/app', { replace: true })
-    } catch (error) {
-      toast.error(getErrorMessage(error, 'Não foi possível excluir o evento.'))
-    }
-  }, [eventId, navigate])
+    await runAction({
+      action: () => deleteEvent(eventId),
+      toastMessages: { success: 'Evento excluído.', error: 'Não foi possível excluir o evento.' },
+      callback: () => navigate('/app', { replace: true })
+    })
+  }, [eventId, navigate, runAction])
 
   const refresh = useCallback(async () => {
     try {
@@ -255,101 +256,97 @@ const useEventDetails = (eventId: string) => {
 
   const addScreen = useCallback(
     async (name?: string) => {
-      try {
-        const screens = await createEventScreen(eventId, name)
-        setEvent((prev) => (prev ? { ...prev, screens } : prev))
-        toast.success('PIN do telão gerado!')
-      } catch (error) {
-        toast.error(getErrorMessage(error, 'Não foi possível gerar o PIN do telão.'))
-      }
+      await runAction({
+        action: async () => {
+          const screens = await createEventScreen(eventId, name)
+          setEvent((prev) => (prev ? { ...prev, screens } : prev))
+        },
+        toastMessages: { success: 'PIN do telão gerado!', error: 'Não foi possível gerar o PIN do telão.' }
+      })
     },
-    [eventId]
+    [eventId, runAction]
   )
 
   const disconnectScreen = useCallback(
     async (screenId: string) => {
-      try {
-        const screens = await removeEventScreen(eventId, screenId)
-        setEvent((prev) => (prev ? { ...prev, screens } : prev))
-        toast.success('Telão desconectado.')
-      } catch (error) {
-        toast.error(getErrorMessage(error, 'Não foi possível desconectar o telão.'))
-      }
+      await runAction({
+        action: async () => {
+          const screens = await removeEventScreen(eventId, screenId)
+          setEvent((prev) => (prev ? { ...prev, screens } : prev))
+        },
+        toastMessages: { success: 'Telão desconectado.', error: 'Não foi possível desconectar o telão.' }
+      })
     },
-    [eventId]
+    [eventId, runAction]
   )
 
   const updateScreen = useCallback(
     async (screenId: string, name?: string) => {
-      try {
-        const screens = await updateEventScreen(eventId, screenId, name)
-        setEvent((prev) => (prev ? { ...prev, screens } : prev))
-        toast.success('Identificação do telão atualizada!')
-      } catch (error) {
-        toast.error(getErrorMessage(error, 'Não foi possível atualizar o telão.'))
-      }
+      await runAction({
+        action: async () => {
+          const screens = await updateEventScreen(eventId, screenId, name)
+          setEvent((prev) => (prev ? { ...prev, screens } : prev))
+        },
+        toastMessages: { success: 'Identificação do telão atualizada!', error: 'Não foi possível atualizar o telão.' }
+      })
     },
-    [eventId]
+    [eventId, runAction]
   )
 
   const toggleBlockScreen = useCallback(
     async (screenId: string, blocked: boolean) => {
-      try {
-        const screens = await setEventScreenBlock(eventId, screenId, blocked)
-        setEvent((prev) => (prev ? { ...prev, screens } : prev))
-        toast.success(blocked ? 'Telão bloqueado com sucesso.' : 'Telão desbloqueado com sucesso!')
-      } catch (error) {
-        toast.error(
-          getErrorMessage(
-            error,
-            blocked ? 'Não foi possível bloquear o telão.' : 'Não foi possível desbloquear o telão.'
-          )
-        )
-      }
+      await runAction({
+        action: () => setEventScreenBlock(eventId, screenId, blocked),
+        toastMessages: {
+          success: blocked ? 'Telão bloqueado com sucesso.' : 'Telão desbloqueado com sucesso!',
+          error: blocked ? 'Não foi possível bloquear o telão.' : 'Não foi possível desbloquear o telão.'
+        },
+        callback: (screens) => setEvent((prev) => (prev ? { ...prev, screens } : prev))
+      })
     },
-    [eventId]
+    [eventId, runAction]
   )
 
   const start = useCallback(async () => {
-    try {
-      const updated = await startEvent(eventId)
-      setEvent(updated)
-      toast.success('Evento iniciado! O sistema e telão estão ativos.')
-    } catch (error) {
-      toast.error(getErrorMessage(error, 'Não foi possível iniciar o evento.'))
-    }
-  }, [eventId])
+    await runAction({
+      action: async () => {
+        const updated = await startEvent(eventId)
+        setEvent(updated)
+      },
+      toastMessages: { success: 'Evento iniciado! O sistema e telão estão ativos.', error: 'Não foi possível iniciar o evento.' }
+    })
+  }, [eventId, runAction])
 
   const close = useCallback(async () => {
-    try {
-      const updated = await closeEvent(eventId)
-      setEvent(updated)
-      toast.success('Evento encerrado. A galeria está liberada!')
-    } catch (error) {
-      toast.error(getErrorMessage(error, 'Não foi possível encerrar o evento.'))
-    }
-  }, [eventId])
+    await runAction({
+      action: async () => {
+        const updated = await closeEvent(eventId)
+        setEvent(updated)
+      },
+      toastMessages: { success: 'Evento encerrado. A galeria está liberada!', error: 'Não foi possível encerrar o evento.' }
+    })
+  }, [eventId, runAction])
 
   const reopen = useCallback(async () => {
-    try {
-      const updated = await reopenEvent(eventId)
-      setEvent(updated)
-      toast.success('Evento reaberto com sucesso!')
-    } catch (error) {
-      toast.error(getErrorMessage(error, 'Não foi possível reabrir o evento.'))
-    }
-  }, [eventId])
+    await runAction({
+      action: async () => {
+        const updated = await reopenEvent(eventId)
+        setEvent(updated)
+      },
+      toastMessages: { success: 'Evento reaberto com sucesso!', error: 'Não foi possível reabrir o evento.' }
+    })
+  }, [eventId, runAction])
 
   const unlockPin = useCallback(
-    async (scope: 'all' | 'screen' | 'guest' = 'all') => {
-      try {
-        await resetEventLockouts(eventId, scope)
-        toast.success('Bloqueios de PIN resetados com sucesso.')
-      } catch (error) {
-        toast.error(getErrorMessage(error, 'Não foi possível desbloquear os dispositivos.'))
-      }
+    async (scope: LockoutScope = 'all') => {
+      await runAction({
+        action: async () => {
+          await resetEventLockouts(eventId, scope)
+        },
+        toastMessages: { success: 'Bloqueios de PIN resetados com sucesso.', error: 'Não foi possível desbloquear os dispositivos.' }
+      })
     },
-    [eventId]
+    [eventId, runAction]
   )
 
   return {
@@ -369,4 +366,4 @@ const useEventDetails = (eventId: string) => {
   }
 }
 
-export default useEventDetails
+export default useEventDetailsData

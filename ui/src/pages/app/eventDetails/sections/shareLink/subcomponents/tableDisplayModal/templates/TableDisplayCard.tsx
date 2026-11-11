@@ -1,11 +1,5 @@
 import { Box, Typography } from '@mui/material'
-import {
-  CameraAltOutlined as CameraIcon,
-  CloudUploadOutlined as UploadIcon,
-  TvOutlined as TvIcon,
-  LockOutlined as LockIcon,
-  AutoAwesomeOutlined as SparkleIcon
-} from '@mui/icons-material'
+import { CameraAltOutlined as CameraIcon, CloudUploadOutlined as UploadIcon, TvOutlined as TvIcon, LockOutlined as LockIcon, AutoAwesomeOutlined as SparkleIcon } from '@mui/icons-material'
 import { QRCodeSVG } from 'qrcode.react'
 
 import { TEMPLATE_THEMES, cardContainerStyles } from './styles'

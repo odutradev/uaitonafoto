@@ -1,47 +1,20 @@
 import { useEffect, useState } from 'react'
-import {
-  Box,
-  Button,
-  Card,
-  CircularProgress,
-  IconButton,
-  Switch,
-  TextField,
-  Tooltip,
-  Typography
-} from '@mui/material'
-import {
-  AddOutlined as AddIcon,
-  DeleteOutline as DeleteIcon,
-  RestartAltOutlined as ResetIcon
-} from '@mui/icons-material'
+import { Box, Button, Card, CircularProgress, IconButton, Switch, TextField, Tooltip, Typography } from '@mui/material'
+import { AddOutlined as AddIcon, DeleteOutline as DeleteIcon, RestartAltOutlined as ResetIcon } from '@mui/icons-material'
 import { toast } from 'react-toastify'
 
-import {
-  addEventChallenge,
-  deleteEventChallenge,
-  getEventChallenges,
-  resetEventChallenges,
-  toggleEventChallenge
-} from '@actions/events'
+import { addEventChallenge, deleteEventChallenge, getEventChallenges, resetEventChallenges, toggleEventChallenge } from '@actions/events'
 import Modal from '@components/modal'
 import { getErrorMessage } from '@utils/functions/events'
 
-import {
-  addChallengeButtonStyles,
-  addChallengeFormRowStyles,
-  challengeActionsRowStyles,
-  challengeItemCardStyles,
-  challengeListStackStyles,
-  challengesCardStyles,
-  challengesHeaderRowStyles,
-  countBadgeStyles,
-  resetButtonStyles
-} from './styles'
+import { addChallengeButtonStyles, addChallengeFormRowStyles, challengeActionsRowStyles, challengeItemCardStyles, challengeListStackStyles, challengesCardStyles, challengesHeaderRowStyles, countBadgeStyles, resetButtonStyles } from './styles'
 import type { EventChallenge } from '@utils/types/events'
-import type { EventChallengesProps } from './types'
+import useEventDetailsPage from '@pages/app/eventDetails/hook'
 
-const EventChallenges = ({ event, onRefresh }: EventChallengesProps) => {
+const EventChallenges = () => {
+  const { event: eventValue, refresh: onRefresh } = useEventDetailsPage()
+  const event = eventValue!
+
   const [challenges, setChallenges] = useState<EventChallenge[]>(event.challenges ?? [])
   const [newTitle, setNewTitle] = useState('')
   const [isLoading, setIsLoading] = useState(false)

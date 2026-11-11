@@ -1,26 +1,6 @@
 import { useEffect, useState } from 'react'
-import {
-  Alert,
-  Avatar,
-  Box,
-  Button,
-  Card,
-  Chip,
-  CircularProgress,
-  Switch,
-  Tab,
-  Tabs,
-  TextField,
-  Typography
-} from '@mui/material'
-import {
-  DeleteOutline as DeleteIcon,
-  DesktopWindowsOutlined as ScreenIcon,
-  PhoneIphoneOutlined as MobileIcon,
-  SaveOutlined as SaveIcon,
-  Chat as WhatsAppIcon,
-  SyncOutlined as SyncIcon
-} from '@mui/icons-material'
+import { Alert, Avatar, Box, Button, Card, Chip, CircularProgress, Switch, Tab, Tabs, TextField, Typography } from '@mui/material'
+import { DeleteOutline as DeleteIcon, DesktopWindowsOutlined as ScreenIcon, PhoneIphoneOutlined as MobileIcon, SaveOutlined as SaveIcon, Chat as WhatsAppIcon, SyncOutlined as SyncIcon } from '@mui/icons-material'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 
@@ -29,32 +9,16 @@ import { isEventStarted } from '@utils/functions/eventPhase'
 import Modal from '@components/modal'
 import useAuth from '@hooks/useAuth'
 
-import {
-  appBadgeCardStyles,
-  appMockupStyles,
-  appNotchBarStyles,
-  customizationCardStyles,
-  customizationSwitchRowStyles,
-  dangerCardStyles,
-  dangerRowStyles,
-  previewBoxStyles,
-  previewTabsContainerStyles,
-  proBadgeStyles,
-  screenBadgeStyles,
-  screenHeaderBarStyles,
-  screenMockupStyles,
-  settingsActionsRowStyles,
-  settingsButtonStyles,
-  settingsCardStyles,
-  settingsSectionStackStyles,
-  syncButtonStyles
-} from './styles'
+import { appBadgeCardStyles, appMockupStyles, appNotchBarStyles, customizationCardStyles, customizationSwitchRowStyles, dangerCardStyles, dangerRowStyles, previewBoxStyles, previewTabsContainerStyles, proBadgeStyles, screenBadgeStyles, screenHeaderBarStyles, screenMockupStyles, settingsActionsRowStyles, settingsButtonStyles, settingsCardStyles, settingsSectionStackStyles, syncButtonStyles } from './styles'
 import type { FormEvent } from 'react'
 import type { EventFormState } from '@components/eventFormFields/types'
-import type { EventSettingsProps } from './types'
 import type { EventCustomization } from '@utils/types/events'
+import useEventDetailsPage from '@pages/app/eventDetails/hook'
 
-const EventSettings = ({ event, onSave, onDelete }: EventSettingsProps) => {
+const EventSettings = () => {
+  const { event: eventValue, save: onSave, remove: onDelete } = useEventDetailsPage()
+  const event = eventValue!
+
   const navigate = useNavigate()
   const { user } = useAuth()
   const hasPlan = Boolean(user?.hasActiveSubscription)
@@ -596,7 +560,7 @@ const EventSettings = ({ event, onSave, onDelete }: EventSettingsProps) => {
         </Box>
       </Card>
 
-      {event.myRole === 'creator' && onDelete && (
+      {event.myRole === 'creator' && (
         <Card elevation={0} sx={dangerCardStyles}>
           <Box sx={dangerRowStyles}>
             <Box sx={{ minWidth: 0 }}>

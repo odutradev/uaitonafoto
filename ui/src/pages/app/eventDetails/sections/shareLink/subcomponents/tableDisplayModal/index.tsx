@@ -1,57 +1,13 @@
 import { useState, useMemo } from 'react'
-import {
-  Box,
-  Button,
-  Chip,
-  CircularProgress,
-  Dialog,
-  Divider,
-  FormControlLabel,
-  IconButton,
-  MenuItem,
-  Select,
-  Switch,
-  TextField,
-  Tooltip,
-  Typography
-} from '@mui/material'
-import {
-  Close as CloseIcon,
-  DownloadOutlined as DownloadIcon,
-  PrintOutlined as PrintIcon,
-  FavoriteOutlined as WeddingIcon,
-  CelebrationOutlined as PartyIcon,
-  BusinessCenterOutlined as CorporateIcon,
-  CropFreeOutlined as MinimalIcon,
-  AutoAwesomeOutlined as NightlifeIcon,
-  ParkOutlined as RusticIcon,
-  QrCode2Outlined as DisplayHeaderIcon,
-  PaletteOutlined as PaletteIcon,
-  FormatColorResetOutlined as ResetColorIcon
-} from '@mui/icons-material'
+import { Box, Button, Chip, CircularProgress, Dialog, Divider, FormControlLabel, IconButton, MenuItem, Select, Switch, TextField, Tooltip, Typography } from '@mui/material'
+import { Close as CloseIcon, DownloadOutlined as DownloadIcon, PrintOutlined as PrintIcon, FavoriteOutlined as WeddingIcon, CelebrationOutlined as PartyIcon, BusinessCenterOutlined as CorporateIcon, CropFreeOutlined as MinimalIcon, AutoAwesomeOutlined as NightlifeIcon, ParkOutlined as RusticIcon, QrCode2Outlined as DisplayHeaderIcon, PaletteOutlined as PaletteIcon, FormatColorResetOutlined as ResetColorIcon } from '@mui/icons-material'
 import { toast } from 'react-toastify'
 
 import type { EventItem } from '@utils/types/events'
 import { TableDisplayCard } from './templates/TableDisplayCard'
 import { exportTableDisplayPng } from './exportPng'
-import type {
-  TableDisplayConfig,
-  TableDisplayTemplateId,
-  PrintPageLayout,
-  TableDisplayQrSize
-} from './types'
-import {
-  controlCardStyles,
-  controlsSectionStyles,
-  dialogActionButtonStyles,
-  dialogActionsStyles,
-  dialogContentStyles,
-  dialogHeaderStyles,
-  dialogPaperStyles,
-  previewWrapperStyles,
-  templateOptionButtonStyles,
-  templateSelectorGridStyles
-} from './styles'
+import type { TableDisplayConfig, TableDisplayTemplateId, PrintPageLayout, TableDisplayQrSize } from './types'
+import { controlCardStyles, controlsSectionStyles, dialogActionButtonStyles, dialogActionsStyles, dialogContentStyles, dialogHeaderStyles, dialogPaperStyles, previewWrapperStyles, templateOptionButtonStyles, templateSelectorGridStyles } from './styles'
 
 interface TableDisplayModalProps {
   open: boolean

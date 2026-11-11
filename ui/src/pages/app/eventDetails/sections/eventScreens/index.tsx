@@ -1,53 +1,15 @@
 import { useState } from 'react'
-import {
-  Box,
-  Button,
-  Card,
-  Chip,
-  CircularProgress,
-  IconButton,
-  TextField,
-  Tooltip,
-  Typography
-} from '@mui/material'
-import {
-  AddOutlined as AddIcon,
-  CheckCircleOutline as CheckCircleIcon,
-  ContentCopyOutlined as CopyIcon,
-  DeleteOutline as DeleteIcon,
-  EditOutlined as EditIcon,
-  LockOpenOutlined as LockOpenIcon,
-  LockOutlined as LockIcon,
-  OpenInNewOutlined as OpenIcon,
-  PowerOffOutlined as PowerOffIcon,
-  RefreshOutlined as RefreshIcon
-} from '@mui/icons-material'
+import { Box, Button, Card, Chip, CircularProgress, IconButton, TextField, Tooltip, Typography } from '@mui/material'
+import { AddOutlined as AddIcon, CheckCircleOutline as CheckCircleIcon, ContentCopyOutlined as CopyIcon, DeleteOutline as DeleteIcon, EditOutlined as EditIcon, LockOpenOutlined as LockOpenIcon, LockOutlined as LockIcon, OpenInNewOutlined as OpenIcon, PowerOffOutlined as PowerOffIcon, RefreshOutlined as RefreshIcon } from '@mui/icons-material'
 import dayjs from 'dayjs'
 import { toast } from 'react-toastify'
 
 import Modal from '@components/modal'
-import { MAX_EVENT_SCREENS } from '@assets/data/events'
 import { buildScreenLink, getEventLimits } from '@utils/functions/events'
 
-import {
-  compactIconButtonStyles,
-  countBadgeStyles,
-  linkFieldBoxStyles,
-  linkIconActionsStyles,
-  linkTextStyles,
-  pinCodeTextStyles,
-  screenActionButtonStyles,
-  screenCardStyles,
-  screenHeaderActionsStyles,
-  screenHeaderRowStyles,
-  screenSectionStackStyles,
-  screenSlotCardStyles,
-  screenSlotHeaderStyles,
-  screenSlotsGridStyles,
-  statusPillStyles
-} from './styles'
+import { compactIconButtonStyles, countBadgeStyles, linkFieldBoxStyles, linkIconActionsStyles, linkTextStyles, pinCodeTextStyles, screenActionButtonStyles, screenCardStyles, screenHeaderActionsStyles, screenHeaderRowStyles, screenSectionStackStyles, screenSlotCardStyles, screenSlotHeaderStyles, screenSlotsGridStyles, statusPillStyles } from './styles'
 import type { EventScreenHistoryEntry, EventScreenSlot } from '@utils/types/events'
-import type { EventScreensProps } from './types'
+import useEventDetailsPage from '@pages/app/eventDetails/hook'
 
 const SCREEN_ONLINE_TIMEOUT_MS = 30_000
 
@@ -149,16 +111,10 @@ const getScreenStatusBadge = (slot: EventScreenSlot) => {
   }
 }
 
-const EventScreens = ({
-  event,
-  onOpenScreen,
-  onAddScreen,
-  onDisconnectScreen,
-  onUpdateScreen,
-  onToggleBlockScreen,
-  onRefresh,
-  onUnlockLockouts
-}: EventScreensProps) => {
+const EventScreens = () => {
+  const { event: eventValue, openScreen: onOpenScreen, addScreen: onAddScreen, disconnectScreen: onDisconnectScreen, updateScreen: onUpdateScreen, toggleBlockScreen: onToggleBlockScreen, refresh: onRefresh, handleUnlockScreenLockouts: onUnlockLockouts } = useEventDetailsPage()
+  const event = eventValue!
+
   const screenLink = buildScreenLink(event.guestToken)
   const screens = event.screens ?? []
   const screenHistory = [...(event.screenHistory ?? [])].reverse()
@@ -265,49 +221,45 @@ const EventScreens = ({
           </Box>
 
           <Box sx={screenHeaderActionsStyles}>
-            {onRefresh && (
-              <Tooltip title="Atualizar status dos telões">
-                <span>
-                  <IconButton
-                    size="small"
-                    onClick={handleRefresh}
-                    disabled={isRefreshing}
-                    aria-label="Atualizar status"
-                    sx={compactIconButtonStyles}
-                  >
-                    {isRefreshing ? (
-                      <CircularProgress size={16} color="inherit" />
-                    ) : (
-                      <RefreshIcon sx={{ fontSize: 18 }} />
-                    )}
-                  </IconButton>
-                </span>
-              </Tooltip>
-            )}
+            <Tooltip title="Atualizar status dos telões">
+              <span>
+                <IconButton
+                  size="small"
+                  onClick={handleRefresh}
+                  disabled={isRefreshing}
+                  aria-label="Atualizar status"
+                  sx={compactIconButtonStyles}
+                >
+                  {isRefreshing ? (
+                    <CircularProgress size={16} color="inherit" />
+                  ) : (
+                    <RefreshIcon sx={{ fontSize: 18 }} />
+                  )}
+                </IconButton>
+              </span>
+            </Tooltip>
 
-            {onUnlockLockouts && (
-              <Tooltip title="Desbloqueia telões travados por tentativas excessivas de PIN">
-                <span>
-                  <Button
-                    size="small"
-                    variant="outlined"
-                    color="inherit"
-                    startIcon={
-                      isUnlocking ? (
-                        <CircularProgress size={14} color="inherit" />
-                      ) : (
-                        <LockOpenIcon sx={{ fontSize: 16 }} />
-                      )
-                    }
-                    onClick={handleUnlockLockouts}
-                    disabled={isUnlocking}
-                    sx={{ ...screenActionButtonStyles, borderColor: 'divider', color: 'text.secondary' }}
-                  >
-                    Desbloquear
-                  </Button>
-                </span>
-              </Tooltip>
-            )}
+            <Tooltip title="Desbloqueia telões travados por tentativas excessivas de PIN">
+              <span>
+                <Button
+                  size="small"
+                  variant="outlined"
+                  color="inherit"
+                  startIcon={
+                    isUnlocking ? (
+                      <CircularProgress size={14} color="inherit" />
+                    ) : (
+                      <LockOpenIcon sx={{ fontSize: 16 }} />
+                    )
+                  }
+                  onClick={handleUnlockLockouts}
+                  disabled={isUnlocking}
+                  sx={{ ...screenActionButtonStyles, borderColor: 'divider', color: 'text.secondary' }}
+                >
+                  Desbloquear
+                </Button>
+              </span>
+            </Tooltip>
 
             <Button
               size="small"
@@ -372,25 +324,23 @@ const EventScreens = ({
                     </Box>
 
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.25, flexShrink: 0 }}>
-                      {onToggleBlockScreen && (
-                        <Tooltip title={slot.isBlocked ? 'Desbloquear telão' : 'Bloquear telão'}>
-                          <IconButton
-                            size="small"
-                            onClick={() => handleToggleBlockScreen(slot.id, !slot.isBlocked)}
-                            disabled={isManagingScreen}
-                            aria-label={slot.isBlocked ? 'Desbloquear telão' : 'Bloquear telão'}
-                            sx={{
-                              ...compactIconButtonStyles,
-                              color: slot.isBlocked ? 'warning.main' : 'text.secondary',
-                              '&:hover': {
-                                color: slot.isBlocked ? 'warning.light' : 'text.primary'
-                              }
-                            }}
-                          >
-                            {slot.isBlocked ? <LockOpenIcon sx={{ fontSize: 16 }} /> : <LockIcon sx={{ fontSize: 16 }} />}
-                          </IconButton>
-                        </Tooltip>
-                      )}
+                      <Tooltip title={slot.isBlocked ? 'Desbloquear telão' : 'Bloquear telão'}>
+                        <IconButton
+                          size="small"
+                          onClick={() => handleToggleBlockScreen(slot.id, !slot.isBlocked)}
+                          disabled={isManagingScreen}
+                          aria-label={slot.isBlocked ? 'Desbloquear telão' : 'Bloquear telão'}
+                          sx={{
+                            ...compactIconButtonStyles,
+                            color: slot.isBlocked ? 'warning.main' : 'text.secondary',
+                            '&:hover': {
+                              color: slot.isBlocked ? 'warning.light' : 'text.primary'
+                            }
+                          }}
+                        >
+                          {slot.isBlocked ? <LockOpenIcon sx={{ fontSize: 16 }} /> : <LockIcon sx={{ fontSize: 16 }} />}
+                        </IconButton>
+                      </Tooltip>
                       <Tooltip title="Renomear telão">
                         <IconButton
                           size="small"

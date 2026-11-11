@@ -10,15 +10,16 @@ import {
   rejectEventPhoto
 } from '@actions/events'
 import { buildRoomStreamUrl } from '@utils/api/guest'
-import { getErrorMessage } from '@utils/functions/events'
 
 import type { EventGuest, EventPhoto, PaginationMeta } from '@utils/types/events'
+import useAction from '@hooks/useAction'
 
 const ALBUM_PAGE_SIZE = 24
 
 export type AlbumStatusFilter = 'all' | 'pending' | 'approved' | 'rejected'
 
 const useEventAlbum = (eventId: string, isModerationEnabled = false) => {
+  const runAction = useAction()
   const [photos, setPhotos] = useState<EventPhoto[]>([])
   const [guests, setGuests] = useState<EventGuest[]>([])
   const [meta, setMeta] = useState<PaginationMeta | null>(null)
@@ -32,21 +33,21 @@ const useEventAlbum = (eventId: string, isModerationEnabled = false) => {
 
   const load = useCallback(async () => {
     setIsLoading(true)
-    try {
-      const result = await getEventAlbum(eventId, {
-        page,
-        limit: ALBUM_PAGE_SIZE,
-        guestId: guestId || undefined,
-        status: statusFilter
-      })
-      setPhotos(result.data)
-      setMeta(result.meta)
-    } catch (error) {
-      toast.error(getErrorMessage(error, 'Não foi possível carregar o álbum.'))
-    } finally {
-      setIsLoading(false)
-    }
-  }, [eventId, page, guestId, statusFilter])
+    await runAction({
+      action: async () => {
+        const result = await getEventAlbum(eventId, {
+          page,
+          limit: ALBUM_PAGE_SIZE,
+          guestId: guestId || undefined,
+          status: statusFilter
+        })
+        setPhotos(result.data)
+        setMeta(result.meta)
+      },
+      toastMessages: { error: 'Não foi possível carregar o álbum.' }
+    })
+    setIsLoading(false)
+  }, [eventId, page, guestId, statusFilter, runAction])
 
   const refreshPendingCount = useCallback(async () => {
     if (!isModerationEnabled) return
@@ -147,59 +148,61 @@ const useEventAlbum = (eventId: string, isModerationEnabled = false) => {
   }
 
   const removePhoto = async (photoId: string) => {
-    try {
-      await deleteEventPhoto(eventId, photoId)
-      toast.success('Foto removida com sucesso.')
-      setPhotos((current) => current.filter((p) => p.id !== photoId))
-      refreshPendingCount()
-    } catch (error) {
-      toast.error(getErrorMessage(error, 'Não foi possível remover a foto.'))
-    }
+    await runAction({
+      action: () => deleteEventPhoto(eventId, photoId),
+      toastMessages: { success: 'Foto removida com sucesso.', error: 'Não foi possível remover a foto.' },
+      callback: () => {
+        setPhotos((current) => current.filter((p) => p.id !== photoId))
+        refreshPendingCount()
+      }
+    })
   }
 
   const approvePhoto = async (photoId: string) => {
-    try {
-      await approveEventPhoto(eventId, photoId)
-      toast.success('Foto aprovada e enviada para o telão!')
-      if (statusFilter === 'pending') {
-        setPhotos((current) => current.filter((p) => p.id !== photoId))
-      } else {
-        setPhotos((current) =>
-          current.map((p) => (p.id === photoId ? { ...p, status: 'approved' } : p))
-        )
+    await runAction({
+      action: () => approveEventPhoto(eventId, photoId),
+      toastMessages: { success: 'Foto aprovada e enviada para o telão!', error: 'Não foi possível aprovar a foto.' },
+      callback: () => {
+        if (statusFilter === 'pending') {
+          setPhotos((current) => current.filter((p) => p.id !== photoId))
+        } else {
+          setPhotos((current) =>
+            current.map((p) => (p.id === photoId ? { ...p, status: 'approved' } : p))
+          )
+        }
+        setPendingCount((prev) => Math.max(0, prev - 1))
       }
-      setPendingCount((prev) => Math.max(0, prev - 1))
-    } catch (error) {
-      toast.error(getErrorMessage(error, 'Não foi possível aprovar a foto.'))
-    }
+    })
   }
 
   const rejectPhoto = async (photoId: string) => {
-    try {
-      await rejectEventPhoto(eventId, photoId)
-      toast.info('Foto rejeitada.')
-      if (statusFilter === 'pending') {
-        setPhotos((current) => current.filter((p) => p.id !== photoId))
-      } else {
-        setPhotos((current) =>
-          current.map((p) => (p.id === photoId ? { ...p, status: 'rejected' } : p))
-        )
+    await runAction({
+      action: () => rejectEventPhoto(eventId, photoId),
+      toastMessages: { error: 'Não foi possível rejeitar a foto.' },
+      callback: () => {
+        toast.info('Foto rejeitada.')
+        if (statusFilter === 'pending') {
+          setPhotos((current) => current.filter((p) => p.id !== photoId))
+        } else {
+          setPhotos((current) =>
+            current.map((p) => (p.id === photoId ? { ...p, status: 'rejected' } : p))
+          )
+        }
+        setPendingCount((prev) => Math.max(0, prev - 1))
       }
-      setPendingCount((prev) => Math.max(0, prev - 1))
-    } catch (error) {
-      toast.error(getErrorMessage(error, 'Não foi possível rejeitar a foto.'))
-    }
+    })
   }
 
   const approveAll = async () => {
-    try {
-      const res = await approveAllEventPhotos(eventId)
-      toast.success(`${res.approvedCount} ${res.approvedCount === 1 ? 'foto aprovada' : 'fotos aprovadas'} com sucesso!`)
-      setPendingCount(0)
-      load()
-    } catch (error) {
-      toast.error(getErrorMessage(error, 'Não foi possível aprovar todas as fotos.'))
-    }
+    await runAction({
+      action: () => approveAllEventPhotos(eventId),
+      toastMessages: { error: 'Não foi possível aprovar todas as fotos.' },
+      callback: (res) => {
+        toast.success(`${res.approvedCount} ${res.approvedCount === 1 ? 'foto aprovada' : 'fotos aprovadas'} com sucesso!`)
+        setPendingCount(0)
+        load()
+      }
+    })
   }
 
   return {

@@ -1,53 +1,20 @@
 import { useEffect, useMemo, useState } from 'react'
-import {
-  Avatar,
-  Box,
-  Button,
-  Card,
-  CircularProgress,
-  IconButton,
-  InputAdornment,
-  TextField,
-  Tooltip,
-  Typography
-} from '@mui/material'
-import {
-  CollectionsOutlined as PhotoIcon,
-  DeleteOutline as DeleteIcon,
-  EditOutlined as EditIcon,
-  LockOpenOutlined as LockOpenIcon,
-  LockOutlined as LockIcon,
-  PeopleAltOutlined as GuestIcon,
-  RefreshOutlined as RefreshIcon,
-  SearchOutlined as SearchIcon
-} from '@mui/icons-material'
+import { Avatar, Box, Button, Card, CircularProgress, IconButton, InputAdornment, TextField, Tooltip, Typography } from '@mui/material'
+import { CollectionsOutlined as PhotoIcon, DeleteOutline as DeleteIcon, EditOutlined as EditIcon, LockOpenOutlined as LockOpenIcon, LockOutlined as LockIcon, PeopleAltOutlined as GuestIcon, RefreshOutlined as RefreshIcon, SearchOutlined as SearchIcon } from '@mui/icons-material'
 import dayjs from 'dayjs'
 import { toast } from 'react-toastify'
 
 import Modal from '@components/modal'
-import {
-  deleteEventGuest,
-  getEventGuests,
-  setEventGuestBlock,
-  updateEventGuest
-} from '@actions/events'
+import { deleteEventGuest, getEventGuests, setEventGuestBlock, updateEventGuest } from '@actions/events'
 import { getErrorMessage } from '@utils/functions/events'
 import type { EventGuest } from '@utils/types/events'
-import type { EventGuestsProps } from './types'
-import {
-  compactIconButtonStyles,
-  countBadgeStyles,
-  guestCardStyles,
-  guestHeaderStyles,
-  guestsCardStyles,
-  guestsGridStyles,
-  guestsHeaderActionsStyles,
-  guestsHeaderRowStyles,
-  guestsSectionStackStyles,
-  guestStatusPillStyles
-} from './styles'
+import { compactIconButtonStyles, countBadgeStyles, guestCardStyles, guestHeaderStyles, guestsCardStyles, guestsGridStyles, guestsHeaderActionsStyles, guestsHeaderRowStyles, guestsSectionStackStyles, guestStatusPillStyles } from './styles'
+import useEventDetailsPage from '@pages/app/eventDetails/hook'
 
-const EventGuests = ({ event }: EventGuestsProps) => {
+const EventGuests = () => {
+  const { event: eventValue } = useEventDetailsPage()
+  const event = eventValue!
+
   const [guests, setGuests] = useState<EventGuest[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isRefreshing, setIsRefreshing] = useState(false)
