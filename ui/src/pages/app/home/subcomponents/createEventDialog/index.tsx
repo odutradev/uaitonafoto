@@ -7,14 +7,14 @@ import { getMeData } from '@actions/auth'
 import { createEvent } from '@actions/events'
 import EventFormFields, { buildInitialEventForm, isValidEventPeriod, isValidEventPin, toEventPayload } from '@components/eventFormFields'
 import Stepper from '@components/stepper'
-import { getErrorMessage } from '@utils/functions/events'
 import useAuth from '@hooks/useAuth'
+import useAction from '@hooks/useAction'
+import useHomePage from '@pages/app/home/hook'
 import useAuthStore from '@stores/auth'
 
 import { dialogActionsStyles, dialogButtonStyles, dialogPaperStyles } from './styles'
 import type { FormEvent } from 'react'
 import type { EventFormState } from '@components/eventFormFields/types'
-import type { CreateEventDialogProps } from './types'
 
 const STEPS = [
   { label: 'Básico', description: 'Dados essenciais' },
@@ -22,7 +22,9 @@ const STEPS = [
   { label: 'Acesso', description: 'Senha e PIN' }
 ]
 
-const CreateEventDialog = ({ open, onClose, onCreated }: CreateEventDialogProps) => {
+const CreateEventDialog = () => {
+  const { isCreateOpen: open, handleCloseCreate: onClose, handleEventCreated: onCreated } = useHomePage()
+  const runAction = useAction()
   const navigate = useNavigate()
   const { user } = useAuth()
   const updateUser = useAuthStore((state) => state.updateUser)
@@ -107,17 +109,16 @@ const CreateEventDialog = ({ open, onClose, onCreated }: CreateEventDialogProps)
     }
 
     setIsSubmitting(true)
-    try {
-      const created = await createEvent(toEventPayload(form))
-      toast.success('Evento criado!')
-      getMeData().then(updateUser).catch(() => undefined)
-      setForm(buildInitialEventForm(defaultCreditType))
-      onCreated(created)
-    } catch (error) {
-      toast.error(getErrorMessage(error, 'Não foi possível criar o evento.'))
-    } finally {
-      setIsSubmitting(false)
-    }
+    await runAction({
+      action: () => createEvent(toEventPayload(form)),
+      toastMessages: { success: 'Evento criado!', error: 'Não foi possível criar o evento.' },
+      callback: (created) => {
+        getMeData().then(updateUser).catch(() => undefined)
+        setForm(buildInitialEventForm(defaultCreditType))
+        onCreated(created)
+      }
+    })
+    setIsSubmitting(false)
   }
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
