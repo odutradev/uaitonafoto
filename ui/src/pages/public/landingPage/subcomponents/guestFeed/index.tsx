@@ -2,13 +2,7 @@ import { Box, Button, Chip, Stack, Typography } from '@mui/material'
 import { Favorite as FavoriteIcon } from '@mui/icons-material'
 import { Link as RouterLink } from 'react-router-dom'
 
-import {
-  getActivityBoxStyles,
-  getGuestFeedChipStyles,
-  guestFeedButtonStyles,
-  guestFeedContainerStyles,
-  heartIconBoxStyles
-} from './styles'
+import { getActivityBoxStyles, getGuestFeedChipStyles, guestFeedButtonStyles, guestFeedContainerStyles, heartIconBoxStyles } from './styles'
 import type { GuestFeedProps } from './types'
 
 export const GuestFeed = ({ data, isDark }: GuestFeedProps) => {

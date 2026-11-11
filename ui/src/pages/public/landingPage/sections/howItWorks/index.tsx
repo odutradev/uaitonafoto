@@ -1,21 +1,10 @@
 import { Box, Card, CardContent, Container, Stack, Typography } from '@mui/material'
-import {
-  ConnectedTv as ConnectedTvIcon,
-  QrCode2 as QrCodeIcon
-} from '@mui/icons-material'
+import { ConnectedTv as ConnectedTvIcon, QrCode2 as QrCodeIcon } from '@mui/icons-material'
 
 import Logo from '@components/logo'
 
-import {
-  getSectionBoxStyles,
-  getStepIconBoxStyles,
-  sectionHeaderStyles,
-  sectionSubtitleStyles,
-  sectionTitleStyles,
-  stepCardStyles,
-  stepsGridStyles
-} from './styles'
-import type { HowItWorksProps } from './types'
+import { getSectionBoxStyles, getStepIconBoxStyles, sectionHeaderStyles, sectionSubtitleStyles, sectionTitleStyles, stepCardStyles, stepsGridStyles } from './styles'
+import useLandingPage from '@pages/public/landingPage/hook'
 
 const renderStepIcon = (iconName: string) => {
   const iconSx = { fontSize: { xs: 26, sm: 32 } }
@@ -30,7 +19,10 @@ const renderStepIcon = (iconName: string) => {
   }
 }
 
-export const HowItWorks = ({ data, isDark }: HowItWorksProps) => {
+export const HowItWorks = () => {
+  const { isDark, data: content } = useLandingPage()
+  const data = content.howItWorks
+
   return (
     <Box sx={getSectionBoxStyles(isDark)}>
       <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3 } }}>

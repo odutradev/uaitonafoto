@@ -3,15 +3,7 @@ import BoltIcon from '@mui/icons-material/Bolt'
 
 import Skeleton from '@components/skeleton'
 
-import {
-  getPlanCardStyles,
-  getSectionBoxStyles,
-  plansGridStyles,
-  sectionHeaderStyles,
-  sectionSubtitleStyles,
-  sectionTitleStyles,
-  tagBadgeStyles
-} from './styles'
+import { getPlanCardStyles, getSectionBoxStyles, plansGridStyles, sectionHeaderStyles, sectionSubtitleStyles, sectionTitleStyles, tagBadgeStyles } from './styles'
 export interface PlansSkeletonProps {
   data: {
     tag: string

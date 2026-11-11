@@ -1,6 +1,6 @@
 import { Box } from '@mui/material'
 
-import useLandingPage from './hook'
+import { LandingPageProvider } from './hook'
 import Features from './sections/features'
 import FinalCta from './sections/finalCta'
 import Hero from './sections/hero'
@@ -10,16 +10,7 @@ import Plans from './sections/plans'
 import { Footer } from './subcomponents/footer'
 import { Navbar } from './subcomponents/navbar'
 
-const LandingPage = () => {
-  const {
-    isDark,
-    plans,
-    isLoadingPlans,
-    data,
-    user,
-    onSelectPlan
-  } = useLandingPage()
-
+const LandingPageContent = () => {
   return (
     <Box
       sx={{
@@ -31,27 +22,22 @@ const LandingPage = () => {
         width: '100%'
       }}
     >
-      <Navbar data={data.header} isDark={isDark} user={user} />
-      <Hero data={data.hero} isDark={isDark} />
-      <HowItWorks data={data.howItWorks} isDark={isDark} />
-      <InteractiveDemo
-        liveWallData={data.liveWall}
-        guestFeedData={data.guestFeed}
-        isDark={isDark}
-      />
-      <Features data={data.features} isDark={isDark} />
-      <Plans
-        data={data.plans}
-        plans={plans}
-        isDark={isDark}
-        isLoading={isLoadingPlans}
-        isAuthenticated={Boolean(user)}
-        onSelectPlan={onSelectPlan}
-      />
-      <FinalCta data={data.finalCta} isDark={isDark} />
-      <Footer data={data.footer} />
+      <Navbar />
+      <Hero />
+      <HowItWorks />
+      <InteractiveDemo />
+      <Features />
+      <Plans />
+      <FinalCta />
+      <Footer />
     </Box>
   )
 }
+
+const LandingPage = () => (
+  <LandingPageProvider>
+    <LandingPageContent />
+  </LandingPageProvider>
+)
 
 export default LandingPage

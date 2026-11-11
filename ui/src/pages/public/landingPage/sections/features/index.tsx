@@ -1,26 +1,8 @@
 import { Box, Card, Container, Stack, Typography } from '@mui/material'
-import {
-  AutoAwesome as AutoAwesomeIcon,
-  CloudDownloadOutlined as DownloadIcon,
-  ConnectedTvOutlined as TvIcon,
-  EmojiEventsOutlined as TrophyIcon,
-  PrintOutlined as PrintIcon,
-  SecurityOutlined as SecurityIcon,
-  StorefrontOutlined as StoreIcon
-} from '@mui/icons-material'
+import { AutoAwesome as AutoAwesomeIcon, CloudDownloadOutlined as DownloadIcon, ConnectedTvOutlined as TvIcon, EmojiEventsOutlined as TrophyIcon, PrintOutlined as PrintIcon, SecurityOutlined as SecurityIcon, StorefrontOutlined as StoreIcon } from '@mui/icons-material'
 
-import {
-  cardBadgeStyles,
-  featuresGridStyles,
-  getFeatureCardStyles,
-  getFeatureIconBoxStyles,
-  getSectionBoxStyles,
-  sectionHeaderStyles,
-  sectionSubtitleStyles,
-  sectionTitleStyles,
-  tagBadgeStyles
-} from './styles'
-import type { FeaturesProps } from './types'
+import { cardBadgeStyles, featuresGridStyles, getFeatureCardStyles, getFeatureIconBoxStyles, getSectionBoxStyles, sectionHeaderStyles, sectionSubtitleStyles, sectionTitleStyles, tagBadgeStyles } from './styles'
+import useLandingPage from '@pages/public/landingPage/hook'
 
 const renderFeatureIcon = (iconName: string) => {
   const iconSx = { fontSize: 24 }
@@ -42,7 +24,10 @@ const renderFeatureIcon = (iconName: string) => {
   }
 }
 
-export const Features = ({ data, isDark }: FeaturesProps) => {
+export const Features = () => {
+  const { isDark, data: content } = useLandingPage()
+  const data = content.features
+
   return (
     <Box id="recursos" component="section" sx={getSectionBoxStyles(isDark)}>
       <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3 } }}>

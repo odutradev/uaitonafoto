@@ -8,5 +8,6 @@ export interface UseLandingPageReturn {
   isLoadingPlans: boolean
   data: LandingPageData
   user: AuthUser | null
+  isAuthenticated: boolean
   onSelectPlan: (plan: PlanCardData) => void
 }

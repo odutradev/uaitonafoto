@@ -4,13 +4,13 @@ import { brandColors } from '@styles/theme'
 import { GuestFeed } from '@pages/public/landingPage/subcomponents/guestFeed'
 import { LiveWall } from '@pages/public/landingPage/subcomponents/liveWall'
 import { demoContainerStyles, demoGridStyles } from './styles'
-import type { InteractiveDemoProps } from './types'
+import useLandingPage from '@pages/public/landingPage/hook'
 
-export const InteractiveDemo = ({
-  liveWallData,
-  guestFeedData,
-  isDark
-}: InteractiveDemoProps) => {
+export const InteractiveDemo = () => {
+  const { isDark, data: content } = useLandingPage()
+  const liveWallData = content.liveWall
+  const guestFeedData = content.guestFeed
+
   const liveWallAccent = isDark ? brandColors.flashYellow : brandColors.ink
   const mosaicTiles = isDark
     ? [brandColors.darkSurface, brandColors.darkBorder, brandColors.darkPaper]
