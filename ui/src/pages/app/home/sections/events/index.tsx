@@ -17,9 +17,10 @@ import {
   eventCardStyles,
   eventsGridStyles
 } from './styles'
-import type { EventsProps } from './types'
+import useHomePage from '@pages/app/home/hook'
 
-const Events = ({ events, isLoading, onCreateEvent, onOpenEvent }: EventsProps) => {
+const Events = () => {
+  const { events, isLoading, handleOpenCreate: onCreateEvent, handleOpenEvent: onOpenEvent } = useHomePage()
   return (
     <Box component="section">
       {isLoading && (
