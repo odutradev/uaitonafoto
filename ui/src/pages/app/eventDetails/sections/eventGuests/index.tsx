@@ -6,12 +6,13 @@ import { toast } from 'react-toastify'
 
 import Modal from '@components/modal'
 import { deleteEventGuest, getEventGuests, setEventGuestBlock, updateEventGuest } from '@actions/events'
-import { getErrorMessage } from '@utils/functions/events'
 import type { EventGuest } from '@utils/types/events'
 import { compactIconButtonStyles, countBadgeStyles, guestCardStyles, guestHeaderStyles, guestsCardStyles, guestsGridStyles, guestsHeaderActionsStyles, guestsHeaderRowStyles, guestsSectionStackStyles, guestStatusPillStyles } from './styles'
 import useEventDetailsPage from '@pages/app/eventDetails/hook'
+import useAction from '@hooks/useAction'
 
 const EventGuests = () => {
+  const runAction = useAction()
   const { event: eventValue } = useEventDetailsPage()
   const event = eventValue!
 
@@ -28,14 +29,14 @@ const EventGuests = () => {
 
   const loadGuests = async (showLoading = true) => {
     if (showLoading) setIsLoading(true)
-    try {
-      const data = await getEventGuests(event.id)
-      setGuests(data)
-    } catch (error) {
-      toast.error(getErrorMessage(error, 'Não foi possível carregar a lista de convidados.'))
-    } finally {
-      if (showLoading) setIsLoading(false)
-    }
+    await runAction({
+      action: async () => {
+        const data = await getEventGuests(event.id)
+        setGuests(data)
+      },
+      toastMessages: { error: 'Não foi possível carregar a lista de convidados.' }
+    })
+    if (showLoading) setIsLoading(false)
   }
 
   useEffect(() => {
@@ -55,20 +56,14 @@ const EventGuests = () => {
   const handleToggleBlock = async (guest: EventGuest) => {
     setActionLoadingId(guest.id)
     const nextBlock = !guest.isBlocked
-    try {
-      const updated = await setEventGuestBlock(event.id, guest.id, nextBlock)
-      setGuests((prev) => prev.map((g) => (g.id === guest.id ? updated : g)))
-      toast.success(nextBlock ? `${guest.name} foi bloqueado(a).` : `${guest.name} foi desbloqueado(a)!`)
-    } catch (error) {
-      toast.error(
-        getErrorMessage(
-          error,
-          nextBlock ? 'Não foi possível bloquear o convidado.' : 'Não foi possível desbloquear o convidado.'
-        )
-      )
-    } finally {
-      setActionLoadingId(null)
-    }
+    await runAction({
+      action: async () => {
+        const updated = await setEventGuestBlock(event.id, guest.id, nextBlock)
+        setGuests((prev) => prev.map((g) => (g.id === guest.id ? updated : g)))
+      },
+      toastMessages: { success: nextBlock ? `${guest.name} foi bloqueado(a).` : `${guest.name} foi desbloqueado(a)!`, error: nextBlock ? 'Não foi possível bloquear o convidado.' : 'Não foi possível desbloquear o convidado.' }
+    })
+    setActionLoadingId(null)
   }
 
   const handleOpenEdit = (guest: EventGuest) => {
@@ -85,16 +80,15 @@ const EventGuests = () => {
     }
 
     setActionLoadingId(editingGuest.id)
-    try {
-      const updated = await updateEventGuest(event.id, editingGuest.id, trimmed)
-      setGuests((prev) => prev.map((g) => (g.id === editingGuest.id ? updated : g)))
-      toast.success('Nome do convidado atualizado!')
-      setEditingGuest(null)
-    } catch (error) {
-      toast.error(getErrorMessage(error, 'Não foi possível atualizar o convidado.'))
-    } finally {
-      setActionLoadingId(null)
-    }
+    await runAction({
+      action: async () => {
+        const updated = await updateEventGuest(event.id, editingGuest.id, trimmed)
+        setGuests((prev) => prev.map((g) => (g.id === editingGuest.id ? updated : g)))
+        setEditingGuest(null)
+      },
+      toastMessages: { success: 'Nome do convidado atualizado!', error: 'Não foi possível atualizar o convidado.' }
+    })
+    setActionLoadingId(null)
   }
 
   const handleOpenDelete = (guest: EventGuest) => {
@@ -104,16 +98,15 @@ const EventGuests = () => {
   const handleConfirmDelete = async () => {
     if (!deletingGuest) return
     setActionLoadingId(deletingGuest.id)
-    try {
-      await deleteEventGuest(event.id, deletingGuest.id)
-      setGuests((prev) => prev.filter((g) => g.id !== deletingGuest.id))
-      toast.success('Convidado removido do evento.')
-      setDeletingGuest(null)
-    } catch (error) {
-      toast.error(getErrorMessage(error, 'Não foi possível remover o convidado.'))
-    } finally {
-      setActionLoadingId(null)
-    }
+    await runAction({
+      action: async () => {
+        await deleteEventGuest(event.id, deletingGuest.id)
+        setGuests((prev) => prev.filter((g) => g.id !== deletingGuest.id))
+        setDeletingGuest(null)
+      },
+      toastMessages: { success: 'Convidado removido do evento.', error: 'Não foi possível remover o convidado.' }
+    })
+    setActionLoadingId(null)
   }
 
   const filteredGuests = useMemo(() => {
