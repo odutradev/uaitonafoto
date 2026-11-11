@@ -1,11 +1,11 @@
 import { buildPaginatedResponse, getPaginationOptions } from '@factories/pagination/utils'
 import { listLogsQuerySchema, listLogsResponseSchema } from './schemas'
-import userRepository from '@domains/users/repositories'
-import logRepository from '@domains/system/repositories'
+import userRepository from '@domains/users/repositories/users'
+import logRepository from '@domains/system/repositories/logs'
 import defineAction from '@factories/defineAction'
 
 import type { ManageRequestBody, ManageRequestResponse } from '@middlewares/manageRequest/types'
-import type { LogEntity } from '@domains/system/repositories/types'
+import type { LogEntity } from '@domains/system/repositories/logs/types'
 import type { ListLogsRequest, ListLogsResponse } from './types'
 import type { LogItemResponse } from './types'
 

@@ -2,7 +2,7 @@ import multer, { MulterError } from 'multer'
 
 import { errorResponseSchema } from '@factories/errors/schemas'
 import { AllowedMimeTypes } from './types'
-import sendError from '@error/index'
+import sendError from '@factories/errors'
 
 import type { DocumentedMiddleware, ResponseConfig } from '@factories/defineAction/types'
 import type { Request, Response, NextFunction } from 'express'

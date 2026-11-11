@@ -1,8 +1,8 @@
 import transactionRepository from '@domains/payments/repositories/transactions'
 import purchaseRepository from '@domains/payments/repositories/purchases'
 import ensureSubscriptionRecord from './ensureSubscriptionRecord'
-import userRepository from '@domains/users/repositories'
-import logRepository from '@domains/system/repositories'
+import userRepository from '@domains/users/repositories/users'
+import logRepository from '@domains/system/repositories/logs'
 import createLogger from '@utils/logger'
 
 import type { TransactionEntity } from '@domains/payments/repositories/transactions/types'

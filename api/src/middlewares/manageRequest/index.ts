@@ -1,6 +1,6 @@
 import { errorResponseSchema } from '@factories/errors/schemas'
+import sendError from '@factories/errors'
 import createLogger from '@utils/logger'
-import sendError from '@error/index'
 
 import type { ManageRequestBody, ManageErrorParams, ServiceFunction, RouteSchema, ManageRequestSchema, FileData } from '@middlewares/manageRequest/types'
 import type { DocumentedMiddleware, ResponseConfig } from '@factories/defineAction/types'

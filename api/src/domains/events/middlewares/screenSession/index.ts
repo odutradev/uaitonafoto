@@ -1,7 +1,7 @@
 import { verifyScreenToken } from '@domains/events/utils/screenToken'
 import eventRepository from '@domains/events/repositories/events'
 import { errorResponseSchema } from '@factories/errors/schemas'
-import sendError from '@error/index'
+import sendError from '@factories/errors'
 
 import type { DocumentedMiddleware, ResponseConfig } from '@factories/defineAction/types'
 import type { NextFunction, Request, Response } from 'express'

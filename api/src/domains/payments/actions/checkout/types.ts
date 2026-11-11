@@ -1,5 +1,5 @@
 import type { checkoutResponseSchema, createCheckoutBodySchema } from './schemas'
-import type { UserEntity } from '@domains/users/repositories/types'
+import type { UserEntity } from '@domains/users/repositories/users/types'
 import type { CachedPlan } from '@payment/plans/types'
 import type { z } from 'zod'
 

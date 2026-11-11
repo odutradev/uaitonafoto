@@ -1,7 +1,7 @@
 import rateLimit from 'express-rate-limit'
 
 import { errorResponseSchema } from '@factories/errors/schemas'
-import sendError from '@error/index'
+import sendError from '@factories/errors'
 
 import type { RateLimitConfig, DocumentedMiddleware } from './types'
 

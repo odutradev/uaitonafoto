@@ -7,8 +7,8 @@ import subscriptionRepository from '@domains/payments/repositories/subscriptions
 import transactionRepository from '@domains/payments/repositories/transactions'
 import { webhookBodySchema, webhookResponseSchema } from './schemas'
 import confirmPayment from '@domains/payments/utils/confirmPayment'
-import userRepository from '@domains/users/repositories'
-import logRepository from '@domains/system/repositories'
+import userRepository from '@domains/users/repositories/users'
+import logRepository from '@domains/system/repositories/logs'
 import defineAction from '@factories/defineAction'
 import env from '@config/env'
 

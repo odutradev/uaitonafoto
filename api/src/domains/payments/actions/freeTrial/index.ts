@@ -1,6 +1,6 @@
 import purchaseRepository from '@domains/payments/repositories/purchases'
-import logRepository from '@domains/system/repositories'
-import userRepository from '@domains/users/repositories'
+import userRepository from '@domains/users/repositories/users'
+import logRepository from '@domains/system/repositories/logs'
 import { claimFreeTrialResponseSchema } from './schemas'
 import defineAction from '@factories/defineAction'
 import { freeTrialPlan } from '@payment/plans'

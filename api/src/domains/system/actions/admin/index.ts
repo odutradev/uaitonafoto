@@ -4,8 +4,8 @@ import subscriptionRepository from '@domains/payments/repositories/subscriptions
 import transactionRepository from '@domains/payments/repositories/transactions'
 import eventRepository from '@domains/events/repositories/events'
 import photoRepository from '@domains/events/repositories/photos'
-import userRepository from '@domains/users/repositories'
-import logRepository from '@domains/system/repositories'
+import userRepository from '@domains/users/repositories/users'
+import logRepository from '@domains/system/repositories/logs'
 import defineAction from '@factories/defineAction'
 
 import type { AddAdminUserCreditsBody, AddAdminUserCreditsParams, AddAdminUserCreditsResponse, AdminMetricsQuery, AdminMetricsResponse, AdminPeriod, AdminUserItem, ListAdminUsersQuery, ListAdminUsersResponse } from './types'

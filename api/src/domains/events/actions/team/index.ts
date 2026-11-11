@@ -2,7 +2,7 @@ import { addOrganizerSchema, removeMemberParamsSchema, teamListResponseSchema, t
 import { resolveEventLimits } from '@domains/events/utils/eventLimits'
 import eventRepository from '@domains/events/repositories/events'
 import { findMemberRole } from '@domains/events/actions/event'
-import userRepository from '@domains/users/repositories'
+import userRepository from '@domains/users/repositories/users'
 import defineAction from '@factories/defineAction'
 
 import type { AddOrganizerRequest, ListTeamRequest, RemoveMemberRequest, TeamListResponse } from './types'

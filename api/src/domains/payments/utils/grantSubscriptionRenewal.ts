@@ -2,9 +2,9 @@ import subscriptionRepository from '@domains/payments/repositories/subscriptions
 import transactionRepository from '@domains/payments/repositories/transactions'
 import purchaseRepository from '@domains/payments/repositories/purchases'
 import { sendSubscriptionRenewedEmail } from './notifySubscriptionEmail'
+import userRepository from '@domains/users/repositories/users'
 import computeNextBillingDate from './computeNextBillingDate'
-import userRepository from '@domains/users/repositories'
-import logRepository from '@domains/system/repositories'
+import logRepository from '@domains/system/repositories/logs'
 import { getPlanByProductId } from '@payment/plans'
 import createLogger from '@utils/logger'
 
