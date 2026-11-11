@@ -1,9 +1,10 @@
-import { sendTeamInviteEmail, sendTeamRemovedEmail } from '@domains/events/utils/notifyEventEmail'
 import { addOrganizerSchema, removeMemberParamsSchema, teamListResponseSchema, teamParamsSchema } from './schemas'
+import { sendTeamInviteEmail, sendTeamRemovedEmail } from '@domains/events/utils/notifyEventEmail'
 import { resolveEventLimits } from '@domains/events/utils/eventLimits'
 import eventRepository from '@domains/events/repositories/events'
 import { findMemberRole } from '@domains/events/actions/event'
 import userRepository from '@domains/users/repositories/users'
+import { resolveFrontendBaseUrl } from '@email/links'
 import defineAction from '@factories/defineAction'
 
 import type { AddOrganizerRequest, ListTeamRequest, RemoveMemberRequest, TeamListResponse } from './types'
@@ -72,7 +73,7 @@ export const addOrganizer = defineAction(
       409: { description: 'Usuário já faz parte da equipe ou limite de organizadores atingido' }
     }
   },
-  async ({ ids, params, data, manageError }: ManageRequestBody<AddOrganizerRequest>): ManageRequestResponse<TeamListResponse> => {
+  async ({ ids, params, data, defaultExpress, manageError }: ManageRequestBody<AddOrganizerRequest>): ManageRequestResponse<TeamListResponse> => {
     if (!ids.userId) return manageError({ code: 'unauthorized' })
 
     const event = await eventRepository.findById(params.id)
@@ -94,7 +95,7 @@ export const addOrganizer = defineAction(
     const updated = await eventRepository.addMember(event.id, user.id, 'organizer')
     if (!updated) return manageError({ code: 'conflict' })
 
-    void sendTeamInviteEmail(updated, user, ids.userId)
+    void sendTeamInviteEmail(updated, user, ids.userId, resolveFrontendBaseUrl(defaultExpress.req.headers.origin))
 
     return buildTeamResponse(updated)
   }
@@ -114,7 +115,7 @@ export const removeMember = defineAction(
       404: { description: 'Evento ou membro não encontrado' }
     }
   },
-  async ({ ids, params, manageError }: ManageRequestBody<RemoveMemberRequest>): ManageRequestResponse<TeamListResponse> => {
+  async ({ ids, params, defaultExpress, manageError }: ManageRequestBody<RemoveMemberRequest>): ManageRequestResponse<TeamListResponse> => {
     if (!ids.userId) return manageError({ code: 'unauthorized' })
 
     const event = await eventRepository.findById(params.id)
@@ -127,7 +128,7 @@ export const removeMember = defineAction(
     const updated = await eventRepository.removeMember(event.id, params.userId)
     if (!updated) return manageError({ code: 'not_found' })
 
-    if (params.userId !== ids.userId) void sendTeamRemovedEmail(updated, params.userId)
+    if (params.userId !== ids.userId) void sendTeamRemovedEmail(updated, params.userId, resolveFrontendBaseUrl(defaultExpress.req.headers.origin))
 
     return buildTeamResponse(updated)
   }

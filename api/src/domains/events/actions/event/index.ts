@@ -1,8 +1,8 @@
 import { createEventSchema, eventParamsSchema, eventSchema, listEventsQuerySchema, listEventsResponseSchema, updateEventSchema } from './schemas'
 import { computeEventWindows, getEventMaxDurationHours, getEventMaxEndsAt, getEventPhase } from '@domains/events/utils/eventWindows'
+import { sendEventCreatedEmail, sendEventSummaryEmails } from '@domains/events/utils/notifyEventEmail'
 import { buildPaginatedResponse, getPaginationOptions } from '@factories/pagination/utils'
 import { EventPlanLimits, resolveUserPlanTier } from '@domains/events/utils/eventLimits'
-import { sendEventCreatedEmail, sendEventSummaryEmails } from '@domains/events/utils/notifyEventEmail'
 import { ensureCurrentEventPin, generatePin } from '@domains/events/utils/eventPin'
 import creditUsageRepository from '@domains/payments/repositories/creditUsages'
 import purchaseRepository from '@domains/payments/repositories/purchases'
@@ -11,6 +11,7 @@ import eventRepository from '@domains/events/repositories/events'
 import guestRepository from '@domains/events/repositories/guests'
 import userRepository from '@domains/users/repositories/users'
 import logRepository from '@domains/system/repositories/logs'
+import { resolveFrontendBaseUrl } from '@email/links'
 import defineAction from '@factories/defineAction'
 import { broadcastEvent } from '@realtime'
 
@@ -81,7 +82,7 @@ export const createEvent = defineAction(
       200: { description: 'Evento criado', schema: eventSchema }
     }
   },
-  async ({ ids, data, manageError }: ManageRequestBody<CreateEventRequest>): ManageRequestResponse<EventResponse> => {
+  async ({ ids, data, defaultExpress, manageError }: ManageRequestBody<CreateEventRequest>): ManageRequestResponse<EventResponse> => {
     const userId = ids.userId
     if (!userId) return manageError({ code: 'unauthorized' })
 
@@ -160,7 +161,7 @@ export const createEvent = defineAction(
         }
       })
 
-      void sendEventCreatedEmail(event, user)
+      void sendEventCreatedEmail(event, user, resolveFrontendBaseUrl(defaultExpress.req.headers.origin))
 
       return toEventResponse(event, 'creator')
     } catch (error) {
@@ -397,7 +398,7 @@ export const closeEvent = defineAction(
       404: { description: 'Evento não encontrado' }
     }
   },
-  async ({ ids, params, manageError }: ManageRequestBody<GetEventRequest>): ManageRequestResponse<EventResponse> => {
+  async ({ ids, params, defaultExpress, manageError }: ManageRequestBody<GetEventRequest>): ManageRequestResponse<EventResponse> => {
     if (!ids.userId) return manageError({ code: 'unauthorized' })
 
     const event = await eventRepository.findById(params.id)
@@ -423,7 +424,7 @@ export const closeEvent = defineAction(
 
     const currentEvent = await ensureCurrentEventPin(updated)
     broadcastEvent(currentEvent.id, 'event:closed', { closedAt })
-    void sendEventSummaryEmails(currentEvent)
+    void sendEventSummaryEmails(currentEvent, resolveFrontendBaseUrl(defaultExpress.req.headers.origin))
     return toEventResponse(currentEvent, role)
   }
 )

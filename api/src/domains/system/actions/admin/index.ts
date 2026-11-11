@@ -1,14 +1,14 @@
 import { addAdminUserCreditsBodySchema, addAdminUserCreditsParamsSchema, addAdminUserCreditsResponseSchema, adminMetricsQuerySchema, adminMetricsResponseSchema, listAdminUsersQuerySchema, listAdminUsersResponseSchema } from './schemas'
 import { buildPaginatedResponse, getPaginationOptions } from '@factories/pagination/utils'
 import subscriptionRepository from '@domains/payments/repositories/subscriptions'
-import creditsGrantedEmail from '@domains/payments/emails/creditsGranted'
 import transactionRepository from '@domains/payments/repositories/transactions'
+import creditsGrantedEmail from '@domains/payments/emails/creditsGranted'
+import { buildFrontendUrl, resolveFrontendBaseUrl } from '@email/links'
 import eventRepository from '@domains/events/repositories/events'
 import photoRepository from '@domains/events/repositories/photos'
 import userRepository from '@domains/users/repositories/users'
 import logRepository from '@domains/system/repositories/logs'
 import defineAction from '@factories/defineAction'
-import { buildFrontendUrl } from '@email/links'
 
 import type { AddAdminUserCreditsBody, AddAdminUserCreditsParams, AddAdminUserCreditsResponse, AdminMetricsQuery, AdminMetricsResponse, AdminPeriod, AdminUserItem, ListAdminUsersQuery, ListAdminUsersResponse } from './types'
 import type { ManageRequestBody, ManageRequestResponse } from '@middlewares/manageRequest/types'
@@ -298,6 +298,7 @@ export const addAdminUserCredits = defineAction(
     }
   },
   async ({
+    defaultExpress,
     ids,
     params,
     data,
@@ -355,7 +356,7 @@ export const addAdminUserCredits = defineAction(
         creditTypeLabel: data.type === 'paid' ? 'Crédito normal' : 'Cortesia',
         reason: data.reason,
         totalCredits: (updatedUser.paidCredits ?? 0) + (updatedUser.freeCredits ?? 0),
-        appUrl: buildFrontendUrl('/app')
+        appUrl: buildFrontendUrl('/app', resolveFrontendBaseUrl(defaultExpress.req.headers.origin))
       }
     })
 

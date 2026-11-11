@@ -5,6 +5,7 @@ import { sendSubscriptionRenewedEmail } from './notifySubscriptionEmail'
 import userRepository from '@domains/users/repositories/users'
 import computeNextBillingDate from './computeNextBillingDate'
 import logRepository from '@domains/system/repositories/logs'
+import { resolveFrontendBaseUrl } from '@email/links'
 import { getPlanByProductId } from '@payment/plans'
 import createLogger from '@utils/logger'
 
@@ -52,8 +53,10 @@ export const grantSubscriptionRenewal = async ({
     return false
   }
 
-  const user = await userRepository.findById(subscription.userId)
-  const initialTx = user ? null : await transactionRepository.findById(subscription.initialTransactionId)
+  const [user, initialTx] = await Promise.all([
+    userRepository.findById(subscription.userId),
+    transactionRepository.findById(subscription.initialTransactionId)
+  ])
 
   const userEmail = user?.email ?? initialTx?.userEmail ?? 'unknown@user'
   const userName = user?.fullName || user?.name || initialTx?.userName || 'Usuário'
@@ -134,7 +137,8 @@ export const grantSubscriptionRenewal = async ({
     planName: subscription.planName,
     amount: resolvedAmount,
     creditsAdded: creditsToGrant,
-    nextBillingAt
+    nextBillingAt,
+    baseUrl: resolveFrontendBaseUrl(initialTx?.completionUrl, initialTx?.returnUrl)
   })
 
   logger.success(
