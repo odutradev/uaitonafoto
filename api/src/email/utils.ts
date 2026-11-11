@@ -1,7 +1,7 @@
 import env from '@config/env'
 import email from '@email'
 
-import type { ProcessTemplateResult, ProcessTemplateParams, SendEmailResult, SendEmailParams, LocalEmailTemplate, EnrichedEmailTemplate, SendEnrichedEmailParams } from '@email/types'
+import type { ProcessTemplateResult, ProcessTemplateParams, SendEmailResult, SendEmailParams, LocalEmailTemplate, EnrichedEmailTemplate, SendEnrichedEmailParams, MarkdownMailOptions } from '@email/types'
 
 export const processTemplate = ({ template, variables = {} }: ProcessTemplateParams): ProcessTemplateResult => {
   const processed = Object.entries(variables).reduce((acc, [key, value]) => {
@@ -18,14 +18,14 @@ export const sendEmail = async ({ to, subject, template, variables, from }: Send
     const { processed: processedSubject } = processTemplate({ template: subject, variables })
     const { processed } = processTemplate({ template, variables })
 
-    const mailOptions = {
+    const mailOptions: MarkdownMailOptions = {
       from: from ?? env.EMAIL_FROM,
       to: Array.isArray(to) ? to.join(', ') : to,
       subject: processedSubject,
       markdown: processed
     }
 
-    const info = await (transporter as any).sendMail(mailOptions)
+    const info = await transporter.sendMail(mailOptions)
 
     return { success: true, messageId: info.messageId }
   } catch (error) {

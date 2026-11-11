@@ -2,8 +2,9 @@ import { removeUndefined } from '@utils/object'
 import SubscriptionModel from './model'
 
 import type { RecordRenewalPayload, SubscriptionEntity, UpdateSubscriptionStatusPayload, UpsertSubscriptionPayload } from './types'
+import type { SubscriptionDocument } from './model'
 
-const toSubscriptionEntity = (doc: any): SubscriptionEntity => {
+const toSubscriptionEntity = (doc: SubscriptionDocument): SubscriptionEntity => {
   const { _id, ...rest } = doc
   return { ...rest, id: String(_id) }
 }

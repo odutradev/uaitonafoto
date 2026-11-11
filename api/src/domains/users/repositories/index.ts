@@ -2,8 +2,9 @@ import { removeUndefined } from '@utils/object'
 import UserModel from './model'
 
 import type { CreditType, ListUsersParams, UpdateUserPayload, UpsertUserPayload, UserEntity } from './types'
+import type { UserDocument } from './model'
 
-const toUserEntity = (doc: any): UserEntity => ({
+const toUserEntity = (doc: UserDocument & { id?: string }): UserEntity => ({
   id: String(doc._id || doc.id),
   role: doc.role,
   name: doc.name,

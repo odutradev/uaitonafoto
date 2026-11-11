@@ -1,3 +1,4 @@
+import getErrorShape from '@utils/errorShape'
 import { getFirebaseAuth } from './index'
 
 import type { AuthActionCodeSettings, AuthCreateUserRequest, AuthDecodedIdToken, AuthDeleteUsersResult, AuthListUsersResult, AuthSessionCookieOptions, AuthUpdateUserRequest, AuthUserRecord, DeleteUserOptions, GetUserOptions } from './types'
@@ -18,8 +19,9 @@ export const getUser = async (
   try {
     const auth = getFirebaseAuth()
     return await auth.getUser(uid)
-  } catch (error: any) {
-    if (!options?.throwOnNotFound && error?.code === 'auth/user-not-found') {
+  } catch (error) {
+    const { code } = getErrorShape(error)
+    if (!options?.throwOnNotFound && code === 'auth/user-not-found') {
       return null
     }
     throw error
@@ -33,8 +35,9 @@ export const getUserByEmail = async (
   try {
     const auth = getFirebaseAuth()
     return await auth.getUserByEmail(email)
-  } catch (error: any) {
-    if (!options?.throwOnNotFound && error?.code === 'auth/user-not-found') {
+  } catch (error) {
+    const { code } = getErrorShape(error)
+    if (!options?.throwOnNotFound && code === 'auth/user-not-found') {
       return null
     }
     throw error
@@ -48,8 +51,9 @@ export const getUserByPhoneNumber = async (
   try {
     const auth = getFirebaseAuth()
     return await auth.getUserByPhoneNumber(phoneNumber)
-  } catch (error: any) {
-    if (!options?.throwOnNotFound && error?.code === 'auth/user-not-found') {
+  } catch (error) {
+    const { code } = getErrorShape(error)
+    if (!options?.throwOnNotFound && code === 'auth/user-not-found') {
       return null
     }
     throw error
@@ -81,8 +85,9 @@ export const deleteUser = async (
   try {
     await auth.deleteUser(uid)
     return true
-  } catch (error: any) {
-    if (ignoreNotFound && error?.code === 'auth/user-not-found') {
+  } catch (error) {
+    const { code } = getErrorShape(error)
+    if (ignoreNotFound && code === 'auth/user-not-found') {
       return false
     }
     throw error

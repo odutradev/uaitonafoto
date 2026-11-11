@@ -4,9 +4,11 @@ import { removeUndefined } from '@utils/object'
 import EventModel from './model'
 
 import type { CreateEventPayload, EventEntity, EventMemberRole, EventScreenHistoryEntry, EventScreenSlot, ListEventsByMemberParams, UpdateEventPayload } from './types'
+import type { EventDocument } from './model'
 
-const toEventEntity = (doc: any): EventEntity => {
-  const { _id, settings = {}, screens = [], ...rest } = doc
+const toEventEntity = (doc: EventDocument): EventEntity => {
+  const { _id, settings, screens = [], ...rest } = doc
+  const storedSettings: Partial<EventDocument['settings']> = settings ?? {}
   return {
     ...rest,
     id: String(_id),
@@ -14,22 +16,22 @@ const toEventEntity = (doc: any): EventEntity => {
     planTier: rest.planTier ?? 'single',
     customization: doc.customization ?? undefined,
     closedAt: doc.closedAt ?? undefined,
-    screens: screens.map((s: any) => ({
-      ...s,
-      isBlocked: Boolean(s.isBlocked)
+    screens: screens.map((screen) => ({
+      ...screen,
+      isBlocked: Boolean(screen.isBlocked)
     })),
     screenHistory: doc.screenHistory ?? [],
     settings: {
-      uploadWindowHours: settings.uploadWindowHours ?? 24,
-      galleryDurationDays: settings.galleryDurationDays ?? 30,
-      photoVisibility: settings.photoVisibility ?? 'during_event',
-      pinEnabled: settings.pinEnabled ?? false,
-      pin: settings.pin ?? '0000',
-      pinRotate: settings.pinRotate ?? true,
-      pinRotationMinutes: settings.pinRotationMinutes ?? 15,
-      pinUpdatedAt: settings.pinUpdatedAt ?? rest.createdAt ?? new Date().toISOString(),
-      moderationEnabled: Boolean(settings.moderationEnabled),
-      challengesEnabled: Boolean(settings.challengesEnabled)
+      uploadWindowHours: storedSettings.uploadWindowHours ?? 24,
+      galleryDurationDays: storedSettings.galleryDurationDays ?? 30,
+      photoVisibility: storedSettings.photoVisibility ?? 'during_event',
+      pinEnabled: storedSettings.pinEnabled ?? false,
+      pin: storedSettings.pin ?? '0000',
+      pinRotate: storedSettings.pinRotate ?? true,
+      pinRotationMinutes: storedSettings.pinRotationMinutes ?? 15,
+      pinUpdatedAt: storedSettings.pinUpdatedAt ?? rest.createdAt ?? new Date().toISOString(),
+      moderationEnabled: Boolean(storedSettings.moderationEnabled),
+      challengesEnabled: Boolean(storedSettings.challengesEnabled)
     }
   }
 }

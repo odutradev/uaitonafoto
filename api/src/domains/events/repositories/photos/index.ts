@@ -1,8 +1,9 @@
 import PhotoModel from './model'
 
 import type { CreatePhotoPayload, ListPhotosParams, ListPhotosSinceParams, PhotoEntity, PhotoStatus } from './types'
+import type { PhotoDocument } from './model'
 
-const toPhotoEntity = (doc: any): PhotoEntity => {
+const toPhotoEntity = (doc: PhotoDocument): PhotoEntity => {
   const { _id, ...rest } = doc
   return {
     ...rest,

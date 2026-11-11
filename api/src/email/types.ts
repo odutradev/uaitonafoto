@@ -1,6 +1,10 @@
-import type { Transporter } from 'nodemailer'
+import type { SendMailOptions, Transporter } from 'nodemailer'
 
 export type EmailTransporter = Transporter
+
+export type MarkdownMailOptions = SendMailOptions & {
+  markdown?: string
+}
 
 export type EmailConfig = {
   host: string
