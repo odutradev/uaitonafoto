@@ -1,4 +1,4 @@
-﻿export interface LikeEntity {
+export interface LikeEntity {
   id: string
   eventId: string
   photoId: string
