@@ -30,11 +30,10 @@ const multerInstance = multer({
     fileSize: MaxFileSize
   },
   fileFilter: (_req, file, cb) => {
-    if (AllowedMimeTypes.includes(file.mimetype as AllowedMimeType)) {
-      cb(null, true)
-    } else {
-      cb(new MulterError('LIMIT_UNEXPECTED_FILE', file.fieldname))
+    if (!AllowedMimeTypes.includes(file.mimetype as AllowedMimeType)) {
+      return cb(new MulterError('LIMIT_UNEXPECTED_FILE', file.fieldname))
     }
+    cb(null, true)
   }
 })
 

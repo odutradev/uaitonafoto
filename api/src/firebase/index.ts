@@ -27,22 +27,18 @@ const firebase: FirebaseModule = {
       const projectId = env.FIREBASE_PROJECT_ID
       const storageBucket = formatStorageBucket(env.FIREBASE_STORAGE_BUCKET)
 
-      if (admin.apps.length > 0 && admin.apps[0]) {
-        firebase.app = admin.apps[0]
-      } else {
-        const clientEmail = env.FIREBASE_CLIENT_EMAIL
-        const privateKey = formatPrivateKey(env.FIREBASE_PRIVATE_KEY)
-
-        firebase.app = admin.initializeApp({
+      const existingApp = admin.apps.length > 0 ? admin.apps[0] : null
+      firebase.app =
+        existingApp ??
+        admin.initializeApp({
           credential: admin.credential.cert({
             projectId,
-            clientEmail,
-            privateKey
+            clientEmail: env.FIREBASE_CLIENT_EMAIL,
+            privateKey: formatPrivateKey(env.FIREBASE_PRIVATE_KEY)
           }),
           projectId,
           storageBucket
         })
-      }
 
       logger.success(`Connected: Firebase services ready [Auth, Storage] (${projectId} | ${storageBucket})`)
 

@@ -158,11 +158,7 @@ export const uploadPhoto = defineAction(
       }).catch(() => {})
 
       const [response] = await toPhotoResponses([photo], guest.id)
-      if (isModerationOn) {
-        broadcastEvent(event.id, 'photo:pending', response)
-      } else {
-        broadcastEvent(event.id, 'photo:new', response)
-      }
+      broadcastEvent(event.id, isModerationOn ? 'photo:pending' : 'photo:new', response)
       return response
     } catch (error) {
       await removePhotoFile(stored.path)

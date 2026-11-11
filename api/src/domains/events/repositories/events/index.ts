@@ -167,17 +167,10 @@ export const eventRepository = {
   },
 
   updateScreenSlotName: async (id: string, screenId: string, name?: string): Promise<EventEntity | null> => {
-    const updateObj: Record<string, unknown> = {
-      $set: {
-        updatedAt: new Date().toISOString()
-      }
-    }
-
-    if (name) {
-      (updateObj.$set as Record<string, unknown>)['screens.$.name'] = name
-    } else {
-      updateObj.$unset = { 'screens.$.name': '' }
-    }
+    const updatedAt = new Date().toISOString()
+    const updateObj = name
+      ? { $set: { updatedAt, 'screens.$.name': name } }
+      : { $set: { updatedAt }, $unset: { 'screens.$.name': '' } }
 
     const doc = await EventModel.findOneAndUpdate(
       { _id: id, 'screens.id': screenId },
