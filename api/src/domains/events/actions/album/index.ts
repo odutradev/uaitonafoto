@@ -108,7 +108,7 @@ const MAX_ACTIVE_SCREENS = 2
 export const createScreenSlot = defineAction(
   {
     method: 'post',
-    path: '/events/:id/screens',
+    path: '/events/:id/screens/create',
     summary: 'Gerar um novo PIN de telão para o evento (máximo de 2 telões ativos)',
     tags: ['Álbum e Telão'],
     authenticate: true,
@@ -175,7 +175,7 @@ export const createScreenSlot = defineAction(
 export const removeScreenSlot = defineAction(
   {
     method: 'delete',
-    path: '/events/:id/screens/:screenId',
+    path: '/events/:id/screens/:screenId/remove',
     summary: 'Desconectar e remover um telão do evento',
     tags: ['Álbum e Telão'],
     authenticate: true,
@@ -218,7 +218,7 @@ export const removeScreenSlot = defineAction(
 export const updateScreenSlot = defineAction(
   {
     method: 'patch',
-    path: '/events/:id/screens/:screenId',
+    path: '/events/:id/screens/:screenId/update',
     summary: 'Atualizar apelido ou identificação de um telão do evento',
     tags: ['Álbum e Telão'],
     authenticate: true,
@@ -410,7 +410,7 @@ export const activateScreen = defineAction(
 export const getScreen = defineAction(
   {
     method: 'get',
-    path: '/events/:id/screen',
+    path: '/events/:id/screen/details',
     summary: 'Fotos do telão (polling por cursor), autenticado pela credencial do telão',
     tags: ['Álbum e Telão'],
     middlewares: [screenSessionMiddleware],
@@ -499,7 +499,7 @@ export const disconnectScreen = defineAction(
 export const getAlbum = defineAction(
   {
     method: 'get',
-    path: '/events/:id/album',
+    path: '/events/:id/album/list',
     summary: 'Álbum do evento para a equipe (fotos enviadas pelos convidados)',
     tags: ['Álbum e Telão'],
     authenticate: true,
@@ -532,7 +532,7 @@ export const getAlbum = defineAction(
 export const listEventGuests = defineAction(
   {
     method: 'get',
-    path: '/events/:id/guests',
+    path: '/events/:id/guests/list',
     summary: 'Listar convidados do evento com a quantidade de fotos enviadas',
     tags: ['Álbum e Telão'],
     authenticate: true,
@@ -569,7 +569,7 @@ export const listEventGuests = defineAction(
 export const updateEventGuest = defineAction(
   {
     method: 'patch',
-    path: '/events/:id/guests/:guestId',
+    path: '/events/:id/guests/:guestId/update',
     summary: 'Atualizar nome de um convidado do evento',
     tags: ['Álbum e Telão'],
     authenticate: true,
@@ -654,7 +654,7 @@ export const setEventGuestBlock = defineAction(
 export const deleteEventGuest = defineAction(
   {
     method: 'delete',
-    path: '/events/:id/guests/:guestId',
+    path: '/events/:id/guests/:guestId/remove',
     summary: 'Remover um convidado do evento',
     tags: ['Álbum e Telão'],
     authenticate: true,
@@ -683,7 +683,7 @@ export const deleteEventGuest = defineAction(
 export const deleteEventPhoto = defineAction(
   {
     method: 'delete',
-    path: '/events/:id/photos/:photoId',
+    path: '/events/:id/photos/:photoId/remove',
     summary: 'Remover foto do evento (moderação da equipe)',
     tags: ['Álbum e Telão'],
     authenticate: true,
@@ -846,7 +846,7 @@ export const streamScreen = defineAction(
 export const streamRoom = defineAction(
   {
     method: 'get',
-    path: '/rooms/:id',
+    path: '/rooms/:id/stream',
     summary: 'Canal SSE por sala de evento (/rooms/:eventId)',
     tags: ['Álbum e Telão'],
     schema: { params: eventIdParamsSchema },
@@ -1001,7 +1001,7 @@ export const downloadAlbumZip = defineAction(
 export const getEventChallenges = defineAction(
   {
     method: 'get',
-    path: '/events/:id/challenges',
+    path: '/events/:id/challenges/list',
     summary: 'Listar missões e desafios fotográficos do evento',
     tags: ['Gamificação & Desafios'],
     authenticate: true,
@@ -1033,7 +1033,7 @@ export const getEventChallenges = defineAction(
 export const addEventChallenge = defineAction(
   {
     method: 'post',
-    path: '/events/:id/challenges',
+    path: '/events/:id/challenges/create',
     summary: 'Adicionar nova missão fotográfica ao evento',
     tags: ['Gamificação & Desafios'],
     authenticate: true,
@@ -1069,7 +1069,7 @@ export const addEventChallenge = defineAction(
 export const deleteEventChallenge = defineAction(
   {
     method: 'delete',
-    path: '/events/:id/challenges/:challengeId',
+    path: '/events/:id/challenges/:challengeId/remove',
     summary: 'Remover missão fotográfica do evento',
     tags: ['Gamificação & Desafios'],
     authenticate: true,

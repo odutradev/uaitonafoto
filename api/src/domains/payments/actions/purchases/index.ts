@@ -32,7 +32,7 @@ const toPurchaseItemResponse = (entity: PurchaseEntity): PurchaseItemResponse =>
 export const listMyPurchases = defineAction(
   {
     method: 'get',
-    path: '/payments/purchases',
+    path: '/payments/purchases/list',
     summary: 'Listar lotes de créditos e aquisições do usuário autenticado',
     tags: ['Pagamentos'],
     authenticate: true,

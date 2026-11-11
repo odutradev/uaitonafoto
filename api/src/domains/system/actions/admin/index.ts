@@ -111,7 +111,7 @@ const getPeriodBucketsAndRange = (
 export const getAdminMetrics = defineAction(
   {
     method: 'get',
-    path: '/admin/metrics',
+    path: '/admin/metrics/details',
     summary: 'Obter métricas gerais da plataforma para administradores com filtro de período',
     tags: ['Admin', 'Sistema'],
     authenticate: true,
@@ -264,7 +264,7 @@ export const getAdminMetrics = defineAction(
 export const listAdminUsers = defineAction(
   {
     method: 'get',
-    path: '/admin/users',
+    path: '/admin/users/list',
     summary: 'Listar usuários com dados detalhados para administração',
     tags: ['Admin', 'Sistema'],
     authenticate: true,
@@ -343,7 +343,7 @@ export const listAdminUsers = defineAction(
 export const addAdminUserCredits = defineAction(
   {
     method: 'post',
-    path: '/admin/users/:userId/credits',
+    path: '/admin/users/:userId/credits/add',
     summary: 'Conceder créditos a um usuário (somente admin)',
     tags: ['Admin', 'Sistema'],
     authenticate: true,

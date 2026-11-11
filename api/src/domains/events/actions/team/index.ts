@@ -42,7 +42,7 @@ import type {
 export const listTeam = defineAction(
   {
     method: 'get',
-    path: '/events/:id/team',
+    path: '/events/:id/team/list',
     summary: 'Listar equipe organizadora do evento',
     tags: ['Equipe do Evento'],
     authenticate: true,
@@ -69,7 +69,7 @@ export const MAX_ORGANIZERS = 5
 export const addOrganizer = defineAction(
   {
     method: 'post',
-    path: '/events/:id/team',
+    path: '/events/:id/team/add',
     summary: 'Adicionar organizador à equipe pelo e-mail (somente criador)',
     tags: ['Equipe do Evento'],
     authenticate: true,
@@ -110,7 +110,7 @@ export const addOrganizer = defineAction(
 export const removeMember = defineAction(
   {
     method: 'delete',
-    path: '/events/:id/team/:userId',
+    path: '/events/:id/team/:userId/remove',
     summary: 'Remover organizador (criador remove qualquer organizador; organizador pode sair)',
     tags: ['Equipe do Evento'],
     authenticate: true,

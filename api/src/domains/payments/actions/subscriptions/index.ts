@@ -65,7 +65,7 @@ const toSubscriptionResponse = (entity: SubscriptionEntity): SubscriptionRespons
 export const listMySubscriptions = defineAction(
   {
     method: 'get',
-    path: '/payments/subscriptions',
+    path: '/payments/subscriptions/list',
     summary: 'Listar assinaturas recorrentes do usuário autenticado',
     tags: ['Pagamentos'],
     authenticate: true,

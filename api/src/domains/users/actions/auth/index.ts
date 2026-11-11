@@ -121,7 +121,7 @@ export const syncAuthUser = defineAction(
 export const getMe = defineAction(
   {
     method: 'get',
-    path: '/auth/me',
+    path: '/auth/me/details',
     summary: 'Buscar dados do usuário logado',
     tags: ['Autenticação'],
     authenticate: true,
@@ -148,7 +148,7 @@ export const getMe = defineAction(
 export const updateMe = defineAction(
   {
     method: 'patch',
-    path: '/auth/me',
+    path: '/auth/me/update',
     summary: 'Atualizar dados do usuário logado',
     tags: ['Autenticação'],
     authenticate: true,
