@@ -7,12 +7,18 @@ export type EmailDetailItem = {
   value: string
 }
 
+export type EmailStepItem = {
+  title: string
+  description?: string
+}
+
 export type EmailBlock =
   | { type: 'paragraph'; text: string }
   | { type: 'heading'; text: string }
   | { type: 'button'; label: string; url: string }
   | { type: 'details'; title?: string; items: EmailDetailItem[] }
   | { type: 'notice'; tone: EmailNoticeTone; title?: string; items: string[] }
+  | { type: 'steps'; items: EmailStepItem[] }
   | { type: 'fallbackLink'; text: string; url: string }
   | { type: 'divider' }
 

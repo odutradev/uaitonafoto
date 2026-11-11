@@ -33,3 +33,12 @@ export const buildCreatedAtFilter = ({ since, until }: CreatedAtRange = {}): Rec
   if (!since && !until) return {}
   return { createdAt: { ...(since ? { $gte: since } : {}), ...(until ? { $lte: until } : {}) } }
 }
+
+export const BrazilTimeZone = 'America/Sao_Paulo'
+
+export const formatDateTimeBR = (date: Date): string => {
+  const day = date.toLocaleDateString('pt-BR', { timeZone: BrazilTimeZone })
+  const time = date.toLocaleTimeString('pt-BR', { timeZone: BrazilTimeZone, hour: '2-digit', minute: '2-digit' })
+
+  return `${day} às ${time}`
+}

@@ -1,7 +1,7 @@
 import { formatInlineHtml, formatInlineText, escapeHtml } from '@email/builder/inline'
 import { EmailColors, EmailFonts, NoticeTones } from '@email/builder/theme'
 
-import type { EmailBlock, EmailDetailItem, EmailNoticeTone } from '@email/builder/types'
+import type { EmailBlock, EmailDetailItem, EmailNoticeTone, EmailStepItem } from '@email/builder/types'
 
 const paragraphStyle = `margin: 0 0 16px; font-family: ${EmailFonts.body}; font-size: 16px; line-height: 1.65; color: ${EmailColors.textGray};`
 
@@ -27,6 +27,21 @@ const renderNoticeHtml = (tone: EmailNoticeTone, items: string[], title?: string
     </tr>
   </table>`
 }
+
+const renderStepHtml = (item: EmailStepItem, index: number): string => `
+  <tr>
+    <td width="40" valign="top" style="width: 40px; padding: 0 0 18px;">
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td width="28" height="28" align="center" bgcolor="${EmailColors.ink}" style="width: 28px; height: 28px; background-color: ${EmailColors.ink}; border-radius: 9px; font-family: ${EmailFonts.heading}; font-size: 14px; font-weight: 800; line-height: 28px; color: ${EmailColors.flashYellow}; text-align: center;">${index + 1}</td>
+        </tr>
+      </table>
+    </td>
+    <td valign="top" style="padding: 3px 0 18px;">
+      <p style="margin: 0; font-family: ${EmailFonts.heading}; font-size: 15px; font-weight: 800; letter-spacing: -0.2px; line-height: 1.4; color: ${EmailColors.ink};">${formatInlineHtml(item.title)}</p>
+      ${item.description ? `<p style="margin: 4px 0 0; font-family: ${EmailFonts.body}; font-size: 14px; line-height: 1.6; color: ${EmailColors.textGray};">${formatInlineHtml(item.description)}</p>` : ''}
+    </td>
+  </tr>`
 
 export const renderBlockHtml = (block: EmailBlock): string => {
   switch (block.type) {
@@ -55,6 +70,8 @@ export const renderBlockHtml = (block: EmailBlock): string => {
   </table>`
     case 'notice':
       return renderNoticeHtml(block.tone, block.items, block.title)
+    case 'steps':
+      return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 8px 0 12px;">${block.items.map(renderStepHtml).join('')}</table>`
     case 'fallbackLink':
       return `<p style="margin: 0 0 16px; font-family: ${EmailFonts.body}; font-size: 13px; line-height: 1.6; color: ${EmailColors.mutedGray};">${formatInlineHtml(block.text)}<br><a href="${escapeHtml(block.url)}" target="_blank" style="color: ${EmailColors.ink}; text-decoration: underline; word-break: break-all;">${escapeHtml(block.url)}</a></p>`
     case 'divider':
@@ -74,6 +91,10 @@ export const renderBlockText = (block: EmailBlock): string => {
       return [block.title, ...block.items.map((item) => `- ${item.label}: ${item.value}`)].filter(Boolean).join('\n')
     case 'notice':
       return [block.title, ...block.items.map((item) => `- ${formatInlineText(item)}`)].filter(Boolean).join('\n')
+    case 'steps':
+      return block.items
+        .map((item, index) => [`${index + 1}. ${formatInlineText(item.title)}`, item.description ? `   ${formatInlineText(item.description)}` : ''].filter(Boolean).join('\n'))
+        .join('\n')
     case 'fallbackLink':
       return `${formatInlineText(block.text)}\n${block.url}`
     case 'divider':
@@ -87,6 +108,7 @@ export const emailBlocks = {
   button: (label: string, url: string): EmailBlock => ({ type: 'button', label, url }),
   details: (items: EmailDetailItem[], title?: string): EmailBlock => ({ type: 'details', items, title }),
   notice: (tone: EmailNoticeTone, items: string[], title?: string): EmailBlock => ({ type: 'notice', tone, items, title }),
+  steps: (items: EmailStepItem[]): EmailBlock => ({ type: 'steps', items }),
   fallbackLink: (text: string, url: string): EmailBlock => ({ type: 'fallbackLink', text, url }),
   divider: (): EmailBlock => ({ type: 'divider' })
 }
