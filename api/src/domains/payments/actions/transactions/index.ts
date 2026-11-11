@@ -37,7 +37,7 @@ const toTransactionItemResponse = (entity: TransactionEntity): TransactionItemRe
 export const listMyTransactions = defineAction(
   {
     method: 'get',
-    path: '/payments/transactions',
+    path: '/payments/transactions/list',
     summary: 'Listar histórico paginado de faturas e transações do usuário autenticado',
     tags: ['Pagamentos'],
     authenticate: true,

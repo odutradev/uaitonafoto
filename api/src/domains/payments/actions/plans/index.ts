@@ -8,7 +8,7 @@ import type { GetPlanSchema, ListPlansSchema, PlanResponse, PlansListResponse } 
 export const listPlans = defineAction(
   {
     method: 'get',
-    path: '/plans',
+    path: '/plans/list',
     summary: 'Listar planos disponíveis ou buscar por query',
     tags: ['Pagamentos'],
     authenticate: false,
@@ -34,7 +34,7 @@ export const listPlans = defineAction(
 export const getPlanById = defineAction(
   {
     method: 'get',
-    path: '/plans/:id',
+    path: '/plans/:id/details',
     summary: 'Buscar dados de um plano específico por ID ou identificador',
     tags: ['Pagamentos'],
     authenticate: false,

@@ -3,7 +3,7 @@ import type { Paginated, PaginationParams } from '@actions/events/types'
 import type { GuestEventInfo, GuestPhoto, GuestSession, JoinEventResponse, LikeResult } from './types'
 
 export const getGuestEvent = async (eventToken: string): Promise<GuestEventInfo> => {
-  const response = await guestApi.get<GuestEventInfo>(`/guest/events/${eventToken}`)
+  const response = await guestApi.get<GuestEventInfo>(`/guest/events/${eventToken}/details`)
   return response.data
 }
 
@@ -16,7 +16,7 @@ export const joinEvent = async (eventToken: string, name: string, pin?: string):
 }
 
 export const getGuestSession = async (guestToken: string): Promise<GuestSession> => {
-  const response = await guestApi.get<GuestSession>('/guest/me', withGuestToken(guestToken))
+  const response = await guestApi.get<GuestSession>('/guest/me/details', withGuestToken(guestToken))
   return response.data
 }
 
@@ -39,12 +39,12 @@ export const uploadGuestPhoto = async (
   if (typeof focalY === 'number') {
     formData.append('focalY', Math.round(focalY).toString())
   }
-  const response = await guestApi.post<GuestPhoto>('/guest/photos', formData, withGuestToken(guestToken))
+  const response = await guestApi.post<GuestPhoto>('/guest/photos/upload', formData, withGuestToken(guestToken))
   return response.data
 }
 
 export const getGuestFeed = async (guestToken: string, params?: PaginationParams): Promise<Paginated<GuestPhoto>> => {
-  const response = await guestApi.get<Paginated<GuestPhoto>>('/guest/feed', { ...withGuestToken(guestToken), params })
+  const response = await guestApi.get<Paginated<GuestPhoto>>('/guest/feed/list', { ...withGuestToken(guestToken), params })
   return response.data
 }
 
@@ -54,6 +54,6 @@ export const toggleGuestPhotoLike = async (guestToken: string, photoId: string):
 }
 
 export const deleteGuestPhoto = async (guestToken: string, photoId: string): Promise<GuestPhoto> => {
-  const response = await guestApi.delete<GuestPhoto>(`/guest/photos/${photoId}`, withGuestToken(guestToken))
+  const response = await guestApi.delete<GuestPhoto>(`/guest/photos/${photoId}/remove`, withGuestToken(guestToken))
   return response.data
 }

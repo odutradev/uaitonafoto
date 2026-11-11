@@ -85,7 +85,7 @@ import type {
 export const createEvent = defineAction(
   {
     method: 'post',
-    path: '/events',
+    path: '/events/create',
     summary: 'Criar evento (o usuário autenticado se torna o criador)',
     tags: ['Eventos'],
     authenticate: true,
@@ -188,7 +188,7 @@ export const createEvent = defineAction(
 export const listMyEvents = defineAction(
   {
     method: 'get',
-    path: '/events',
+    path: '/events/list',
     summary: 'Listar eventos em que o usuário é criador ou organizador',
     tags: ['Eventos'],
     authenticate: true,
@@ -219,7 +219,7 @@ export const listMyEvents = defineAction(
 export const getEvent = defineAction(
   {
     method: 'get',
-    path: '/events/:id',
+    path: '/events/:id/details',
     summary: 'Obter evento da equipe organizadora',
     tags: ['Eventos'],
     authenticate: true,
@@ -247,7 +247,7 @@ export const getEvent = defineAction(
 export const updateEvent = defineAction(
   {
     method: 'put',
-    path: '/events/:id',
+    path: '/events/:id/update',
     summary: 'Atualizar dados e configurações do evento (criador ou organizador)',
     tags: ['Eventos'],
     authenticate: true,
@@ -321,7 +321,7 @@ export const updateEvent = defineAction(
 export const deleteEvent = defineAction(
   {
     method: 'delete',
-    path: '/events/:id',
+    path: '/events/:id/remove',
     summary: 'Excluir evento (somente criador)',
     tags: ['Eventos'],
     authenticate: true,

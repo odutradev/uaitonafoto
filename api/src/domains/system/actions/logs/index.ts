@@ -33,7 +33,7 @@ import type { ListLogsRequest, ListLogsResponse } from './types'
 export const listLogs = defineAction(
   {
     method: 'get',
-    path: '/logs',
+    path: '/logs/list',
     summary: 'Listar histórico paginado de logs de atividades (próprios ou globais para admin)',
     tags: ['Sistema'],
     authenticate: true,

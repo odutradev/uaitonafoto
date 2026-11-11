@@ -20,27 +20,27 @@ import type {
 } from './types'
 
 export const createEvent = async (payload: CreateEventPayload): Promise<EventItem> => {
-  const response = await api.post<EventItem>('/events', payload)
+  const response = await api.post<EventItem>('/events/create', payload)
   return response.data
 }
 
 export const getMyEvents = async (params?: PaginationParams): Promise<Paginated<EventItem>> => {
-  const response = await api.get<Paginated<EventItem>>('/events', { params })
+  const response = await api.get<Paginated<EventItem>>('/events/list', { params })
   return response.data
 }
 
 export const getEvent = async (id: string): Promise<EventItem> => {
-  const response = await api.get<EventItem>(`/events/${id}`)
+  const response = await api.get<EventItem>(`/events/${id}/details`)
   return response.data
 }
 
 export const updateEvent = async (id: string, payload: UpdateEventPayload): Promise<EventItem> => {
-  const response = await api.put<EventItem>(`/events/${id}`, payload)
+  const response = await api.put<EventItem>(`/events/${id}/update`, payload)
   return response.data
 }
 
 export const deleteEvent = async (id: string): Promise<EventItem> => {
-  const response = await api.delete<EventItem>(`/events/${id}`)
+  const response = await api.delete<EventItem>(`/events/${id}/remove`)
   return response.data
 }
 
@@ -60,22 +60,22 @@ export const reopenEvent = async (id: string): Promise<EventItem> => {
 }
 
 export const getEventTeam = async (id: string): Promise<TeamMember[]> => {
-  const response = await api.get<TeamMember[]>(`/events/${id}/team`)
+  const response = await api.get<TeamMember[]>(`/events/${id}/team/list`)
   return response.data
 }
 
 export const addOrganizer = async (id: string, email: string): Promise<TeamMember[]> => {
-  const response = await api.post<TeamMember[]>(`/events/${id}/team`, { email })
+  const response = await api.post<TeamMember[]>(`/events/${id}/team/add`, { email })
   return response.data
 }
 
 export const removeTeamMember = async (id: string, userId: string): Promise<TeamMember[]> => {
-  const response = await api.delete<TeamMember[]>(`/events/${id}/team/${userId}`)
+  const response = await api.delete<TeamMember[]>(`/events/${id}/team/${userId}/remove`)
   return response.data
 }
 
 export const getEventGuests = async (id: string): Promise<EventGuest[]> => {
-  const response = await api.get<EventGuest[]>(`/events/${id}/guests`)
+  const response = await api.get<EventGuest[]>(`/events/${id}/guests/list`)
   return response.data
 }
 
@@ -89,7 +89,7 @@ export const getEventScreen = async (
   screenToken: string,
   params?: ScreenParams
 ): Promise<ScreenResponse> => {
-  const response = await screenApi.get<ScreenResponse>(`/events/${id}/screen`, {
+  const response = await screenApi.get<ScreenResponse>(`/events/${id}/screen/details`, {
     ...withScreenToken(screenToken),
     params
   })
@@ -101,19 +101,19 @@ export const disconnectEventScreen = async (id: string, screenToken: string): Pr
 }
 
 export const createEventScreen = async (id: string, name?: string): Promise<EventScreenSlot[]> => {
-  const response = await api.post<EventScreenSlot[]>(`/events/${id}/screens`, {
+  const response = await api.post<EventScreenSlot[]>(`/events/${id}/screens/create`, {
     ...(name?.trim() ? { name: name.trim() } : {})
   })
   return response.data
 }
 
 export const removeEventScreen = async (id: string, screenId: string): Promise<EventScreenSlot[]> => {
-  const response = await api.delete<EventScreenSlot[]>(`/events/${id}/screens/${screenId}`)
+  const response = await api.delete<EventScreenSlot[]>(`/events/${id}/screens/${screenId}/remove`)
   return response.data
 }
 
 export const updateEventScreen = async (id: string, screenId: string, name?: string): Promise<EventScreenSlot[]> => {
-  const response = await api.patch<EventScreenSlot[]>(`/events/${id}/screens/${screenId}`, {
+  const response = await api.patch<EventScreenSlot[]>(`/events/${id}/screens/${screenId}/update`, {
     ...(name?.trim() ? { name: name.trim() } : { name: '' })
   })
   return response.data
@@ -127,12 +127,12 @@ export const setEventScreenBlock = async (id: string, screenId: string, blocked:
 }
 
 export const getEventAlbum = async (id: string, params?: AlbumParams): Promise<Paginated<EventPhoto>> => {
-  const response = await api.get<Paginated<EventPhoto>>(`/events/${id}/album`, { params })
+  const response = await api.get<Paginated<EventPhoto>>(`/events/${id}/album/list`, { params })
   return response.data
 }
 
 export const deleteEventPhoto = async (id: string, photoId: string): Promise<EventPhoto> => {
-  const response = await api.delete<EventPhoto>(`/events/${id}/photos/${photoId}`)
+  const response = await api.delete<EventPhoto>(`/events/${id}/photos/${photoId}/remove`)
   return response.data
 }
 
@@ -167,7 +167,7 @@ export const downloadEventAlbumZip = async (id: string): Promise<Blob> => {
 }
 
 export const getEventChallenges = async (id: string): Promise<EventChallenge[]> => {
-  const response = await api.get<EventChallenge[]>(`/events/${id}/challenges`)
+  const response = await api.get<EventChallenge[]>(`/events/${id}/challenges/list`)
   return response.data
 }
 
@@ -176,7 +176,7 @@ export const addEventChallenge = async (
   title: string,
   description?: string
 ): Promise<EventChallenge[]> => {
-  const response = await api.post<EventChallenge[]>(`/events/${id}/challenges`, { title, description })
+  const response = await api.post<EventChallenge[]>(`/events/${id}/challenges/create`, { title, description })
   return response.data
 }
 
@@ -184,7 +184,7 @@ export const deleteEventChallenge = async (
   id: string,
   challengeId: string
 ): Promise<EventChallenge[]> => {
-  const response = await api.delete<EventChallenge[]>(`/events/${id}/challenges/${challengeId}`)
+  const response = await api.delete<EventChallenge[]>(`/events/${id}/challenges/${challengeId}/remove`)
   return response.data
 }
 
@@ -206,7 +206,7 @@ export const updateEventGuest = async (
   guestId: string,
   name: string
 ): Promise<EventGuest> => {
-  const response = await api.patch<EventGuest>(`/events/${id}/guests/${guestId}`, { name })
+  const response = await api.patch<EventGuest>(`/events/${id}/guests/${guestId}/update`, { name })
   return response.data
 }
 
@@ -220,5 +220,5 @@ export const setEventGuestBlock = async (
 }
 
 export const deleteEventGuest = async (id: string, guestId: string): Promise<void> => {
-  await api.delete(`/events/${id}/guests/${guestId}`)
+  await api.delete(`/events/${id}/guests/${guestId}/remove`)
 }

@@ -76,7 +76,7 @@ import type {
 export const uploadPhoto = defineAction(
   {
     method: 'post',
-    path: '/guest/photos',
+    path: '/guest/photos/upload',
     summary: 'Enviar foto para o evento (convidado)',
     tags: ['Fotos'],
     rateLimit: { limit: 60 },
@@ -186,7 +186,7 @@ export const uploadPhoto = defineAction(
 export const listFeed = defineAction(
   {
     method: 'get',
-    path: '/guest/feed',
+    path: '/guest/feed/list',
     summary: 'Listar feed de fotos do evento (convidado)',
     tags: ['Fotos'],
     middlewares: [guestSessionMiddleware],
@@ -258,7 +258,7 @@ export const toggleLike = defineAction(
 export const deleteMyPhoto = defineAction(
   {
     method: 'delete',
-    path: '/guest/photos/:id',
+    path: '/guest/photos/:id/remove',
     summary: 'Excluir foto enviada pelo próprio convidado',
     tags: ['Fotos'],
     middlewares: [guestSessionMiddleware],

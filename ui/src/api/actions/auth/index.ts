@@ -19,12 +19,12 @@ export const syncAuthUser = async ({ firebaseToken, ...payload }: SyncServicePay
 }
 
 export const getMeData = async (): Promise<AuthUser> => {
-  const response = await api.get<AuthUser>('/auth/me')
+  const response = await api.get<AuthUser>('/auth/me/details')
   return response.data
 }
 
 export const updateMeData = async (payload: UpdateMePayload): Promise<AuthUser> => {
-  const response = await api.patch<AuthUser>('/auth/me', payload)
+  const response = await api.patch<AuthUser>('/auth/me/update', payload)
   return response.data
 }
 

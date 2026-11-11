@@ -25,7 +25,7 @@ export const clearGuestToken = (eventToken: string): void =>
 export const withGuestToken = (guestToken: string) => ({ headers: { Authorization: `Bearer ${guestToken}` } })
 
 export const buildRoomStreamUrl = (roomId: string, token?: string): string => {
-  const url = new URL(`${defaultConfig.baseURL}/rooms/${encodeURIComponent(roomId)}`)
+  const url = new URL(`${defaultConfig.baseURL}/rooms/${encodeURIComponent(roomId)}/stream`)
   if (token) url.searchParams.set('token', token)
   return url.toString()
 }

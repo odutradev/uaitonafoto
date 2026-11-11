@@ -49,7 +49,7 @@ import type {
 export const getGuestEvent = defineAction(
   {
     method: 'get',
-    path: '/guest/events/:token',
+    path: '/guest/events/:token/details',
     summary: 'Obter dados públicos do evento pelo link do convidado',
     tags: ['Convidado'],
     schema: { params: guestTokenParamsSchema },
@@ -173,7 +173,7 @@ export const joinEvent = defineAction(
 export const getGuestSession = defineAction(
   {
     method: 'get',
-    path: '/guest/me',
+    path: '/guest/me/details',
     summary: 'Obter sessão do convidado: dados, evento e cota de fotos',
     tags: ['Convidado'],
     middlewares: [guestSessionMiddleware],

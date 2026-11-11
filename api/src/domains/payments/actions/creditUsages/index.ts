@@ -20,7 +20,7 @@ const toCreditUsageResponse = (entity: CreditUsageEntity): CreditUsageItemRespon
 export const listMyCreditUsages = defineAction(
   {
     method: 'get',
-    path: '/payments/credit-usages',
+    path: '/payments/credit-usages/list',
     summary: 'Listar histórico de créditos utilizados pelo usuário autenticado',
     tags: ['Pagamentos'],
     authenticate: true,
