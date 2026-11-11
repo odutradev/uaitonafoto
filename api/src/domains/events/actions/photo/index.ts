@@ -1,5 +1,6 @@
 import { Types } from 'mongoose'
 
+import { eventUploadRateLimiter, guestFeedRateLimiter, guestLikeRateLimiter, guestUploadRateLimiter } from '@domains/events/middlewares/guestRateLimit'
 import { likeResponseSchema, listFeedQuerySchema, listFeedResponseSchema, photoParamsSchema, photoSchema } from './schemas'
 import { arePhotosVisible, canUploadPhotos, getEventPhase } from '@domains/events/utils/eventWindows'
 import { buildPaginatedResponse, getPaginationOptions } from '@factories/pagination/utils'
@@ -67,8 +68,7 @@ export const uploadPhoto = defineAction(
     path: '/guest/photos/upload',
     summary: 'Enviar foto para o evento (convidado)',
     tags: ['Fotos'],
-    rateLimit: { limit: 60 },
-    middlewares: [guestSessionMiddleware, upload.single('file')],
+    middlewares: [guestSessionMiddleware, eventUploadRateLimiter, guestUploadRateLimiter, upload.single('file')],
     requestFormat: 'multipart',
     uploadFieldName: 'file',
     responses: {
@@ -173,7 +173,7 @@ export const listFeed = defineAction(
     path: '/guest/feed/list',
     summary: 'Listar feed de fotos do evento (convidado)',
     tags: ['Fotos'],
-    middlewares: [guestSessionMiddleware],
+    middlewares: [guestSessionMiddleware, guestFeedRateLimiter],
     schema: { query: listFeedQuerySchema },
     responses: {
       200: { description: 'Feed paginado, mais recentes primeiro', schema: listFeedResponseSchema },
@@ -209,8 +209,7 @@ export const toggleLike = defineAction(
     path: '/guest/photos/:id/like',
     summary: 'Curtir ou descurtir uma foto (alterna)',
     tags: ['Fotos'],
-    rateLimit: { limit: 300 },
-    middlewares: [guestSessionMiddleware],
+    middlewares: [guestSessionMiddleware, guestLikeRateLimiter],
     schema: { params: photoParamsSchema },
     responses: {
       200: { description: 'Estado atual da curtida', schema: likeResponseSchema },

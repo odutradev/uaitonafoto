@@ -1,4 +1,5 @@
 import { guestEventInfoSchema, guestSessionResponseSchema, guestTokenParamsSchema, joinEventResponseSchema, joinEventSchema } from './schemas'
+import { joinDeviceRateLimiter, joinEventRateLimiter } from '@domains/events/middlewares/guestRateLimit'
 import { checkPinLockout, recordPinFailure, resetPinLockout } from '@domains/events/utils/pinLockout'
 import guestSessionMiddleware from '@domains/events/middlewares/guestSession'
 import { getClientIdentity } from '@domains/events/utils/clientIdentity'
@@ -60,7 +61,7 @@ export const joinEvent = defineAction(
     path: '/guest/events/:token/join',
     summary: 'Entrar no evento como convidado e obter token de sessão',
     tags: ['Convidado'],
-    rateLimit: { limit: 30 },
+    middlewares: [joinEventRateLimiter, joinDeviceRateLimiter],
     schema: { params: guestTokenParamsSchema, body: joinEventSchema },
     responses: {
       200: { description: 'Sessão do convidado criada', schema: joinEventResponseSchema },

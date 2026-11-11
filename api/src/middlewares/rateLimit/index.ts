@@ -1,9 +1,10 @@
-import rateLimit from 'express-rate-limit'
+import rateLimit, { ipKeyGenerator } from 'express-rate-limit'
 
 import { errorResponseSchema } from '@factories/errors/schemas'
 import sendError from '@factories/errors'
 
 import type { RateLimitConfig, DocumentedMiddleware } from './types'
+import type { Request } from 'express'
 
 export const createRateLimiter = (config: RateLimitConfig = {}): DocumentedMiddleware => {
   const { domainName, endpointPath, message, ...rest } = config
@@ -36,10 +37,16 @@ export const createRateLimiter = (config: RateLimitConfig = {}): DocumentedMiddl
   })
 }
 
+const GlobalLimit = 300
+const GuestIpLimit = 6000
+
+const isGuestRequest = (req: Request): boolean => req.path.includes('/guest/')
+
 export const globalRateLimiter: DocumentedMiddleware = Object.assign(
   rateLimit({
     windowMs: 15 * 60 * 1000,
-    limit: 300,
+    limit: (req) => (isGuestRequest(req) ? GuestIpLimit : GlobalLimit),
+    keyGenerator: (req) => `${isGuestRequest(req) ? 'guest' : 'api'}:${ipKeyGenerator(req.ip ?? 'unknown')}`,
     standardHeaders: 'draft-7',
     legacyHeaders: false,
     skip: (req) =>
