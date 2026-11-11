@@ -16,6 +16,7 @@ export interface EventFormState {
   moderationEnabled: boolean;
   challengesEnabled: boolean;
   challengesMode?: "choose" | "random";
+  uploadCooldownSeconds: number;
   customization?: EventCustomization;
 }
 

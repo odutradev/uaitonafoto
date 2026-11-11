@@ -25,6 +25,18 @@ export const pinRotationLabels: Record<PinRotationMinutes, string> = {
   60: "A cada 60 minutos"
 };
 
+export const defaultUploadCooldownSeconds = 60;
+
+export const uploadCooldownLabels: Record<number, string> = {
+  0: "Sem intervalo",
+  30: "30 segundos",
+  60: "1 minuto (padrão)",
+  120: "2 minutos",
+  300: "5 minutos",
+  600: "10 minutos",
+  900: "15 minutos"
+};
+
 export const eventPhaseLabels: Record<EventPhase, string> = {
   upcoming: "Em breve",
   open: "Recebendo fotos",
