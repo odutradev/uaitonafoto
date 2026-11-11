@@ -1,92 +1,99 @@
-import { Avatar, Box, Button, Container, Stack, Typography } from "@mui/material";
+import { useEffect, useRef, useState } from "react";
+import { Avatar, Button } from "@mui/material";
 import { ArrowForward as ArrowForwardIcon } from "@mui/icons-material";
 import { Link as RouterLink } from "react-router-dom";
 
 import Logo from "@components/logo";
-import ThemeToggle from "@components/themeToggle";
-
-import {
-  getHeaderStyles,
-  getUserBadgeStyles,
-  loginButtonStyles,
-  navContainerStyles,
-  userAvatarStyles,
-  userGreetingStyles,
-  userNameStyles,
-  userTextContainerStyles
-} from "./styles";
 import useLandingPage from "@pages/public/landingPage/hook";
 
+import { Actions, Bar, Header, Links, LongLabel, ShortLabel, UserBadge } from "./styles";
+
 export const Navbar = () => {
-  const { isDark, user, data: content } = useLandingPage();
+  const { user, data: content } = useLandingPage();
   const data = content.header;
+  const headerRef = useRef<HTMLElement>(null);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isHidden, setIsHidden] = useState(false);
+
+  useEffect(() => {
+    const state = { lastY: window.scrollY, frame: 0 };
+
+    const update = () => {
+      state.frame = 0;
+      const currentY = window.scrollY;
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      headerRef.current?.style.setProperty("--read", (maxScroll > 0 ? currentY / maxScroll : 0).toFixed(4));
+      setIsScrolled(currentY > 24);
+      setIsHidden(currentY > 400 && currentY > state.lastY + 4);
+      if (Math.abs(currentY - state.lastY) > 4) state.lastY = currentY;
+    };
+
+    const schedule = () => {
+      if (!state.frame) state.frame = window.requestAnimationFrame(update);
+    };
+
+    update();
+    window.addEventListener("scroll", schedule, { passive: true });
+    return () => {
+      window.cancelAnimationFrame(state.frame);
+      window.removeEventListener("scroll", schedule);
+    };
+  }, []);
 
   const displayName = user?.fullName || user?.name || user?.email?.split("@")[0] || "Usuário";
 
   return (
-    <Box component="header" sx={getHeaderStyles(isDark)}>
-      <Container maxWidth="lg" sx={navContainerStyles}>
-        <RouterLink to="/" style={{ textDecoration: "none", display: "inline-flex" }}>
-          <Logo size="medium" variant="auto" animation="breathe" />
+    <Header ref={headerRef} data-hidden={isHidden}>
+      <Bar data-scrolled={isScrolled} aria-label="Navegação principal">
+        <RouterLink to="/" style={{ display: "inline-flex" }} aria-label="uaiToNaFoto, página inicial">
+          <Logo size="medium" variant="dark" animation="breathe" />
         </RouterLink>
 
-        <Stack direction="row" spacing={{ xs: 1, sm: 1.5 }} alignItems="center" sx={{ flexShrink: 0 }}>
-          <ThemeToggle />
+        <Links>
+          {data.links.map((link) => (
+            <li key={link.href}>
+              <a href={link.href}>{link.text}</a>
+            </li>
+          ))}
+        </Links>
 
+        <Actions>
           {user ? (
-            <Stack direction="row" spacing={{ xs: 1, sm: 1.25 }} alignItems="center">
-              <Box
-                component={RouterLink}
-                to="/app"
-                sx={getUserBadgeStyles(isDark)}
-                title={`Conectado como ${displayName}. Acessar painel.`}
-              >
-                <Avatar src={user.photoUrl} alt={displayName} sx={userAvatarStyles}>
+            <>
+              <UserBadge to="/app" title={`Conectado como ${displayName}. Acessar painel.`}>
+                <Avatar src={user.photoUrl} alt={displayName}>
                   {displayName.charAt(0).toUpperCase()}
                 </Avatar>
-                <Box sx={userTextContainerStyles}>
-                  <Typography variant="caption" sx={userGreetingStyles}>
-                    Conectado
-                  </Typography>
-                  <Typography variant="body2" sx={userNameStyles}>
-                    {displayName}
-                  </Typography>
-                </Box>
-              </Box>
-
+                <span>
+                  <small>Conectado</small>
+                  <strong>{displayName}</strong>
+                </span>
+              </UserBadge>
               <Button
                 component={RouterLink}
                 to="/app"
                 variant="contained"
                 color="primary"
-                size="medium"
                 endIcon={<ArrowForwardIcon />}
-                sx={loginButtonStyles}
               >
-                <Box component="span" sx={{ display: { xs: "none", sm: "inline" } }}>
-                  Acessar painel
-                </Box>
-                <Box component="span" sx={{ display: { xs: "inline", sm: "none" } }}>
-                  Entrar
-                </Box>
+                <LongLabel>Acessar painel</LongLabel>
+                <ShortLabel>Entrar</ShortLabel>
               </Button>
-            </Stack>
+            </>
           ) : (
             <Button
               component={RouterLink}
               to={data.loginButton.href}
               variant="contained"
               color="primary"
-              size="medium"
               endIcon={<ArrowForwardIcon />}
-              sx={loginButtonStyles}
             >
               {data.loginButton.text}
             </Button>
           )}
-        </Stack>
-      </Container>
-    </Box>
+        </Actions>
+      </Bar>
+    </Header>
   );
 };
 

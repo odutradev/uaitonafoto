@@ -1,44 +1,92 @@
-import { Box, Button, Container, Typography } from "@mui/material";
+import { useRef } from "react";
+import { Button } from "@mui/material";
 import { ArrowForward as ArrowForwardIcon } from "@mui/icons-material";
 import { Link as RouterLink } from "react-router-dom";
+import { QRCodeSVG } from "qrcode.react";
 
-import Logo from "@components/logo";
-
-import { ctaButtonStyles, ctaDescriptionStyles, ctaTitleStyles, getCtaBoxStyles } from "./styles";
+import useScrollProgress from "@hooks/useScrollProgress";
 import useLandingPage from "@pages/public/landingPage/hook";
+import Reveal from "@pages/public/landingPage/subcomponents/reveal";
+import ScenePhoto from "@pages/public/landingPage/subcomponents/scenePhoto";
+import { brandColors } from "@styles/theme";
 
-export const FinalCta = () => {
-  const { isDark, data: content } = useLandingPage();
-  const data = content.finalCta;
+import { Block, ButtonWrap, Content, Copy, Floating, QrBox, Section } from "./styles";
+
+import type { CSSProperties } from "react";
+
+const floatingSlots = [
+  { top: "-30px", right: "28%", rot: "8deg", depth: "120px", delay: "0s" },
+  { top: "40%", right: "-20px", rot: "-10deg", depth: "60px", delay: "1.2s" },
+  { bottom: "-40px", right: "40%", rot: "-4deg", depth: "160px", delay: "2.4s" }
+];
+
+const FinalCta = () => {
+  const { data } = useLandingPage();
+  const cta = data.finalCta;
+  const sectionRef = useRef<HTMLElement>(null);
+  useScrollProgress(sectionRef, { mode: "through", steps: 1 });
+  const photos = data.hero.photos.slice(0, floatingSlots.length);
 
   return (
-    <Box component="section" sx={{ width: "100%", py: { xs: 6, sm: 8, md: 10 } }}>
-      <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3 } }}>
-        <Box sx={getCtaBoxStyles(isDark)}>
-          <Logo size="large" variant="auto" animation="flash" />
-
-          <Typography variant="h2" sx={ctaTitleStyles}>
-            {data.title}
-          </Typography>
-
-          <Typography variant="body1" sx={ctaDescriptionStyles}>
-            {data.description}
-          </Typography>
-
-          <Button
-            component={RouterLink}
-            to={data.button.href}
-            variant="contained"
-            color="primary"
-            size="large"
-            endIcon={<ArrowForwardIcon />}
-            sx={ctaButtonStyles}
-          >
-            {data.button.text}
-          </Button>
-        </Box>
-      </Container>
-    </Box>
+    <Section ref={sectionRef}>
+      <Block>
+        {photos.map((photo, index) => {
+          const slot = floatingSlots[index];
+          return (
+            <Floating
+              key={photo.id}
+              aria-hidden="true"
+              style={
+                {
+                  top: slot.top,
+                  right: slot.right,
+                  bottom: slot.bottom,
+                  "--rot": slot.rot,
+                  "--depth": slot.depth,
+                  "--delay": slot.delay
+                } as CSSProperties
+              }
+            >
+              <div>
+                <ScenePhoto kind={photo.kind} tone={photo.tone} />
+              </div>
+            </Floating>
+          );
+        })}
+        <Content>
+          <Copy>
+            <Reveal>
+              <h2>{cta.title}</h2>
+            </Reveal>
+            <Reveal delay={100}>
+              <p>{cta.description}</p>
+            </Reveal>
+            <Reveal delay={200}>
+              <ButtonWrap>
+                <Button
+                  component={RouterLink}
+                  to={cta.button.href}
+                  variant="contained"
+                  endIcon={<ArrowForwardIcon />}
+                  data-cursor="bora!"
+                >
+                  {cta.button.text}
+                </Button>
+              </ButtonWrap>
+            </Reveal>
+          </Copy>
+          <Reveal effect="slideLeft" delay={250}>
+            <QrBox>
+              <QRCodeSVG value={`https://${cta.domain}`} bgColor={brandColors.paper} fgColor={brandColors.ink} />
+              <div>
+                <strong>{cta.domain}</strong>
+                <small>crie seu evento agora</small>
+              </div>
+            </QrBox>
+          </Reveal>
+        </Content>
+      </Block>
+    </Section>
   );
 };
 

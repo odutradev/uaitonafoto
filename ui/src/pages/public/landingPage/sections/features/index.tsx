@@ -1,90 +1,65 @@
-import { Box, Card, Container, Stack, Typography } from "@mui/material";
 import {
-  AutoAwesome as AutoAwesomeIcon,
-  CloudDownloadOutlined as DownloadIcon,
-  ConnectedTvOutlined as TvIcon,
-  EmojiEventsOutlined as TrophyIcon,
-  PrintOutlined as PrintIcon,
-  SecurityOutlined as SecurityIcon,
-  StorefrontOutlined as StoreIcon
+  ConnectedTvRounded as TvIcon,
+  FavoriteRounded as FeedIcon,
+  GpsFixedRounded as MissionsIcon,
+  QrCode2Rounded as TableIcon,
+  SellRounded as WhiteLabelIcon,
+  VerifiedUserRounded as ModerationIcon
 } from "@mui/icons-material";
 
-import {
-  cardBadgeStyles,
-  featuresGridStyles,
-  getFeatureCardStyles,
-  getFeatureIconBoxStyles,
-  getSectionBoxStyles,
-  sectionHeaderStyles,
-  sectionSubtitleStyles,
-  sectionTitleStyles,
-  tagBadgeStyles
-} from "./styles";
 import useLandingPage from "@pages/public/landingPage/hook";
+import Reveal from "@pages/public/landingPage/subcomponents/reveal";
+import SectionHeading from "@pages/public/landingPage/subcomponents/sectionHeading";
+import type { FeatureItem } from "@pages/public/landingPage/data";
 
-const renderFeatureIcon = (iconName: string) => {
-  const iconSx = { fontSize: 24 };
-  switch (iconName) {
-    case "tv":
-      return <TvIcon sx={iconSx} />;
-    case "challenges":
-      return <TrophyIcon sx={iconSx} />;
-    case "moderation":
-      return <SecurityIcon sx={iconSx} />;
-    case "print":
-      return <PrintIcon sx={iconSx} />;
-    case "whitelabel":
-      return <StoreIcon sx={iconSx} />;
-    case "download":
-      return <DownloadIcon sx={iconSx} />;
-    default:
-      return <AutoAwesomeIcon sx={iconSx} />;
-  }
+import { Badge, Card, Grid, Icon, Inner, Section } from "./styles";
+
+import type { PointerEvent as ReactPointerEvent } from "react";
+
+const featureIcons: Record<FeatureItem["icon"], typeof TvIcon> = {
+  tv: TvIcon,
+  missions: MissionsIcon,
+  moderation: ModerationIcon,
+  table: TableIcon,
+  whitelabel: WhiteLabelIcon,
+  feed: FeedIcon
 };
 
-export const Features = () => {
-  const { isDark, data: content } = useLandingPage();
-  const data = content.features;
+const handleSpotlight = (event: ReactPointerEvent<HTMLElement>) => {
+  const rect = event.currentTarget.getBoundingClientRect();
+  event.currentTarget.style.setProperty("--x", `${event.clientX - rect.left}px`);
+  event.currentTarget.style.setProperty("--y", `${event.clientY - rect.top}px`);
+};
+
+const Features = () => {
+  const { data } = useLandingPage();
+  const features = data.features;
 
   return (
-    <Box id="recursos" component="section" sx={getSectionBoxStyles(isDark)}>
-      <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3 } }}>
-        <Stack spacing={1.75} sx={sectionHeaderStyles}>
-          <Box sx={tagBadgeStyles}>
-            <AutoAwesomeIcon sx={{ fontSize: 16, color: "primary.main" }} />
-            {data.tag}
-          </Box>
-          <Typography variant="h2" sx={sectionTitleStyles}>
-            {data.title}
-          </Typography>
-          <Typography variant="body1" sx={sectionSubtitleStyles}>
-            {data.subtitle}
-          </Typography>
-        </Stack>
-
-        <Box sx={featuresGridStyles}>
-          {data.items.map((item) => (
-            <Card key={item.id} elevation={0} sx={getFeatureCardStyles(isDark)}>
-              <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                <Box sx={getFeatureIconBoxStyles(isDark)}>{renderFeatureIcon(item.icon)}</Box>
-                {item.badge && <Box sx={cardBadgeStyles}>{item.badge}</Box>}
-              </Box>
-
-              <Typography
-                variant="h4"
-                sx={{ fontSize: { xs: "1.2rem", sm: "1.35rem" }, fontWeight: 700, color: "text.primary" }}
-              >
-                {item.title}
-              </Typography>
-
-              <Typography variant="body2" sx={{ color: "text.secondary", lineHeight: 1.6 }}>
-                {item.description}
-              </Typography>
-            </Card>
-          ))}
-        </Box>
-      </Container>
-    </Box>
+    <Section id="recursos">
+      <Inner>
+        <SectionHeading eyebrow={features.eyebrow} title={features.title} highlight={features.highlight} />
+        <Grid>
+          {features.items.map((item, index) => {
+            const FeatureIcon = featureIcons[item.icon];
+            return (
+              <Reveal key={item.id} delay={(index % 3) * 90}>
+                <Card onPointerMove={handleSpotlight}>
+                  <Icon>
+                    <FeatureIcon />
+                  </Icon>
+                  <h3>
+                    {item.title}
+                    {item.badge && <Badge>{item.badge}</Badge>}
+                  </h3>
+                  <p>{item.description}</p>
+                </Card>
+              </Reveal>
+            );
+          })}
+        </Grid>
+      </Inner>
+    </Section>
   );
 };
 
