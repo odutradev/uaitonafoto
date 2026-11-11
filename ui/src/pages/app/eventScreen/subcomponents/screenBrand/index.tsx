@@ -1,8 +1,5 @@
 import { Avatar, Box, IconButton, Tooltip, Typography } from '@mui/material'
-import {
-  Fullscreen as FullscreenIcon,
-  SettingsOutlined as SettingsIcon
-} from '@mui/icons-material'
+import { Fullscreen as FullscreenIcon, SettingsOutlined as SettingsIcon } from '@mui/icons-material'
 import Logo from '@components/logo'
 import { brandColors } from '@styles/theme'
 import type { EventCustomization } from '@utils/types/events'

@@ -1,69 +1,17 @@
-import {
-  Box,
-  Button,
-  Chip,
-  Dialog,
-  Divider,
-  IconButton,
-  Stack,
-  Switch,
-  Tooltip,
-  Typography
-} from '@mui/material'
-import {
-  CheckCircle as CheckIcon,
-  Close as CloseIcon,
-  CropFree as FitIcon,
-  DashboardCustomizeOutlined as LayoutIcon,
-  DarkMode as DarkModeIcon,
-  LightMode as LightModeIcon,
-  PowerSettingsNew as DisconnectIcon,
-  Tune as SettingsIcon,
-  Visibility as VisibilityIcon,
-  VisibilityOff as VisibilityOffIcon
-} from '@mui/icons-material'
+import { Box, Button, Chip, Dialog, Divider, IconButton, Stack, Switch, Tooltip, Typography } from '@mui/material'
+import { CheckCircle as CheckIcon, Close as CloseIcon, CropFree as FitIcon, DashboardCustomizeOutlined as LayoutIcon, DarkMode as DarkModeIcon, LightMode as LightModeIcon, PowerSettingsNew as DisconnectIcon, Tune as SettingsIcon, Visibility as VisibilityIcon, VisibilityOff as VisibilityOffIcon } from '@mui/icons-material'
 
 import useSystemStore from '@stores/system'
 import { brandColors } from '@styles/theme'
 
 import { SCREEN_LAYOUT_OPTIONS, SCREEN_PHOTO_FIT_OPTIONS } from '@pages/app/eventScreen/types'
-import {
-  getLayoutCardStyles,
-  modalBodyStyles,
-  modalDialogPaperStyles,
-  settingRowStyles,
-  settingsSectionStyles,
-  settingsSectionTitleStyles
-} from './styles'
-import type { ScreenLayoutMode, ScreenPhotoFit } from '@pages/app/eventScreen/types'
+import { getLayoutCardStyles, modalBodyStyles, modalDialogPaperStyles, settingRowStyles, settingsSectionStyles, settingsSectionTitleStyles } from './styles'
+import useEventScreenPage from '@pages/app/eventScreen/hook'
 
-interface ScreenSettingsModalProps {
-  open: boolean
-  onClose: () => void
-  layout: ScreenLayoutMode
-  onChangeLayout: (mode: ScreenLayoutMode) => void
-  photoFit: ScreenPhotoFit
-  onChangePhotoFit: (fit: ScreenPhotoFit) => void
-  showPin: boolean
-  onTogglePin: () => void
-  hasPin: boolean
-  isActivated: boolean
-  onRequestDisconnect: () => void
-}
 
-export const ScreenSettingsModal = ({
-  open,
-  onClose,
-  layout,
-  onChangeLayout,
-  photoFit,
-  onChangePhotoFit,
-  showPin,
-  onTogglePin,
-  hasPin,
-  isActivated,
-  onRequestDisconnect
-}: ScreenSettingsModalProps) => {
+export const ScreenSettingsModal = () => {
+  const { isSettingsModalOpen: open, handleCloseSettings: onClose, layoutMode: layout, handleLayoutChange: onChangeLayout, photoFit, handlePhotoFitChange: onChangePhotoFit, showPin, handleTogglePinVisibility: onTogglePin, hasPin, isActivated, handleOpenDisconnect: onRequestDisconnect } = useEventScreenPage()
+
   const { themeMode } = useSystemStore((state) => state.system)
   const toggleTheme = useSystemStore((state) => state.toggleTheme)
   const isDark = themeMode === 'dark'

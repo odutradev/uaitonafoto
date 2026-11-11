@@ -1,15 +1,17 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { useParams } from 'react-router-dom'
+import { toast } from 'react-toastify'
+
+import createPageContext from '@utils/functions/createPageContext'
+import { buildGuestLink } from '@utils/functions/events'
+import useAction from '@hooks/useAction'
+
+import type { ScreenLayoutMode, ScreenPhotoFit } from '@pages/app/eventScreen/types'
+import type { UseEventScreenPageReturn } from './types'
+import type { FormEvent } from 'react'
 
 import { activateEventScreen, disconnectEventScreen, getEventScreen } from '@actions/events'
-import {
-  buildScreenStreamUrl,
-  clearScreenCredential,
-  getStoredScreenEvent,
-  getStoredScreenPin,
-  getStoredScreenToken,
-  storeScreenCredential,
-  storeScreenPin
-} from '@utils/api/screen'
+import { buildScreenStreamUrl, clearScreenCredential, getStoredScreenEvent, getStoredScreenPin, getStoredScreenToken, storeScreenCredential, storeScreenPin } from '@utils/api/screen'
 import { getErrorMessage } from '@utils/functions/events'
 import usePinLockout from '@hooks/usePinLockout'
 
@@ -20,7 +22,7 @@ const SYNC_POLL_INTERVAL_MS = 45000
 const ROTATE_INTERVAL_MS = 6000
 const NEW_ARRIVAL_DURATION_MS = 3500
 
-const useEventScreen = (eventId: string) => {
+const useEventScreenSession = (eventId: string) => {
   const [screenToken, setScreenToken] = useState<string | null>(() => getStoredScreenToken(eventId))
   const [event, setEvent] = useState<ScreenEventInfo | null>(() => getStoredScreenEvent(eventId))
   const [pin, setPin] = useState<string | null>(() => getStoredScreenPin(eventId))
@@ -283,4 +285,127 @@ const useEventScreen = (eventId: string) => {
   }
 }
 
-export default useEventScreen
+const SCREEN_SHOW_PIN_STORAGE_KEY = 'uaitonafoto:screen:show_pin'
+const SCREEN_LAYOUT_STORAGE_KEY = 'uaitonafoto:screen:layout'
+const SCREEN_PHOTO_FIT_STORAGE_KEY = 'uaitonafoto:screen:photo_fit'
+
+const useEventScreenPageState = (): UseEventScreenPageReturn => {
+  const { token, id } = useParams()
+  const runAction = useAction()
+  const eventIdentifier = token || id || ''
+  const session = useEventScreenSession(eventIdentifier)
+  const { activate, disconnect, lockout, event, pin } = session
+  const [pinInput, setPinInput] = useState('')
+  const [isDisconnectModalOpen, setIsDisconnectModalOpen] = useState(false)
+  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false)
+  const [layoutMode, setLayoutMode] = useState<ScreenLayoutMode>(() => {
+    const stored = localStorage.getItem(SCREEN_LAYOUT_STORAGE_KEY)
+    if (
+      stored === 'stories' ||
+      stored === 'lateral' ||
+      stored === 'stage' ||
+      stored === 'mosaic' ||
+      stored === 'duo'
+    ) {
+      return stored
+    }
+    // Compatibilidade com configurações anteriores
+    if (stored === 'side-hub') return 'lateral'
+    if (stored === 'classic') return 'stage'
+    if (stored === 'social-feed') return 'stories'
+    return 'stories'
+  })
+  const [photoFit, setPhotoFit] = useState<ScreenPhotoFit>(() => {
+    const stored = localStorage.getItem(SCREEN_PHOTO_FIT_STORAGE_KEY) as ScreenPhotoFit | null
+    if (stored && ['cover', 'contain'].includes(stored)) {
+      return stored
+    }
+    return 'contain'
+  })
+  const [showPin, setShowPin] = useState<boolean>(() => {
+    const stored = localStorage.getItem(SCREEN_SHOW_PIN_STORAGE_KEY)
+    return stored !== null ? stored === 'true' : true
+  })
+
+  const handleTogglePinVisibility = () => {
+    setShowPin((prev) => {
+      const next = !prev
+      localStorage.setItem(SCREEN_SHOW_PIN_STORAGE_KEY, String(next))
+      return next
+    })
+  }
+
+  const handleLayoutChange = (mode: ScreenLayoutMode) => {
+    setLayoutMode(mode)
+    localStorage.setItem(SCREEN_LAYOUT_STORAGE_KEY, mode)
+  }
+
+  const handlePhotoFitChange = (fit: ScreenPhotoFit) => {
+    setPhotoFit(fit)
+    localStorage.setItem(SCREEN_PHOTO_FIT_STORAGE_KEY, fit)
+  }
+
+  const handleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen?.()
+    } else {
+      document.exitFullscreen?.()
+    }
+  }
+
+  const handleActivateSubmit = async (submitEvent: FormEvent<HTMLFormElement>) => {
+    submitEvent.preventDefault()
+    if (lockout.isLocked || !/^\d{4}$/.test(pinInput)) return
+    await activate(pinInput)
+  }
+
+  const guestLink = event ? buildGuestLink(event.guestToken) : token ? buildGuestLink(token) : ''
+
+
+  const handleOpenSettings = () => setIsSettingsModalOpen(true)
+  const handleCloseSettings = () => setIsSettingsModalOpen(false)
+  const handleOpenDisconnect = () => setIsDisconnectModalOpen(true)
+  const handleCloseDisconnect = () => setIsDisconnectModalOpen(false)
+
+  const handleConfirmDisconnect = async () => {
+    setIsDisconnectModalOpen(false)
+    await runAction({
+      action: disconnect,
+      callback: () => {
+        toast.info('Telão desconectado e vaga liberada com sucesso.')
+      }
+    })
+  }
+
+  return {
+    ...session,
+    token,
+    guestLink,
+    pinInput,
+    setPinInput,
+    isDisconnectModalOpen,
+    isSettingsModalOpen,
+    layoutMode,
+    photoFit,
+    showPin,
+    hasPin: Boolean(pin),
+    handleTogglePinVisibility,
+    handleLayoutChange,
+    handlePhotoFitChange,
+    handleFullscreen,
+    handleActivateSubmit,
+    handleOpenSettings,
+    handleCloseSettings,
+    handleOpenDisconnect,
+    handleCloseDisconnect,
+    handleConfirmDisconnect
+  }
+}
+
+const { PageProvider: EventScreenPageProvider, usePage: useEventScreenPage } = createPageContext(
+  useEventScreenPageState,
+  'useEventScreenPage'
+)
+
+export { EventScreenPageProvider }
+export default useEventScreenPage

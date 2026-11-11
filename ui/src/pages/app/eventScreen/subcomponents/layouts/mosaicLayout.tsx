@@ -3,38 +3,13 @@ import { Box } from '@mui/material'
 import ScreenBrand from '@pages/app/eventScreen/subcomponents/screenBrand'
 import ScreenPhotoTile from '@pages/app/eventScreen/subcomponents/screenPhotoTile'
 import ScreenQrBlock from '@pages/app/eventScreen/subcomponents/screenQrBlock'
-import type { EventCustomization, EventPhoto } from '@utils/types/events'
-import type { ScreenPhotoFit } from '@pages/app/eventScreen/types'
+import useEventScreenPage from '@pages/app/eventScreen/hook'
 
-interface MosaicLayoutProps {
-  currentPhoto: EventPhoto | null
-  isNewArrival: boolean
-  photos: EventPhoto[]
-  currentIndex: number
-  onSelectPhoto: (index: number) => void
-  guestLink: string
-  pin: string | null
-  showPin: boolean
-  photoFit: ScreenPhotoFit
-  customization?: EventCustomization
-  onFullscreen?: () => void
-  onOpenSettings?: () => void
-}
 
-export const MosaicLayout = ({
-  currentPhoto,
-  isNewArrival,
-  photos,
-  currentIndex,
-  onSelectPhoto,
-  guestLink,
-  pin,
-  showPin,
-  photoFit,
-  customization,
-  onFullscreen,
-  onOpenSettings
-}: MosaicLayoutProps) => {
+export const MosaicLayout = () => {
+  const { currentPhoto, isNewArrival, photos, currentIndex, selectPhoto: onSelectPhoto, guestLink, pin, showPin, photoFit, handleFullscreen: onFullscreen, handleOpenSettings: onOpenSettings, event } = useEventScreenPage()
+  const customization = event?.customization
+
   // Pega até 5 fotos recentes
   const recentPhotos = Array.from({ length: 5 }, (_, idx) => {
     if (photos.length <= 1) return null
