@@ -362,9 +362,6 @@ export const addAdminUserCredits = defineAction(
       updatedAt: updatedUser.updatedAt
     }
 
-    return {
-      user: userItem,
-      message: `${data.amount} crédito(s) adicionado(s) com sucesso.`
-    }
+    return { user: userItem }
   }
 )

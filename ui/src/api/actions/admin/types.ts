@@ -82,6 +82,5 @@ export interface AddCreditsPayload {
 
 export interface AddCreditsResponse {
   user: AdminUserItem
-  message: string
 }
 

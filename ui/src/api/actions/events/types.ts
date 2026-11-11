@@ -188,9 +188,7 @@ export interface ScreenParams {
 }
 
 export interface ResetLockoutsResponse {
-  success: boolean
   clearedCount: number
-  message: string
 }
 
 export interface ApproveAllPhotosResponse {
