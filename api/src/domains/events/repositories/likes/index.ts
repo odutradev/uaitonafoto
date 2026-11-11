@@ -1,3 +1,4 @@
+import getErrorShape from '@utils/errorShape'
 import LikeModel from './model'
 
 import type { CreateLikePayload } from './types'
@@ -9,8 +10,9 @@ export const likeRepository = {
     try {
       await LikeModel.create(payload)
       return true
-    } catch (error: any) {
-      if (error?.code === DUPLICATE_KEY_ERROR) return false
+    } catch (error) {
+      const { code } = getErrorShape(error)
+      if (code === DUPLICATE_KEY_ERROR) return false
       throw error
     }
   },

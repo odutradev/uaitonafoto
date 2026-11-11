@@ -3,8 +3,9 @@ import TransactionModel from './model'
 
 import type { CreateCancelledTransactionPayload, CreatePaidTransactionPayload, CreateTransactionPayload, ListUserTransactionsPaginatedParams, TransactionEntity, TransactionStatus, TransactionWebhookEvent, UpdateTransactionPayload } from './types'
 import type { PaginatedData } from '@factories/pagination/types'
+import type { TransactionDocument } from './model'
 
-const toTransactionEntity = (doc: any): TransactionEntity => {
+const toTransactionEntity = (doc: TransactionDocument & { effectiveDate?: string }): TransactionEntity => {
   const { _id, effectiveDate: _effectiveDate, ...rest } = doc
   return { ...rest, id: String(_id), webhookEvents: rest.webhookEvents ?? [] }
 }

@@ -917,7 +917,7 @@ export const downloadAlbumZip = defineAction(
 
     const archive = new ZipArchive({ zlib: { level: 5 } })
 
-    archive.on('error', (err: any) => {
+    archive.on('error', (err: Error) => {
       if (!res.headersSent) {
         manageError({ code: 'internal_error', error: err })
       } else {

@@ -3,8 +3,9 @@ import PurchaseModel from './model'
 
 import type { CreatePurchasePayload, PurchaseEntity } from './types'
 import type { CreditType } from '@domains/users/repositories/types'
+import type { PurchaseDocument } from './model'
 
-const toPurchaseEntity = (doc: any): PurchaseEntity => {
+const toPurchaseEntity = (doc: PurchaseDocument): PurchaseEntity => {
   const { _id, ...rest } = doc
   const credits = rest.credits ?? 0
   return {

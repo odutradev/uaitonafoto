@@ -4,12 +4,13 @@ import LogModel from './model'
 
 import type { CreateLogPayload, ListLogsPaginatedParams, LogEntity } from './types'
 import type { PaginatedData } from '@factories/pagination/types'
+import type { LogDocument } from './model'
 
 const logger = createLogger('log-repository')
 
 const escapeRegex = (value: string): string => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 
-const toLogEntity = (doc: any): LogEntity => ({
+const toLogEntity = (doc: LogDocument & { id?: string }): LogEntity => ({
   id: String(doc._id || doc.id),
   category: doc.category,
   level: doc.level,

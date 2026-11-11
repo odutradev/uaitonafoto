@@ -1,3 +1,4 @@
+import getErrorShape from '@utils/errorShape'
 import { getStorageBucket } from './index'
 
 import type { DeleteFileOptions, DeleteFilesResult, ListFilesOptions, ListFilesResult, SignedUploadUrlOptions, SignedUrlOptions, StorageFileMetadata, UploadFileOptions, UploadFileResult } from './types'
@@ -73,8 +74,9 @@ export const deleteFile = async (path: string, options?: DeleteFileOptions): Pro
   try {
     await file.delete({ ignoreNotFound })
     return true
-  } catch (error: any) {
-    if (ignoreNotFound && (error?.code === 404 || error?.errors?.[0]?.reason === 'notFound')) {
+  } catch (error) {
+    const { code, errors } = getErrorShape(error)
+    if (ignoreNotFound && (code === 404 || errors?.[0]?.reason === 'notFound')) {
       return false
     }
     throw error
@@ -130,8 +132,9 @@ export const getFileMetadata = async (
       md5Hash: metadata.md5Hash,
       metadata: metadata.metadata as Record<string, string> | undefined
     }
-  } catch (error: any) {
-    if (error?.code === 404 || error?.errors?.[0]?.reason === 'notFound') {
+  } catch (error) {
+    const { code, errors } = getErrorShape(error)
+    if (code === 404 || errors?.[0]?.reason === 'notFound') {
       return null
     }
     throw error

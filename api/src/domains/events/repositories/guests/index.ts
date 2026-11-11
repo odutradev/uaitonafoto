@@ -3,8 +3,9 @@ import GuestModel from './model'
 
 import type { CreateGuestPayload, FindGuestForClientParams, GuestEntity, UpdateGuestSessionPayload } from './types'
 import type { EventEntity } from '@domains/events/repositories/events/types'
+import type { GuestDocument } from './model'
 
-const toGuestEntity = (doc: any): GuestEntity => {
+const toGuestEntity = (doc: GuestDocument): GuestEntity => {
   const { _id, ...rest } = doc
   return {
     ...rest,

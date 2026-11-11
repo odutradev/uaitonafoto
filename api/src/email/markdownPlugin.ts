@@ -1,17 +1,21 @@
 import { marked } from 'marked'
 
-export const markdownPlugin = () => {
-  return (mail: any, callback: (err?: Error | null) => void): void => {
-    if (!mail?.data?.markdown || mail.data.html) return callback()
+import type { MarkdownMailOptions } from '@email/types'
+import type Mail from 'nodemailer/lib/mailer'
 
-    mail.resolveContent(mail.data, 'markdown', async (err: Error | null, markdownContent: string | Buffer) => {
+export const markdownPlugin = (): Mail.PluginFunction => {
+  return (mail, callback) => {
+    const data = mail.data as MarkdownMailOptions
+
+    if (!data?.markdown || data.html) return callback()
+
+    mail.resolveContent(data, 'markdown', async (err: Error | null, markdownContent: string | Buffer) => {
       if (err) return callback(err)
 
       try {
         const text = (markdownContent || '').toString()
-        const html = await marked.parse(text)
-        mail.data.html = html
-        if (!mail.data.text) mail.data.text = text
+        data.html = await marked.parse(text)
+        if (!data.text) data.text = text
         callback(null)
       } catch (parseError) {
         callback(parseError as Error)

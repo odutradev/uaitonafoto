@@ -2,8 +2,9 @@ import { removeUndefined } from '@utils/object'
 import CreditUsageModel from './model'
 
 import type { CreateCreditUsagePayload, CreditUsageEntity } from './types'
+import type { CreditUsageDocument } from './model'
 
-const toCreditUsageEntity = (doc: any): CreditUsageEntity => {
+const toCreditUsageEntity = (doc: CreditUsageDocument): CreditUsageEntity => {
   const { _id, ...rest } = doc
   return {
     ...rest,
