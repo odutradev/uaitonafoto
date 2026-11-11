@@ -21,7 +21,7 @@ import {
   timelineSectionStyles
 } from './styles'
 import type { LogCategory, LogLevel } from '@utils/types/logs'
-import type { LogsTimelineProps } from './types'
+import useLogsPage from '@pages/app/logs/hook'
 
 const formatDateTimePtBr = (isoDate: string): string => {
   const parsed = new Date(isoDate)
@@ -47,17 +47,9 @@ const getCategoryLabel = (category: LogCategory): string => {
   return 'Usuário'
 }
 
-const LogsTimeline = ({
-  logs,
-  isAdmin,
-  scope,
-  page,
-  total,
-  totalPages,
-  isLoading,
-  onPageChange,
-  onSelectLog
-}: LogsTimelineProps) => {
+const LogsTimeline = () => {
+  const { logs, isAdmin, scope, page, total, totalPages, isLoading, handlePageChange: onPageChange, setSelectedLog: onSelectLog } = useLogsPage()
+
   const showUserBadge = isAdmin && scope === 'all'
 
   return (

@@ -18,7 +18,7 @@ import {
   jsonPreStyles
 } from './styles'
 import type { LogLevel } from '@utils/types/logs'
-import type { LogDetailsDialogProps } from './types'
+import useLogsPage from '@pages/app/logs/hook'
 
 const formatFullDateTime = (isoDate: string): string => {
   const parsed = new Date(isoDate)
@@ -39,7 +39,9 @@ const getLevelChip = (level: LogLevel) => {
   return { label: 'Informação', color: 'info' as const }
 }
 
-const LogDetailsDialog = ({ log, isAdmin, onClose }: LogDetailsDialogProps) => {
+const LogDetailsDialog = () => {
+  const { selectedLog: log, isAdmin, handleCloseLog: onClose } = useLogsPage()
+
   if (!log) return null
 
   const levelMeta = getLevelChip(log.level)
