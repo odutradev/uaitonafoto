@@ -16,8 +16,17 @@ export const Viewport = styled("main")`
   position: fixed;
   inset: 0;
   overflow: hidden;
-  background: ${brandColors.ink};
+  background: ${brandColors.darkBg};
   touch-action: none;
+  transition: background 0.35s ease;
+
+  &:has([data-tone="light"]) {
+    background: ${brandColors.paper};
+  }
+
+  &:has([data-tone="yellow"]) {
+    background: ${brandColors.flashYellow};
+  }
   user-select: none;
 `;
 
