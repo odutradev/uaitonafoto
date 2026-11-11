@@ -50,6 +50,7 @@ export const List = styled("ol")`
     left: 23px;
     top: 24px;
     bottom: 24px;
+    z-index: 0;
     width: 3px;
     border-radius: 999px;
     background: ${brandColors.sandDark};
@@ -73,21 +74,32 @@ export const List = styled("ol")`
 
 export const Item = styled("li")`
   position: relative;
+  z-index: 1;
   padding: ${({ theme }) => theme.spacing(2.5)};
   border: 1px solid ${brandColors.lightBorder};
   border-radius: 22px;
   background: ${brandColors.paper};
-  opacity: 0.55;
   transform: translateX(10px);
   transition:
-    opacity 0.5s ease,
     transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
     box-shadow 0.5s ease;
 
+  & > h3,
+  & > p,
+  & > code {
+    opacity: 0.5;
+    transition: opacity 0.5s ease;
+  }
+
   &[data-active="true"] {
-    opacity: 1;
     transform: none;
     box-shadow: 0 24px 50px -30px ${brandColors.textGray};
+  }
+
+  &[data-active="true"] > h3,
+  &[data-active="true"] > p,
+  &[data-active="true"] > code {
+    opacity: 1;
   }
 
   & h3 {
@@ -125,8 +137,8 @@ export const StepNumber = styled("span")`
   width: 50px;
   height: 50px;
   border-radius: 14px;
-  background: ${brandColors.ink};
-  color: ${brandColors.flashYellow};
+  background: ${brandColors.sandDark};
+  color: ${brandColors.textGray};
   font-family: ${({ theme }) => theme.typography.h3.fontFamily};
   font-size: 1.3rem;
   font-weight: 800;
