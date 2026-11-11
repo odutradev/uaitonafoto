@@ -27,6 +27,7 @@ import { Link as RouterLink, Navigate, Outlet, useLocation, useNavigate } from '
 import Logo from '@components/logo'
 import ThemeToggle from '@components/themeToggle'
 import useAuth from '@hooks/useAuth'
+import useSystemStore from '@stores/system'
 
 import {
   adminBadgeStyles,
@@ -197,6 +198,7 @@ const SidebarContent = ({
 }
 
 const DashboardLayout = () => {
+  const hasPermissions = useSystemStore((state) => state.hasPermissions)
   const theme = useTheme()
   const isDark = theme.palette.mode === 'dark'
   const location = useLocation()
@@ -234,7 +236,7 @@ const DashboardLayout = () => {
     userName: user.fullName || user.name,
     userEmail: user.email,
     userPhotoUrl: user.photoUrl,
-    isAdmin: user.role === 'admin',
+    isAdmin: hasPermissions(user.role, ['manage_platform']),
     hasActiveSubscription: Boolean(user.hasActiveSubscription),
     paidCredits: user.paidCredits,
     freeCredits: user.freeCredits,

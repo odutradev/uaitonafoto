@@ -1,6 +1,5 @@
-export type AuthRouteAccess = 'private' | 'guest' | 'admin'
+import type { PageMetadata } from '@utils/types/permissions'
 
 export interface AuthRouteProps {
-  access: AuthRouteAccess
+  metadata: PageMetadata
 }
-

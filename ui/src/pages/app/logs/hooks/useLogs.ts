@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 
 import { getLogs } from '@actions/logs'
+import useSystemStore from '@stores/system'
 import useAuthStore from '@stores/auth'
 
 import type { LogItem, LogScope } from '@utils/types/logs'
@@ -11,7 +12,8 @@ const SEARCH_DEBOUNCE_MS = 350
 
 export const useLogs = (): UseLogsReturn => {
   const user = useAuthStore((state) => state.auth.user)
-  const isAdmin = user?.role === 'admin'
+  const hasPermissions = useSystemStore((state) => state.hasPermissions)
+  const isAdmin = hasPermissions(user?.role, ['view_all_logs'])
   const defaultScope: LogScope = isAdmin ? 'all' : 'me'
 
   const [logs, setLogs] = useState<LogItem[]>([])

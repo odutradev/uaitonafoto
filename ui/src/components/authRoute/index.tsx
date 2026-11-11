@@ -1,34 +1,32 @@
 import { Navigate, Outlet, useLocation } from 'react-router-dom'
 
+import useSystemStore from '@stores/system'
 import useAuthStore from '@stores/auth'
 
 import type { AuthRouteProps } from './types'
 
-const PRIVATE_FALLBACK = '/signin'
-const GUEST_FALLBACK = '/app'
+const privateFallback = '/signin'
+const guestFallback = '/app'
 
-const AuthRoute = ({ access }: AuthRouteProps) => {
+const AuthRoute = ({ metadata }: AuthRouteProps) => {
   const user = useAuthStore((state) => state.auth.user)
+  const hasPermissions = useSystemStore((state) => state.hasPermissions)
   const isAuthenticated = Boolean(user)
   const location = useLocation()
+  const requiredPermissions = metadata.requiredPermissions ?? []
 
-  if (access === 'private' && !isAuthenticated) {
-    return <Navigate to={PRIVATE_FALLBACK} replace />
+  if (metadata.access === 'private' && !isAuthenticated) {
+    return <Navigate to={privateFallback} replace />
   }
 
-  if (access === 'admin') {
-    if (!isAuthenticated) {
-      return <Navigate to={PRIVATE_FALLBACK} replace />
-    }
-    if (user?.role !== 'admin') {
-      return <Navigate to={GUEST_FALLBACK} replace />
-    }
+  if (requiredPermissions.length > 0 && !hasPermissions(user?.role, requiredPermissions)) {
+    return <Navigate to={guestFallback} replace />
   }
 
-  if (access === 'guest' && isAuthenticated) {
+  if (metadata.access === 'guest' && isAuthenticated) {
     const searchParams = new URLSearchParams(location.search)
     const planId = searchParams.get('planId') || searchParams.get('productId')
-    const destination = planId ? `/app?checkout=${encodeURIComponent(planId)}` : GUEST_FALLBACK
+    const destination = planId ? `/app?checkout=${encodeURIComponent(planId)}` : guestFallback
     return <Navigate to={destination} replace />
   }
 
@@ -36,4 +34,3 @@ const AuthRoute = ({ access }: AuthRouteProps) => {
 }
 
 export default AuthRoute
-
