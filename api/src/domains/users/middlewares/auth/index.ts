@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken'
 import { errorResponseSchema } from '@factories/errors/schemas'
 import { verifyIdToken } from '@firebase/services/auth'
 import { getJwtSecret } from '@config/env'
-import sendError from '@error/index'
+import sendError from '@factories/errors'
 
 import type { DocumentedMiddleware, ResponseConfig } from '@factories/defineAction/types'
 import type { NextFunction, Response, Request } from 'express'

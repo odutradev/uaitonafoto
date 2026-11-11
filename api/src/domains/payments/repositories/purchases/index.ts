@@ -1,8 +1,8 @@
 import { removeUndefined } from '@utils/object'
 import PurchaseModel from './model'
 
+import type { CreditType } from '@domains/users/repositories/users/types'
 import type { CreatePurchasePayload, PurchaseEntity } from './types'
-import type { CreditType } from '@domains/users/repositories/types'
 import type { PurchaseDocument } from './model'
 
 const toPurchaseEntity = (doc: PurchaseDocument): PurchaseEntity => {

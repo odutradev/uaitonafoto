@@ -1,7 +1,7 @@
 import { subscriptionPaymentFailedTemplate } from '@email/templates/subscriptionPaymentFailed'
 import { subscriptionRenewedTemplate } from '@email/templates/subscriptionRenewed'
 import transactionRepository from '@domains/payments/repositories/transactions'
-import userRepository from '@domains/users/repositories'
+import userRepository from '@domains/users/repositories/users'
 import { formatDateBR } from '@utils/date'
 import { checkEmailHealth } from '@email'
 import createLogger from '@utils/logger'

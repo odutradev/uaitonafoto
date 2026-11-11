@@ -1,4 +1,4 @@
-import type { CreditType } from '@domains/users/repositories/types'
+import type { CreditType } from '@domains/users/repositories/users/types'
 
 export interface CreditUsageEntity {
   id: string

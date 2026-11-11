@@ -1,7 +1,7 @@
 import { verifyGuestToken } from '@domains/events/utils/guestToken'
 import guestRepository from '@domains/events/repositories/guests'
 import { errorResponseSchema } from '@factories/errors/schemas'
-import sendError from '@error/index'
+import sendError from '@factories/errors'
 
 import type { DocumentedMiddleware, ResponseConfig } from '@factories/defineAction/types'
 import type { NextFunction, Request, Response } from 'express'
