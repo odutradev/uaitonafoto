@@ -1,6 +1,6 @@
-import type { CreateLikePayload } from './types'
+import LikeModel from './model'
 
-﻿import LikeModel from './model'
+import type { CreateLikePayload } from './types'
 
 const DUPLICATE_KEY_ERROR = 11000
 

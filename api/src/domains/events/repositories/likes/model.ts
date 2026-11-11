@@ -1,6 +1,6 @@
-import type { LikeEntity } from './types'
+import mongoose, { Schema } from 'mongoose'
 
-﻿import mongoose, { Schema } from 'mongoose'
+import type { LikeEntity } from './types'
 
 export type LikeDocument = Omit<LikeEntity, 'id'> & { _id: string }
 

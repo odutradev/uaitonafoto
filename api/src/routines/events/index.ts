@@ -1,6 +1,6 @@
-import type { RoutineDivisionDefinition } from '@config/routine'
+import expireGalleries from './expireGalleries'
 
-﻿import expireGalleries from './expireGalleries'
+import type { RoutineDivisionDefinition } from '@config/routine'
 
 const routines = {
   expireGalleries
