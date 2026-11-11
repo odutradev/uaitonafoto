@@ -1,4 +1,5 @@
 import transactionRepository from '@domains/payments/repositories/transactions'
+import { sendPaymentConfirmedEmail } from './notifyTransactionEmail'
 import purchaseRepository from '@domains/payments/repositories/purchases'
 import ensureSubscriptionRecord from './ensureSubscriptionRecord'
 import userRepository from '@domains/users/repositories/users'
@@ -70,6 +71,8 @@ export const confirmPayment = async (transaction: TransactionEntity, data: Webho
   if (plan.credits > 0) {
     await userRepository.addCredits(transaction.userId, 'paid', plan.credits)
   }
+
+  await sendPaymentConfirmedEmail(current, plan.credits, subscriptionRecord)
 
   logger.success(`Payment confirmed: transaction ${transaction.id}, +${plan.credits} paid credits for user ${transaction.userId}`)
 

@@ -1,11 +1,13 @@
 import expirePendingTransactions from './expirePendingTransactions'
+import remindSubscriptionRenewals from './remindSubscriptionRenewals'
 import reconcileSubscriptions from './reconcileSubscriptions'
 
 import type { RoutineDivisionDefinition } from '@config/routine'
 
 const routines = {
   expirePendingTransactions,
-  reconcileSubscriptions
+  reconcileSubscriptions,
+  remindSubscriptionRenewals
 }
 
 export const paymentsRoutines: RoutineDivisionDefinition<typeof routines> = {
