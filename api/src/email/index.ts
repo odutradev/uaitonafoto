@@ -1,6 +1,5 @@
 import nodemailer from 'nodemailer'
 
-import { markdownPlugin } from '@email/markdownPlugin'
 import createLogger from '@utils/logger'
 import env from '@config/env'
 
@@ -30,9 +29,8 @@ const email: EmailModule = {
       }
 
       email.transporter = nodemailer.createTransport(config)
-      email.transporter.use('compile', markdownPlugin())
 
-      logger.info('Email service initialized successfully with markdown support')
+      logger.info('Email service initialized successfully')
 
       return { transporter: email.transporter }
     } catch (error) {

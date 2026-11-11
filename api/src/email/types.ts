@@ -1,10 +1,7 @@
-import type { SendMailOptions, Transporter } from 'nodemailer'
+import type { EmailContent, RenderedEmail } from '@email/builder/types'
+import type { Transporter } from 'nodemailer'
 
 export type EmailTransporter = Transporter
-
-export type MarkdownMailOptions = SendMailOptions & {
-  markdown?: string
-}
 
 export type EmailConfig = {
   host: string
@@ -16,8 +13,6 @@ export type EmailConfig = {
   }
 }
 
-export type EmailTemplateVariables = Record<string, string | number | boolean>
-
 export type EmailInstance = {
   transporter: EmailTransporter
 }
@@ -28,20 +23,11 @@ export type EmailModule = {
   getInstance: () => Promise<EmailTransporter>
 }
 
-export type ProcessTemplateParams = {
-  template: string
-  variables?: EmailTemplateVariables
-}
-
-export type ProcessTemplateResult = {
-  processed: string
-}
-
 export type SendEmailParams = {
   to: string | string[]
   subject: string
-  template: string
-  variables?: EmailTemplateVariables
+  html: string
+  text: string
   from?: string
 }
 
@@ -51,19 +37,18 @@ export type SendEmailResult = {
   error?: string
 }
 
-export type LocalEmailTemplate = {
-  subject: string
-  markdownBody: string
+export type EmailDefinition<Variables> = {
+  subject: (variables: Variables) => string
+  build: (variables: Variables) => EmailContent
 }
 
-export type EmailTemplateRegistry = Record<string, LocalEmailTemplate>
-
-export type SendEnrichedEmailParams = {
+export type SendEnrichedEmailParams<Variables> = {
   to: string | string[]
-  variables?: EmailTemplateVariables
+  variables: Variables
   from?: string
 }
 
-export type EnrichedEmailTemplate = LocalEmailTemplate & {
-  send: (params: SendEnrichedEmailParams) => Promise<SendEmailResult>
+export type EnrichedEmail<Variables> = EmailDefinition<Variables> & {
+  render: (variables: Variables) => RenderedEmail & { subject: string }
+  send: (params: SendEnrichedEmailParams<Variables>) => Promise<SendEmailResult>
 }
