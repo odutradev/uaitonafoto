@@ -3,17 +3,18 @@
   "version": "1.8.5",
   "private": true,
   "description": "Plataforma em tempo real para compartilhamento e exibição de fotos em eventos — uai to na foto",
+  "workspaces": ["api", "ui"],
   "scripts": {
-    "dev": "concurrently -n \"API,UI\" -c \"blue,magenta\" \"npm run dev:api\" \"npm run dev:ui\"",
-    "dev:api": "npm --prefix api run dev",
-    "dev:ui": "npm --prefix ui run dev",
-    "build:api": "npm --prefix api run build",
-    "build:ui": "npm --prefix ui run build",
-    "build": "npm run build:api && npm run build:ui",
-    "publish": "npx pub --bump-package --push"
+    "dev": "concurrently -n \"api,web\" \"npm run dev:api\" \"npm run dev:web\"",
+    "dev:api": "npm run dev -w api",
+    "dev:web": "npm run dev -w ui",
+    "build": "npm run build:api && npm run build:web",
+    "build:api": "npm run build -w api",
+    "build:web": "npm run build -w ui",
+    "lint": "npm run lint -w ui",
+    "up": "docker compose up -d --build"
   },
   "devDependencies": {
-    "concurrently": "^10.0.6",
-    "project-publisher": "latest"
+    "concurrently": "^10.0.6"
   }
 }
