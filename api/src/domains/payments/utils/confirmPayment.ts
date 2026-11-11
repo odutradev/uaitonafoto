@@ -30,12 +30,14 @@ export const confirmPayment = async (transaction: TransactionEntity, data: Webho
     externalPaymentId: payment?.id
   })
 
-  let current = claimed ?? (await transactionRepository.findById(transaction.id))
-  if (current?.status !== 'PAID') return
+  const storedTransaction = claimed ?? (await transactionRepository.findById(transaction.id))
+  if (storedTransaction?.status !== 'PAID') return
 
-  if (!claimed && payment?.id && !current.externalPaymentId) {
-    current = (await transactionRepository.update(current.id, { externalPaymentId: payment.id })) ?? current
-  }
+  const paymentId = payment?.id
+  const shouldLinkPayment = !claimed && paymentId && !storedTransaction.externalPaymentId
+  const current = shouldLinkPayment
+    ? (await transactionRepository.update(storedTransaction.id, { externalPaymentId: paymentId })) ?? storedTransaction
+    : storedTransaction
 
   const subscriptionRecord =
     current.planType === 'SUBSCRIPTION'

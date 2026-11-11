@@ -10,6 +10,17 @@ import type { ZodTypeAny } from 'zod'
 
 extendZodWithOpenApi(z)
 
+const buildBodySchema = (metadata: ActionMetadata): ZodTypeAny | undefined => {
+  const declaredBody = metadata.schema?.body
+  if (metadata.requestFormat !== 'multipart') return declaredBody
+
+  const fieldName = metadata.uploadFieldName ?? 'file'
+  const fileSchema = z.string().openapi({ type: 'string', format: 'binary', description: 'Upload file' })
+
+  if (declaredBody instanceof z.ZodObject) return declaredBody.extend({ [fieldName]: fileSchema })
+  return z.object({ [fieldName]: fileSchema })
+}
+
 export const registerOpenApiAction = (metadata: ActionMetadata): void => {
   const defaultResponses: Record<string, ResponseConfig> = {
     200: { description: 'Sucesso' },
@@ -18,24 +29,12 @@ export const registerOpenApiAction = (metadata: ActionMetadata): void => {
     500: { description: 'Erro interno', schema: errorResponseSchema }
   }
 
-  const middlewareResponses: Record<string, ResponseConfig> = {}
-  let middlewareAuthenticate = false
-
-  if (metadata.middlewares) {
-    metadata.middlewares.forEach((mw) => {
-      const documentedMw = mw as DocumentedMiddleware
-
-      if (documentedMw.authenticate) {
-        middlewareAuthenticate = true
-      }
-
-      if (documentedMw.responses) {
-        Object.entries(documentedMw.responses).forEach(([code, config]) => {
-          middlewareResponses[code] = config
-        })
-      }
-    })
-  }
+  const documentedMiddlewares = (metadata.middlewares ?? []).map((middleware) => middleware as DocumentedMiddleware)
+  const middlewareAuthenticate = documentedMiddlewares.some((middleware) => Boolean(middleware.authenticate))
+  const middlewareResponses = documentedMiddlewares.reduce<Record<string, ResponseConfig>>(
+    (acc, middleware) => ({ ...acc, ...(middleware.responses ?? {}) }),
+    {}
+  )
 
   const mergedResponses = { ...defaultResponses, ...middlewareResponses, ...metadata.responses }
 
@@ -58,22 +57,7 @@ export const registerOpenApiAction = (metadata: ActionMetadata): void => {
     ? [{ bearerAuth: [] }]
     : undefined)
 
-  let bodySchema = metadata.schema?.body
-
-  if (metadata.requestFormat === 'multipart') {
-    const fieldName = metadata.uploadFieldName ?? 'file'
-    const fileSchema = z.string().openapi({ type: 'string', format: 'binary', description: 'Upload file' })
-
-    if (bodySchema instanceof z.ZodObject) {
-      bodySchema = bodySchema.extend({
-        [fieldName]: fileSchema
-      })
-    } else {
-      bodySchema = z.object({
-        [fieldName]: fileSchema
-      })
-    }
-  }
+  const bodySchema = buildBodySchema(metadata)
 
   const requestBody = metadata.requestBody
     ?? (bodySchema

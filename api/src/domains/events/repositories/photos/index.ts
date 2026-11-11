@@ -1,6 +1,8 @@
+import { buildCreatedAtFilter } from '@utils/date'
 import PhotoModel from './model'
 
 import type { CreatePhotoPayload, ListPhotosParams, ListPhotosSinceParams, PhotoEntity, PhotoStatus } from './types'
+import type { CreatedAtRange } from '@utils/date/types'
 import type { PhotoDocument } from './model'
 
 const toPhotoEntity = (doc: PhotoDocument): PhotoEntity => {
@@ -125,6 +127,10 @@ export const photoRepository = {
 
   deleteByEvent: async (eventId: string): Promise<void> => {
     await PhotoModel.deleteMany({ eventId })
+  },
+
+  countAll: async (range?: CreatedAtRange): Promise<number> => {
+    return PhotoModel.countDocuments(buildCreatedAtFilter(range))
   }
 }
 

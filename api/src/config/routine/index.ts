@@ -9,6 +9,7 @@ const logger = createLogger('routine')
 
 export const registeredRoutines: RoutineRegistry = new Map()
 export const activeScheduledTasks: Map<string, ScheduledRoutineEntry> = new Map()
+const runningRoutines = new Set<string>()
 
 export const defineRoutine = (routine: RoutineDefinition): RoutineDefinition => routine
 
@@ -27,29 +28,20 @@ const extractRoutines = (
   obj: Record<string, unknown> | unknown[],
   prefix = ''
 ): Array<{ name: string; routine: RoutineDefinition }> => {
-  const result: Array<{ name: string; routine: RoutineDefinition }> = []
-
   if (Array.isArray(obj)) {
-    for (const item of obj) {
-      if (isRoutineDefinition(item)) {
-        result.push({ name: item.name, routine: item })
-      } else if (item && typeof item === 'object') {
-        result.push(...extractRoutines(item as Record<string, unknown>, prefix))
-      }
-    }
-    return result
+    return obj.flatMap((item) => {
+      if (isRoutineDefinition(item)) return [{ name: item.name, routine: item }]
+      if (item && typeof item === 'object') return extractRoutines(item as Record<string, unknown>, prefix)
+      return []
+    })
   }
 
-  for (const [key, value] of Object.entries(obj)) {
+  return Object.entries(obj).flatMap(([key, value]) => {
     const fullName = prefix ? `${prefix}.${key}` : key
-    if (isRoutineDefinition(value)) {
-      result.push({ name: fullName, routine: value })
-    } else if (value && typeof value === 'object') {
-      result.push(...extractRoutines(value as Record<string, unknown>, fullName))
-    }
-  }
-
-  return result
+    if (isRoutineDefinition(value)) return [{ name: fullName, routine: value }]
+    if (value && typeof value === 'object') return extractRoutines(value as Record<string, unknown>, fullName)
+    return []
+  })
 }
 
 export const registerRoutine = (division: RoutineDivisionDefinition): void => {
@@ -63,9 +55,7 @@ export const registerRoutine = (division: RoutineDivisionDefinition): void => {
 }
 
 export const registerRoutines = (divisions: RoutineDivisionDefinition[]): void => {
-  for (const division of divisions) {
-    registerRoutine(division)
-  }
+  divisions.forEach((division) => registerRoutine(division))
 }
 
 export const getRegisteredRoutineDivision = (name: string): RoutineDivisionDefinition | undefined => {
@@ -96,31 +86,29 @@ export const startRoutines = (divisions?: RoutineDivisionDefinition[]): void => 
 
   const targetDivisions = divisions ?? Array.from(registeredRoutines.values())
 
-  for (const division of targetDivisions) {
+  targetDivisions.forEach((division) => {
     const routines = extractRoutines(division.routines as Record<string, unknown>)
 
-    for (const { name, routine } of routines) {
+    routines.forEach(({ name, routine }) => {
       const routineKey = `${division.name}.${name}`
 
       if (activeScheduledTasks.has(routineKey)) {
         logger.warn(`Routine [${routineKey}] is already active. Skipping duplicate startup.`)
-        continue
+        return
       }
 
       if (!cron.validate(routine.cronExpression)) {
         logger.error(`Invalid cron expression "${routine.cronExpression}" for routine [${routineKey}]`)
-        continue
+        return
       }
 
-      let isRunning = false
-
       const runTask = async (): Promise<void> => {
-        if (isRunning) {
+        if (runningRoutines.has(routineKey)) {
           logger.warn(`Routine [${routineKey}] is already running. Skipping execution.`)
           return
         }
 
-        isRunning = true
+        runningRoutines.add(routineKey)
         const startTime = Date.now()
 
         try {
@@ -131,7 +119,7 @@ export const startRoutines = (divisions?: RoutineDivisionDefinition[]): void => 
           const durationMs = Date.now() - startTime
           logger.error(`Error running routine [${routineKey}] after ${durationMs}ms:`, error)
         } finally {
-          isRunning = false
+          runningRoutines.delete(routineKey)
         }
       }
 
@@ -162,8 +150,8 @@ export const startRoutines = (divisions?: RoutineDivisionDefinition[]): void => 
       })
 
       logger.info(`Routine started: [${routineKey}] scheduled as "${routine.cronExpression}"`)
-    }
-  }
+    })
+  })
 }
 
 export const stopRoutine = (routineKey: string): boolean => {
@@ -182,13 +170,13 @@ export const stopRoutine = (routineKey: string): boolean => {
 }
 
 export const stopRoutines = (): void => {
-  for (const [key, entry] of activeScheduledTasks.entries()) {
+  activeScheduledTasks.forEach((entry, key) => {
     try {
       entry.task.stop()
     } catch (error) {
       logger.error(`Error stopping routine [${key}]:`, error)
     }
-  }
+  })
 
   activeScheduledTasks.clear()
   logger.info('All scheduled routines have been stopped')

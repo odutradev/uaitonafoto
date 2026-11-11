@@ -87,22 +87,18 @@ export const createEvent = defineAction(
     const user = await userRepository.findById(userId)
     if (!user) return manageError({ code: 'user_not_found' })
 
-    let creditType = data.creditType
-    if (creditType) {
-      if (creditType === 'paid' && user.paidCredits < 1) {
-        return manageError({ code: 'bad_request', details: 'Saldo insuficiente de créditos normais.' })
-      }
-      if (creditType === 'free' && user.freeCredits < 1) {
-        return manageError({ code: 'bad_request', details: 'Saldo insuficiente de créditos de teste grátis.' })
-      }
-    } else {
-      if (user.paidCredits >= 1) {
-        creditType = 'paid'
-      } else if (user.freeCredits >= 1) {
-        creditType = 'free'
-      } else {
-        return manageError({ code: 'bad_request', details: 'Você não possui créditos disponíveis para criar um evento.' })
-      }
+    const requestedCreditType = data.creditType
+    if (requestedCreditType === 'paid' && user.paidCredits < 1) {
+      return manageError({ code: 'bad_request', details: 'Saldo insuficiente de créditos normais.' })
+    }
+    if (requestedCreditType === 'free' && user.freeCredits < 1) {
+      return manageError({ code: 'bad_request', details: 'Saldo insuficiente de créditos de teste grátis.' })
+    }
+
+    const availableCreditType = user.paidCredits >= 1 ? 'paid' : user.freeCredits >= 1 ? 'free' : undefined
+    const creditType = requestedCreditType || availableCreditType
+    if (!creditType) {
+      return manageError({ code: 'bad_request', details: 'Você não possui créditos disponíveis para criar um evento.' })
     }
 
     const durationHours = creditType === 'free' ? 4 : 8

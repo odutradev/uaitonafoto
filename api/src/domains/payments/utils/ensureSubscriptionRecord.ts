@@ -17,28 +17,31 @@ export interface GatewaySubscriptionInfo {
   method?: string
 }
 
+const fetchGatewaySubscription = async (transactionId: string): Promise<GatewaySubscriptionInfo> => {
+  try {
+    const client = await getPaymentClient()
+    const response = await client.subscriptions.get({ externalId: transactionId })
+    if (response.error || !response.data?.id) return {}
+    return { id: response.data.id, method: response.data.method }
+  } catch (error) {
+    logger.warn(`Could not fetch subscription from gateway for transaction ${transactionId}:`, error)
+    return {}
+  }
+}
+
 export const ensureSubscriptionRecord = async (
   transaction: TransactionEntity,
   gatewayInfo?: GatewaySubscriptionInfo
 ): Promise<SubscriptionEntity | null> => {
   if (transaction.planType !== 'SUBSCRIPTION') return null
 
-  let subscriptionId = gatewayInfo?.id ?? transaction.subscriptionId
-  let method = gatewayInfo?.method ?? transaction.paymentMethod
+  const knownSubscriptionId = gatewayInfo?.id ?? transaction.subscriptionId
+  const knownMethod = gatewayInfo?.method ?? transaction.paymentMethod
   const frequency = gatewayInfo?.frequency ?? 'MONTHLY'
 
-  if (!subscriptionId) {
-    try {
-      const client = await getPaymentClient()
-      const response = await client.subscriptions.get({ externalId: transaction.id })
-      if (!response.error && response.data?.id) {
-        subscriptionId = response.data.id
-        method = method ?? response.data.method
-      }
-    } catch (error) {
-      logger.warn(`Could not fetch subscription from gateway for transaction ${transaction.id}:`, error)
-    }
-  }
+  const fetchedSubscription = knownSubscriptionId ? {} : await fetchGatewaySubscription(transaction.id)
+  const subscriptionId = knownSubscriptionId || fetchedSubscription.id
+  const method = knownMethod ?? fetchedSubscription.method
 
   if (!subscriptionId) return null
 

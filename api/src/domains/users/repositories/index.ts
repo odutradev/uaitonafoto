@@ -1,7 +1,9 @@
+import { buildCreatedAtFilter } from '@utils/date'
 import { removeUndefined } from '@utils/object'
 import UserModel from './model'
 
 import type { CreditType, ListUsersParams, UpdateUserPayload, UpsertUserPayload, UserEntity } from './types'
+import type { CreatedAtRange } from '@utils/date/types'
 import type { UserDocument } from './model'
 
 const toUserEntity = (doc: UserDocument & { id?: string }): UserEntity => ({
@@ -180,6 +182,31 @@ export const userRepository = {
       rows: docs.map(toUserEntity),
       count
     }
+  },
+
+  countAll: async (range?: CreatedAtRange): Promise<number> => {
+    return UserModel.countDocuments(buildCreatedAtFilter(range))
+  },
+
+  countByRole: async (role: string): Promise<number> => {
+    return UserModel.countDocuments({ role })
+  },
+
+  countTrialClaimed: async (): Promise<number> => {
+    return UserModel.countDocuments({ freeTrialClaimedAt: { $exists: true, $ne: null } })
+  },
+
+  sumCredits: async (): Promise<{ totalPaid: number; totalFree: number }> => {
+    const [result] = await UserModel.aggregate([
+      {
+        $group: {
+          _id: null,
+          totalPaid: { $sum: '$paidCredits' },
+          totalFree: { $sum: '$freeCredits' }
+        }
+      }
+    ])
+    return { totalPaid: result?.totalPaid ?? 0, totalFree: result?.totalFree ?? 0 }
   }
 }
 

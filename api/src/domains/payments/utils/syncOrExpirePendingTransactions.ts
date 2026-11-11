@@ -1,6 +1,7 @@
 import transactionRepository from '@domains/payments/repositories/transactions'
 import confirmPayment from './confirmPayment'
 import { getPaymentClient } from '@payment'
+import runSequentially from '@utils/async'
 import createLogger from '@utils/logger'
 import env from '@config/env'
 
@@ -100,18 +101,14 @@ export const syncOrExpirePendingTransactions = async (
 
   const expiredCount = await transactionRepository.expirePendingOlderThan(cutoffIso, options?.userId)
 
-  let gatewayUpdatedCount = 0
+  if (!options?.checkGateway) return { expiredCount, gatewayUpdatedCount: 0 }
 
-  if (options?.checkGateway) {
-    const pendingList = await transactionRepository.listPending(options?.userId)
-    const maxChecks = options?.maxGatewayChecks ?? 10
-    const toCheck = pendingList.slice(0, maxChecks)
+  const pendingList = await transactionRepository.listPending(options?.userId)
+  const maxChecks = options?.maxGatewayChecks ?? 10
+  const toCheck = pendingList.slice(0, maxChecks)
 
-    for (const tx of toCheck) {
-      const updated = await syncTransactionWithGateway(tx)
-      if (updated) gatewayUpdatedCount++
-    }
-  }
+  const syncResults = await runSequentially(toCheck, (transaction) => syncTransactionWithGateway(transaction))
+  const gatewayUpdatedCount = syncResults.filter(Boolean).length
 
   return { expiredCount, gatewayUpdatedCount }
 }

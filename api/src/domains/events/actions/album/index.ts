@@ -753,10 +753,10 @@ export const approveAllEventPhotos = defineAction(
     const approvedPhotos = await photoRepository.approveAllPending(access.event.id)
     if (approvedPhotos.length > 0) {
       const responses = await toPhotoResponses(approvedPhotos)
-      for (const res of responses) {
-        broadcastEvent(access.event.id, 'photo:new', res)
-        broadcastEvent(access.event.id, 'photo:moderated', { photoId: res.id, status: 'approved' })
-      }
+      responses.forEach((photoResponse) => {
+        broadcastEvent(access.event.id, 'photo:new', photoResponse)
+        broadcastEvent(access.event.id, 'photo:moderated', { photoId: photoResponse.id, status: 'approved' })
+      })
     }
 
     return { approvedCount: approvedPhotos.length }
@@ -845,17 +845,18 @@ export const resetEventLockouts = defineAction(
 
     const clearedCount = resetPinLockoutsForTarget(targetIds, scope)
 
-    let historyEntry: EventScreenHistoryEntry | undefined
-    if (scope === 'all' || scope === 'screen') {
-      historyEntry = {
-        id: randomUUID(),
-        screenId: event.id,
-        name: 'Todos os telões',
-        action: 'unblocked',
-        timestamp: new Date().toISOString()
-      }
-      await eventRepository.addScreenHistory(event.id, historyEntry)
-    }
+    const shouldRecordHistory = scope === 'all' || scope === 'screen'
+    const historyEntry: EventScreenHistoryEntry | undefined = shouldRecordHistory
+      ? {
+          id: randomUUID(),
+          screenId: event.id,
+          name: 'Todos os telões',
+          action: 'unblocked',
+          timestamp: new Date().toISOString()
+        }
+      : undefined
+
+    if (historyEntry) await eventRepository.addScreenHistory(event.id, historyEntry)
 
     broadcastEvent(event.id, 'lockout:reset', {
       scope,
@@ -918,11 +919,8 @@ export const downloadAlbumZip = defineAction(
     const archive = new ZipArchive({ zlib: { level: 5 } })
 
     archive.on('error', (err: Error) => {
-      if (!res.headersSent) {
-        manageError({ code: 'internal_error', error: err })
-      } else {
-        res.end()
-      }
+      if (res.headersSent) return res.end()
+      manageError({ code: 'internal_error', error: err })
     })
 
     archive.pipe(res)
@@ -966,13 +964,11 @@ export const getEventChallenges = defineAction(
     if ('error' in access) return manageError({ code: access.error })
 
     const event = access.event
-    let challenges = event.challenges ?? []
+    const storedChallenges = event.challenges ?? []
+    if (storedChallenges.length > 0) return storedChallenges
 
-    if (challenges.length === 0) {
-      challenges = buildDefaultChallenges(event.type)
-      await eventRepository.update(event.id, { challenges })
-    }
-
+    const challenges = buildDefaultChallenges(event.type)
+    await eventRepository.update(event.id, { challenges })
     return challenges
   }
 )

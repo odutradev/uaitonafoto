@@ -64,10 +64,8 @@ export const grantSubscriptionRenewal = async ({
   const resolvedFrequency = frequency ?? subscription.frequency
   const resolvedMethod = paymentMethod ?? subscription.method
 
-  let renewalTransaction
-
-  try {
-    renewalTransaction = await transactionRepository.createPaid({
+  const renewalTransaction = await transactionRepository
+    .createPaid({
       userId: subscription.userId,
       userEmail,
       userName,
@@ -93,10 +91,12 @@ export const grantSubscriptionRenewal = async ({
       webhookEvents: webhookEvent ? [webhookEvent] : [],
       paidAt: resolvedPaidAt
     })
-  } catch (error) {
-    if (isDuplicateKeyError(error)) return false
-    throw error
-  }
+    .catch((error: unknown) => {
+      if (isDuplicateKeyError(error)) return null
+      throw error
+    })
+
+  if (!renewalTransaction) return false
 
   const creditsToGrant = snapshot?.credits ?? subscription.creditsPerCycle
 

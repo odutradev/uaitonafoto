@@ -1,9 +1,11 @@
 import { isValidObjectId } from 'mongoose'
 
+import { buildCreatedAtFilter } from '@utils/date'
 import { removeUndefined } from '@utils/object'
 import EventModel from './model'
 
 import type { CreateEventPayload, EventEntity, EventMemberRole, EventScreenHistoryEntry, EventScreenSlot, ListEventsByMemberParams, UpdateEventPayload } from './types'
+import type { CreatedAtRange } from '@utils/date/types'
 import type { EventDocument } from './model'
 
 const toEventEntity = (doc: EventDocument): EventEntity => {
@@ -244,6 +246,14 @@ export const eventRepository = {
       { new: true, lean: true }
     )
     return doc ? toEventEntity(doc) : null
+  },
+
+  countAll: async (range?: CreatedAtRange): Promise<number> => {
+    return EventModel.countDocuments(buildCreatedAtFilter(range))
+  },
+
+  countClosed: async (): Promise<number> => {
+    return EventModel.countDocuments({ closedAt: { $exists: true, $ne: null } })
   }
 }
 

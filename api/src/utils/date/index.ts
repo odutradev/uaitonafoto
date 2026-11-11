@@ -1,3 +1,5 @@
+import type { CreatedAtRange } from './types'
+
 export const formatTimestamp = (date: Date = new Date()): string => {
   const yyyy = date.getFullYear()
   const mm = String(date.getMonth() + 1).padStart(2, '0')
@@ -25,4 +27,9 @@ export const addDays = (date: Date, days: number): Date => {
 
 export const isPast = (date: Date): boolean => {
   return date.getTime() < new Date().getTime()
+}
+
+export const buildCreatedAtFilter = ({ since, until }: CreatedAtRange = {}): Record<string, unknown> => {
+  if (!since && !until) return {}
+  return { createdAt: { ...(since ? { $gte: since } : {}), ...(until ? { $lte: until } : {}) } }
 }

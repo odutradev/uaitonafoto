@@ -1,5 +1,6 @@
 import { ProductCycle } from '@abacatepay/types/v2'
 
+import runSequentially from '@utils/async'
 import createLogger from '@utils/logger'
 
 import type { AbacatePayClient } from '@payment'
@@ -58,7 +59,7 @@ export const SEED_PLANS: SeedProduct[] = [
 export const seedPlans = async (client: AbacatePayClient): Promise<void> => {
   logger.info(`Starting plans seed (${SEED_PLANS.length} products to verify)...`)
 
-  for (const product of SEED_PLANS) {
+  await runSequentially(SEED_PLANS, async (product) => {
     try {
       const checkResponse = await client.products.get({ externalId: product.externalId })
 
@@ -66,7 +67,7 @@ export const seedPlans = async (client: AbacatePayClient): Promise<void> => {
         logger.info(
           `[seedPlans] Product "${product.name}" (${product.externalId}) already exists (ID: ${checkResponse.data.id}). Skipping.`
         )
-        continue
+        return
       }
 
       logger.info(`[seedPlans] Creating product "${product.name}" (${product.externalId})...`)
@@ -82,13 +83,14 @@ export const seedPlans = async (client: AbacatePayClient): Promise<void> => {
 
       if (createResponse.error || !createResponse.data) {
         logger.error(`[seedPlans] Error creating "${product.name}":`, createResponse.error)
-      } else {
-        logger.success(`[seedPlans] Product "${product.name}" created successfully (ID: ${createResponse.data.id}).`)
+        return
       }
+
+      logger.success(`[seedPlans] Product "${product.name}" created successfully (ID: ${createResponse.data.id}).`)
     } catch (err) {
       logger.error(`[seedPlans] Exception while processing "${product.name}":`, err)
     }
-  }
+  })
 
   logger.success('[seedPlans] Plans seed completed.')
 }

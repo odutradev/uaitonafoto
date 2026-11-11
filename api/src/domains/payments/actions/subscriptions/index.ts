@@ -6,6 +6,7 @@ import userRepository from '@domains/users/repositories'
 import logRepository from '@domains/system/repositories'
 import defineAction from '@factories/defineAction'
 import { getPaymentClient } from '@payment'
+import runSequentially from '@utils/async'
 
 import type { CancelSubscriptionRequest, SubscriptionListResponse, SubscriptionResponse } from './types'
 import type { ManageRequestBody, ManageRequestResponse } from '@middlewares/manageRequest/types'
@@ -31,9 +32,7 @@ const syncUserSubscriptions = async (userId: string): Promise<void> => {
     (tx) => tx.planType === 'SUBSCRIPTION' && tx.status === 'PAID' && !tx.subscriptionId
   )
 
-  for (const tx of unlinked) {
-    await ensureSubscriptionRecord(tx)
-  }
+  await runSequentially(unlinked, (transaction) => ensureSubscriptionRecord(transaction))
 }
 
 const toSubscriptionResponse = (entity: SubscriptionEntity): SubscriptionResponse => ({

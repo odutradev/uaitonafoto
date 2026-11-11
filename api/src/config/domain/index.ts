@@ -28,18 +28,14 @@ const extractActionHandlers = (
   obj: Record<string, unknown>,
   prefix = ''
 ): Array<{ name: string; action: ActionDefinition }> => {
-  const result: Array<{ name: string; action: ActionDefinition }> = []
-
-  for (const [key, value] of Object.entries(obj)) {
+  return Object.entries(obj).flatMap(([key, value]) => {
     const fullName = prefix ? `${prefix}.${key}` : key
-    if (isActionDefinition(value)) {
-      result.push({ name: fullName, action: value })
-    } else if (value && typeof value === 'object' && !Array.isArray(value)) {
-      result.push(...extractActionHandlers(value as Record<string, unknown>, fullName))
+    if (isActionDefinition(value)) return [{ name: fullName, action: value }]
+    if (value && typeof value === 'object' && !Array.isArray(value)) {
+      return extractActionHandlers(value as Record<string, unknown>, fullName)
     }
-  }
-
-  return result
+    return []
+  })
 }
 
 export const registerDomain = (domain: DomainDefinition): void => {
@@ -53,9 +49,7 @@ export const registerDomain = (domain: DomainDefinition): void => {
 }
 
 export const registerDomains = (domains: DomainDefinition[]): void => {
-  for (const domain of domains) {
-    registerDomain(domain)
-  }
+  domains.forEach((domain) => registerDomain(domain))
 }
 
 export const getRegisteredDomain = (name: string): DomainDefinition | undefined => {
@@ -73,7 +67,7 @@ export const registerDomainEndpoints = (
   const targetDomains = domains ?? Array.from(registeredDomains.values())
   const registeredEndpoints = new Set<string>()
 
-  for (const domain of targetDomains) {
+  targetDomains.forEach((domain) => {
     const domainLimiter = domain.rateLimit
       ? typeof domain.rateLimit === 'function'
         ? domain.rateLimit
@@ -86,7 +80,7 @@ export const registerDomainEndpoints = (
     const actions = (domain.actions || {}) as Record<string, unknown>
     const actionEntries = extractActionHandlers(actions)
 
-    for (const { name, action } of actionEntries) {
+    actionEntries.forEach(({ name, action }) => {
       const { method, path, handlers } = action
       const normalizedPath = path.startsWith('/') ? path : `/${path}`
       const httpMethod = method.toLowerCase() as 'get' | 'post' | 'put' | 'delete' | 'patch'
@@ -94,7 +88,7 @@ export const registerDomainEndpoints = (
 
       if (registeredEndpoints.has(endpointKey)) {
         logger.warn(`Endpoint ${endpointKey} already registered. Skipping duplicate from ${domain.name}.${name}`)
-        continue
+        return
       }
 
       const isWebhook =
@@ -106,14 +100,15 @@ export const registerDomainEndpoints = (
           ? [domainLimiter, ...handlers]
           : handlers
 
-      if (typeof router[httpMethod] === 'function') {
-        router[httpMethod](normalizedPath, ...actionHandlers)
-        registeredEndpoints.add(endpointKey)
-      } else {
+      if (typeof router[httpMethod] !== 'function') {
         logger.warn(`Unsupported HTTP method: ${method} for action ${domain.name}.${name}`)
+        return
       }
-    }
-  }
+
+      router[httpMethod](normalizedPath, ...actionHandlers)
+      registeredEndpoints.add(endpointKey)
+    })
+  })
 
   return router
 }

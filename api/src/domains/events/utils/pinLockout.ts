@@ -156,36 +156,32 @@ export const checkPinLockout = ({ scope, targetId, req, res }: PinLockoutParams)
   }
 }
 
+const buildFailureMessage = (isPermanent: boolean, lockedUntil: number | null, remainingSeconds: number, highestAttempts: number): string => {
+  if (isPermanent) {
+    return 'Acesso bloqueado definitivamente após 10 tentativas incorretas. Entre em contato com o organizador do evento.'
+  }
+  if (lockedUntil && remainingSeconds > 0) {
+    return `PIN incorreto. Dispositivo bloqueado temporariamente. Tente novamente em ${formatLockoutDuration(remainingSeconds)}.`
+  }
+  const remainingFree = Math.max(0, 5 - highestAttempts)
+  if (remainingFree > 0) {
+    return `PIN incorreto. Você tem mais ${remainingFree} ${remainingFree === 1 ? 'tentativa' : 'tentativas'} antes do bloqueio temporário.`
+  }
+  return 'PIN incorreto. Tente novamente.'
+}
+
 export const recordPinFailure = ({ scope, targetId, req, res }: PinLockoutParams): PinLockoutStatus => {
   const { deviceKey, ipKey, fpKey } = getStorageKeys(scope, targetId, req)
   const now = Date.now()
 
-  const keysToUpdate = [ipKey]
-  if (deviceKey) keysToUpdate.push(deviceKey)
-  if (fpKey) keysToUpdate.push(fpKey)
+  const keysToUpdate = [ipKey, deviceKey, fpKey].filter((key): key is string => Boolean(key))
 
-  let highestAttempts = 0
-  let isPermanent = false
-  let lockedUntil: number | null = null
-  let remainingSeconds = 0
-
-  keysToUpdate.forEach((key) => {
+  const failures = keysToUpdate.map((key) => {
     const existing = lockoutStore.get(key)
     const attempts = (existing?.attempts ?? 0) + 1
-    highestAttempts = Math.max(highestAttempts, attempts)
-
-    let itemIsPermanent = existing?.isPermanent || attempts >= PIN_LOCKOUT_PERMANENT_THRESHOLD
-    let itemLockedUntil: number | null = null
-
-    if (itemIsPermanent) {
-      isPermanent = true
-      remainingSeconds = Infinity
-    } else if (attempts >= 5) {
-      const durationSeconds = PIN_LOCKOUT_DURATIONS[attempts] ?? 3600
-      remainingSeconds = Math.max(remainingSeconds, durationSeconds)
-      itemLockedUntil = now + durationSeconds * 1000
-      lockedUntil = Math.max(lockedUntil ?? 0, itemLockedUntil)
-    }
+    const itemIsPermanent = Boolean(existing?.isPermanent || attempts >= PIN_LOCKOUT_PERMANENT_THRESHOLD)
+    const durationSeconds = !itemIsPermanent && attempts >= 5 ? PIN_LOCKOUT_DURATIONS[attempts] ?? 3600 : 0
+    const itemLockedUntil = durationSeconds > 0 ? now + durationSeconds * 1000 : null
 
     lockoutStore.set(key, {
       attempts,
@@ -193,27 +189,26 @@ export const recordPinFailure = ({ scope, targetId, req, res }: PinLockoutParams
       isPermanent: itemIsPermanent,
       lastAttemptAt: now
     })
+
+    return { attempts, itemIsPermanent, durationSeconds, itemLockedUntil }
   })
 
-  let message: string
-  if (isPermanent) {
-    message = 'Acesso bloqueado definitivamente após 10 tentativas incorretas. Entre em contato com o organizador do evento.'
-  } else if (lockedUntil && remainingSeconds > 0) {
-    message = `PIN incorreto. Dispositivo bloqueado temporariamente. Tente novamente em ${formatLockoutDuration(remainingSeconds)}.`
-  } else {
-    const remainingFree = Math.max(0, 5 - highestAttempts)
-    message =
-      remainingFree > 0
-        ? `PIN incorreto. Você tem mais ${remainingFree} ${remainingFree === 1 ? 'tentativa' : 'tentativas'} antes do bloqueio temporário.`
-        : 'PIN incorreto. Tente novamente.'
-  }
+  const highestAttempts = failures.reduce((highest, failure) => Math.max(highest, failure.attempts), 0)
+  const isPermanent = failures.some((failure) => failure.itemIsPermanent)
+  const lockedUntilValues = failures
+    .map((failure) => failure.itemLockedUntil)
+    .filter((value): value is number => value !== null)
+  const lockedUntil = lockedUntilValues.length > 0 ? Math.max(...lockedUntilValues) : null
+  const remainingSeconds = isPermanent
+    ? Infinity
+    : failures.reduce((highest, failure) => Math.max(highest, failure.durationSeconds), 0)
 
   const status: PinLockoutStatus = {
     isLocked: isPermanent || (lockedUntil !== null && lockedUntil > now),
     isPermanent,
     remainingSeconds,
     attempts: highestAttempts,
-    message
+    message: buildFailureMessage(isPermanent, lockedUntil, remainingSeconds, highestAttempts)
   }
 
   applyResponseHeaders(res, status)
@@ -232,29 +227,23 @@ export const resetPinLockoutsForTarget = (
   scope?: PinLockoutScope | 'all'
 ): number => {
   const ids = Array.isArray(targetIds) ? targetIds : [targetIds]
-  let removedCount = 0
 
-  for (const key of lockoutStore.keys()) {
+  const keysToRemove = Array.from(lockoutStore.keys()).filter((key) => {
     const matchesScope = !scope || scope === 'all' || key.startsWith(`${scope}:`)
     const matchesTarget = ids.some((id) => key.includes(`:${id}:`))
+    return matchesScope && matchesTarget
+  })
 
-    if (matchesScope && matchesTarget) {
-      lockoutStore.delete(key)
-      removedCount++
-    }
-  }
-
-  return removedCount
+  keysToRemove.forEach((key) => lockoutStore.delete(key))
+  return keysToRemove.length
 }
 
 setInterval(() => {
   const now = Date.now()
   const expirationThreshold = 24 * 60 * 60 * 1000
 
-  for (const [key, entry] of lockoutStore.entries()) {
-    if (!entry.isPermanent && now - entry.lastAttemptAt > expirationThreshold) {
-      lockoutStore.delete(key)
-    }
-  }
+  Array.from(lockoutStore.entries())
+    .filter(([, entry]) => !entry.isPermanent && now - entry.lastAttemptAt > expirationThreshold)
+    .forEach(([key]) => lockoutStore.delete(key))
 }, 15 * 60 * 1000).unref?.()
 

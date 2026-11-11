@@ -75,26 +75,25 @@ export const broadcastRealtimeEvent = (
   if (!room || room.size === 0) return
 
   const message = `event: ${eventName}\ndata: ${JSON.stringify(data)}\n\n`
-  const staleClients: RealtimeClient[] = []
 
-  for (const client of room) {
-    if (client.res.writableEnded) {
-      staleClients.push(client)
-      continue
-    }
+  const writeToClient = (client: RealtimeClient): boolean => {
+    if (client.res.writableEnded) return false
 
     try {
       client.res.write(message)
+      return true
     } catch (err) {
       logger.warn(`Failed to write to client [${client.id}] in event [${eventId}]:`, err)
-      staleClients.push(client)
+      return false
     }
   }
 
-  for (const stale of staleClients) {
+  const staleClients = Array.from(room).filter((client) => !writeToClient(client))
+
+  staleClients.forEach((stale) => {
     clearInterval(stale.pingTimer)
     room.delete(stale)
-  }
+  })
 
   if (room.size === 0) {
     realtimeRooms.delete(eventId)
@@ -105,29 +104,27 @@ export const closeAllRealtimeStreams = (): void => {
   logger.info('Closing all active realtime streams...')
   const shutdownMessage = `event: close\ndata: ${JSON.stringify({ reason: 'shutdown' })}\n\n`
 
-  for (const [eventId, room] of realtimeRooms.entries()) {
-    for (const client of room) {
+  realtimeRooms.forEach((room) => {
+    room.forEach((client) => {
       clearInterval(client.pingTimer)
-      if (!client.res.writableEnded) {
-        try {
-          client.res.write(shutdownMessage)
-          client.res.end()
-        } catch {
-        }
+      if (client.res.writableEnded) return
+
+      try {
+        client.res.write(shutdownMessage)
+        client.res.end()
+      } catch {
+        return
       }
-    }
+    })
     room.clear()
-  }
+  })
 
   realtimeRooms.clear()
   logger.success('All realtime streams closed successfully')
 }
 
 export const getRealtimeStats = (): RealtimeStats => {
-  let totalClients = 0
-  for (const room of realtimeRooms.values()) {
-    totalClients += room.size
-  }
+  const totalClients = Array.from(realtimeRooms.values()).reduce((total, room) => total + room.size, 0)
   return {
     totalRooms: realtimeRooms.size,
     totalClients
