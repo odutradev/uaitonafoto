@@ -161,12 +161,10 @@ const basePlans: CachedPlan[] = plansConfig.map((config) => ({
   devMode: false
 }))
 
-let cachedPlans: CachedPlan[] = []
+const plansCache: { plans: CachedPlan[] } = { plans: [] }
 
 export const getCachedPlans = (): CachedPlan[] => {
-  if (cachedPlans.length > 0) {
-    return [freeTrialPlan, ...cachedPlans]
-  }
+  if (plansCache.plans.length > 0) return [freeTrialPlan, ...plansCache.plans]
   return [freeTrialPlan, ...basePlans]
 }
 
@@ -197,11 +195,12 @@ export const syncPlansCache = async (client: AbacatePayClient): Promise<CachedPl
             ? { id: plan.abacateProductId }
             : { externalId: plan.abacateProductId }
 
-          let response = await client.products.get(query)
-
-          if ((response.error || !response.data) && plan.abacateProductId.startsWith('prod_')) {
-            response = await client.products.get({ externalId: plan.abacateProductId })
-          }
+          const firstResponse = await client.products.get(query)
+          const shouldRetryByExternalId =
+            (firstResponse.error || !firstResponse.data) && plan.abacateProductId.startsWith('prod_')
+          const response = shouldRetryByExternalId
+            ? await client.products.get({ externalId: plan.abacateProductId })
+            : firstResponse
 
           if (response.error || !response.data) {
             logger.warn(
@@ -231,8 +230,8 @@ export const syncPlansCache = async (client: AbacatePayClient): Promise<CachedPl
     const synchronized = fetchedPlans.filter((plan): plan is CachedPlan => plan !== null)
 
     if (synchronized.length > 0) {
-      cachedPlans = plansConfig.map((config) => {
-        const synced = synchronized.find((s) => s.abacateProductId === config.abacateProductId)
+      plansCache.plans = plansConfig.map((config) => {
+        const synced = synchronized.find((syncedPlan) => syncedPlan.abacateProductId === config.abacateProductId)
         return synced || { ...config, imageUrl: null, devMode: false }
       })
       logger.success(`[syncPlansCache] Synchronized ${synchronized.length}/${plansConfig.length} plans in memory cache`)

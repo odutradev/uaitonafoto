@@ -26,11 +26,11 @@ suppressPunycodeWarning()
 const logger = createLogger('server')
 
 const setupGracefulShutdown = (server: Server): void => {
-  let isShuttingDown = false
+  const shutdownState = { isShuttingDown: false }
 
   const handleShutdown = async (signal: NodeJS.Signals): Promise<void> => {
-    if (isShuttingDown) return
-    isShuttingDown = true
+    if (shutdownState.isShuttingDown) return
+    shutdownState.isShuttingDown = true
 
     logger.info(`Received ${signal}. Starting graceful shutdown...`)
     stopRoutines()

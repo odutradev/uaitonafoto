@@ -5,13 +5,16 @@ import { broadcastEvent } from '@realtime'
 
 import type { EventEntity, EventSettings } from '@domains/events/repositories/events/types'
 
+const drawRandomPin = (): string => randomInt(0, 10000).toString().padStart(4, '0')
+
+const drawPinOutside = (excluded: string[]): string => {
+  const pin = drawRandomPin()
+  return excluded.includes(pin) ? drawPinOutside(excluded) : pin
+}
+
 export const generatePin = (excludePin?: string | string[]): string => {
   const excluded = Array.isArray(excludePin) ? excludePin : excludePin ? [excludePin] : []
-  let pin = randomInt(0, 10000).toString().padStart(4, '0')
-  while (excluded.includes(pin)) {
-    pin = randomInt(0, 10000).toString().padStart(4, '0')
-  }
-  return pin
+  return drawPinOutside(excluded)
 }
 
 export const isPinExpired = (settings: EventSettings, now = new Date()): boolean => {

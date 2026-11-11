@@ -44,6 +44,14 @@ const resolveFrontendBaseUrl = (redirectUrl?: string, requestOrigin?: string): s
   return env.FRONTEND_URL.replace(/\/+$/, '')
 }
 
+const verifyResetToken = (token: string, secret: string): PasswordResetTokenPayload | null => {
+  try {
+    return jwt.verify(token, secret) as PasswordResetTokenPayload
+  } catch {
+    return null
+  }
+}
+
 export const syncAuthUser = defineAction(
   {
     method: 'post',
@@ -72,13 +80,13 @@ export const syncAuthUser = defineAction(
       return manageError({ code: 'no_token' })
     }
 
-    let decodedToken
+    const verification = await verifyIdToken(token).then(
+      (decoded) => ({ decoded }),
+      (error: unknown) => ({ error })
+    )
+    if ('error' in verification) return manageError({ code: 'token_is_not_valid', error: verification.error })
 
-    try {
-      decodedToken = await verifyIdToken(token)
-    } catch (error) {
-      return manageError({ code: 'token_is_not_valid', error })
-    }
+    const decodedToken = verification.decoded
 
     if (decodedToken.uid !== data.id) {
       return manageError({ code: 'forbidden' })
@@ -201,10 +209,11 @@ export const forgotPassword = defineAction(
   async ({ defaultExpress, data, manageError }: ManageRequestBody<ForgotPasswordRequest>): ManageRequestResponse => {
     try {
       const normalizedEmail = data.email.trim().toLowerCase()
-      let dbUser = await userRepository.findByEmail(normalizedEmail)
-      if (!dbUser && normalizedEmail !== data.email.trim()) {
-        dbUser = await userRepository.findByEmail(data.email.trim())
-      }
+      const userByNormalizedEmail = await userRepository.findByEmail(normalizedEmail)
+      const shouldRetryOriginalEmail = !userByNormalizedEmail && normalizedEmail !== data.email.trim()
+      const dbUser = shouldRetryOriginalEmail
+        ? await userRepository.findByEmail(data.email.trim())
+        : userByNormalizedEmail
 
       const firebaseUserRecord = await getUserByEmail(normalizedEmail)
 
@@ -279,11 +288,9 @@ export const resetPassword = defineAction(
   },
   async ({ data, manageError }: ManageRequestBody<ResetPasswordRequest>): ManageRequestResponse => {
     const secret = getJwtSecret()
-    let decoded: PasswordResetTokenPayload
+    const decoded = verifyResetToken(data.token, secret)
 
-    try {
-      decoded = jwt.verify(data.token, secret) as PasswordResetTokenPayload
-    } catch {
+    if (!decoded) {
       return manageError({
         code: 'bad_request',
         details: 'O link de redefinição de senha é inválido ou expirou. Solicite um novo link.'

@@ -5,6 +5,7 @@ import transactionRepository from '@domains/payments/repositories/transactions'
 import confirmPayment from '@domains/payments/utils/confirmPayment'
 import { defineRoutine } from '@config/routine'
 import { getPaymentClient } from '@payment'
+import runSequentially from '@utils/async'
 import createLogger from '@utils/logger'
 
 import type { ConfirmedStatementCharge } from './types'
@@ -18,33 +19,31 @@ const fetchConfirmedStatementCharges = async (client: AbacatePayClient): Promise
   const response = await client.bankStatement.list({ limit: 100 })
   if (response.error || !response.data) return []
 
-  const refundedIntentIds = new Set<string>()
+  const refundedIntentIds = new Set(
+    response.data
+      .filter((item) => item.movements.some((movement) => movement.category === 'refund' || movement.category === 'reversal'))
+      .map((item) => item.paymentIntentId)
+      .filter((paymentIntentId): paymentIntentId is string => Boolean(paymentIntentId))
+  )
 
-  for (const item of response.data) {
-    const hasReversal = item.movements.some((m) => m.category === 'refund' || m.category === 'reversal')
-    if (hasReversal && item.paymentIntentId) {
-      refundedIntentIds.add(item.paymentIntentId)
-    }
-  }
-
-  const charges: ConfirmedStatementCharge[] = []
-
-  for (const item of response.data) {
-    if (!item.checkoutId || !item.paymentIntentId) continue
-    if (refundedIntentIds.has(item.paymentIntentId)) continue
+  const charges = response.data.flatMap((item): ConfirmedStatementCharge[] => {
+    if (!item.checkoutId || !item.paymentIntentId) return []
+    if (refundedIntentIds.has(item.paymentIntentId)) return []
 
     const creditMovement = item.movements.find(
-      (m) => m.category === 'transaction' && m.balanceEffect === 'credit'
+      (movement) => movement.category === 'transaction' && movement.balanceEffect === 'credit'
     )
-    if (!creditMovement) continue
+    if (!creditMovement) return []
 
-    charges.push({
-      checkoutId: item.checkoutId,
-      paymentIntentId: item.paymentIntentId,
-      amount: creditMovement.amount,
-      createdAt: item.createdAt
-    })
-  }
+    return [
+      {
+        checkoutId: item.checkoutId,
+        paymentIntentId: item.paymentIntentId,
+        amount: creditMovement.amount,
+        createdAt: item.createdAt
+      }
+    ]
+  })
 
   return charges.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
 }
@@ -52,10 +51,10 @@ const fetchConfirmedStatementCharges = async (client: AbacatePayClient): Promise
 const syncPendingSubscriptionTransactions = async (client: AbacatePayClient): Promise<void> => {
   const transactions = await transactionRepository.listSubscriptionTransactionsToSync()
 
-  for (const tx of transactions) {
+  await runSequentially(transactions, async (tx) => {
     try {
       const subRes = await client.subscriptions.get({ externalId: tx.id })
-      if (subRes.error || !subRes.data) continue
+      if (subRes.error || !subRes.data) return
 
       const gatewaySub = subRes.data
 
@@ -68,7 +67,10 @@ const syncPendingSubscriptionTransactions = async (client: AbacatePayClient): Pr
             status: gatewaySub.status
           }
         })
-      } else if (tx.status === 'PAID') {
+        return
+      }
+
+      if (tx.status === 'PAID') {
         await ensureSubscriptionRecord(tx, {
           id: gatewaySub.id,
           method: gatewaySub.method
@@ -77,7 +79,7 @@ const syncPendingSubscriptionTransactions = async (client: AbacatePayClient): Pr
     } catch (error) {
       logger.warn(`Failed to reconcile subscription transaction ${tx.id}:`, error)
     }
-  }
+  })
 }
 
 export const runSubscriptionReconciliation = async (): Promise<void> => {
@@ -90,7 +92,7 @@ export const runSubscriptionReconciliation = async (): Promise<void> => {
 
   const statementCharges = await fetchConfirmedStatementCharges(client)
 
-  for (const sub of subscriptions) {
+  await runSequentially(subscriptions, async (sub) => {
     try {
       const subRes = await client.subscriptions.get({ id: sub.subscriptionId })
 
@@ -100,32 +102,32 @@ export const runSubscriptionReconciliation = async (): Promise<void> => {
           cancelledAt: new Date().toISOString(),
           cancelReason: 'cancelled_by_gateway'
         })
-        continue
+        return
       }
 
-      if (!sub.checkoutId) continue
+      if (!sub.checkoutId) return
 
       const subCharges = statementCharges.filter((charge) => charge.checkoutId === sub.checkoutId)
-      if (subCharges.length <= sub.cyclesCompleted) continue
+      if (subCharges.length <= sub.cyclesCompleted) return
 
       const initialCreatedTime = new Date(sub.createdAt).getTime()
       const renewalCharges = subCharges
         .slice(1)
         .filter((charge) => new Date(charge.createdAt).getTime() - initialCreatedTime >= MIN_RENEWAL_GAP_MS)
 
-      for (const charge of renewalCharges) {
-        await grantSubscriptionRenewal({
+      await runSequentially(renewalCharges, (charge) =>
+        grantSubscriptionRenewal({
           subscription: sub,
           externalPaymentId: charge.paymentIntentId,
           paidAt: charge.createdAt,
           amount: charge.amount,
           paidAmount: charge.amount
         })
-      }
+      )
     } catch (error) {
       logger.warn(`Failed to reconcile subscription ${sub.subscriptionId}:`, error)
     }
-  }
+  })
 }
 
 export const reconcileSubscriptionsRoutine = defineRoutine({

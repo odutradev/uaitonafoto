@@ -1,23 +1,24 @@
 import { purgeEventPhotos } from '@domains/events/utils/photoStorage'
 import eventRepository from '@domains/events/repositories/events'
 import { defineRoutine } from '@config/routine'
+import runSequentially from '@utils/async'
 import createLogger from '@utils/logger'
 
 const logger = createLogger('events:expire-galleries-routine')
 
 export const runExpireGalleries = async (): Promise<void> => {
   const expiredEvents = await eventRepository.listExpiredGalleries(new Date().toISOString())
-  let cleanedCount = 0
-
-  for (const event of expiredEvents) {
+  const cleanResults = await runSequentially(expiredEvents, async (event) => {
     try {
       await purgeEventPhotos(event.id)
       await eventRepository.markGalleryCleaned(event.id)
-      cleanedCount += 1
+      return true
     } catch (error) {
       logger.error(`Failed to clean gallery of event ${event.id}:`, error)
+      return false
     }
-  }
+  })
+  const cleanedCount = cleanResults.filter(Boolean).length
 
   if (cleanedCount > 0) {
     logger.info(`Routine completed: ${cleanedCount} expired galleries cleaned.`)

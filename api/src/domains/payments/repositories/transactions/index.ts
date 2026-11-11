@@ -1,8 +1,10 @@
+import { buildCreatedAtFilter } from '@utils/date'
 import { removeUndefined } from '@utils/object'
 import TransactionModel from './model'
 
 import type { CreateCancelledTransactionPayload, CreatePaidTransactionPayload, CreateTransactionPayload, ListUserTransactionsPaginatedParams, TransactionEntity, TransactionStatus, TransactionWebhookEvent, UpdateTransactionPayload } from './types'
 import type { PaginatedData } from '@factories/pagination/types'
+import type { CreatedAtRange } from '@utils/date/types'
 import type { TransactionDocument } from './model'
 
 const toTransactionEntity = (doc: TransactionDocument & { effectiveDate?: string }): TransactionEntity => {
@@ -144,6 +146,18 @@ export const transactionRepository = {
     })
 
     return result.modifiedCount ?? 0
+  },
+
+  countPaid: async (range?: CreatedAtRange): Promise<number> => {
+    return TransactionModel.countDocuments({ status: 'PAID', ...buildCreatedAtFilter(range) })
+  },
+
+  sumPaidAmount: async (range?: CreatedAtRange): Promise<number> => {
+    const [result] = await TransactionModel.aggregate([
+      { $match: { status: 'PAID', ...buildCreatedAtFilter(range) } },
+      { $group: { _id: null, total: { $sum: '$amount' } } }
+    ])
+    return result?.total ?? 0
   }
 }
 

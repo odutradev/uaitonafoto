@@ -125,36 +125,30 @@ export const joinEvent = defineAction(
       })
     }
 
-    let guest: GuestEntity
-    let completedChallengeIds: string[] = []
-
-    if (existingGuest) {
-      const updated = await guestRepository.updateSession(existingGuest.id, {
-        name: data.name.trim(),
-        ip: client.ip,
-        deviceId: client.deviceId,
-        deviceFingerprint: client.fingerprint,
-        userAgent: client.userAgent
-      })
-      guest = updated ?? existingGuest
-      completedChallengeIds = await photoRepository.findCompletedChallengeIdsByGuest(guest.id)
-    } else {
-      guest = await guestRepository.create({
-        eventId: event.id,
-        name: data.name.trim(),
-        ip: client.ip,
-        deviceId: client.deviceId,
-        deviceFingerprint: client.fingerprint,
-        userAgent: client.userAgent
-      })
+    const sessionData = {
+      name: data.name.trim(),
+      ip: client.ip,
+      deviceId: client.deviceId,
+      deviceFingerprint: client.fingerprint,
+      userAgent: client.userAgent
     }
 
-    return {
+    const buildJoinResponse = (guest: GuestEntity, completedChallengeIds: string[]) => ({
       guestToken: signGuestToken(guest.id, event.galleryExpiresAt),
       guest: { id: guest.id, name: guest.name },
       event: toGuestEventInfo(event),
       completedChallengeIds
+    })
+
+    if (!existingGuest) {
+      const createdGuest = await guestRepository.create({ eventId: event.id, ...sessionData })
+      return buildJoinResponse(createdGuest, [])
     }
+
+    const updatedGuest = await guestRepository.updateSession(existingGuest.id, sessionData)
+    const guest = updatedGuest ?? existingGuest
+    const completedChallengeIds = await photoRepository.findCompletedChallengeIdsByGuest(guest.id)
+    return buildJoinResponse(guest, completedChallengeIds)
   }
 )
 

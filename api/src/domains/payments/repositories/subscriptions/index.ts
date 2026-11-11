@@ -117,6 +117,32 @@ export const subscriptionRepository = {
   hasActiveByUser: async (userId: string): Promise<boolean> => {
     const count = await SubscriptionModel.countDocuments({ userId, status: 'ACTIVE' })
     return count > 0
+  },
+
+  countByStatus: async (status: string): Promise<number> => {
+    return SubscriptionModel.countDocuments({ status })
+  },
+
+  countByPlanName: async (): Promise<Array<{ name: string; count: number }>> => {
+    const groups: Array<{ _id: unknown; count?: number }> = await SubscriptionModel.aggregate([
+      {
+        $group: {
+          _id: { $ifNull: ['$planName', 'Sem identificação'] },
+          count: { $sum: 1 }
+        }
+      }
+    ])
+    return groups.map((group) => ({ name: String(group._id || 'Geral'), count: Number(group.count || 0) }))
+  },
+
+  listActiveByUsers: async (userIds: string[]): Promise<SubscriptionEntity[]> => {
+    const docs = await SubscriptionModel.find({ userId: { $in: userIds }, status: 'ACTIVE' }).lean()
+    return docs.map(toSubscriptionEntity)
+  },
+
+  findActiveByUser: async (userId: string): Promise<SubscriptionEntity | null> => {
+    const doc = await SubscriptionModel.findOne({ userId, status: 'ACTIVE' }).lean()
+    return doc ? toSubscriptionEntity(doc) : null
   }
 }
 

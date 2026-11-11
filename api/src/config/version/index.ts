@@ -3,56 +3,43 @@ import fs from 'fs'
 
 import type { PackageJsonVersion } from './types'
 
-let appVersion = '1.0.0'
+const DefaultVersion = '1.0.0'
 
-export const resolveAppVersion = (): string => {
-  const candidates = [
-    path.resolve(process.cwd(), 'uaitonafoto-package.json'),
-    path.resolve(process.cwd(), '../uaitonafoto-package.json'),
-    path.resolve(process.cwd(), 'package.json'),
-    path.resolve(process.cwd(), '../package.json'),
-    path.resolve(__dirname, '../../../../package.json'),
-    path.resolve(__dirname, '../../../package.json')
-  ]
+const VersionCandidates = [
+  path.resolve(process.cwd(), 'uaitonafoto-package.json'),
+  path.resolve(process.cwd(), '../uaitonafoto-package.json'),
+  path.resolve(process.cwd(), 'package.json'),
+  path.resolve(process.cwd(), '../package.json'),
+  path.resolve(__dirname, '../../../../package.json'),
+  path.resolve(__dirname, '../../../package.json')
+]
 
-  for (const candidate of candidates) {
-    try {
-      if (fs.existsSync(candidate)) {
-        const parsed = JSON.parse(fs.readFileSync(candidate, 'utf-8')) as PackageJsonVersion
-        if (parsed.name === 'uaitonafoto' && parsed.version) {
-          appVersion = parsed.version
-          return appVersion
-        }
-        if (parsed.version && !parsed.name?.includes('api') && !parsed.name?.includes('ui')) {
-          appVersion = parsed.version
-          return appVersion
-        }
-      }
-    } catch {}
+const readPackageJson = (candidate: string): PackageJsonVersion | null => {
+  try {
+    if (!fs.existsSync(candidate)) return null
+    return JSON.parse(fs.readFileSync(candidate, 'utf-8')) as PackageJsonVersion
+  } catch {
+    return null
   }
-
-  for (const candidate of candidates) {
-    try {
-      if (fs.existsSync(candidate)) {
-        const parsed = JSON.parse(fs.readFileSync(candidate, 'utf-8')) as PackageJsonVersion
-        if (parsed.version) {
-          appVersion = parsed.version
-          return appVersion
-        }
-      }
-    } catch {}
-  }
-
-  return appVersion
 }
 
-appVersion = resolveAppVersion()
+const isRootPackage = (parsed: PackageJsonVersion): boolean => {
+  if (parsed.name === 'uaitonafoto' && parsed.version) return true
+  return Boolean(parsed.version && !parsed.name?.includes('api') && !parsed.name?.includes('ui'))
+}
+
+export const resolveAppVersion = (): string => {
+  const packages = VersionCandidates.map(readPackageJson).filter((parsed): parsed is PackageJsonVersion => parsed !== null)
+  const rootPackage = packages.find(isRootPackage)
+  const fallbackPackage = packages.find((parsed) => Boolean(parsed.version))
+  return rootPackage?.version ?? fallbackPackage?.version ?? DefaultVersion
+}
+
+const resolvedVersion = resolveAppVersion()
 
 export const getAppVersion = (): string => {
-  if (appVersion === '1.0.0') {
-    return resolveAppVersion()
-  }
-  return appVersion
+  if (resolvedVersion === DefaultVersion) return resolveAppVersion()
+  return resolvedVersion
 }
 
 export const version = getAppVersion()
