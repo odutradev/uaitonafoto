@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import { getPlans } from "@actions/payments";
 import useAction from "@hooks/useAction";
+import useSystemStore from "@stores/system";
 import createPageContext from "@utils/functions/createPageContext";
 import { formatPriceInBrl } from "@utils/functions/formatters";
 import type { PlanApiItem } from "@utils/types/payments";
@@ -41,6 +42,8 @@ const toPresentationPlan = (item: PlanApiItem): PresentationPlan => ({
 
 const usePresentationState = (): UsePresentationReturn => {
   const runAction = useAction();
+  const { themeMode } = useSystemStore((state) => state.system);
+  const toggleTheme = useSystemStore((state) => state.toggleTheme);
   const [currentIndex, setCurrentIndex] = useState(readIndexFromHash);
   const [direction, setDirection] = useState<SlideDirection>(1);
   const [scale, setScale] = useState(readScale);
@@ -111,11 +114,12 @@ const usePresentationState = (): UsePresentationReturn => {
       if (event.key === "Home") handleGoTo(0);
       if (event.key === "End") handleGoTo(slideIds.length - 1);
       if (event.key.toLowerCase() === "f") handleToggleFullscreen();
+      if (event.key.toLowerCase() === "t") toggleTheme();
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [handleNext, handlePrevious, handleGoTo, handleToggleFullscreen]);
+  }, [handleNext, handlePrevious, handleGoTo, handleToggleFullscreen, toggleTheme]);
 
   useEffect(() => {
     const handleResize = () => setScale(readScale());
@@ -157,6 +161,7 @@ const usePresentationState = (): UsePresentationReturn => {
     total: slideIds.length,
     scale,
     isFullscreen,
+    themeMode,
     plans,
     isLoadingPlans,
     handleNext,

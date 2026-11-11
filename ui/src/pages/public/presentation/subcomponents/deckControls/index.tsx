@@ -7,6 +7,7 @@ import {
   FullscreenRounded as FullscreenIcon
 } from "@mui/icons-material";
 
+import ThemeToggle from "@components/themeToggle";
 import usePresentation from "@pages/public/presentation/hook";
 
 import { Actions, Bar, Counter, Dot, Dots, Progress } from "./styles";
@@ -71,6 +72,11 @@ const DeckControls = () => {
           <IconButton aria-label="Próximo slide" onClick={handleNext} disabled={currentIndex === total - 1}>
             <NextIcon />
           </IconButton>
+          <Tooltip title="Trocar tema (T)">
+            <span>
+              <ThemeToggle showTooltip={false} />
+            </span>
+          </Tooltip>
           <Tooltip title="Tela cheia (F)">
             <IconButton
               aria-label={isFullscreen ? "Sair da tela cheia" : "Entrar em tela cheia"}
