@@ -4,6 +4,7 @@ import useInView from "@hooks/useInView";
 import useLandingPage from "@pages/public/landingPage/hook";
 import Reveal from "@pages/public/landingPage/subcomponents/reveal";
 import ScenePhoto from "@components/scenePhoto";
+import InlineCta from "@pages/public/landingPage/subcomponents/inlineCta";
 import SectionHeading from "@pages/public/landingPage/subcomponents/sectionHeading";
 import { photoTones } from "@styles/theme";
 
@@ -211,6 +212,7 @@ const AfterParty = () => {
           </Reveal>
         </Extras>
       </Inner>
+      <InlineCta {...data.inlineCtas.afterParty} tone="dark" />
     </Section>
   );
 };
