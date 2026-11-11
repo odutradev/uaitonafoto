@@ -16,7 +16,7 @@ export interface SeedProduct {
   cycle?: ProductCycle
 }
 
-export const SEED_PLANS: SeedProduct[] = [
+export const SeedPlans: SeedProduct[] = [
   {
     externalId: 'prod_b2c_event_pass',
     name: 'Passe Evento Completo',
@@ -57,9 +57,9 @@ export const SEED_PLANS: SeedProduct[] = [
 ]
 
 export const seedPlans = async (client: AbacatePayClient): Promise<void> => {
-  logger.info(`Starting plans seed (${SEED_PLANS.length} products to verify)...`)
+  logger.info(`Starting plans seed (${SeedPlans.length} products to verify)...`)
 
-  await runSequentially(SEED_PLANS, async (product) => {
+  await runSequentially(SeedPlans, async (product) => {
     try {
       const checkResponse = await client.products.get({ externalId: product.externalId })
 

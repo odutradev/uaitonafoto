@@ -1,16 +1,16 @@
 import multer, { MulterError } from 'multer'
 
 import { errorResponseSchema } from '@factories/errors/schemas'
-import { ALLOWED_MIME_TYPES } from './types'
+import { AllowedMimeTypes } from './types'
 import sendError from '@error/index'
 
 import type { DocumentedMiddleware, ResponseConfig } from '@factories/defineAction/types'
 import type { Request, Response, NextFunction } from 'express'
 import type { AllowedMimeType } from './types'
 
-export const MAX_FILE_SIZE = 10 * 1024 * 1024
+export const MaxFileSize = 10 * 1024 * 1024
 
-export const MIME_EXTENSION_MAP: Record<string, string> = {
+export const MimeExtensionMap: Record<string, string> = {
   'image/jpeg': 'jpg',
   'image/jpg': 'jpg',
   'image/png': 'png',
@@ -27,10 +27,10 @@ export const uploadResponses: Record<string, ResponseConfig> = {
 const multerInstance = multer({
   storage: multer.memoryStorage(),
   limits: {
-    fileSize: MAX_FILE_SIZE
+    fileSize: MaxFileSize
   },
   fileFilter: (_req, file, cb) => {
-    if (ALLOWED_MIME_TYPES.includes(file.mimetype as AllowedMimeType)) {
+    if (AllowedMimeTypes.includes(file.mimetype as AllowedMimeType)) {
       cb(null, true)
     } else {
       cb(new MulterError('LIMIT_UNEXPECTED_FILE', file.fieldname))

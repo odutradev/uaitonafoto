@@ -19,10 +19,10 @@ export interface PinLockoutStatus {
   message?: string
 }
 
-export const PIN_LOCKOUT_MAX_FREE_ATTEMPTS = 4
-export const PIN_LOCKOUT_PERMANENT_THRESHOLD = 10
+export const PinLockoutMaxFreeAttempts = 4
+export const PinLockoutPermanentThreshold = 10
 
-export const PIN_LOCKOUT_DURATIONS: Record<number, number> = {
+export const PinLockoutDurations: Record<number, number> = {
   5: 60,
   6: 300,
   7: 900,
@@ -179,8 +179,8 @@ export const recordPinFailure = ({ scope, targetId, req, res }: PinLockoutParams
   const failures = keysToUpdate.map((key) => {
     const existing = lockoutStore.get(key)
     const attempts = (existing?.attempts ?? 0) + 1
-    const itemIsPermanent = Boolean(existing?.isPermanent || attempts >= PIN_LOCKOUT_PERMANENT_THRESHOLD)
-    const durationSeconds = !itemIsPermanent && attempts >= 5 ? PIN_LOCKOUT_DURATIONS[attempts] ?? 3600 : 0
+    const itemIsPermanent = Boolean(existing?.isPermanent || attempts >= PinLockoutPermanentThreshold)
+    const durationSeconds = !itemIsPermanent && attempts >= 5 ? PinLockoutDurations[attempts] ?? 3600 : 0
     const itemLockedUntil = durationSeconds > 0 ? now + durationSeconds * 1000 : null
 
     lockoutStore.set(key, {

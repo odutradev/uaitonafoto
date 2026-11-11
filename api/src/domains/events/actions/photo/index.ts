@@ -18,15 +18,15 @@ import type { ManageRequestBody, ManageRequestResponse } from '@middlewares/mana
 import type { PhotoEntity } from '@domains/events/repositories/photos/types'
 import type { DetectedImageType } from '@domains/events/utils/types'
 
-const JPEG_SIGNATURE = [0xff, 0xd8, 0xff]
-const PNG_SIGNATURE = [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]
+const JpegSignature = [0xff, 0xd8, 0xff]
+const PngSignature = [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]
 
 const startsWithSignature = (buffer: Buffer, signature: number[], offset = 0): boolean =>
   signature.every((byte, index) => buffer[offset + index] === byte)
 
 const detectImageType = (buffer: Buffer): DetectedImageType | null => {
-  if (startsWithSignature(buffer, JPEG_SIGNATURE)) return { contentType: 'image/jpeg', extension: 'jpg' }
-  if (startsWithSignature(buffer, PNG_SIGNATURE)) return { contentType: 'image/png', extension: 'png' }
+  if (startsWithSignature(buffer, JpegSignature)) return { contentType: 'image/jpeg', extension: 'jpg' }
+  if (startsWithSignature(buffer, PngSignature)) return { contentType: 'image/png', extension: 'png' }
 
   const isWebp = buffer.subarray(0, 4).toString('ascii') === 'RIFF' && buffer.subarray(8, 12).toString('ascii') === 'WEBP'
   if (isWebp) return { contentType: 'image/webp', extension: 'webp' }
@@ -94,10 +94,10 @@ export const uploadPhoto = defineAction(
       const capturedAt = Number(rawCapturedAt)
       if (!Number.isNaN(capturedAt)) {
         const ageMs = Date.now() - capturedAt
-        const MAX_CAPTURE_AGE_MS = 10 * 60 * 1000
-        const MAX_FUTURE_TOLERANCE_MS = 2 * 60 * 1000
+        const MaxCaptureAgeMs = 10 * 60 * 1000
+        const MaxFutureToleranceMs = 2 * 60 * 1000
 
-        if (ageMs > MAX_CAPTURE_AGE_MS || ageMs < -MAX_FUTURE_TOLERANCE_MS) {
+        if (ageMs > MaxCaptureAgeMs || ageMs < -MaxFutureToleranceMs) {
           return manageError({
             code: 'bad_request',
             details: 'Apenas fotos tiradas na hora com a câmera são permitidas. Não é possível enviar fotos antigas.'

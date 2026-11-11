@@ -3,7 +3,7 @@ import LikeModel from './model'
 
 import type { CreateLikePayload } from './types'
 
-const DUPLICATE_KEY_ERROR = 11000
+const DuplicateKeyError = 11000
 
 export const likeRepository = {
   create: async (payload: CreateLikePayload): Promise<boolean> => {
@@ -12,7 +12,7 @@ export const likeRepository = {
       return true
     } catch (error) {
       const { code } = getErrorShape(error)
-      if (code === DUPLICATE_KEY_ERROR) return false
+      if (code === DuplicateKeyError) return false
       throw error
     }
   },
