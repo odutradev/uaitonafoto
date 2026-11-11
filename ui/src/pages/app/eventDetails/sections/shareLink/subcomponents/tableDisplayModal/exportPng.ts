@@ -1,6 +1,6 @@
 import type { EventItem } from '@utils/types/events'
 import type { TableDisplayConfig } from './types'
-import { templateThemes } from './templates/styles'
+import { templateThemes } from './subcomponents/tableDisplayCard/styles'
 
 const downloadBlob = (blob: Blob, filename: string): void => {
   const blobUrl = window.URL.createObjectURL(blob)

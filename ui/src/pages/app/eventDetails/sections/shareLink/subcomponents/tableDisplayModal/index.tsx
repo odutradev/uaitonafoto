@@ -4,7 +4,7 @@ import { Close as CloseIcon, DownloadOutlined as DownloadIcon, PrintOutlined as 
 import { toast } from 'react-toastify'
 
 import type { EventItem } from '@utils/types/events'
-import { TableDisplayCard } from './templates/TableDisplayCard'
+import { TableDisplayCard } from './subcomponents/tableDisplayCard'
 import { exportTableDisplayPng } from './exportPng'
 import type { TableDisplayConfig, TableDisplayTemplateId, PrintPageLayout, TableDisplayQrSize } from './types'
 import { controlCardStyles, controlsSectionStyles, dialogActionButtonStyles, dialogActionsStyles, dialogContentStyles, dialogHeaderStyles, dialogPaperStyles, previewWrapperStyles, templateOptionButtonStyles, templateSelectorGridStyles } from './styles'
