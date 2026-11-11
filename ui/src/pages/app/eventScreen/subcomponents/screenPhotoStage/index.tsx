@@ -1,24 +1,10 @@
 import { Box, Typography } from '@mui/material'
-import {
-  Favorite as LikeIcon,
-  PhotoCameraOutlined as CameraIcon
-} from '@mui/icons-material'
+import { Favorite as LikeIcon, PhotoCameraOutlined as CameraIcon } from '@mui/icons-material'
 
 import { formatGuestTaNaFoto } from '@utils/functions/events'
 import { brandColors } from '@styles/theme'
 
-import {
-  bannerAuthorStyles,
-  bannerLikesStyles,
-  bannerTextRowStyles,
-  bannerTextStyles,
-  getMainCardStyles,
-  getPhotoContainerStyles,
-  getPhotoStyles,
-  photoBackdropStyles,
-  waitingEmptyStyles,
-  yellowBannerStyles
-} from '@pages/app/eventScreen/styles'
+import { bannerAuthorStyles, bannerLikesStyles, bannerTextRowStyles, bannerTextStyles, getMainCardStyles, getPhotoContainerStyles, getPhotoStyles, photoBackdropStyles, waitingEmptyStyles, yellowBannerStyles } from '@pages/app/eventScreen/styles'
 import type { EventPhoto } from '@utils/types/events'
 import type { ScreenPhotoFit } from '@pages/app/eventScreen/types'
 

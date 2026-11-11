@@ -1,135 +1,22 @@
-import { useState } from 'react'
-import {
-  Alert,
-  Avatar,
-  Box,
-  Button,
-  IconButton,
-  Tooltip,
-  Typography
-} from '@mui/material'
-import {
-  Fullscreen as FullscreenIcon,
-  SettingsOutlined as SettingsIcon
-} from '@mui/icons-material'
-import { useParams } from 'react-router-dom'
-import { toast } from 'react-toastify'
+import { Alert, Avatar, Box, Button, IconButton, Tooltip, Typography } from '@mui/material'
+import { Fullscreen as FullscreenIcon, SettingsOutlined as SettingsIcon } from '@mui/icons-material'
 
 import Logo from '@components/logo'
 import Modal from '@components/modal'
 import PinInput from '@components/pinInput'
-import { buildGuestLink } from '@utils/functions/events'
 import { brandColors } from '@styles/theme'
 
-import useEventScreen from './hooks/useEventScreen'
+import useEventScreenPage, { EventScreenPageProvider } from './hook'
 import ScreenSettingsModal from './subcomponents/screenSettingsModal'
 import LateralLayout from './subcomponents/layouts/lateralLayout'
 import StageLayout from './subcomponents/layouts/stageLayout'
 import MosaicLayout from './subcomponents/layouts/mosaicLayout'
 import DuoLayout from './subcomponents/layouts/duoLayout'
 import StoriesLayout from './subcomponents/layouts/storiesLayout'
-import {
-  activationCardStyles,
-  activationWrapperStyles,
-  controlsChipStyles,
-  iconButtonStyles,
-  screenAgencyBadgeStyles,
-  screenRootStyles,
-  stageContainerStyles,
-  stageFrameStyles,
-  topBarStyles
-} from './styles'
-import type { FormEvent } from 'react'
-import type { ScreenLayoutMode, ScreenPhotoFit } from './types'
+import { activationCardStyles, activationWrapperStyles, controlsChipStyles, iconButtonStyles, screenAgencyBadgeStyles, screenRootStyles, stageContainerStyles, stageFrameStyles, topBarStyles } from './styles'
 
-const SCREEN_SHOW_PIN_STORAGE_KEY = 'uaitonafoto:screen:show_pin'
-const SCREEN_LAYOUT_STORAGE_KEY = 'uaitonafoto:screen:layout'
-const SCREEN_PHOTO_FIT_STORAGE_KEY = 'uaitonafoto:screen:photo_fit'
-
-const EventScreen = () => {
-  const { token, id } = useParams()
-  const eventIdentifier = token || id || ''
-  const {
-    isActivated,
-    isActivating,
-    activationError,
-    activate,
-    disconnect,
-    lockout,
-    event,
-    pin,
-    photos,
-    currentIndex,
-    selectPhoto,
-    currentPhoto,
-    isLiveStreamConnected,
-    isNewArrival
-  } = useEventScreen(eventIdentifier)
-  const [pinInput, setPinInput] = useState('')
-  const [isDisconnectModalOpen, setIsDisconnectModalOpen] = useState(false)
-  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false)
-  const [layoutMode, setLayoutMode] = useState<ScreenLayoutMode>(() => {
-    const stored = localStorage.getItem(SCREEN_LAYOUT_STORAGE_KEY)
-    if (
-      stored === 'stories' ||
-      stored === 'lateral' ||
-      stored === 'stage' ||
-      stored === 'mosaic' ||
-      stored === 'duo'
-    ) {
-      return stored
-    }
-    // Compatibilidade com configurações anteriores
-    if (stored === 'side-hub') return 'lateral'
-    if (stored === 'classic') return 'stage'
-    if (stored === 'social-feed') return 'stories'
-    return 'stories'
-  })
-  const [photoFit, setPhotoFit] = useState<ScreenPhotoFit>(() => {
-    const stored = localStorage.getItem(SCREEN_PHOTO_FIT_STORAGE_KEY) as ScreenPhotoFit | null
-    if (stored && ['cover', 'contain'].includes(stored)) {
-      return stored
-    }
-    return 'contain'
-  })
-  const [showPin, setShowPin] = useState<boolean>(() => {
-    const stored = localStorage.getItem(SCREEN_SHOW_PIN_STORAGE_KEY)
-    return stored !== null ? stored === 'true' : true
-  })
-
-  const handleTogglePinVisibility = () => {
-    setShowPin((prev) => {
-      const next = !prev
-      localStorage.setItem(SCREEN_SHOW_PIN_STORAGE_KEY, String(next))
-      return next
-    })
-  }
-
-  const handleLayoutChange = (mode: ScreenLayoutMode) => {
-    setLayoutMode(mode)
-    localStorage.setItem(SCREEN_LAYOUT_STORAGE_KEY, mode)
-  }
-
-  const handlePhotoFitChange = (fit: ScreenPhotoFit) => {
-    setPhotoFit(fit)
-    localStorage.setItem(SCREEN_PHOTO_FIT_STORAGE_KEY, fit)
-  }
-
-  const handleFullscreen = () => {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen?.()
-    } else {
-      document.exitFullscreen?.()
-    }
-  }
-
-  const handleActivateSubmit = async (submitEvent: FormEvent<HTMLFormElement>) => {
-    submitEvent.preventDefault()
-    if (lockout.isLocked || !/^\d{4}$/.test(pinInput)) return
-    await activate(pinInput)
-  }
-
-  const guestLink = event ? buildGuestLink(event.guestToken) : token ? buildGuestLink(token) : ''
+const EventScreenContent = () => {
+  const { isActivated, isActivating, activationError, lockout, event, isLiveStreamConnected, pinInput, setPinInput, isDisconnectModalOpen, layoutMode, handleFullscreen, handleActivateSubmit, handleOpenSettings, handleCloseDisconnect, handleConfirmDisconnect } = useEventScreenPage()
 
   return (
     <>
@@ -206,7 +93,7 @@ const EventScreen = () => {
               <Tooltip title="Configurações do telão">
                 <IconButton
                   aria-label="Configurações do telão"
-                  onClick={() => setIsSettingsModalOpen(true)}
+                  onClick={handleOpenSettings}
                   sx={iconButtonStyles}
                   size="small"
                 >
@@ -315,121 +202,46 @@ const EventScreen = () => {
         <Box sx={stageContainerStyles}>
           <Box id="stage" sx={stageFrameStyles}>
             {layoutMode === 'stories' ? (
-              <StoriesLayout
-                currentPhoto={currentPhoto}
-                isNewArrival={isNewArrival}
-                photos={photos}
-                currentIndex={currentIndex}
-                onSelectPhoto={selectPhoto}
-                guestLink={guestLink}
-                pin={pin}
-                showPin={showPin}
-                photoFit={photoFit}
-                customization={event?.customization}
-                onFullscreen={handleFullscreen}
-                onOpenSettings={() => setIsSettingsModalOpen(true)}
-              />
+              <StoriesLayout />
             ) : layoutMode === 'stage' ? (
-              <StageLayout
-                currentPhoto={currentPhoto}
-                isNewArrival={isNewArrival}
-                photos={photos}
-                currentIndex={currentIndex}
-                onSelectPhoto={selectPhoto}
-                guestLink={guestLink}
-                pin={pin}
-                showPin={showPin}
-                photoFit={photoFit}
-                customization={event?.customization}
-                onFullscreen={handleFullscreen}
-                onOpenSettings={() => setIsSettingsModalOpen(true)}
-              />
+              <StageLayout />
             ) : layoutMode === 'mosaic' ? (
-              <MosaicLayout
-                currentPhoto={currentPhoto}
-                isNewArrival={isNewArrival}
-                photos={photos}
-                currentIndex={currentIndex}
-                onSelectPhoto={selectPhoto}
-                guestLink={guestLink}
-                pin={pin}
-                showPin={showPin}
-                photoFit={photoFit}
-                customization={event?.customization}
-                onFullscreen={handleFullscreen}
-                onOpenSettings={() => setIsSettingsModalOpen(true)}
-              />
+              <MosaicLayout />
             ) : layoutMode === 'duo' ? (
-              <DuoLayout
-                currentPhoto={currentPhoto}
-                isNewArrival={isNewArrival}
-                photos={photos}
-                currentIndex={currentIndex}
-                onSelectPhoto={selectPhoto}
-                guestLink={guestLink}
-                pin={pin}
-                showPin={showPin}
-                photoFit={photoFit}
-                customization={event?.customization}
-                onFullscreen={handleFullscreen}
-                onOpenSettings={() => setIsSettingsModalOpen(true)}
-              />
+              <DuoLayout />
             ) : (
-              <LateralLayout
-                currentPhoto={currentPhoto}
-                isNewArrival={isNewArrival}
-                photos={photos}
-                currentIndex={currentIndex}
-                onSelectPhoto={selectPhoto}
-                guestLink={guestLink}
-                pin={pin}
-                showPin={showPin}
-                photoFit={photoFit}
-                customization={event?.customization}
-                onFullscreen={handleFullscreen}
-                onOpenSettings={() => setIsSettingsModalOpen(true)}
-              />
+              <LateralLayout />
             )}
           </Box>
         </Box>
       )}
 
-      <ScreenSettingsModal
-        open={isSettingsModalOpen}
-        onClose={() => setIsSettingsModalOpen(false)}
-        layout={layoutMode}
-        onChangeLayout={handleLayoutChange}
-        photoFit={photoFit}
-        onChangePhotoFit={handlePhotoFitChange}
-        showPin={showPin}
-        onTogglePin={handleTogglePinVisibility}
-        hasPin={Boolean(pin)}
-        isActivated={isActivated}
-        onRequestDisconnect={() => setIsDisconnectModalOpen(true)}
-      />
+      <ScreenSettingsModal />
 
       <Modal
         open={isDisconnectModalOpen}
-        onClose={() => setIsDisconnectModalOpen(false)}
+        onClose={handleCloseDisconnect}
         variant="warning"
         title="Desconectar este telão?"
         description="Este dispositivo deixará de exibir as fotos ao vivo e sua vaga será liberada no painel de gestão do evento."
         primaryAction={{
           label: 'Desconectar',
           color: 'error',
-          onClick: async () => {
-            setIsDisconnectModalOpen(false)
-            await disconnect()
-            toast.info('Telão desconectado e vaga liberada com sucesso.')
-          }
+          onClick: handleConfirmDisconnect
         }}
         secondaryAction={{
           label: 'Cancelar',
-          onClick: () => setIsDisconnectModalOpen(false)
+          onClick: handleCloseDisconnect
         }}
       />
     </>
   )
 }
+
+const EventScreen = () => (
+  <EventScreenPageProvider>
+    <EventScreenContent />
+  </EventScreenPageProvider>
+)
 
 export default EventScreen

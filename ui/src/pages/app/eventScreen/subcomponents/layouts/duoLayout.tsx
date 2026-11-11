@@ -3,38 +3,13 @@ import { Box } from '@mui/material'
 import ScreenBrand from '@pages/app/eventScreen/subcomponents/screenBrand'
 import ScreenPhotoTile from '@pages/app/eventScreen/subcomponents/screenPhotoTile'
 import ScreenQrBlock from '@pages/app/eventScreen/subcomponents/screenQrBlock'
-import type { EventCustomization, EventPhoto } from '@utils/types/events'
-import type { ScreenPhotoFit } from '@pages/app/eventScreen/types'
+import useEventScreenPage from '@pages/app/eventScreen/hook'
 
-interface DuoLayoutProps {
-  currentPhoto: EventPhoto | null
-  isNewArrival: boolean
-  photos: EventPhoto[]
-  currentIndex: number
-  onSelectPhoto: (index: number) => void
-  guestLink: string
-  pin: string | null
-  showPin: boolean
-  photoFit: ScreenPhotoFit
-  customization?: EventCustomization
-  onFullscreen?: () => void
-  onOpenSettings?: () => void
-}
 
-export const DuoLayout = ({
-  currentPhoto,
-  isNewArrival,
-  photos,
-  currentIndex,
-  onSelectPhoto,
-  guestLink,
-  pin,
-  showPin,
-  photoFit,
-  customization,
-  onFullscreen,
-  onOpenSettings
-}: DuoLayoutProps) => {
+export const DuoLayout = () => {
+  const { currentPhoto, isNewArrival, photos, currentIndex, selectPhoto: onSelectPhoto, guestLink, pin, showPin, photoFit, handleFullscreen: onFullscreen, handleOpenSettings: onOpenSettings, event } = useEventScreenPage()
+  const customization = event?.customization
+
   // Foto anterior (rec(1)[0])
   const previousIndex = photos.length > 1 ? (currentIndex - 1 + photos.length) % photos.length : -1
   const previousPhoto = previousIndex >= 0 ? photos[previousIndex] : null

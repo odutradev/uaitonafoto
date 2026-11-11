@@ -3,16 +3,7 @@ import { QRCodeSVG } from 'qrcode.react'
 
 import { brandColors } from '@styles/theme'
 
-import {
-  qrFrameStyles,
-  qrPinBadgeStyles,
-  qrPinCodeStyles,
-  qrPinLabelStyles,
-  qrSubtitleStyles,
-  qrTextContainerStyles,
-  qrTitleStyles,
-  rightCardStyles
-} from '@pages/app/eventScreen/styles'
+import { qrFrameStyles, qrPinBadgeStyles, qrPinCodeStyles, qrPinLabelStyles, qrSubtitleStyles, qrTextContainerStyles, qrTitleStyles, rightCardStyles } from '@pages/app/eventScreen/styles'
 import type { SxProps, Theme } from '@mui/material'
 
 interface ScreenQrCardProps {
