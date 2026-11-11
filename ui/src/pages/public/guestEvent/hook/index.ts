@@ -11,6 +11,7 @@ import {
   uploadGuestPhoto
 } from "@actions/guest";
 import { buildRoomStreamUrl, clearGuestToken, getStoredGuestToken, storeGuestToken } from "@utils/api/guest";
+import { defaultUploadCooldownSeconds } from "@assets/data/events";
 import usePinLockout from "@hooks/usePinLockout";
 import useAction from "@hooks/useAction";
 
@@ -35,6 +36,8 @@ const useGuestEventPageState = (): UseGuestEventPageReturn => {
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const [isUploading, setIsUploading] = useState(false);
+  const [nextUploadAt, setNextUploadAt] = useState<string | null>(null);
+  const [uploadWaitSeconds, setUploadWaitSeconds] = useState(0);
   const [notFound, setNotFound] = useState(false);
 
   const loadFeed = useCallback(
@@ -65,6 +68,7 @@ const useGuestEventPageState = (): UseGuestEventPageReturn => {
           setGuest(session.guest);
           setEvent(session.event);
           setPhotosSent(session.photosSent);
+          setNextUploadAt(session.nextUploadAt ?? null);
           setCompletedChallengeIds(session.completedChallengeIds ?? []);
           setGuestToken(storedToken);
           await loadFeed(storedToken, 1);
@@ -91,6 +95,23 @@ const useGuestEventPageState = (): UseGuestEventPageReturn => {
       isActive = false;
     };
   }, [eventToken, loadFeed]);
+
+  useEffect(() => {
+    if (!nextUploadAt) {
+      setUploadWaitSeconds(0);
+      return undefined;
+    }
+
+    const updateWaitSeconds = () => {
+      const remainingSeconds = Math.max(0, Math.ceil((new Date(nextUploadAt).getTime() - Date.now()) / 1000));
+      setUploadWaitSeconds(remainingSeconds);
+      if (remainingSeconds === 0) setNextUploadAt(null);
+    };
+
+    updateWaitSeconds();
+    const intervalId = window.setInterval(updateWaitSeconds, 1000);
+    return () => window.clearInterval(intervalId);
+  }, [nextUploadAt]);
 
   useEffect(() => {
     if (guestToken) loadFeed(guestToken, page);
@@ -190,17 +211,29 @@ const useGuestEventPageState = (): UseGuestEventPageReturn => {
         setGuest(response.guest);
         setEvent(response.event);
         setPhotosSent(0);
+        setNextUploadAt(null);
         setCompletedChallengeIds(response.completedChallengeIds ?? []);
       }
     });
   };
 
+  const syncNextUploadAt = async (sessionToken: string) => {
+    try {
+      const session = await getGuestSession(sessionToken);
+      setNextUploadAt(session.nextUploadAt ?? null);
+    } catch {
+      setNextUploadAt(null);
+    }
+  };
+
   const upload = async (file: File, challengeId?: string, challengeTitle?: string) => {
-    if (!guestToken) return;
+    if (!guestToken || uploadWaitSeconds > 0) return;
     setIsUploading(true);
     await runAction({
       action: async () => {
         await uploadGuestPhoto(guestToken, file, challengeId, challengeTitle);
+        const cooldownSeconds = event?.uploadCooldownSeconds ?? defaultUploadCooldownSeconds;
+        setNextUploadAt(cooldownSeconds > 0 ? new Date(Date.now() + cooldownSeconds * 1000).toISOString() : null);
         setPhotosSent((count) => count + 1);
         if (challengeId) {
           setCompletedChallengeIds((prev) => (prev.includes(challengeId) ? prev : [...prev, challengeId]));
@@ -211,6 +244,10 @@ const useGuestEventPageState = (): UseGuestEventPageReturn => {
       toastMessages: {
         success: challengeTitle ? `Desafio "${challengeTitle}" cumprido! Foto enviada!` : "Foto enviada!",
         error: "Não foi possível enviar a foto."
+      },
+      onError: (error) => {
+        const status = (error as { response?: { status?: number } })?.response?.status;
+        if (status === 429) void syncNextUploadAt(guestToken);
       }
     });
     setIsUploading(false);
@@ -252,6 +289,7 @@ const useGuestEventPageState = (): UseGuestEventPageReturn => {
     page,
     isLoading,
     isUploading,
+    uploadWaitSeconds,
     notFound,
     lockout,
     setPage,
