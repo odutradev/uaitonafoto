@@ -3,18 +3,13 @@ import { ArrowForward as ArrowForwardIcon } from '@mui/icons-material'
 import { Link as RouterLink } from 'react-router-dom'
 import { brandColors } from '@styles/theme'
 
-import {
-  getChipStyles,
-  heroContainerStyles,
-  heroDescriptionStyles,
-  heroStackStyles,
-  heroTitleStyles,
-  primaryButtonStyles,
-  secondaryButtonStyles
-} from './styles'
-import type { HeroProps } from './types'
+import { getChipStyles, heroContainerStyles, heroDescriptionStyles, heroStackStyles, heroTitleStyles, primaryButtonStyles, secondaryButtonStyles } from './styles'
+import useLandingPage from '@pages/public/landingPage/hook'
 
-export const Hero = ({ data, isDark }: HeroProps) => {
+export const Hero = () => {
+  const { isDark, data: content } = useLandingPage()
+  const data = content.hero
+
   return (
     <Container maxWidth="lg" sx={heroContainerStyles}>
       <Stack spacing={{ xs: 2.5, sm: 3.5 }} alignItems="center" textAlign="center" sx={heroStackStyles}>

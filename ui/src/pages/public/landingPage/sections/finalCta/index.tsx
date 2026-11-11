@@ -4,15 +4,13 @@ import { Link as RouterLink } from 'react-router-dom'
 
 import Logo from '@components/logo'
 
-import {
-  ctaButtonStyles,
-  ctaDescriptionStyles,
-  ctaTitleStyles,
-  getCtaBoxStyles
-} from './styles'
-import type { FinalCtaProps } from './types'
+import { ctaButtonStyles, ctaDescriptionStyles, ctaTitleStyles, getCtaBoxStyles } from './styles'
+import useLandingPage from '@pages/public/landingPage/hook'
 
-export const FinalCta = ({ data, isDark }: FinalCtaProps) => {
+export const FinalCta = () => {
+  const { isDark, data: content } = useLandingPage()
+  const data = content.finalCta
+
   return (
     <Box component="section" sx={{ width: '100%', py: { xs: 6, sm: 8, md: 10 } }}>
       <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3 } }}>

@@ -5,19 +5,13 @@ import { Link as RouterLink } from 'react-router-dom'
 import Logo from '@components/logo'
 import ThemeToggle from '@components/themeToggle'
 
-import {
-  getHeaderStyles,
-  getUserBadgeStyles,
-  loginButtonStyles,
-  navContainerStyles,
-  userAvatarStyles,
-  userGreetingStyles,
-  userNameStyles,
-  userTextContainerStyles
-} from './styles'
-import type { NavbarProps } from './types'
+import { getHeaderStyles, getUserBadgeStyles, loginButtonStyles, navContainerStyles, userAvatarStyles, userGreetingStyles, userNameStyles, userTextContainerStyles } from './styles'
+import useLandingPage from '@pages/public/landingPage/hook'
 
-export const Navbar = ({ data, isDark, user }: NavbarProps) => {
+export const Navbar = () => {
+  const { isDark, user, data: content } = useLandingPage()
+  const data = content.header
+
   const displayName = user?.fullName || user?.name || user?.email?.split('@')[0] || 'Usuário'
 
   return (

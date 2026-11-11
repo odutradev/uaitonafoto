@@ -4,6 +4,7 @@ import { useTheme } from '@mui/material/styles'
 import { getPlans } from '@actions/payments'
 import { trackEvent } from '@utils/functions/firebase'
 import { formatPriceInBrl } from '@utils/functions/formatters'
+import createPageContext from '@utils/functions/createPageContext'
 import useAuth from '@hooks/useAuth'
 import type { PlanApiItem } from '@utils/types/payments'
 
@@ -110,7 +111,7 @@ const DEFAULT_FALLBACK_PLANS: PlanCardData[] = [
   }
 ]
 
-export const useLandingPage = (): UseLandingPageReturn => {
+const useLandingPageState = (): UseLandingPageReturn => {
   const theme = useTheme()
   const isDark = theme.palette.mode === 'dark'
   const { user } = useAuth()
@@ -176,9 +177,16 @@ export const useLandingPage = (): UseLandingPageReturn => {
     isLoadingPlans,
     data: landingPageData,
     user,
+    isAuthenticated: Boolean(user),
     onSelectPlan
   }
 }
 
+const { PageProvider: LandingPageProvider, usePage: useLandingPage } = createPageContext(
+  useLandingPageState,
+  'useLandingPage'
+)
+
+export { LandingPageProvider }
 export default useLandingPage
 export * from './types'

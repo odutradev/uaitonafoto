@@ -1,48 +1,16 @@
 import { Box, Button, Card, Container, IconButton, Stack, Tooltip, Typography } from '@mui/material'
-import {
-  CheckCircle as CheckCircleIcon,
-  ArrowForward as ArrowForwardIcon,
-  AutoAwesome as AutoAwesomeIcon,
-  Bolt as BoltIcon,
-  InfoOutlined as InfoOutlinedIcon
-} from '@mui/icons-material'
+import { CheckCircle as CheckCircleIcon, ArrowForward as ArrowForwardIcon, AutoAwesome as AutoAwesomeIcon, Bolt as BoltIcon, InfoOutlined as InfoOutlinedIcon } from '@mui/icons-material'
 import { Link as RouterLink } from 'react-router-dom'
 
 import PlansSkeleton from './skeleton'
 import { resolvePlanFeature } from './featuresMap'
-import {
-  checkIconStyles,
-  costPerEventBadgeStyles,
-  featureInfoButtonStyles,
-  featureItemStyles,
-  getPlanCardStyles,
-  getPlanCtaButtonStyles,
-  getSectionBoxStyles,
-  periodTextStyles,
-  planDescriptionStyles,
-  plansGridStyles,
-  planTagStyles,
-  planTitleStyles,
-  popularBadgeStyles,
-  priceContainerStyles,
-  priceTextStyles,
-  sectionHeaderStyles,
-  sectionSubtitleStyles,
-  sectionTitleStyles,
-  subBadgeContainerStyles,
-  subBadgeNeutralStyles,
-  tagBadgeStyles
-} from './styles'
-import type { PlansSectionProps } from './types'
+import { checkIconStyles, costPerEventBadgeStyles, featureInfoButtonStyles, featureItemStyles, getPlanCardStyles, getPlanCtaButtonStyles, getSectionBoxStyles, periodTextStyles, planDescriptionStyles, plansGridStyles, planTagStyles, planTitleStyles, popularBadgeStyles, priceContainerStyles, priceTextStyles, sectionHeaderStyles, sectionSubtitleStyles, sectionTitleStyles, subBadgeContainerStyles, subBadgeNeutralStyles, tagBadgeStyles } from './styles'
+import useLandingPage from '@pages/public/landingPage/hook'
 
-export const Plans = ({
-  data,
-  plans,
-  isDark,
-  isLoading = false,
-  isAuthenticated = false,
-  onSelectPlan
-}: PlansSectionProps) => {
+export const Plans = () => {
+  const { plans, isDark, isLoadingPlans: isLoading = false, isAuthenticated = false, onSelectPlan, data: content } = useLandingPage()
+  const data = content.plans
+
   if (isLoading) {
     return <PlansSkeleton data={data} isDark={isDark} />
   }

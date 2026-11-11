@@ -25,18 +25,3 @@ export interface UpsellBannerData {
   ctaText: string
   ctaHref: string
 }
-
-export interface PlansSectionProps {
-  data: {
-    tag: string
-    title: string
-    subtitle: string
-  }
-  plans: PlanCardData[]
-  upsell?: UpsellBannerData | null
-  isDark: boolean
-  isLoading?: boolean
-  isAuthenticated?: boolean
-  onSelectPlan?: (plan: PlanCardData) => void
-  onSelectUpsell?: (upsell: UpsellBannerData) => void
-}

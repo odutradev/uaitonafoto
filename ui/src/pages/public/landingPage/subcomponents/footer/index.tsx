@@ -1,15 +1,8 @@
 import { Box, Container, Link, Stack, Typography } from '@mui/material'
 import { Link as RouterLink } from 'react-router-dom'
 
-import {
-  footerBoxStyles,
-  footerCompanyStyles,
-  footerContainerStyles,
-  footerCopyrightStyles,
-  footerLinkItemStyles,
-  footerLinksStyles
-} from './styles'
-import type { FooterProps } from './types'
+import { footerBoxStyles, footerCompanyStyles, footerContainerStyles, footerCopyrightStyles, footerLinkItemStyles, footerLinksStyles } from './styles'
+import useLandingPage from '@pages/public/landingPage/hook'
 
 const formatCompanyName = (name: string): string => {
   return name.toLowerCase().replace(/(?:^|\s|-)\S/g, char => char.toUpperCase())
@@ -23,7 +16,10 @@ const formatCnpj = (cnpj: string): string => {
   return cnpj
 }
 
-export const Footer = ({ data }: FooterProps) => {
+export const Footer = () => {
+  const { data: content } = useLandingPage()
+  const data = content.footer
+
   const copyrightText = data.copyrightSuffix.startsWith('©')
     ? data.copyrightSuffix
     : `© ${new Date().getFullYear()} ${data.copyrightSuffix}`

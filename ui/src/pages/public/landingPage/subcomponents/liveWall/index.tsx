@@ -3,20 +3,7 @@ import { QrCode2 as QrCodeIcon } from '@mui/icons-material'
 
 import Logo from '@components/logo'
 
-import {
-  getLiveWallBadgeStyles,
-  getLiveWallBrandTitleStyles,
-  getLiveWallOuterBoxStyles,
-  getLiveWallScreenStyles,
-  getLiveWallTitleStyles,
-  getMosaicTileStyles,
-  liveWallBrandBoxStyles,
-  liveWallDescriptionStyles,
-  liveWallHeaderStyles,
-  liveWallQrCodeStyles,
-  liveWallQrInstructionStyles,
-  liveWallQrStackStyles
-} from './styles'
+import { getLiveWallBadgeStyles, getLiveWallBrandTitleStyles, getLiveWallOuterBoxStyles, getLiveWallScreenStyles, getLiveWallTitleStyles, getMosaicTileStyles, liveWallBrandBoxStyles, liveWallDescriptionStyles, liveWallHeaderStyles, liveWallQrCodeStyles, liveWallQrInstructionStyles, liveWallQrStackStyles } from './styles'
 import type { LiveWallProps } from './types'
 
 export const LiveWall = ({ data, isDark, liveWallAccent, mosaicTiles }: LiveWallProps) => {
