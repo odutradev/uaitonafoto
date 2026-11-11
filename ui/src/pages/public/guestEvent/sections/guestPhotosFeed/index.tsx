@@ -1,35 +1,16 @@
 import { Alert, Box, Button, IconButton, Paper, Typography } from '@mui/material'
-import {
-  DeleteOutline as DeleteIcon,
-  EmojiEventsOutlined as ChallengeIcon,
-  Favorite as LikedIcon,
-  FavoriteBorder as LikeIcon
-} from '@mui/icons-material'
+import { DeleteOutline as DeleteIcon, EmojiEventsOutlined as ChallengeIcon, Favorite as LikedIcon, FavoriteBorder as LikeIcon } from '@mui/icons-material'
 import dayjs from 'dayjs'
 
 import Pagination from '@components/pagination'
 
-import {
-  actionsStyles,
-  challengeChipStyles,
-  feedGridStyles,
-  feedSectionStyles,
-  guestNameStyles,
-  photoBarStyles,
-  photoCardStyles,
-  photoImageStyles
-} from './styles'
-import type { GuestPhotosFeedProps } from './types'
+import { actionsStyles, challengeChipStyles, feedGridStyles, feedSectionStyles, guestNameStyles, photoBarStyles, photoCardStyles, photoImageStyles } from './styles'
+import useGuestEventPage from '@pages/public/guestEvent/hook'
 
-const GuestPhotosFeed = ({
-  event,
-  photos,
-  meta,
-  page,
-  onPageChange,
-  onToggleLike,
-  onRemovePhoto
-}: GuestPhotosFeedProps) => {
+const GuestPhotosFeed = () => {
+  const { event: eventValue, photos, meta, page, setPage: onPageChange, toggleLike: onToggleLike, removePhoto: onRemovePhoto } = useGuestEventPage()
+  const event = eventValue!
+
   const isHiddenUntilEnd = event.photoVisibility === 'after_event' && dayjs().isBefore(dayjs(event.endsAt))
 
   const handleDelete = (photoId: string) => {

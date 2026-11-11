@@ -1,25 +1,21 @@
 import { useCallback, useEffect, useState } from 'react'
-import { toast } from 'react-toastify'
+import { useParams } from 'react-router-dom'
 
-import {
-  deleteGuestPhoto,
-  getGuestEvent,
-  getGuestFeed,
-  getGuestSession,
-  joinEvent,
-  toggleGuestPhotoLike,
-  uploadGuestPhoto
-} from '@actions/guest'
+import { deleteGuestPhoto, getGuestEvent, getGuestFeed, getGuestSession, joinEvent, toggleGuestPhotoLike, uploadGuestPhoto } from '@actions/guest'
 import { buildRoomStreamUrl, clearGuestToken, getStoredGuestToken, storeGuestToken } from '@utils/api/guest'
-import { getErrorMessage } from '@utils/functions/events'
 import usePinLockout from '@hooks/usePinLockout'
+import useAction from '@hooks/useAction'
 
 import type { PaginationMeta } from '@utils/types/events'
 import type { GuestEventInfo, GuestPhoto, GuestProfile } from '@utils/types/guest'
+import type { UseGuestEventPageReturn } from './types'
+import createPageContext from '@utils/functions/createPageContext'
 
 const FEED_PAGE_SIZE = 24
 
-const useGuestEvent = (eventToken: string) => {
+const useGuestEventPageState = (): UseGuestEventPageReturn => {
+  const { token: eventToken = '' } = useParams()
+  const runAction = useAction()
   const lockout = usePinLockout({ scope: 'guest', targetId: eventToken })
   const [event, setEvent] = useState<GuestEventInfo | null>(null)
   const [guest, setGuest] = useState<GuestProfile | null>(null)
@@ -180,68 +176,67 @@ const useGuestEvent = (eventToken: string) => {
 
   const join = async (name: string, pin?: string) => {
     if (lockout.isLocked) return
-    try {
-      const response = await joinEvent(eventToken, name, pin)
-      lockout.resetLockout()
-      storeGuestToken(eventToken, response.guestToken)
-      setGuestToken(response.guestToken)
-      setGuest(response.guest)
-      setEvent(response.event)
-      setPhotosSent(0)
-      setCompletedChallengeIds(response.completedChallengeIds ?? [])
-    } catch (error) {
-      lockout.recordFailure(error)
-      toast.error(getErrorMessage(error, 'Não foi possível entrar no evento.'))
-    }
+    await runAction({
+      action: () => joinEvent(eventToken, name, pin),
+      toastMessages: { error: 'Não foi possível entrar no evento.' },
+      onError: (error) => lockout.recordFailure(error),
+      callback: (response) => {
+        lockout.resetLockout()
+        storeGuestToken(eventToken, response.guestToken)
+        setGuestToken(response.guestToken)
+        setGuest(response.guest)
+        setEvent(response.event)
+        setPhotosSent(0)
+        setCompletedChallengeIds(response.completedChallengeIds ?? [])
+      }
+    })
   }
 
   const upload = async (file: File, challengeId?: string, challengeTitle?: string) => {
     if (!guestToken) return
     setIsUploading(true)
-    try {
-      await uploadGuestPhoto(guestToken, file, challengeId, challengeTitle)
-      setPhotosSent((count) => count + 1)
-      if (challengeId) {
-        setCompletedChallengeIds((prev) => (prev.includes(challengeId) ? prev : [...prev, challengeId]))
+    await runAction({
+      action: async () => {
+        await uploadGuestPhoto(guestToken, file, challengeId, challengeTitle)
+        setPhotosSent((count) => count + 1)
+        if (challengeId) {
+          setCompletedChallengeIds((prev) => (prev.includes(challengeId) ? prev : [...prev, challengeId]))
+        }
+        setPage(1)
+        await loadFeed(guestToken, 1)
+      },
+      toastMessages: {
+        success: challengeTitle ? `Desafio "${challengeTitle}" cumprido! Foto enviada!` : 'Foto enviada!',
+        error: 'Não foi possível enviar a foto.'
       }
-      setPage(1)
-      await loadFeed(guestToken, 1)
-      if (challengeTitle) {
-        toast.success(`Desafio "${challengeTitle}" cumprido! Foto enviada!`)
-      } else {
-        toast.success('Foto enviada!')
-      }
-    } catch (error) {
-      toast.error(getErrorMessage(error, 'Não foi possível enviar a foto.'))
-    } finally {
-      setIsUploading(false)
-    }
+    })
+    setIsUploading(false)
   }
 
   const toggleLike = async (photoId: string) => {
     if (!guestToken) return
-    try {
-      const result = await toggleGuestPhotoLike(guestToken, photoId)
-      setPhotos((items) =>
-        items.map((item) =>
-          item.id === photoId ? { ...item, likedByMe: result.liked, likesCount: result.likesCount } : item
+    await runAction({
+      action: () => toggleGuestPhotoLike(guestToken, photoId),
+      toastMessages: { error: 'Não foi possível registrar a curtida.' },
+      callback: (result) =>
+        setPhotos((items) =>
+          items.map((item) =>
+            item.id === photoId ? { ...item, likedByMe: result.liked, likesCount: result.likesCount } : item
+          )
         )
-      )
-    } catch (error) {
-      toast.error(getErrorMessage(error, 'Não foi possível registrar a curtida.'))
-    }
+    })
   }
 
   const removePhoto = async (photoId: string) => {
     if (!guestToken) return
-    try {
-      await deleteGuestPhoto(guestToken, photoId)
-      setPhotosSent((count) => Math.max(0, count - 1))
-      await loadFeed(guestToken, page)
-      toast.success('Foto excluída.')
-    } catch (error) {
-      toast.error(getErrorMessage(error, 'Não foi possível excluir a foto.'))
-    }
+    await runAction({
+      action: async () => {
+        await deleteGuestPhoto(guestToken, photoId)
+        setPhotosSent((count) => Math.max(0, count - 1))
+        await loadFeed(guestToken, page)
+      },
+      toastMessages: { success: 'Foto excluída.', error: 'Não foi possível excluir a foto.' }
+    })
   }
 
   return {
@@ -264,5 +259,10 @@ const useGuestEvent = (eventToken: string) => {
   }
 }
 
-export default useGuestEvent
+const { PageProvider: GuestEventPageProvider, usePage: useGuestEventPage } = createPageContext(
+  useGuestEventPageState,
+  'useGuestEventPage'
+)
 
+export { GuestEventPageProvider }
+export default useGuestEventPage

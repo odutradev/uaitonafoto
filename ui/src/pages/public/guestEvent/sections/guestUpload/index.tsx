@@ -1,54 +1,21 @@
 import { useMemo, useRef, useState } from 'react'
-import {
-  Alert,
-  Box,
-  Button,
-  Chip,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  IconButton,
-  Paper,
-  Stack,
-  Typography
-} from '@mui/material'
-import {
-  AddAPhotoOutlined as CameraIcon,
-  CasinoOutlined as DiceIcon,
-  CheckCircleRounded as CheckIcon,
-  Close as CloseIcon,
-  EmojiEventsOutlined as ChallengeIcon,
-  Replay as RepeatIcon,
-  ShuffleOutlined as ShuffleIcon
-} from '@mui/icons-material'
+import { Alert, Box, Button, Chip, Dialog, DialogContent, DialogTitle, IconButton, Paper, Stack, Typography } from '@mui/material'
+import { AddAPhotoOutlined as CameraIcon, CasinoOutlined as DiceIcon, CheckCircleRounded as CheckIcon, Close as CloseIcon, EmojiEventsOutlined as ChallengeIcon, Replay as RepeatIcon, ShuffleOutlined as ShuffleIcon } from '@mui/icons-material'
 import dayjs from 'dayjs'
 import { toast } from 'react-toastify'
 
-import {
-  challengeActiveBadgeStyles,
-  challengeButtonStyles,
-  challengeCompletedItemCardStyles,
-  challengeItemCardStyles,
-  randomChallengeCardStyles,
-  uploadButtonStyles,
-  uploadButtonsRowStyles,
-  uploadHeaderStyles,
-  uploadPaperStyles
-} from './styles'
+import { challengeActiveBadgeStyles, challengeButtonStyles, challengeCompletedItemCardStyles, challengeItemCardStyles, randomChallengeCardStyles, uploadButtonStyles, uploadButtonsRowStyles, uploadHeaderStyles, uploadPaperStyles } from './styles'
 import type { ChangeEvent } from 'react'
 import type { EventChallenge } from '@utils/types/events'
-import type { GuestUploadProps } from './types'
+import useGuestEventPage from '@pages/public/guestEvent/hook'
 
 const MAX_PHOTO_AGE_MS = 5 * 60 * 1000
 
-const GuestUpload = ({
-  event,
-  guest,
-  photosSent,
-  completedChallengeIds = [],
-  isUploading,
-  onUpload
-}: GuestUploadProps) => {
+const GuestUpload = () => {
+  const { event: eventValue, guest: guestValue, photosSent, completedChallengeIds = [], isUploading, upload: onUpload } = useGuestEventPage()
+  const event = eventValue!
+  const guest = guestValue!
+
   const inputRef = useRef<HTMLInputElement | null>(null)
   const [isChallengeModalOpen, setIsChallengeModalOpen] = useState(false)
   const [selectedChallenge, setSelectedChallenge] = useState<EventChallenge | null>(null)
