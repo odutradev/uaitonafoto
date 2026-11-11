@@ -2,6 +2,7 @@ import { Avatar, Box, Card, Chip, IconButton, Tooltip, Typography } from '@mui/m
 import { ContentCopy as CopyIcon } from '@mui/icons-material'
 import { toast } from 'react-toastify'
 
+import useProfilePage from '@pages/app/profile/hook'
 import useSystemStore from '@stores/system'
 
 import {
@@ -16,7 +17,7 @@ import {
   metadataGridStyles,
   overviewCardStyles
 } from './styles'
-import type { UserOverviewProps } from './types'
+import type { AuthUser } from '@stores/auth/types'
 
 const formatDatePtBr = (isoDate?: string): string => {
   if (!isoDate) return 'Não informado'
@@ -36,7 +37,8 @@ const formatProviderLabel = (provider?: string): string => {
   return provider
 }
 
-const UserOverview = ({ user }: UserOverviewProps) => {
+const UserOverview = () => {
+  const user = useProfilePage().user as AuthUser
   const displayName = user.fullName || user.name
   const hasPermissions = useSystemStore((state) => state.hasPermissions)
   const isAdmin = hasPermissions(user.role, ['manage_platform'])
