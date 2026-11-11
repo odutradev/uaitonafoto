@@ -38,7 +38,6 @@ export const Footer = () => {
           <Links aria-label="Links institucionais">
             <FooterLink to="/termos-de-uso">Termos de Uso</FooterLink>
             <FooterLink to="/politica-de-cancelamento">Cancelamento e Reembolso</FooterLink>
-            <FooterLink to="/id">Identidade Visual</FooterLink>
           </Links>
         </Top>
         <Bottom>
