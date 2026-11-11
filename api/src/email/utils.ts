@@ -1,31 +1,20 @@
+import buildEmail from '@email/builder'
 import env from '@config/env'
 import email from '@email'
 
-import type { ProcessTemplateResult, ProcessTemplateParams, SendEmailResult, SendEmailParams, LocalEmailTemplate, EnrichedEmailTemplate, SendEnrichedEmailParams, MarkdownMailOptions } from '@email/types'
+import type { SendEnrichedEmailParams, SendEmailResult, SendEmailParams, EmailDefinition, EnrichedEmail } from '@email/types'
 
-export const processTemplate = ({ template, variables = {} }: ProcessTemplateParams): ProcessTemplateResult => {
-  const processed = Object.entries(variables).reduce((acc, [key, value]) => {
-    const regex = new RegExp(`{{\\s*${key}\\s*}}`, 'g')
-    return acc.replace(regex, String(value))
-  }, template)
-
-  return { processed }
-}
-
-export const sendEmail = async ({ to, subject, template, variables, from }: SendEmailParams): Promise<SendEmailResult> => {
+export const sendEmail = async ({ to, subject, html, text, from }: SendEmailParams): Promise<SendEmailResult> => {
   try {
     const transporter = await email.getInstance()
-    const { processed: processedSubject } = processTemplate({ template: subject, variables })
-    const { processed } = processTemplate({ template, variables })
 
-    const mailOptions: MarkdownMailOptions = {
+    const info = await transporter.sendMail({
       from: from ?? env.EMAIL_FROM,
       to: Array.isArray(to) ? to.join(', ') : to,
-      subject: processedSubject,
-      markdown: processed
-    }
-
-    const info = await transporter.sendMail(mailOptions)
+      subject,
+      html,
+      text
+    })
 
     return { success: true, messageId: info.messageId }
   } catch (error) {
@@ -33,15 +22,18 @@ export const sendEmail = async ({ to, subject, template, variables, from }: Send
   }
 }
 
-export const enrichTemplate = (templateDef: LocalEmailTemplate): EnrichedEmailTemplate => ({
-  ...templateDef,
-  send: async ({ to, variables, from }: SendEnrichedEmailParams): Promise<SendEmailResult> => {
-    return sendEmail({
-      to,
-      subject: templateDef.subject,
-      template: templateDef.markdownBody,
-      variables,
-      from
-    })
+export const enrichEmail = <Variables>(definition: EmailDefinition<Variables>): EnrichedEmail<Variables> => {
+  const render = (variables: Variables) => ({
+    subject: definition.subject(variables),
+    ...buildEmail(definition.build(variables))
+  })
+
+  return {
+    ...definition,
+    render,
+    send: async ({ to, variables, from }: SendEnrichedEmailParams<Variables>): Promise<SendEmailResult> => {
+      const { subject, html, text } = render(variables)
+      return sendEmail({ to, subject, html, text, from })
+    }
   }
-})
+}
