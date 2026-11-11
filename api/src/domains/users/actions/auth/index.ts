@@ -3,11 +3,15 @@ import jwt from 'jsonwebtoken'
 import { forgotPasswordSchema, resetPasswordSchema, syncResponseSchema, updateUserSchema, syncUserSchema, userSchema } from './schemas'
 import { getUserByEmail, updateUser, verifyIdToken } from '@firebase/services/auth'
 import subscriptionRepository from '@domains/payments/repositories/subscriptions'
+import passwordChangedEmail from '@domains/users/emails/passwordChanged'
 import passwordResetEmail from '@domains/users/emails/passwordReset'
 import userRepository from '@domains/users/repositories/users'
 import logRepository from '@domains/system/repositories/logs'
 import { authRateLimiter } from '@middlewares/rateLimit'
+import welcomeEmail from '@domains/users/emails/welcome'
 import defineAction from '@factories/defineAction'
+import { buildFrontendUrl } from '@email/links'
+import { formatDateTimeBR } from '@utils/date'
 import { getJwtSecret } from '@config/env'
 import env from '@config/env'
 
@@ -102,6 +106,19 @@ export const syncAuthUser = defineAction(
       }
 
       const user = await userRepository.upsert(data.id, payload)
+      const isNewUser = user.createdAt === user.updatedAt
+
+      if (isNewUser) {
+        void welcomeEmail.send({
+          to: user.email,
+          variables: {
+            userName: user.fullName || user.name,
+            appUrl: buildFrontendUrl('/app'),
+            billingUrl: buildFrontendUrl('/app/billing')
+          }
+        })
+      }
+
       const secret = getJwtSecret()
       const tokenPayload = { email: user.email, authProviderId: user.authProviderId }
       
@@ -321,6 +338,15 @@ export const resetPassword = defineAction(
       if (dbUser) {
         await userRepository.update(decoded.sub, {})
       }
+
+      void passwordChangedEmail.send({
+        to: dbUser?.email || decoded.email,
+        variables: {
+          userName: dbUser?.fullName || dbUser?.name || 'Usuário',
+          changedAt: formatDateTimeBR(new Date()),
+          recoveryUrl: buildFrontendUrl('/signin')
+        }
+      })
 
       logRepository.create({
         category: 'user',
