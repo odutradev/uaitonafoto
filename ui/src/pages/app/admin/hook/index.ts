@@ -1,18 +1,15 @@
 import { useCallback, useEffect, useState } from 'react'
-import axios from 'axios'
 import { toast } from 'react-toastify'
 
-import {
-  addAdminUserCredits,
-  getAdminMetrics,
-  listAdminUsers,
-  type AddCreditsPayload,
-  type AdminMetrics,
-  type AdminPeriod,
-  type AdminUserItem
-} from '@actions/admin'
+import { addAdminUserCredits, getAdminMetrics, listAdminUsers } from '@actions/admin'
+import createPageContext from '@utils/functions/createPageContext'
+import useAction from '@hooks/useAction'
 
-export const useAdminDashboard = () => {
+import type { AddCreditsPayload, AdminMetrics, AdminPeriod, AdminUserItem } from '@utils/types/admin'
+import type { AdminRoleFilter, UseAdminDashboardPageReturn } from './types'
+
+const useAdminDashboardPageState = (): UseAdminDashboardPageReturn => {
+  const runAction = useAction()
   const [period, setPeriod] = useState<AdminPeriod>('30d')
   const [metrics, setMetrics] = useState<AdminMetrics | null>(null)
   const [isLoadingMetrics, setIsLoadingMetrics] = useState(true)
@@ -26,7 +23,7 @@ export const useAdminDashboard = () => {
 
   const [searchInput, setSearchInput] = useState('')
   const [debouncedSearch, setDebouncedSearch] = useState('')
-  const [roleFilter, setRoleFilter] = useState<'all' | 'admin' | 'user'>('all')
+  const [roleFilter, setRoleFilter] = useState<AdminRoleFilter>('all')
 
   const [selectedUserForCredits, setSelectedUserForCredits] = useState<AdminUserItem | null>(null)
   const [isAddCreditsOpen, setIsAddCreditsOpen] = useState(false)
@@ -41,35 +38,36 @@ export const useAdminDashboard = () => {
   }, [searchInput])
 
   const fetchMetrics = useCallback(async () => {
-    try {
-      setIsLoadingMetrics(true)
-      const data = await getAdminMetrics({ period })
-      setMetrics(data)
-    } catch {
-      toast.error('Não foi possível carregar as métricas administrativas.')
-    } finally {
-      setIsLoadingMetrics(false)
-    }
-  }, [period])
+    setIsLoadingMetrics(true)
+    await runAction({
+      action: () => getAdminMetrics({ period }),
+      toastMessages: { error: 'Não foi possível carregar as métricas administrativas.' },
+      shouldUseApiError: false,
+      callback: setMetrics
+    })
+    setIsLoadingMetrics(false)
+  }, [period, runAction])
 
   const fetchUsers = useCallback(async () => {
-    try {
-      setIsLoadingUsers(true)
-      const res = await listAdminUsers({
-        page,
-        limit,
-        search: debouncedSearch || undefined,
-        role: roleFilter === 'all' ? undefined : roleFilter
-      })
-      setUsers(res.data)
-      setTotalUsers(res.meta.total)
-      setTotalPages(res.meta.totalPages || 1)
-    } catch {
-      toast.error('Erro ao listar usuários.')
-    } finally {
-      setIsLoadingUsers(false)
-    }
-  }, [page, limit, debouncedSearch, roleFilter])
+    setIsLoadingUsers(true)
+    await runAction({
+      action: () =>
+        listAdminUsers({
+          page,
+          limit,
+          search: debouncedSearch || undefined,
+          role: roleFilter === 'all' ? undefined : roleFilter
+        }),
+      toastMessages: { error: 'Erro ao listar usuários.' },
+      shouldUseApiError: false,
+      callback: (res) => {
+        setUsers(res.data)
+        setTotalUsers(res.meta.total)
+        setTotalPages(res.meta.totalPages || 1)
+      }
+    })
+    setIsLoadingUsers(false)
+  }, [page, limit, debouncedSearch, roleFilter, runAction])
 
   useEffect(() => {
     fetchMetrics()
@@ -96,21 +94,16 @@ export const useAdminDashboard = () => {
 
   const handleConfirmAddCredits = async (payload: AddCreditsPayload) => {
     if (!selectedUserForCredits) return
-    try {
-      setIsSubmittingCredits(true)
-      await addAdminUserCredits(selectedUserForCredits.id, payload)
-      toast.success(`${payload.amount} crédito(s) adicionado(s) com sucesso.`)
-      handleCloseAddCredits()
-      await Promise.all([fetchUsers(), fetchMetrics()])
-    } catch (err: unknown) {
-      let msg = 'Falha ao conceder créditos.'
-      if (axios.isAxiosError(err) && err.response?.data?.message) {
-        msg = String(err.response.data.message)
+    setIsSubmittingCredits(true)
+    await runAction({
+      action: () => addAdminUserCredits(selectedUserForCredits.id, payload),
+      toastMessages: { success: `${payload.amount} crédito(s) adicionado(s) com sucesso.`, error: 'Falha ao conceder créditos.' },
+      callback: async () => {
+        handleCloseAddCredits()
+        await Promise.all([fetchUsers(), fetchMetrics()])
       }
-      toast.error(msg)
-    } finally {
-      setIsSubmittingCredits(false)
-    }
+    })
+    setIsSubmittingCredits(false)
   }
 
   return {
@@ -118,6 +111,7 @@ export const useAdminDashboard = () => {
     setPeriod,
     metrics,
     isLoadingMetrics,
+    isRefreshing: isLoadingMetrics || isLoadingUsers,
     users,
     totalUsers,
     page,
@@ -131,7 +125,7 @@ export const useAdminDashboard = () => {
     searchInput,
     setSearchInput,
     roleFilter,
-    setRoleFilter: (role: 'all' | 'admin' | 'user') => {
+    setRoleFilter: (role: AdminRoleFilter) => {
       setRoleFilter(role)
       setPage(1)
     },
@@ -146,4 +140,11 @@ export const useAdminDashboard = () => {
   }
 }
 
-export default useAdminDashboard
+
+const { PageProvider: AdminDashboardPageProvider, usePage: useAdminDashboardPage } = createPageContext(
+  useAdminDashboardPageState,
+  'useAdminDashboardPage'
+)
+
+export { AdminDashboardPageProvider }
+export default useAdminDashboardPage

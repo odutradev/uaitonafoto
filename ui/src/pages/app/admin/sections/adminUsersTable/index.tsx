@@ -26,23 +26,8 @@ import {
 } from '@mui/icons-material'
 
 import { filterRowStyles, tableCardStyles, tableContainerStyles } from '@pages/app/admin/styles'
-import type { AdminUserItem } from '@actions/admin'
+import useAdminDashboardPage from '@pages/app/admin/hook'
 
-interface AdminUsersTableProps {
-  users: AdminUserItem[]
-  totalUsers: number
-  page: number
-  limit: number
-  totalPages: number
-  isLoading: boolean
-  searchInput: string
-  roleFilter: 'all' | 'admin' | 'user'
-  onSearchChange: (value: string) => void
-  onRoleFilterChange: (role: 'all' | 'admin' | 'user') => void
-  onPageChange: (newPage: number) => void
-  onLimitChange: (newLimit: number) => void
-  onAddCredits: (user: AdminUserItem) => void
-}
 
 const formatDatePtBr = (isoDate?: string): string => {
   if (!isoDate) return '-'
@@ -55,20 +40,9 @@ const formatDatePtBr = (isoDate?: string): string => {
   })
 }
 
-export const AdminUsersTable = ({
-  users,
-  totalUsers,
-  page,
-  limit,
-  isLoading,
-  searchInput,
-  roleFilter,
-  onSearchChange,
-  onRoleFilterChange,
-  onPageChange,
-  onLimitChange,
-  onAddCredits
-}: AdminUsersTableProps) => {
+export const AdminUsersTable = () => {
+  const { users, totalUsers, page, limit, isLoadingUsers: isLoading, searchInput, roleFilter, setSearchInput: onSearchChange, setRoleFilter: onRoleFilterChange, setPage: onPageChange, setLimit: onLimitChange, handleOpenAddCredits: onAddCredits } = useAdminDashboardPage()
+
   return (
     <Card elevation={0} sx={tableCardStyles}>
       <Box sx={filterRowStyles}>

@@ -11,12 +11,8 @@ import {
 } from '@mui/icons-material'
 
 import { kpiCardStyles, kpiGridStyles } from '@pages/app/admin/styles'
-import type { AdminMetrics } from '@actions/admin'
+import useAdminDashboardPage from '@pages/app/admin/hook'
 
-interface AdminKpisProps {
-  metrics: AdminMetrics | null
-  isLoading: boolean
-}
 
 const formatCurrencyBrl = (cents: number): string => {
   return (cents / 100).toLocaleString('pt-BR', {
@@ -25,7 +21,9 @@ const formatCurrencyBrl = (cents: number): string => {
   })
 }
 
-export const AdminKpis = ({ metrics, isLoading }: AdminKpisProps) => {
+export const AdminKpis = () => {
+  const { metrics, isLoadingMetrics: isLoading } = useAdminDashboardPage()
+
   if (isLoading || !metrics) {
     return (
       <Box sx={kpiGridStyles}>
