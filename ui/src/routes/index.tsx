@@ -12,6 +12,7 @@ import type { ComponentType, LazyExoticComponent } from "react";
 
 const ResetPassword = lazy(() => import("@pages/auth/resetPassword"));
 const LandingPage = lazy(() => import("@pages/public/landingPage"));
+const Presentation = lazy(() => import("@pages/public/presentation"));
 const TermsOfUse = lazy(() => import("@pages/public/termsOfUse"));
 const RefundPolicy = lazy(() => import("@pages/public/refundPolicy"));
 const BrandIdentity = lazy(() => import("@pages/public/brandIdentity"));
@@ -79,6 +80,7 @@ const appRouter = createBrowserRouter([
       { path: "/cancelamento-e-reembolso", element: renderPage(RefundPolicy) },
       { path: "/politica-de-reembolso", element: renderPage(RefundPolicy) },
       { path: "/", element: renderPage(LandingPage) },
+      { path: "/apresentacao", element: renderPage(Presentation) },
       { path: "*", element: renderPage(NotFound) }
     ]
   }
