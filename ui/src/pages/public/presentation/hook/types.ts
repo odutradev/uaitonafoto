@@ -26,6 +26,7 @@ export interface UsePresentationReturn {
   total: number;
   scale: number;
   isFullscreen: boolean;
+  themeMode: "light" | "dark";
   plans: PresentationPlan[];
   isLoadingPlans: boolean;
   handleNext: () => void;
