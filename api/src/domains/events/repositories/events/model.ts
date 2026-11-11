@@ -54,7 +54,8 @@ const settingsSchema = new Schema(
     pinUpdatedAt: { type: String, default: () => new Date().toISOString() },
     moderationEnabled: { type: Boolean, default: false },
     challengesEnabled: { type: Boolean, default: false },
-    challengesMode: { type: String, enum: ['choose', 'random'], default: 'choose' }
+    challengesMode: { type: String, enum: ['choose', 'random'], default: 'choose' },
+    uploadCooldownSeconds: { type: Number, min: 0, max: 1800, default: 60 }
   },
   { _id: false }
 )

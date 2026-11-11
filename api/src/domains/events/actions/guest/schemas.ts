@@ -28,6 +28,10 @@ export const guestEventInfoSchema = z
     challengesEnabled: z.boolean().default(false).optional(),
     challengesMode: z.enum(['choose', 'random']).default('choose').optional(),
     challenges: z.array(eventChallengeSchema).default([]),
+    uploadCooldownSeconds: z.number().int().openapi({
+      example: 60,
+      description: 'Intervalo mínimo, em segundos, entre duas fotos do mesmo convidado'
+    }),
     phase: eventPhaseSchema
   })
   .openapi('GuestEventInfo')
@@ -66,6 +70,10 @@ export const guestSessionResponseSchema = z
     guest: guestSchema,
     event: guestEventInfoSchema,
     photosSent: z.number().openapi({ example: 3 }),
+    nextUploadAt: z.string().optional().openapi({
+      example: '2026-12-20T22:01:00.000Z',
+      description: 'A partir de quando o convidado pode enviar a próxima foto, se ainda estiver aguardando'
+    }),
     completedChallengeIds: z.array(z.string()).default([])
   })
   .openapi('GuestSessionResponse')
