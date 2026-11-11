@@ -1,7 +1,7 @@
-import type { z } from 'zod'
 import type { checkoutResponseSchema, createCheckoutBodySchema } from './schemas'
-import type { CachedPlan } from '@payment/plans/types'
 import type { UserEntity } from '@domains/users/repositories/types'
+import type { CachedPlan } from '@payment/plans/types'
+import type { z } from 'zod'
 
 export type CreateCheckoutRequest = { body: z.infer<typeof createCheckoutBodySchema> }
 

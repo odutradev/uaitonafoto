@@ -1,5 +1,6 @@
 import subscriptionRepository from '@domains/payments/repositories/subscriptions'
-import type { EventEntity, EventPlanTier } from '../repositories/events/types'
+
+import type { EventEntity, EventPlanTier } from '@domains/events/repositories/events/types'
 
 export interface EventLimits {
   tier: EventPlanTier

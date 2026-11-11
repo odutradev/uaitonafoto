@@ -1,4 +1,5 @@
 import mongoose, { Schema } from 'mongoose'
+
 import type { LogCategory, LogLevel } from './types'
 
 export interface LogDocument {

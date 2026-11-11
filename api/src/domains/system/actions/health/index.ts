@@ -1,14 +1,14 @@
+import { healthCheckResponseSchema } from './schemas'
+import defineAction from '@factories/defineAction'
 import { checkDatabaseHealth } from '@database'
 import { checkFirebaseHealth } from '@firebase'
-import { checkEmailHealth } from '@email'
-import { checkPaymentHealth } from '@payment'
-import env from '@config/env'
 import { getAppVersion } from '@config/version'
-import defineAction from '@factories/defineAction'
-import { healthCheckResponseSchema } from './schemas'
+import { checkPaymentHealth } from '@payment'
+import { checkEmailHealth } from '@email'
+import env from '@config/env'
 
-import type { HealthCheckResponse } from './types'
 import type { ManageRequestBody, ManageRequestResponse } from '@middlewares/manageRequest/types'
+import type { HealthCheckResponse } from './types'
 
 export const healthCheck = defineAction(
   {

@@ -1,4 +1,5 @@
 import mongoose, { Schema } from 'mongoose'
+
 import type { CreditUsageEntity } from './types'
 
 export type CreditUsageDocument = Omit<CreditUsageEntity, 'id'> & { _id: string }

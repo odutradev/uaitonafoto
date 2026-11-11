@@ -1,12 +1,9 @@
 import cron from 'node-cron'
-import env from '@config/env'
+
 import createLogger from '@utils/logger'
-import type {
-  RoutineDefinition,
-  RoutineDivisionDefinition,
-  RoutineRegistry,
-  ScheduledRoutineEntry
-} from './types'
+import env from '@config/env'
+
+import type { RoutineDefinition, RoutineDivisionDefinition, RoutineRegistry, ScheduledRoutineEntry } from './types'
 
 const logger = createLogger('routine')
 

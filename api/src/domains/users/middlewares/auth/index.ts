@@ -1,12 +1,12 @@
 import jwt from 'jsonwebtoken'
 
+import { errorResponseSchema } from '@factories/errors/schemas'
+import { verifyIdToken } from '@firebase/services/auth'
 import { getJwtSecret } from '@config/env'
 import sendError from '@error/index'
-import { verifyIdToken } from '@firebase/services/auth'
-import { errorResponseSchema } from '@factories/errors/schemas'
 
-import type { NextFunction, Response, Request } from 'express'
 import type { DocumentedMiddleware, ResponseConfig } from '@factories/defineAction/types'
+import type { NextFunction, Response, Request } from 'express'
 
 export const authMiddleware = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const authHeader = req.headers.authorization

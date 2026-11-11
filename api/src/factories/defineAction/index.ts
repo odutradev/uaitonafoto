@@ -1,6 +1,6 @@
+import authMiddleware from '@domains/users/middlewares/auth'
 import { createRateLimiter } from '@middlewares/rateLimit'
 import manageRequest from '@middlewares/manageRequest'
-import authMiddleware from '@domains/users/middlewares/auth'
 import { registerOpenApiAction } from './openapi'
 
 import type { ManageRequestSchema, ServiceFunction, RouteSchema } from '@middlewares/manageRequest/types'

@@ -1,13 +1,13 @@
-import env from '@config/env'
-import { checkEmailHealth } from '@email'
-import { subscriptionRenewedTemplate } from '@email/templates/subscriptionRenewed'
 import { subscriptionPaymentFailedTemplate } from '@email/templates/subscriptionPaymentFailed'
-import { formatDateBR } from '@utils/date'
-import createLogger from '@utils/logger'
+import { subscriptionRenewedTemplate } from '@email/templates/subscriptionRenewed'
+import transactionRepository from '@domains/payments/repositories/transactions'
 import userRepository from '@domains/users/repositories'
-import transactionRepository from '../repositories/transactions'
+import { formatDateBR } from '@utils/date'
+import { checkEmailHealth } from '@email'
+import createLogger from '@utils/logger'
+import env from '@config/env'
 
-import type { SubscriptionEntity } from '../repositories/subscriptions/types'
+import type { SubscriptionEntity } from '@domains/payments/repositories/subscriptions/types'
 
 const logger = createLogger('payments:email')
 

@@ -1,7 +1,8 @@
-import dns from 'node:dns'
 import mongoose from 'mongoose'
-import env from '@config/env'
+import dns from 'node:dns'
+
 import createLogger from '@utils/logger'
+import env from '@config/env'
 
 const logger = createLogger('database')
 

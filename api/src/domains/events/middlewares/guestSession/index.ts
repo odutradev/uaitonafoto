@@ -1,10 +1,10 @@
-import sendError from '@error/index'
+import { verifyGuestToken } from '@domains/events/utils/guestToken'
+import guestRepository from '@domains/events/repositories/guests'
 import { errorResponseSchema } from '@factories/errors/schemas'
-import guestRepository from '../../repositories/guests'
-import { verifyGuestToken } from '../../utils/guestToken'
+import sendError from '@error/index'
 
-import type { NextFunction, Request, Response } from 'express'
 import type { DocumentedMiddleware, ResponseConfig } from '@factories/defineAction/types'
+import type { NextFunction, Request, Response } from 'express'
 
 export const guestSessionMiddleware = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const authHeader = req.headers.authorization

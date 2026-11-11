@@ -1,11 +1,6 @@
+import type { addOrganizerSchema, removeMemberParamsSchema, teamListResponseSchema, teamMemberSchema, teamParamsSchema } from './schemas'
+
 ﻿import type { z } from 'zod'
-import type {
-  addOrganizerSchema,
-  removeMemberParamsSchema,
-  teamListResponseSchema,
-  teamMemberSchema,
-  teamParamsSchema
-} from './schemas'
 
 export type ListTeamRequest = { params: z.infer<typeof teamParamsSchema> }
 

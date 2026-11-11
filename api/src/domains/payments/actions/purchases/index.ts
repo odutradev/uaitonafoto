@@ -1,10 +1,10 @@
-import defineAction from '@factories/defineAction'
-import purchaseRepository from '../../repositories/purchases'
-import type { PurchaseEntity } from '../../repositories/purchases/types'
-import type { PurchaseItemResponse, PurchaseListResponse } from './types'
+import purchaseRepository from '@domains/payments/repositories/purchases'
 import { purchaseListResponseSchema } from './schemas'
+import defineAction from '@factories/defineAction'
 
+import type { PurchaseEntity } from '@domains/payments/repositories/purchases/types'
 import type { ManageRequestResponse } from '@middlewares/manageRequest/types'
+import type { PurchaseItemResponse, PurchaseListResponse } from './types'
 
 const normalizePlanName = (planId: string, planType: string, planName: string): string => {
   if (planId === 'free_trial' || planType === 'FREE' || planName === 'Modo Degustação') {

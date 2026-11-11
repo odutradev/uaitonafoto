@@ -1,14 +1,14 @@
+import ensureSubscriptionRecord from '@domains/payments/utils/ensureSubscriptionRecord'
+import grantSubscriptionRenewal from '@domains/payments/utils/grantSubscriptionRenewal'
+import subscriptionRepository from '@domains/payments/repositories/subscriptions'
+import transactionRepository from '@domains/payments/repositories/transactions'
+import confirmPayment from '@domains/payments/utils/confirmPayment'
 import { defineRoutine } from '@config/routine'
 import { getPaymentClient } from '@payment'
 import createLogger from '@utils/logger'
-import transactionRepository from '@domains/payments/repositories/transactions'
-import subscriptionRepository from '@domains/payments/repositories/subscriptions'
-import confirmPayment from '@domains/payments/utils/confirmPayment'
-import ensureSubscriptionRecord from '@domains/payments/utils/ensureSubscriptionRecord'
-import grantSubscriptionRenewal from '@domains/payments/utils/grantSubscriptionRenewal'
 
-import type { AbacatePayClient } from '@payment/types'
 import type { ConfirmedStatementCharge } from './types'
+import type { AbacatePayClient } from '@payment/types'
 
 const logger = createLogger('payments:routine')
 

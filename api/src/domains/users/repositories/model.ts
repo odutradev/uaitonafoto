@@ -1,4 +1,5 @@
 import mongoose, { Schema } from 'mongoose'
+
 import type { UserCustomization, UserRole } from './types'
 
 export interface UserDocument {

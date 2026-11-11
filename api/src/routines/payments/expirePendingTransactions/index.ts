@@ -1,6 +1,6 @@
+import syncOrExpirePendingTransactions from '@domains/payments/utils/syncOrExpirePendingTransactions'
 import { defineRoutine } from '@config/routine'
 import createLogger from '@utils/logger'
-import syncOrExpirePendingTransactions from '@domains/payments/utils/syncOrExpirePendingTransactions'
 
 const logger = createLogger('payments:expire-routine')
 

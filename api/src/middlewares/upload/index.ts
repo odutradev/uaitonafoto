@@ -1,9 +1,12 @@
 import multer, { MulterError } from 'multer'
-import sendError from '@error/index'
+
 import { errorResponseSchema } from '@factories/errors/schemas'
-import { ALLOWED_MIME_TYPES, type AllowedMimeType } from './types'
-import type { Request, Response, NextFunction } from 'express'
+import { ALLOWED_MIME_TYPES } from './types'
+import sendError from '@error/index'
+
 import type { DocumentedMiddleware, ResponseConfig } from '@factories/defineAction/types'
+import type { Request, Response, NextFunction } from 'express'
+import type { AllowedMimeType } from './types'
 
 export const MAX_FILE_SIZE = 10 * 1024 * 1024
 

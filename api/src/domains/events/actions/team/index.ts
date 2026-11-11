@@ -1,9 +1,13 @@
-import defineAction from '@factories/defineAction'
+import { addOrganizerSchema, removeMemberParamsSchema, teamListResponseSchema, teamParamsSchema } from './schemas'
+import { resolveEventLimits } from '@domains/events/utils/eventLimits'
+import eventRepository from '@domains/events/repositories/events'
+import { findMemberRole } from '@domains/events/actions/event'
 import userRepository from '@domains/users/repositories'
-import eventRepository from '../../repositories/events'
-import { findMemberRole } from '../event'
-import { resolveEventLimits } from '../../utils/eventLimits'
-import type { EventEntity } from '../../repositories/events/types'
+import defineAction from '@factories/defineAction'
+
+import type { AddOrganizerRequest, ListTeamRequest, RemoveMemberRequest, TeamListResponse } from './types'
+import type { ManageRequestBody, ManageRequestResponse } from '@middlewares/manageRequest/types'
+import type { EventEntity } from '@domains/events/repositories/events/types'
 
 const buildTeamResponse = async (event: EventEntity): Promise<TeamListResponse> => {
   const users = await Promise.all(event.members.map((member) => userRepository.findById(member.userId)))
@@ -24,20 +28,6 @@ const buildTeamResponse = async (event: EventEntity): Promise<TeamListResponse> 
     ]
   })
 }
-import {
-  addOrganizerSchema,
-  removeMemberParamsSchema,
-  teamListResponseSchema,
-  teamParamsSchema
-} from './schemas'
-
-import type { ManageRequestBody, ManageRequestResponse } from '@middlewares/manageRequest/types'
-import type {
-  AddOrganizerRequest,
-  ListTeamRequest,
-  RemoveMemberRequest,
-  TeamListResponse
-} from './types'
 
 export const listTeam = defineAction(
   {

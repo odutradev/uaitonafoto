@@ -1,4 +1,4 @@
-import type { EventCreditType, EventSettings } from '../repositories/events/types'
+import type { EventCreditType, EventSettings } from '@domains/events/repositories/events/types'
 import type { EventPhase, EventWindows, EventWindowsInput } from './types'
 
 const HOUR_MS = 60 * 60 * 1000

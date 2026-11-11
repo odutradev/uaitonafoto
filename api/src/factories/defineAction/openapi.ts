@@ -4,8 +4,8 @@ import { z } from 'zod'
 import { errorResponseSchema } from '@factories/errors/schemas'
 import registry from '@factories/docs/registry'
 
-import type { RouteConfig } from '@asteasolutions/zod-to-openapi'
 import type { ActionMetadata, DocumentedMiddleware, ResponseConfig } from './types'
+import type { RouteConfig } from '@asteasolutions/zod-to-openapi'
 import type { ZodTypeAny } from 'zod'
 
 extendZodWithOpenApi(z)

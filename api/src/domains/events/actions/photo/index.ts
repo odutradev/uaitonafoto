@@ -1,18 +1,22 @@
 import { Types } from 'mongoose'
 
-import defineAction from '@factories/defineAction'
-import upload from '@middlewares/upload'
+import { likeResponseSchema, listFeedQuerySchema, listFeedResponseSchema, photoParamsSchema, photoSchema } from './schemas'
+import { arePhotosVisible, canUploadPhotos, getEventPhase } from '@domains/events/utils/eventWindows'
 import { buildPaginatedResponse, getPaginationOptions } from '@factories/pagination/utils'
-import photoRepository from '../../repositories/photos'
-import likeRepository from '../../repositories/likes'
-import guestRepository from '../../repositories/guests'
-import guestSessionMiddleware from '../../middlewares/guestSession'
-import { arePhotosVisible, canUploadPhotos, getEventPhase } from '../../utils/eventWindows'
+import { removePhotoFile, storeEventPhoto } from '@domains/events/utils/photoStorage'
+import guestSessionMiddleware from '@domains/events/middlewares/guestSession'
+import { getClientIdentity } from '@domains/events/utils/clientIdentity'
+import photoRepository from '@domains/events/repositories/photos'
+import guestRepository from '@domains/events/repositories/guests'
+import likeRepository from '@domains/events/repositories/likes'
+import defineAction from '@factories/defineAction'
 import { broadcastEvent } from '@realtime'
-import { removePhotoFile, storeEventPhoto } from '../../utils/photoStorage'
-import { getClientIdentity } from '../../utils/clientIdentity'
-import type { PhotoEntity } from '../../repositories/photos/types'
-import type { DetectedImageType } from '../../utils/types'
+import upload from '@middlewares/upload'
+
+import type { LikeResponse, ListFeedRequest, ListFeedResponse, PhotoParamsRequest, PhotoResponse } from './types'
+import type { ManageRequestBody, ManageRequestResponse } from '@middlewares/manageRequest/types'
+import type { PhotoEntity } from '@domains/events/repositories/photos/types'
+import type { DetectedImageType } from '@domains/events/utils/types'
 
 const JPEG_SIGNATURE = [0xff, 0xd8, 0xff]
 const PNG_SIGNATURE = [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]
@@ -56,22 +60,6 @@ export const toPhotoResponses = async (photos: PhotoEntity[], viewerGuestId?: st
     createdAt: photo.createdAt
   }))
 }
-import {
-  likeResponseSchema,
-  listFeedQuerySchema,
-  listFeedResponseSchema,
-  photoParamsSchema,
-  photoSchema
-} from './schemas'
-
-import type { ManageRequestBody, ManageRequestResponse } from '@middlewares/manageRequest/types'
-import type {
-  LikeResponse,
-  ListFeedRequest,
-  ListFeedResponse,
-  PhotoParamsRequest,
-  PhotoResponse
-} from './types'
 
 export const uploadPhoto = defineAction(
   {

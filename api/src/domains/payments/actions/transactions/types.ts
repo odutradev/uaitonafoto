@@ -1,9 +1,5 @@
+import type { listTransactionsQuerySchema, listTransactionsResponseSchema, transactionItemSchema } from './schemas'
 import type { z } from 'zod'
-import type {
-  listTransactionsQuerySchema,
-  listTransactionsResponseSchema,
-  transactionItemSchema
-} from './schemas'
 
 export type TransactionItemResponse = z.infer<typeof transactionItemSchema>
 

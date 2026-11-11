@@ -1,5 +1,5 @@
-import type { EventCreditType, EventEntity, EventMemberRole, EventSettings } from '../repositories/events/types'
-import type { GuestEntity } from '../repositories/guests/types'
+import type { EventCreditType, EventEntity, EventMemberRole, EventSettings } from '@domains/events/repositories/events/types'
+import type { GuestEntity } from '@domains/events/repositories/guests/types'
 
 export type EventPhase = 'upcoming' | 'open' | 'closed' | 'expired'
 

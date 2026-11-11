@@ -1,7 +1,8 @@
+import eventRepository from '@domains/events/repositories/events'
 import GuestModel from './model'
-import eventRepository from '../events'
-import type { EventEntity } from '../events/types'
+
 import type { CreateGuestPayload, FindGuestForClientParams, GuestEntity, UpdateGuestSessionPayload } from './types'
+import type { EventEntity } from '@domains/events/repositories/events/types'
 
 const toGuestEntity = (doc: any): GuestEntity => {
   const { _id, ...rest } = doc

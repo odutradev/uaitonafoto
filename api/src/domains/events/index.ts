@@ -1,8 +1,9 @@
 import * as eventActions from './actions/event'
-import * as teamActions from './actions/team'
 import * as guestActions from './actions/guest'
 import * as photoActions from './actions/photo'
 import * as albumActions from './actions/album'
+import * as teamActions from './actions/team'
+
 import type { DomainDefinition } from '@config/domain'
 
 const actions = {

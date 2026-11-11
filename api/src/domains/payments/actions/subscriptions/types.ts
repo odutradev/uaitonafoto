@@ -1,9 +1,5 @@
+import type { cancelSubscriptionParamsSchema, subscriptionListResponseSchema, subscriptionSchema } from './schemas'
 import type { z } from 'zod'
-import type {
-  cancelSubscriptionParamsSchema,
-  subscriptionListResponseSchema,
-  subscriptionSchema
-} from './schemas'
 
 export type SubscriptionResponse = z.infer<typeof subscriptionSchema>
 

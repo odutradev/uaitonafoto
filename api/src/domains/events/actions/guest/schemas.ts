@@ -1,7 +1,7 @@
 import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi'
 import { z } from 'zod'
 
-import { eventChallengeSchema, eventCustomizationSchema, eventPinSchema, eventTypeSchema } from '../event/schemas'
+import { eventChallengeSchema, eventCustomizationSchema, eventPinSchema, eventTypeSchema } from '@domains/events/actions/event/schemas'
 
 extendZodWithOpenApi(z)
 

@@ -1,8 +1,8 @@
-﻿import jwt from 'jsonwebtoken'
-
 import { getJwtSecret } from '@config/env'
 
 import type { GuestTokenPayload } from './types'
+
+﻿import jwt from 'jsonwebtoken'
 
 export const signGuestToken = (guestId: string, galleryExpiresAt: string): string => {
   const expiresIn = Math.max(1, Math.floor((new Date(galleryExpiresAt).getTime() - Date.now()) / 1000))

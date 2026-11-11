@@ -1,8 +1,8 @@
 import swaggerUi from 'swagger-ui-express'
 
 import { generateDocs } from '@config/docs'
-import env from '@config/env'
 import createApiRouter from '@routes/api'
+import env from '@config/env'
 
 import type { Application, Response, Request, NextFunction } from 'express'
 
@@ -48,4 +48,4 @@ const registerGlobalRoutes = (app: Application): void => {
   }
 }
 
-export default registerGlobalRoutes
+export default registerGlobalRoutes

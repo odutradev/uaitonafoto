@@ -1,4 +1,5 @@
 import mongoose, { Schema } from 'mongoose'
+
 import type { TransactionEntity } from './types'
 
 export type TransactionDocument = Omit<TransactionEntity, 'id'> & { _id: string }

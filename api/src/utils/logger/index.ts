@@ -1,4 +1,5 @@
 import { formatTimestamp } from '@utils/date'
+
 import type { Logger } from './types'
 
 const COLORS = {
@@ -36,6 +37,5 @@ export const createLogger = (prefix: string): Logger => ({
     console.log(message, ...args)
   }
 })
-
 
 export default createLogger

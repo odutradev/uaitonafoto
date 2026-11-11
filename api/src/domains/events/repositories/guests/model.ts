@@ -1,4 +1,5 @@
 import mongoose, { Schema } from 'mongoose'
+
 import type { GuestEntity } from './types'
 
 export type GuestDocument = Omit<GuestEntity, 'id'> & { _id: string }

@@ -1,5 +1,6 @@
-import { randomBytes } from 'crypto'
 import mongoose, { Schema } from 'mongoose'
+import { randomBytes } from 'crypto'
+
 import type { EventEntity } from './types'
 
 export type EventDocument = Omit<EventEntity, 'id'> & { _id: string }

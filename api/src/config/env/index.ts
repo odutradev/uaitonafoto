@@ -1,6 +1,9 @@
 import 'dotenv/config'
+
+import { serverEnvSchema } from './types'
 import createLogger from '@utils/logger'
-import { serverEnvSchema, type ServerEnv } from './types'
+
+import type { ServerEnv } from './types'
 
 const logger = createLogger('env')
 

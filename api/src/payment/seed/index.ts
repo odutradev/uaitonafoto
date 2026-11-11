@@ -1,4 +1,5 @@
 import 'dotenv/config'
+
 import { getPaymentClient } from '@payment'
 import createLogger from '@utils/logger'
 import { seedPlans } from './plans'

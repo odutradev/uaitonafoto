@@ -1,15 +1,7 @@
 import { removeUndefined } from '@utils/object'
 import TransactionModel from './model'
-import type {
-  CreateCancelledTransactionPayload,
-  CreatePaidTransactionPayload,
-  CreateTransactionPayload,
-  ListUserTransactionsPaginatedParams,
-  TransactionEntity,
-  TransactionStatus,
-  TransactionWebhookEvent,
-  UpdateTransactionPayload
-} from './types'
+
+import type { CreateCancelledTransactionPayload, CreatePaidTransactionPayload, CreateTransactionPayload, ListUserTransactionsPaginatedParams, TransactionEntity, TransactionStatus, TransactionWebhookEvent, UpdateTransactionPayload } from './types'
 import type { PaginatedData } from '@factories/pagination/types'
 
 const toTransactionEntity = (doc: any): TransactionEntity => {

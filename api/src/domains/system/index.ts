@@ -1,6 +1,6 @@
+import * as adminActions from './actions/admin'
 import { healthCheck } from './actions/health'
 import { listLogs } from './actions/logs'
-import * as adminActions from './actions/admin'
 
 import type { DomainDefinition } from '@config/domain'
 

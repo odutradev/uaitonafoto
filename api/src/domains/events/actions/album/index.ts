@@ -1,26 +1,33 @@
-import mongoose from 'mongoose'
-import { randomUUID } from 'crypto'
 import { ZipArchive } from 'archiver'
-import defineAction from '@factories/defineAction'
-import { getStorageFile } from '@firebase/services/storage'
+import { randomUUID } from 'crypto'
+import mongoose from 'mongoose'
+
+import { activateScreenResponseSchema, activateScreenSchema, addChallengeSchema, albumQuerySchema, albumResponseSchema, approveAllPhotosResponseSchema, challengeListResponseSchema, challengeParamsSchema, createScreenSlotSchema, deleteEventGuestResponseSchema, disconnectScreenResponseSchema, eventGuestListResponseSchema, eventGuestParamsSchema, eventGuestSchema, eventIdParamsSchema, eventPhotoParamsSchema, eventScreenParamsSchema, resetEventLockoutsResponseSchema, resetEventLockoutsSchema, screenQuerySchema, screenResponseSchema, screenSlotListResponseSchema, setEventGuestBlockSchema, setScreenSlotBlockSchema, updateEventGuestSchema, updateScreenSlotSchema } from './schemas'
+import { checkPinLockout, recordPinFailure, resetPinLockout, resetPinLockoutsForTarget } from '@domains/events/utils/pinLockout'
+import { arePhotosVisible, getEventPhase, hasEventEnded } from '@domains/events/utils/eventWindows'
 import { buildPaginatedResponse, getPaginationOptions } from '@factories/pagination/utils'
-import eventRepository from '../../repositories/events'
-import guestRepository from '../../repositories/guests'
-import likeRepository from '../../repositories/likes'
-import photoRepository from '../../repositories/photos'
-import screenSessionMiddleware from '../../middlewares/screenSession'
-import { arePhotosVisible, getEventPhase, hasEventEnded } from '../../utils/eventWindows'
+import { ensureCurrentEventPin, generatePin } from '@domains/events/utils/eventPin'
+import screenSessionMiddleware from '@domains/events/middlewares/screenSession'
+import { resolveEventLimits } from '@domains/events/utils/eventLimits'
+import { removePhotoFile } from '@domains/events/utils/photoStorage'
+import { signScreenToken } from '@domains/events/utils/screenToken'
+import { photoSchema } from '@domains/events/actions/photo/schemas'
+import eventRepository from '@domains/events/repositories/events'
+import guestRepository from '@domains/events/repositories/guests'
+import photoRepository from '@domains/events/repositories/photos'
+import challengesData from '@domains/events/data/challenges.json'
 import { broadcastEvent, subscribeEventStream } from '@realtime'
-import { ensureCurrentEventPin, generatePin } from '../../utils/eventPin'
-import { checkPinLockout, recordPinFailure, resetPinLockout, resetPinLockoutsForTarget } from '../../utils/pinLockout'
-import { removePhotoFile } from '../../utils/photoStorage'
-import { signScreenToken } from '../../utils/screenToken'
-import { toPhotoResponses } from '../photo'
-import { findMemberRole } from '../event'
-import { resolveEventLimits } from '../../utils/eventLimits'
-import challengesData from '../../data/challenges.json'
-import type { TeamAccess } from '../../utils/types'
-import type { EventChallenge, EventScreenHistoryEntry, EventScreenSlot, EventType } from '../../repositories/events/types'
+import { toPhotoResponses } from '@domains/events/actions/photo'
+import likeRepository from '@domains/events/repositories/likes'
+import { findMemberRole } from '@domains/events/actions/event'
+import { getStorageFile } from '@firebase/services/storage'
+import defineAction from '@factories/defineAction'
+
+import type { ActivateScreenRequest, ActivateScreenResponse, AddChallengeRequest, AlbumRequest, AlbumResponse, ApproveAllPhotosResponse, ChallengeListResponse, ChallengeParamsRequest, CreateScreenSlotRequest, DeleteEventGuestResponse, DisconnectScreenResponse, EventGuestListResponse, EventGuestParamsRequest, EventGuestResponse, EventIdRequest, EventPhotoRequest, EventScreenRequest, ResetEventLockoutsRequest, ResetEventLockoutsResponse, ScreenRequest, ScreenResponse, ScreenSlotListResponse, SetEventGuestBlockRequest, SetScreenSlotBlockRequest, UpdateEventGuestRequest, UpdateScreenSlotRequest } from './types'
+import type { EventChallenge, EventScreenHistoryEntry, EventScreenSlot, EventType } from '@domains/events/repositories/events/types'
+import type { ManageRequestBody, ManageRequestResponse } from '@middlewares/manageRequest/types'
+import type { PhotoResponse } from '@domains/events/actions/photo/types'
+import type { TeamAccess } from '@domains/events/utils/types'
 
 const DEFAULT_CHALLENGES_BY_TYPE: Record<EventType, string[]> = challengesData as Record<EventType, string[]>
 
@@ -41,66 +48,6 @@ const loadTeamAccess = async (eventId: string, userId: string): Promise<TeamAcce
   const role = findMemberRole(event, userId)
   return role ? { event, role } : { error: 'forbidden' }
 }
-import {
-  activateScreenResponseSchema,
-  activateScreenSchema,
-  addChallengeSchema,
-  albumQuerySchema,
-  albumResponseSchema,
-  approveAllPhotosResponseSchema,
-  challengeListResponseSchema,
-  challengeParamsSchema,
-  createScreenSlotSchema,
-  deleteEventGuestResponseSchema,
-  disconnectScreenResponseSchema,
-  eventGuestListResponseSchema,
-  eventGuestParamsSchema,
-  eventGuestSchema,
-  eventIdParamsSchema,
-  eventPhotoParamsSchema,
-  eventScreenParamsSchema,
-  resetEventLockoutsResponseSchema,
-  resetEventLockoutsSchema,
-  screenQuerySchema,
-  screenResponseSchema,
-  screenSlotListResponseSchema,
-  setEventGuestBlockSchema,
-  setScreenSlotBlockSchema,
-  updateEventGuestSchema,
-  updateScreenSlotSchema
-} from './schemas'
-import { photoSchema } from '../photo/schemas'
-
-import type { ManageRequestBody, ManageRequestResponse } from '@middlewares/manageRequest/types'
-import type { PhotoResponse } from '../photo/types'
-import type {
-  ActivateScreenRequest,
-  ActivateScreenResponse,
-  AddChallengeRequest,
-  AlbumRequest,
-  AlbumResponse,
-  ApproveAllPhotosResponse,
-  ChallengeListResponse,
-  ChallengeParamsRequest,
-  CreateScreenSlotRequest,
-  DeleteEventGuestResponse,
-  DisconnectScreenResponse,
-  EventGuestListResponse,
-  EventGuestParamsRequest,
-  EventGuestResponse,
-  EventIdRequest,
-  EventPhotoRequest,
-  EventScreenRequest,
-  ResetEventLockoutsRequest,
-  ResetEventLockoutsResponse,
-  ScreenRequest,
-  ScreenResponse,
-  ScreenSlotListResponse,
-  SetEventGuestBlockRequest,
-  SetScreenSlotBlockRequest,
-  UpdateEventGuestRequest,
-  UpdateScreenSlotRequest
-} from './types'
 
 const SCREEN_DEFAULT_LIMIT = 50
 const MAX_ACTIVE_SCREENS = 2

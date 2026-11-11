@@ -1,8 +1,9 @@
-import createLogger from '@utils/logger'
 import { removeUndefined } from '@utils/object'
+import createLogger from '@utils/logger'
 import LogModel from './model'
-import type { PaginatedData } from '@factories/pagination/types'
+
 import type { CreateLogPayload, ListLogsPaginatedParams, LogEntity } from './types'
+import type { PaginatedData } from '@factories/pagination/types'
 
 const logger = createLogger('log-repository')
 

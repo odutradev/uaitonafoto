@@ -1,27 +1,27 @@
 import 'dotenv/config'
-import suppressPunycodeWarning from '@utils/warning'
 
-suppressPunycodeWarning()
-
-import env from '@config/env'
-import { resolveAppVersion } from '@config/version'
-import { registerDomains } from '@config/domain'
 import { registerRoutines, startRoutines, stopRoutines } from '@config/routine'
-import usersDomain from '@domains/users'
-import systemDomain from '@domains/system'
-import paymentsDomain from '@domains/payments'
-import eventsDomain from '@domains/events'
+import { connectDatabase, disconnectDatabase } from '@database'
+import suppressPunycodeWarning from '@utils/warning'
+import { resolveAppVersion } from '@config/version'
 import { closeAllRealtimeStreams } from '@realtime'
 import paymentsRoutines from '@routines/payments'
+import { registerDomains } from '@config/domain'
+import paymentsDomain from '@domains/payments'
 import eventsRoutines from '@routines/events'
-import { connectDatabase, disconnectDatabase } from '@database'
-import { connectEmail } from '@email'
 import { connectFirebase } from '@firebase'
+import systemDomain from '@domains/system'
+import eventsDomain from '@domains/events'
 import { connectPayment } from '@payment'
+import usersDomain from '@domains/users'
 import createLogger from '@utils/logger'
-import buildApp from '@/app'
+import { connectEmail } from '@email'
+import env from '@config/env'
+import buildApp from './app'
 
 import type { Server } from 'http'
+
+suppressPunycodeWarning()
 
 const logger = createLogger('server')
 

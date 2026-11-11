@@ -1,13 +1,13 @@
-import defineAction from '@factories/defineAction'
+import syncOrExpirePendingTransactions from '@domains/payments/utils/syncOrExpirePendingTransactions'
 import { buildPaginatedResponse, getPaginationOptions } from '@factories/pagination/utils'
-import transactionRepository from '../../repositories/transactions'
-import syncOrExpirePendingTransactions from '../../utils/syncOrExpirePendingTransactions'
-import type { TransactionEntity } from '../../repositories/transactions/types'
-import type { TransactionItemResponse } from './types'
 import { listTransactionsQuerySchema, listTransactionsResponseSchema } from './schemas'
+import transactionRepository from '@domains/payments/repositories/transactions'
+import defineAction from '@factories/defineAction'
 
 import type { ManageRequestBody, ManageRequestResponse } from '@middlewares/manageRequest/types'
+import type { TransactionEntity } from '@domains/payments/repositories/transactions/types'
 import type { ListTransactionsRequest, ListTransactionsResponse } from './types'
+import type { TransactionItemResponse } from './types'
 
 const normalizePlanName = (planId: string, planType: string, planName: string): string => {
   if (planId === 'free_trial' || planType === 'FREE' || planName === 'Modo Degustação') {
