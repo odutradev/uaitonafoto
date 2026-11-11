@@ -1,7 +1,3 @@
-export interface BrandIdentityProps {
-  lastUpdated?: string
-}
-
 export type SectionId =
   | 'concept'
   | 'symbol'
