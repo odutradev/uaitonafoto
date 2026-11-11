@@ -5,11 +5,11 @@ import { ToastContainer } from 'react-toastify'
 import { createRoot } from 'react-dom/client'
 import { StrictMode, useMemo } from 'react'
 
-import { getToastContainerConfig } from '@config/toastConfig'
-import { initClarity } from '@config/clarity'
-import useSystemStore from '@stores/system'
-import { getAppTheme } from '@theme'
-import appRouter from '@/router'
+import { getToastContainerConfig } from './assets/config/toast'
+import { initClarity } from './utils/functions/clarity'
+import useSystemStore from './stores/system'
+import { getAppTheme } from './styles/theme'
+import appRouter from './routes'
 
 const App = () => {
   const { themeMode } = useSystemStore((state) => state.system)

@@ -4,8 +4,8 @@ import {
   PhotoCameraOutlined as CameraIcon
 } from '@mui/icons-material'
 
-import { formatGuestTaNaFoto } from '@config/events'
-import { brandColors } from '@theme'
+import { formatGuestTaNaFoto } from '@utils/functions/events'
+import { brandColors } from '@styles/theme'
 
 import {
   bannerAuthorStyles,
@@ -18,9 +18,9 @@ import {
   photoBackdropStyles,
   waitingEmptyStyles,
   yellowBannerStyles
-} from '../../styles'
-import type { EventPhoto } from '@actions/events/types'
-import type { ScreenPhotoFit } from '../../types'
+} from '@pages/app/eventScreen/styles'
+import type { EventPhoto } from '@utils/types/events'
+import type { ScreenPhotoFit } from '@pages/app/eventScreen/types'
 
 interface ScreenPhotoStageProps {
   currentPhoto: EventPhoto | null

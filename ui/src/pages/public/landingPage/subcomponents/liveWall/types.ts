@@ -1,4 +1,4 @@
-import type { LiveWallData } from '../../data'
+import type { LiveWallData } from '@pages/public/landingPage/data'
 
 export interface LiveWallProps {
   data: LiveWallData

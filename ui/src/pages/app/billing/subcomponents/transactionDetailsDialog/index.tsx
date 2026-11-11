@@ -18,7 +18,7 @@ import {
 } from '@mui/icons-material'
 import { toast } from 'react-toastify'
 
-import { formatPriceInBrl } from '@config/formatters'
+import { formatPriceInBrl } from '@utils/functions/formatters'
 
 import {
   dialogActionsStyles,
@@ -28,7 +28,7 @@ import {
   metaStackStyles,
   monoIdStyles
 } from './styles'
-import type { TransactionStatus } from '@actions/payments/types'
+import type { TransactionStatus } from '@utils/types/payments'
 import type { TransactionDetailsDialogProps } from './types'
 
 const formatDateTimePtBr = (isoDate?: string): string => {

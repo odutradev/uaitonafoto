@@ -1,5 +1,5 @@
 import type { SxProps, Theme } from '@mui/material'
-import { brandColors } from '@theme'
+import { brandColors } from '@styles/theme'
 
 export const getSectionBoxStyles = (isDark: boolean): SxProps<Theme> => ({
   bgcolor: isDark ? brandColors.darkSurface : brandColors.sand,

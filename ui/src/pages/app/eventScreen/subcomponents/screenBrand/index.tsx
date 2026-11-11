@@ -4,8 +4,8 @@ import {
   SettingsOutlined as SettingsIcon
 } from '@mui/icons-material'
 import Logo from '@components/logo'
-import { brandColors } from '@theme'
-import type { EventCustomization } from '@actions/events/types'
+import { brandColors } from '@styles/theme'
+import type { EventCustomization } from '@utils/types/events'
 
 interface ScreenBrandProps {
   customization?: EventCustomization

@@ -15,7 +15,7 @@ import {
   YAxis
 } from 'recharts'
 
-import { chartCardStyles, chartsGridStyles } from '../../styles'
+import { chartCardStyles, chartsGridStyles } from '@pages/app/admin/styles'
 import type { AdminMetrics } from '@actions/admin'
 
 interface AdminChartsProps {

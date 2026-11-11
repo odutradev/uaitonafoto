@@ -1,12 +1,12 @@
 import { Box, Typography } from '@mui/material'
 import { Favorite as LikeIcon } from '@mui/icons-material'
 
-import { formatGuestTaNaFoto } from '@config/events'
-import ScreenBrand from '../screenBrand'
-import ScreenPhotoTile from '../screenPhotoTile'
-import ScreenQrBlock from '../screenQrBlock'
-import type { EventCustomization, EventPhoto } from '@actions/events/types'
-import type { ScreenPhotoFit } from '../../types'
+import { formatGuestTaNaFoto } from '@utils/functions/events'
+import ScreenBrand from '@pages/app/eventScreen/subcomponents/screenBrand'
+import ScreenPhotoTile from '@pages/app/eventScreen/subcomponents/screenPhotoTile'
+import ScreenQrBlock from '@pages/app/eventScreen/subcomponents/screenQrBlock'
+import type { EventCustomization, EventPhoto } from '@utils/types/events'
+import type { ScreenPhotoFit } from '@pages/app/eventScreen/types'
 
 interface LateralLayoutProps {
   currentPhoto: EventPhoto | null

@@ -1,4 +1,4 @@
-import type { LogCategory, LogItem, LogLevel, LogScope } from '@actions/logs/types'
+import type { LogCategory, LogItem, LogLevel, LogScope } from '@utils/types/logs'
 
 export type LogLevelFilter = 'ALL' | LogLevel
 export type LogCategoryFilter = 'ALL' | LogCategory

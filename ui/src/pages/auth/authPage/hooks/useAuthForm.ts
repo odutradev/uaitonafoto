@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import useAuth from '@hooks/useAuth'
 import type { FormEvent } from 'react'
-import type { AuthMode, UseAuthFormOptions, UseAuthFormReturn } from '../types'
+import type { AuthMode, UseAuthFormOptions, UseAuthFormReturn } from '@pages/auth/authPage/types'
 
 const getFirebaseErrorMessage = (error: unknown, mode: AuthMode): string => {
   if (typeof error === 'object' && error !== null && 'code' in error) {

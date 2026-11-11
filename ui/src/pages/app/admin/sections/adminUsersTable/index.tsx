@@ -25,7 +25,7 @@ import {
   Search as SearchIcon
 } from '@mui/icons-material'
 
-import { filterRowStyles, tableCardStyles, tableContainerStyles } from '../../styles'
+import { filterRowStyles, tableCardStyles, tableContainerStyles } from '@pages/app/admin/styles'
 import type { AdminUserItem } from '@actions/admin'
 
 interface AdminUsersTableProps {

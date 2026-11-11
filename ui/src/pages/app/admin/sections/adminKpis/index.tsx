@@ -10,7 +10,7 @@ import {
   WorkspacePremiumOutlined as PlanIcon
 } from '@mui/icons-material'
 
-import { kpiCardStyles, kpiGridStyles } from '../../styles'
+import { kpiCardStyles, kpiGridStyles } from '@pages/app/admin/styles'
 import type { AdminMetrics } from '@actions/admin'
 
 interface AdminKpisProps {

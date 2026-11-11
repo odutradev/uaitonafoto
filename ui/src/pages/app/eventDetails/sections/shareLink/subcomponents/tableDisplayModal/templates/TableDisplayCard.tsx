@@ -9,7 +9,7 @@ import {
 import { QRCodeSVG } from 'qrcode.react'
 
 import { TEMPLATE_THEMES, cardContainerStyles } from './styles'
-import type { TableDisplayCardProps, TableDisplayTemplateId } from '../types'
+import type { TableDisplayCardProps, TableDisplayTemplateId } from '@pages/app/eventDetails/sections/shareLink/subcomponents/tableDisplayModal/types'
 
 export const TableDisplayCard = ({
   event,

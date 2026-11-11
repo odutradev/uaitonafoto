@@ -1,10 +1,10 @@
 import { Box, Typography } from '@mui/material'
 
-import ScreenBrand from '../screenBrand'
-import ScreenPhotoTile from '../screenPhotoTile'
-import ScreenQrBlock from '../screenQrBlock'
-import type { EventCustomization, EventPhoto } from '@actions/events/types'
-import type { ScreenPhotoFit } from '../../types'
+import ScreenBrand from '@pages/app/eventScreen/subcomponents/screenBrand'
+import ScreenPhotoTile from '@pages/app/eventScreen/subcomponents/screenPhotoTile'
+import ScreenQrBlock from '@pages/app/eventScreen/subcomponents/screenQrBlock'
+import type { EventCustomization, EventPhoto } from '@utils/types/events'
+import type { ScreenPhotoFit } from '@pages/app/eventScreen/types'
 
 interface StageLayoutProps {
   currentPhoto: EventPhoto | null

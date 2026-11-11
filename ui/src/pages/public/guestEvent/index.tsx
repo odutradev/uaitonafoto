@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom'
 
 import Logo from '@components/logo'
 import ThemeToggle from '@components/themeToggle'
-import { eventPhaseLabels, eventTypeLabels } from '@config/events'
+import { eventPhaseLabels, eventTypeLabels } from '@assets/data/events'
 import NotFound from '@pages/public/notFound'
 
 import useGuestEvent from './hooks/useGuestEvent'

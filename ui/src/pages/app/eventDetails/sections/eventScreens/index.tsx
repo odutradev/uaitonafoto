@@ -26,7 +26,8 @@ import dayjs from 'dayjs'
 import { toast } from 'react-toastify'
 
 import Modal from '@components/modal'
-import { buildScreenLink, getEventLimits, MAX_EVENT_SCREENS } from '@config/events'
+import { MAX_EVENT_SCREENS } from '@assets/data/events'
+import { buildScreenLink, getEventLimits } from '@utils/functions/events'
 
 import {
   compactIconButtonStyles,
@@ -45,7 +46,7 @@ import {
   screenSlotsGridStyles,
   statusPillStyles
 } from './styles'
-import type { EventScreenHistoryEntry, EventScreenSlot } from '@actions/events/types'
+import type { EventScreenHistoryEntry, EventScreenSlot } from '@utils/types/events'
 import type { EventScreensProps } from './types'
 
 const SCREEN_ONLINE_TIMEOUT_MS = 30_000

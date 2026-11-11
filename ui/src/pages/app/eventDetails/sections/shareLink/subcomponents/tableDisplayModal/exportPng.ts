@@ -1,4 +1,4 @@
-import type { EventItem } from '@actions/events/types'
+import type { EventItem } from '@utils/types/events'
 import type { TableDisplayConfig } from './types'
 import { TEMPLATE_THEMES } from './templates/styles'
 

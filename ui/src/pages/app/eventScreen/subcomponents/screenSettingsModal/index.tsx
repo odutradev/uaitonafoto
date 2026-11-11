@@ -24,9 +24,9 @@ import {
 } from '@mui/icons-material'
 
 import useSystemStore from '@stores/system'
-import { brandColors } from '@theme'
+import { brandColors } from '@styles/theme'
 
-import { SCREEN_LAYOUT_OPTIONS, SCREEN_PHOTO_FIT_OPTIONS } from '../../types'
+import { SCREEN_LAYOUT_OPTIONS, SCREEN_PHOTO_FIT_OPTIONS } from '@pages/app/eventScreen/types'
 import {
   getLayoutCardStyles,
   modalBodyStyles,
@@ -35,7 +35,7 @@ import {
   settingsSectionStyles,
   settingsSectionTitleStyles
 } from './styles'
-import type { ScreenLayoutMode, ScreenPhotoFit } from '../../types'
+import type { ScreenLayoutMode, ScreenPhotoFit } from '@pages/app/eventScreen/types'
 
 interface ScreenSettingsModalProps {
   open: boolean

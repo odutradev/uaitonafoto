@@ -35,9 +35,9 @@ import { toast } from 'react-toastify'
 import { downloadEventAlbumZip } from '@actions/events'
 import Modal from '@components/modal'
 import Pagination from '@components/pagination'
-import { buildGuestLink, getErrorMessage } from '@config/events'
+import { buildGuestLink, getErrorMessage } from '@utils/functions/events'
 
-import useEventAlbum, { type AlbumStatusFilter } from '../../hooks/useEventAlbum'
+import useEventAlbum, { type AlbumStatusFilter } from '@pages/app/eventDetails/hooks/useEventAlbum'
 
 import {
   albumCardStyles,
@@ -66,7 +66,7 @@ import {
   stateBoxStyles,
   stateIconWrapperStyles
 } from './styles'
-import type { EventPhoto } from '@actions/events/types'
+import type { EventPhoto } from '@utils/types/events'
 import type { EventAlbumProps } from './types'
 
 const downloadBlob = (blob: Blob, filename: string): void => {

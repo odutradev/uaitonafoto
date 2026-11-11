@@ -1,4 +1,4 @@
-import type { TransactionItem } from '@actions/payments/types'
+import type { TransactionItem } from '@utils/types/payments'
 
 export interface TransactionDetailsDialogProps {
   transaction: TransactionItem | null

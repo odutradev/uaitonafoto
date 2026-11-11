@@ -20,7 +20,7 @@ import {
   logInfoColumnStyles,
   timelineSectionStyles
 } from './styles'
-import type { LogCategory, LogLevel } from '@actions/logs/types'
+import type { LogCategory, LogLevel } from '@utils/types/logs'
 import type { LogsTimelineProps } from './types'
 
 const formatDateTimePtBr = (isoDate: string): string => {

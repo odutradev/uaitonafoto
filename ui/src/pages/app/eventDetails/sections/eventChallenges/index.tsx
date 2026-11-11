@@ -25,7 +25,7 @@ import {
   toggleEventChallenge
 } from '@actions/events'
 import Modal from '@components/modal'
-import { getErrorMessage } from '@config/events'
+import { getErrorMessage } from '@utils/functions/events'
 
 import {
   addChallengeButtonStyles,
@@ -38,7 +38,7 @@ import {
   countBadgeStyles,
   resetButtonStyles
 } from './styles'
-import type { EventChallenge } from '@actions/events/types'
+import type { EventChallenge } from '@utils/types/events'
 import type { EventChallengesProps } from './types'
 
 const EventChallenges = ({ event, onRefresh }: EventChallengesProps) => {

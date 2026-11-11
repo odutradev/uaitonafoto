@@ -7,7 +7,7 @@ import { getMeData } from '@actions/auth'
 import { createEvent } from '@actions/events'
 import EventFormFields, { buildInitialEventForm, isValidEventPeriod, isValidEventPin, toEventPayload } from '@components/eventFormFields'
 import Stepper from '@components/stepper'
-import { getErrorMessage } from '@config/events'
+import { getErrorMessage } from '@utils/functions/events'
 import useAuth from '@hooks/useAuth'
 import useAuthStore from '@stores/auth'
 

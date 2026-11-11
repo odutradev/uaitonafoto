@@ -10,7 +10,7 @@ import {
 } from '@mui/material'
 
 import Modal from '@components/modal'
-import { formatPriceInBrl } from '@config/formatters'
+import { formatPriceInBrl } from '@utils/functions/formatters'
 
 import {
   activePlanCardStyles,
@@ -21,7 +21,7 @@ import {
   titleChipsRowStyles,
   topHeaderRowStyles
 } from './styles'
-import type { SubscriptionItem, SubscriptionStatus } from '@actions/payments/types'
+import type { SubscriptionItem, SubscriptionStatus } from '@utils/types/payments'
 import type { CurrentPlanCardProps } from './types'
 
 const formatDatePtBr = (isoDate?: string): string => {

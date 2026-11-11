@@ -1,4 +1,4 @@
-import type { EventItem } from '@actions/events/types'
+import type { EventItem } from '@utils/types/events'
 
 export interface CreateEventDialogProps {
   open: boolean

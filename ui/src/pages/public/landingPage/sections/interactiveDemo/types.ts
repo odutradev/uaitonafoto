@@ -1,4 +1,4 @@
-import type { GuestFeedData, LiveWallData } from '../../data'
+import type { GuestFeedData, LiveWallData } from '@pages/public/landingPage/data'
 
 export interface InteractiveDemoProps {
   liveWallData: LiveWallData

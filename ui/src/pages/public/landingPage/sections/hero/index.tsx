@@ -1,7 +1,7 @@
 import { Box, Button, Chip, Container, Stack, Typography } from '@mui/material'
 import { ArrowForward as ArrowForwardIcon } from '@mui/icons-material'
 import { Link as RouterLink } from 'react-router-dom'
-import { brandColors } from '@theme'
+import { brandColors } from '@styles/theme'
 
 import {
   getChipStyles,

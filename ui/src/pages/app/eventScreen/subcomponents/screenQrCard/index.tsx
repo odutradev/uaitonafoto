@@ -1,7 +1,7 @@
 import { Box, Typography } from '@mui/material'
 import { QRCodeSVG } from 'qrcode.react'
 
-import { brandColors } from '@theme'
+import { brandColors } from '@styles/theme'
 
 import {
   qrFrameStyles,
@@ -12,7 +12,7 @@ import {
   qrTextContainerStyles,
   qrTitleStyles,
   rightCardStyles
-} from '../../styles'
+} from '@pages/app/eventScreen/styles'
 import type { SxProps, Theme } from '@mui/material'
 
 interface ScreenQrCardProps {

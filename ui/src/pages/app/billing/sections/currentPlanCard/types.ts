@@ -1,4 +1,4 @@
-import type { SubscriptionItem } from '@actions/payments/types'
+import type { SubscriptionItem } from '@utils/types/payments'
 
 export interface CurrentPlanCardProps {
   subscriptions: SubscriptionItem[]

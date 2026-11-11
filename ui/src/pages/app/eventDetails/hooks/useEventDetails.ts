@@ -15,10 +15,10 @@ import {
   updateEvent,
   updateEventScreen
 } from '@actions/events'
-import { buildRoomStreamUrl } from '@actions/guest/client'
-import { getErrorMessage } from '@config/events'
+import { buildRoomStreamUrl } from '@utils/api/guest'
+import { getErrorMessage } from '@utils/functions/events'
 
-import type { EventItem, EventScreenHistoryEntry, EventScreenSlot, UpdateEventPayload } from '@actions/events/types'
+import type { EventItem, EventScreenHistoryEntry, EventScreenSlot, UpdateEventPayload } from '@utils/types/events'
 
 const useEventDetails = (eventId: string) => {
   const navigate = useNavigate()

@@ -36,7 +36,7 @@ import {
   uploadPaperStyles
 } from './styles'
 import type { ChangeEvent } from 'react'
-import type { EventChallenge } from '@actions/events/types'
+import type { EventChallenge } from '@utils/types/events'
 import type { GuestUploadProps } from './types'
 
 const MAX_PHOTO_AGE_MS = 5 * 60 * 1000

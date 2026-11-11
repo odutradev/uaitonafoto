@@ -17,7 +17,7 @@ import {
   infoRowStyles,
   jsonPreStyles
 } from './styles'
-import type { LogLevel } from '@actions/logs/types'
+import type { LogLevel } from '@utils/types/logs'
 import type { LogDetailsDialogProps } from './types'
 
 const formatFullDateTime = (isoDate: string): string => {

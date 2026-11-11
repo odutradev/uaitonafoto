@@ -1,5 +1,5 @@
-import type { PaginationMeta } from '@actions/events/types'
-import type { GuestEventInfo, GuestPhoto } from '@actions/guest/types'
+import type { PaginationMeta } from '@utils/types/events'
+import type { GuestEventInfo, GuestPhoto } from '@utils/types/guest'
 
 export interface GuestPhotosFeedProps {
   event: GuestEventInfo

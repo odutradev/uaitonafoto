@@ -1,5 +1,5 @@
 import type { SxProps, Theme } from '@mui/material'
-import type { TableDisplayTemplateId } from '../types'
+import type { TableDisplayTemplateId } from '@pages/app/eventDetails/sections/shareLink/subcomponents/tableDisplayModal/types'
 
 export interface TemplateTheme {
   background: string

@@ -25,7 +25,7 @@ import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 
 import EventFormFields, { isValidEventPeriod, isValidEventPin, toEventForm, toEventPayload } from '@components/eventFormFields'
-import { isEventStarted } from '@config/eventPhase'
+import { isEventStarted } from '@utils/functions/eventPhase'
 import Modal from '@components/modal'
 import useAuth from '@hooks/useAuth'
 
@@ -52,7 +52,7 @@ import {
 import type { FormEvent } from 'react'
 import type { EventFormState } from '@components/eventFormFields/types'
 import type { EventSettingsProps } from './types'
-import type { EventCustomization } from '@actions/events/types'
+import type { EventCustomization } from '@utils/types/events'
 
 const EventSettings = ({ event, onSave, onDelete }: EventSettingsProps) => {
   const navigate = useNavigate()

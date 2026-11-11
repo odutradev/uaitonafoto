@@ -1,6 +1,6 @@
 import { Box, Typography } from '@mui/material'
 import { QRCodeSVG } from 'qrcode.react'
-import { brandColors } from '@theme'
+import { brandColors } from '@styles/theme'
 import type { ReactNode } from 'react'
 import type { SxProps, Theme } from '@mui/material'
 
