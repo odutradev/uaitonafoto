@@ -1,35 +1,12 @@
-import {
-  Box,
-  Button,
-  Chip,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  IconButton,
-  Stack,
-  Tooltip,
-  Typography
-} from '@mui/material'
-import {
-  ContentCopy as CopyIcon,
-  OpenInNew as OpenIcon,
-  ReceiptLong as ReceiptIcon
-} from '@mui/icons-material'
+import { Box, Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Stack, Tooltip, Typography } from '@mui/material'
+import { ContentCopy as CopyIcon, OpenInNew as OpenIcon, ReceiptLong as ReceiptIcon } from '@mui/icons-material'
 import { toast } from 'react-toastify'
 
 import { formatPriceInBrl } from '@utils/functions/formatters'
 
-import {
-  dialogActionsStyles,
-  dialogButtonStyles,
-  dialogPaperStyles,
-  metaRowStyles,
-  metaStackStyles,
-  monoIdStyles
-} from './styles'
+import { dialogActionsStyles, dialogButtonStyles, dialogPaperStyles, metaRowStyles, metaStackStyles, monoIdStyles } from './styles'
 import type { TransactionStatus } from '@utils/types/payments'
-import type { TransactionDetailsDialogProps } from './types'
+import useBillingPage from '@pages/app/billing/hook'
 
 const formatDateTimePtBr = (isoDate?: string): string => {
   if (!isoDate) return '-'
@@ -80,7 +57,9 @@ const formatMethodLabel = (method?: string): string => {
   return 'Não informado'
 }
 
-const TransactionDetailsDialog = ({ transaction, onClose }: TransactionDetailsDialogProps) => {
+const TransactionDetailsDialog = () => {
+  const { selectedTransaction: transaction, handleCloseTransaction: onClose } = useBillingPage()
+
   if (!transaction) return null
 
   const statusMeta = getStatusLabel(transaction.status, transaction.cancelReason)

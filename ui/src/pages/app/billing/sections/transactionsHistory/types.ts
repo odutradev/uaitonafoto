@@ -1,9 +1,4 @@
 import type { CreditUsageItem, PurchaseItem, TransactionItem } from '@utils/types/payments'
-import type {
-  TransactionDirectionFilter,
-  TransactionStatusFilter,
-  TransactionTypeFilter
-} from '@pages/app/billing/types'
 
 export type UnifiedHistoryEntry =
   | {
@@ -24,21 +19,3 @@ export type UnifiedHistoryEntry =
       timestamp: string
       usage: CreditUsageItem
     }
-
-export interface TransactionsHistoryProps {
-  purchases: PurchaseItem[]
-  creditUsages: CreditUsageItem[]
-  transactions: TransactionItem[]
-  page: number
-  total: number
-  totalPages: number
-  statusFilter: TransactionStatusFilter
-  typeFilter: TransactionTypeFilter
-  directionFilter: TransactionDirectionFilter
-  isLoading: boolean
-  onStatusFilterChange: (nextStatus: TransactionStatusFilter) => void
-  onTypeFilterChange: (nextType: TransactionTypeFilter) => void
-  onDirectionFilterChange: (nextDirection: TransactionDirectionFilter) => void
-  onPageChange: (nextPage: number) => void
-  onSelectTransaction: (item: TransactionItem) => void
-}

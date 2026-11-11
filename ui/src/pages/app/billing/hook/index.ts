@@ -4,33 +4,15 @@ import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 
 import { getMeData } from '@actions/auth'
-import {
-  cancelSubscription,
-  claimFreeTrial,
-  createCheckout,
-  getMyCreditUsages,
-  getMyPurchases,
-  getMySubscriptions,
-  getMyTransactions,
-  getPlans
-} from '@actions/payments'
+import { cancelSubscription, claimFreeTrial, createCheckout, getMyCreditUsages, getMyPurchases, getMySubscriptions, getMyTransactions, getPlans } from '@actions/payments'
 import useQueryParams from '@hooks/useQueryParams'
+import useAction from '@hooks/useAction'
 import useAuthStore from '@stores/auth'
 
-import type {
-  CreditUsageItem,
-  PlanApiItem,
-  PurchaseItem,
-  SubscriptionItem,
-  TransactionItem
-} from '@utils/types/payments'
-import type {
-  BillingQueryParams,
-  TransactionDirectionFilter,
-  TransactionStatusFilter,
-  TransactionTypeFilter,
-  UseBillingReturn
-} from '@pages/app/billing/types'
+import type { CreditUsageItem, PlanApiItem, PurchaseItem, SubscriptionItem, TransactionItem } from '@utils/types/payments'
+import type { BillingQueryParams, TransactionDirectionFilter, TransactionStatusFilter, TransactionTypeFilter } from '@pages/app/billing/types'
+import createPageContext from '@utils/functions/createPageContext'
+import type { UseBillingPageReturn } from './types'
 
 const FREE_PLAN_ID = 'free_trial'
 const TRANSACTIONS_FETCH_LIMIT = 100
@@ -39,7 +21,8 @@ const CREDITS_REFRESH_INTERVAL_MS = 2000
 
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
-export const useBilling = (): UseBillingReturn => {
+const useBillingPageState = (): UseBillingPageReturn => {
+  const runAction = useAction()
   const navigate = useNavigate()
   const { checkout, payment } = useQueryParams<BillingQueryParams>()
   const user = useAuthStore((state) => state.auth.user)
@@ -173,38 +156,35 @@ export const useBilling = (): UseBillingReturn => {
       setCheckoutPlanId(planId)
 
       if (planId === FREE_PLAN_ID) {
-        try {
-          const { user: updatedUser } = await claimFreeTrial()
-          updateUser(updatedUser)
-          const freshPurchases = await getMyPurchases().catch(() => [])
-          setPurchases(freshPurchases)
-          toast.success('Teste Grátis ativado! Você recebeu 1 crédito grátis.')
-        } catch (error) {
-          if (axios.isAxiosError(error) && error.response?.status === 409) {
-            getMeData().then(updateUser).catch(() => undefined)
-            toast.info('Você já resgatou o Teste Grátis nesta conta.')
-          } else {
+        await runAction({
+          action: async () => {
+            const { user: updatedUser } = await claimFreeTrial()
+            updateUser(updatedUser)
+            const freshPurchases = await getMyPurchases().catch(() => [])
+            setPurchases(freshPurchases)
+          },
+          toastMessages: { success: 'Teste Grátis ativado! Você recebeu 1 crédito grátis.' },
+          onError: (error) => {
+            if (axios.isAxiosError(error) && error.response?.status === 409) {
+              getMeData().then(updateUser).catch(() => undefined)
+              toast.info('Você já resgatou o Teste Grátis nesta conta.')
+              return
+            }
             toast.error('Não foi possível ativar o Teste Grátis. Tente novamente.')
           }
-        } finally {
-          setCheckoutPlanId(null)
-        }
+        })
+        setCheckoutPlanId(null)
         return
       }
 
-      try {
-        const { checkoutUrl } = await createCheckout(planId)
-        window.location.assign(checkoutUrl)
-      } catch (error) {
-        const apiMessage =
-          axios.isAxiosError(error) && typeof error.response?.data?.message === 'string'
-            ? error.response.data.message
-            : 'Não foi possível iniciar o pagamento. Tente novamente.'
-        toast.error(apiMessage)
-        setCheckoutPlanId(null)
-      }
+      await runAction({
+        action: () => createCheckout(planId),
+        toastMessages: { error: 'Não foi possível iniciar o pagamento. Tente novamente.' },
+        callback: ({ checkoutUrl }) => window.location.assign(checkoutUrl),
+        onError: () => setCheckoutPlanId(null)
+      })
     },
-    [updateUser]
+    [runAction, updateUser]
   )
 
   const handleOpenCheckoutConfirmation = useCallback(
@@ -269,19 +249,23 @@ export const useBilling = (): UseBillingReturn => {
   const handleCancelSubscription = useCallback(async (subscriptionId: string): Promise<boolean> => {
     setCancellingSubscriptionId(subscriptionId)
 
-    try {
-      const updated = await cancelSubscription(subscriptionId)
-      setSubscriptions((prev) => prev.map((sub) => (sub.id === updated.id ? updated : sub)))
-      await loadTransactions(1, statusFilter, typeFilter)
-      toast.success('Assinatura cancelada com sucesso. Seus créditos atuais seguem disponíveis.')
-      return true
-    } catch {
-      toast.error('Não foi possível cancelar a assinatura. Tente novamente.')
-      return false
-    } finally {
-      setCancellingSubscriptionId(null)
-    }
-  }, [loadTransactions, statusFilter, typeFilter])
+    const updated = await runAction({
+      action: async () => {
+        const cancelled = await cancelSubscription(subscriptionId)
+        setSubscriptions((prev) => prev.map((sub) => (sub.id === cancelled.id ? cancelled : sub)))
+        await loadTransactions(1, statusFilter, typeFilter)
+        return cancelled
+      },
+      toastMessages: {
+        success: 'Assinatura cancelada com sucesso. Seus créditos atuais seguem disponíveis.',
+        error: 'Não foi possível cancelar a assinatura. Tente novamente.'
+      },
+      shouldUseApiError: false
+    })
+
+    setCancellingSubscriptionId(null)
+    return updated !== undefined
+  }, [loadTransactions, runAction, statusFilter, typeFilter])
 
   const pollPostPaymentUpdate = useCallback(
     async (initialPaidCredits: number) => {
@@ -359,8 +343,27 @@ export const useBilling = (): UseBillingReturn => {
     user?.paidCredits
   ])
 
+  const hasActiveSubscription = subscriptions.some((sub) => sub.status === 'ACTIVE')
+  const activeSubscriptionPlanIds = subscriptions
+    .filter((sub) => sub.status !== 'CANCELLED')
+    .map((sub) => sub.planId)
+  const isCheckoutBusy = checkoutPlanId !== null
+
+  const handleClaimFreeTrial = useCallback(() => startCheckout(FREE_PLAN_ID), [startCheckout])
+  const handleCloseTransaction = useCallback(() => setSelectedTransaction(null), [])
+
   return {
     user,
+    paidCredits: user?.paidCredits ?? 0,
+    freeCredits: user?.freeCredits ?? 0,
+    freeTrialClaimed: Boolean(user?.freeTrialClaimedAt),
+    isCheckingOutFreeTrial: checkoutPlanId === FREE_PLAN_ID,
+    isCheckoutBusy,
+    hasActiveSubscription,
+    activeSubscriptionPlanIds,
+    isConfirmingCheckout: Boolean(confirmingPlan),
+    handleClaimFreeTrial,
+    handleCloseTransaction,
     plans,
     subscriptions,
     purchases,
@@ -392,4 +395,10 @@ export const useBilling = (): UseBillingReturn => {
   }
 }
 
-export default useBilling
+const { PageProvider: BillingPageProvider, usePage: useBillingPage } = createPageContext(
+  useBillingPageState,
+  'useBillingPage'
+)
+
+export { BillingPageProvider }
+export default useBillingPage

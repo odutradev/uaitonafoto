@@ -1,45 +1,14 @@
-import {
-  Box,
-  Button,
-  Chip,
-  CircularProgress,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Typography
-} from '@mui/material'
-import {
-  CheckCircle as CheckCircleIcon,
-  LockOutlined as LockIcon,
-  ShieldOutlined as ShieldIcon
-} from '@mui/icons-material'
+import { Box, Button, Chip, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from '@mui/material'
+import { CheckCircle as CheckCircleIcon, LockOutlined as LockIcon, ShieldOutlined as ShieldIcon } from '@mui/icons-material'
 
 import { formatPriceInBrl } from '@utils/functions/formatters'
 
-import {
-  cancelButtonStyles,
-  checkIconStyles,
-  confirmButtonStyles,
-  confirmationDialogPaperStyles,
-  dialogActionsStyles,
-  dialogContentBoxStyles,
-  featureRowStyles,
-  featuresContainerStyles,
-  noticeBoxStyles,
-  planSummaryCardStyles,
-  priceRowStyles,
-  priceValueStyles
-} from './styles'
-import type { CheckoutConfirmationDialogProps } from './types'
+import { cancelButtonStyles, checkIconStyles, confirmButtonStyles, confirmationDialogPaperStyles, dialogActionsStyles, dialogContentBoxStyles, featureRowStyles, featuresContainerStyles, noticeBoxStyles, planSummaryCardStyles, priceRowStyles, priceValueStyles } from './styles'
+import useBillingPage from '@pages/app/billing/hook'
 
-export const CheckoutConfirmationDialog = ({
-  plan,
-  open,
-  isLoading,
-  onClose,
-  onConfirm
-}: CheckoutConfirmationDialogProps) => {
+export const CheckoutConfirmationDialog = () => {
+  const { confirmingPlan: plan, isConfirmingCheckout: open, isCheckoutBusy: isLoading, handleCloseCheckoutConfirmation: onClose, handleConfirmCheckout: onConfirm } = useBillingPage()
+
   if (!plan) return null
 
   const formattedPrice = formatPriceInBrl(plan.price)

@@ -1,47 +1,16 @@
-import {
-  Box,
-  Button,
-  Card,
-  Chip,
-  CircularProgress,
-  Skeleton,
-  Typography
-} from '@mui/material'
+import { Box, Button, Card, Chip, CircularProgress, Skeleton, Typography } from '@mui/material'
 import { Check as CheckIcon } from '@mui/icons-material'
 
 import { formatPriceInBrl } from '@utils/functions/formatters'
 
-import {
-  blockWrapperStyles,
-  cardTopMetaRowStyles,
-  checkIconStyles,
-  ctaButtonStyles,
-  featureRowStyles,
-  featuresListStyles,
-  getPlanCardStyles,
-  getSingleCreditsGridStyles,
-  priceLineStyles,
-  priceNumberStyles,
-  singleCreditActionColStyles,
-  singleCreditButtonStyles,
-  singleCreditCardStyles,
-  singleCreditInfoStyles,
-  singleCreditTitleRowStyles,
-  storeWrapperStyles,
-  subscriptionPlansGridStyles
-} from './styles'
-import type { CreditsAndPlansProps } from './types'
+import { blockWrapperStyles, cardTopMetaRowStyles, checkIconStyles, ctaButtonStyles, featureRowStyles, featuresListStyles, getPlanCardStyles, getSingleCreditsGridStyles, priceLineStyles, priceNumberStyles, singleCreditActionColStyles, singleCreditButtonStyles, singleCreditCardStyles, singleCreditInfoStyles, singleCreditTitleRowStyles, storeWrapperStyles, subscriptionPlansGridStyles } from './styles'
+import useBillingPage from '@pages/app/billing/hook'
 
 const EXTRA_CREDIT_ID = 'prod_agency_extra_credit'
 
-const CreditsAndPlans = ({
-  plans,
-  isLoading,
-  checkoutPlanId,
-  activeSubscriptionPlanIds,
-  hasActiveSubscription,
-  onSelectPlan
-}: CreditsAndPlansProps) => {
+const CreditsAndPlans = () => {
+  const { plans, isLoadingInitial: isLoading, checkoutPlanId, activeSubscriptionPlanIds, hasActiveSubscription, handleOpenCheckoutConfirmation: onSelectPlan } = useBillingPage()
+
   const isCheckoutBusy = checkoutPlanId !== null
 
   const singlePurchasePlans = plans.filter((plan) => {

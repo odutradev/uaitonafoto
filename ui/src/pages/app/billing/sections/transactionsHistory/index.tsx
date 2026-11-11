@@ -1,19 +1,5 @@
 import { useMemo } from 'react'
-import {
-  Box,
-  Button,
-  Card,
-  Chip,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Paper,
-  Select,
-  Skeleton,
-  Tab,
-  Tabs,
-  Typography
-} from '@mui/material'
+import { Box, Button, Card, Chip, FormControl, InputLabel, MenuItem, Paper, Select, Skeleton, Tab, Tabs, Typography } from '@mui/material'
 import { OpenInNew as PayNowIcon } from '@mui/icons-material'
 
 import Pagination from '@components/pagination'
@@ -21,24 +7,11 @@ import Pagination from '@components/pagination'
 import { formatPriceInBrl } from '@utils/functions/formatters'
 import { Link as RouterLink } from 'react-router-dom'
 
-import {
-  chipCompactStyles,
-  emptyBoxStyles,
-  filterSelectStyles,
-  filtersRowStyles,
-  getListCardStyles,
-  getTransactionRowStyles,
-  headerFilterBarStyles,
-  historyWrapperStyles,
-  rowActionsStyles,
-  rowButtonStyles,
-  rowMainInfoStyles,
-  rowRightColStyles,
-  rowTitleBadgesStyles
-} from './styles'
+import { chipCompactStyles, emptyBoxStyles, filterSelectStyles, filtersRowStyles, getListCardStyles, getTransactionRowStyles, headerFilterBarStyles, historyWrapperStyles, rowActionsStyles, rowButtonStyles, rowMainInfoStyles, rowRightColStyles, rowTitleBadgesStyles } from './styles'
 import type { PurchaseItem, TransactionStatus } from '@utils/types/payments'
 import type { TransactionStatusFilter, TransactionTypeFilter } from '@pages/app/billing/types'
-import type { TransactionsHistoryProps, UnifiedHistoryEntry } from './types'
+import type { UnifiedHistoryEntry } from './types'
+import useBillingPage from '@pages/app/billing/hook'
 
 const toTimestampMs = (isoDate?: string): number => {
   if (!isoDate) return 0
@@ -116,21 +89,9 @@ const renderAcquiredBadges = (purchase: PurchaseItem) => {
 
 const ITEMS_PER_PAGE = 6
 
-const TransactionsHistory = ({
-  purchases,
-  creditUsages = [],
-  transactions,
-  page,
-  statusFilter,
-  typeFilter,
-  directionFilter = 'ALL',
-  isLoading,
-  onStatusFilterChange,
-  onTypeFilterChange,
-  onDirectionFilterChange,
-  onPageChange,
-  onSelectTransaction
-}: TransactionsHistoryProps) => {
+const TransactionsHistory = () => {
+  const { purchases, creditUsages = [], transactions, transactionsPage: page, statusFilter, typeFilter, directionFilter = 'ALL', isLoadingTransactions: isLoading, handleStatusFilterChange: onStatusFilterChange, handleTypeFilterChange: onTypeFilterChange, handleDirectionFilterChange: onDirectionFilterChange, handlePageChange: onPageChange, setSelectedTransaction: onSelectTransaction } = useBillingPage()
+
   const { allEntries, inCount, outCount } = useMemo(() => {
     const matchingPurchases = purchases.filter((item) => {
       const matchesStatus = statusFilter === 'ALL' || statusFilter === 'PAID'
