@@ -19,7 +19,7 @@ import { chartCardStyles, chartsGridStyles } from '@pages/app/admin/styles'
 import useAdminDashboardPage from '@pages/app/admin/hook'
 
 
-const PIE_COLORS = ['#6366f1', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6', '#3b82f6', '#14b8a6']
+const pieColors = ['#6366f1', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6', '#3b82f6', '#14b8a6']
 
 export const AdminCharts = () => {
   const { metrics, isLoadingMetrics: isLoading } = useAdminDashboardPage()
@@ -165,7 +165,7 @@ export const AdminCharts = () => {
                 paddingAngle={4}
               >
                 {pieData.map((_, index) => (
-                  <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
+                  <Cell key={`cell-${index}`} fill={pieColors[index % pieColors.length]} />
                 ))}
               </Pie>
               <Tooltip

@@ -1,6 +1,6 @@
 import type { EventPhase, EventPlanTier, EventType, PhotoVisibility, PinRotationMinutes } from '@utils/types/events'
 
-export const EVENT_PLAN_LIMITS: Record<EventPlanTier, { maxOrganizers: number; maxScreens: number }> = {
+export const eventPlanLimits: Record<EventPlanTier, { maxOrganizers: number; maxScreens: number }> = {
   single: { maxOrganizers: 1, maxScreens: 2 },
   essential: { maxOrganizers: 2, maxScreens: 3 },
   pro: { maxOrganizers: 5, maxScreens: 4 }
@@ -32,6 +32,6 @@ export const eventPhaseLabels: Record<EventPhase, string> = {
   expired: 'Galeria encerrada'
 }
 
-export const MAX_EVENT_SCREENS = 2
+export const maxEventScreens = 2
 
-export const MAX_EVENT_ORGANIZERS = 5
+export const maxEventOrganizers = 5

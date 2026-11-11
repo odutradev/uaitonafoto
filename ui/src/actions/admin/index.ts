@@ -29,5 +29,4 @@ export const addAdminUserCredits = async (
   return response.data
 }
 
-export * from '@utils/types/admin'
 

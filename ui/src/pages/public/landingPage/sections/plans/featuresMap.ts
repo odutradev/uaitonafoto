@@ -3,7 +3,7 @@ export interface PlanFeatureInfo {
   tooltip: string
 }
 
-const KNOWN_FEATURES_MAP: Record<string, PlanFeatureInfo> = {
+const knownFeaturesMap: Record<string, PlanFeatureInfo> = {
   // Teste Grátis
   'até 25 fotos compartilhadas no mural': {
     label: 'Até 25 fotos no mural',
@@ -128,12 +128,12 @@ const KNOWN_FEATURES_MAP: Record<string, PlanFeatureInfo> = {
 export const resolvePlanFeature = (rawFeature: string): PlanFeatureInfo => {
   const normalized = rawFeature.trim().toLowerCase()
 
-  if (KNOWN_FEATURES_MAP[normalized]) {
-    return KNOWN_FEATURES_MAP[normalized]
+  if (knownFeaturesMap[normalized]) {
+    return knownFeaturesMap[normalized]
   }
 
   // Tenta correspondência parcial por palavras-chave principais
-  for (const [key, info] of Object.entries(KNOWN_FEATURES_MAP)) {
+  for (const [key, info] of Object.entries(knownFeaturesMap)) {
     if (normalized.includes(key) || key.includes(normalized)) {
       return info
     }

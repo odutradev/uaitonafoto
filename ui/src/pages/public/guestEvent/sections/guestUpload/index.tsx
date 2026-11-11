@@ -9,7 +9,7 @@ import type { ChangeEvent } from 'react'
 import type { EventChallenge } from '@utils/types/events'
 import useGuestEventPage from '@pages/public/guestEvent/hook'
 
-const MAX_PHOTO_AGE_MS = 5 * 60 * 1000
+const maxPhotoAgeMs = 5 * 60 * 1000
 
 const GuestUpload = () => {
   const { event: eventValue, guest: guestValue, photosSent, completedChallengeIds = [], isUploading, upload: onUpload } = useGuestEventPage()
@@ -87,7 +87,7 @@ const GuestUpload = () => {
 
     if (file.lastModified) {
       const fileAgeMs = Date.now() - file.lastModified
-      if (fileAgeMs > MAX_PHOTO_AGE_MS || fileAgeMs < -60000) {
+      if (fileAgeMs > maxPhotoAgeMs || fileAgeMs < -60000) {
         toast.error('Apenas fotos tiradas na hora com a câmera são permitidas. Não é possível selecionar fotos antigas da galeria.')
         return
       }

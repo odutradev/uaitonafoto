@@ -16,7 +16,7 @@ interface TableDisplayModalProps {
   guestUrl: string
 }
 
-const DEFAULT_SUBTITLES: Record<TableDisplayTemplateId, string> = {
+const defaultSubtitles: Record<TableDisplayTemplateId, string> = {
   wedding: 'Deixe sua lembrança deste dia tão especial',
   modern: 'Aponte a câmera e entre na foto!',
   corporate: 'Compartilhe seus registros oficiais do evento',
@@ -25,7 +25,7 @@ const DEFAULT_SUBTITLES: Record<TableDisplayTemplateId, string> = {
   rustic: 'Guarde este momento com a gente'
 }
 
-const DEFAULT_TOP_BADGES: Record<TableDisplayTemplateId, string> = {
+const defaultTopBadges: Record<TableDisplayTemplateId, string> = {
   wedding: 'Lembrança Especial',
   modern: 'Fotos ao vivo',
   corporate: 'Galeria Oficial',
@@ -34,7 +34,7 @@ const DEFAULT_TOP_BADGES: Record<TableDisplayTemplateId, string> = {
   rustic: 'Memórias do Dia'
 }
 
-const QUICK_SUBTITLES = [
+const quickSubtitles = [
   'Aponte a câmera e entre na foto!',
   'Deixe sua lembrança deste dia tão especial',
   'Envie suas fotos sem baixar nenhum aplicativo',
@@ -49,7 +49,7 @@ interface TemplateMeta {
   previewBg: string
 }
 
-const TEMPLATE_LIST: TemplateMeta[] = [
+const templateList: TemplateMeta[] = [
   {
     id: 'wedding',
     label: 'Casamento',
@@ -94,7 +94,7 @@ const TEMPLATE_LIST: TemplateMeta[] = [
   }
 ]
 
-const BRAND_PRESET_COLORS = [
+const brandPresetColors = [
   { label: 'Dourado / Champagne', hex: '#9E7D47' },
   { label: 'Flash Yellow', hex: '#FFCF1F' },
   { label: 'Azul Royal', hex: '#2563EB' },
@@ -120,9 +120,9 @@ export const TableDisplayModal = ({
   const [config, setConfig] = useState<TableDisplayConfig>({
     template: initialTemplate,
     title: event.name || '',
-    subtitle: DEFAULT_SUBTITLES[initialTemplate],
+    subtitle: defaultSubtitles[initialTemplate],
     customFooter: event.customization?.agencyName || '',
-    topBadgeText: DEFAULT_TOP_BADGES[initialTemplate],
+    topBadgeText: defaultTopBadges[initialTemplate],
     showTopBadge: true,
     showPin: Boolean(event.settings.pinEnabled),
     showSteps: true,
@@ -139,12 +139,12 @@ export const TableDisplayModal = ({
       ...prev,
       template,
       subtitle:
-        prev.subtitle === DEFAULT_SUBTITLES[prev.template]
-          ? DEFAULT_SUBTITLES[template]
+        prev.subtitle === defaultSubtitles[prev.template]
+          ? defaultSubtitles[template]
           : prev.subtitle,
       topBadgeText:
-        prev.topBadgeText === DEFAULT_TOP_BADGES[prev.template]
-          ? DEFAULT_TOP_BADGES[template]
+        prev.topBadgeText === defaultTopBadges[prev.template]
+          ? defaultTopBadges[template]
           : prev.topBadgeText
     }))
   }
@@ -219,7 +219,7 @@ export const TableDisplayModal = ({
                 1. Escolha o Estilo do Display
               </Typography>
               <Box sx={templateSelectorGridStyles}>
-                {TEMPLATE_LIST.map((tpl) => {
+                {templateList.map((tpl) => {
                   const isSelected = config.template === tpl.id
                   return (
                     <Box
@@ -297,7 +297,7 @@ export const TableDisplayModal = ({
                     flexWrap: 'wrap'
                   }}
                 >
-                  {BRAND_PRESET_COLORS.map((c) => {
+                  {brandPresetColors.map((c) => {
                     const isSelected =
                       config.customColor?.toLowerCase() === c.hex.toLowerCase()
                     return (
@@ -427,7 +427,7 @@ export const TableDisplayModal = ({
                   Sugestões rápidas:
                 </Typography>
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                  {QUICK_SUBTITLES.map((text) => (
+                  {quickSubtitles.map((text) => (
                     <Chip
                       key={text}
                       label={text}

@@ -1,6 +1,6 @@
 import type { EventItem } from '@utils/types/events'
 import type { TableDisplayConfig } from './types'
-import { TEMPLATE_THEMES } from './templates/styles'
+import { templateThemes } from './templates/styles'
 
 const downloadBlob = (blob: Blob, filename: string): void => {
   const blobUrl = window.URL.createObjectURL(blob)
@@ -35,7 +35,7 @@ export async function exportTableDisplayPng({
     throw new Error('Não foi possível obter o contexto 2D do Canvas')
   }
 
-  const theme = TEMPLATE_THEMES[config.template]
+  const theme = templateThemes[config.template]
   const accentColor = config.customColor?.trim() || theme.accentColor
 
   // Fundo

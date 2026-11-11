@@ -14,7 +14,7 @@ export interface ScreenPhotoFitOption {
   subtitle: string
 }
 
-export const SCREEN_LAYOUT_OPTIONS: ScreenLayoutOption[] = [
+export const screenLayoutOptions: ScreenLayoutOption[] = [
   {
     id: 'stories',
     label: 'Stories (3 Destaques)',
@@ -47,7 +47,7 @@ export const SCREEN_LAYOUT_OPTIONS: ScreenLayoutOption[] = [
   }
 ]
 
-export const SCREEN_PHOTO_FIT_OPTIONS: ScreenPhotoFitOption[] = [
+export const screenPhotoFitOptions: ScreenPhotoFitOption[] = [
   {
     id: 'contain',
     label: 'Desfocar laterais (Foto inteira)',

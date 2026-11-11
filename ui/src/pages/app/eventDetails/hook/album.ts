@@ -14,7 +14,7 @@ import { buildRoomStreamUrl } from '@utils/api/guest'
 import type { EventGuest, EventPhoto, PaginationMeta } from '@utils/types/events'
 import useAction from '@hooks/useAction'
 
-const ALBUM_PAGE_SIZE = 24
+const albumPageSize = 24
 
 export type AlbumStatusFilter = 'all' | 'pending' | 'approved' | 'rejected'
 
@@ -37,7 +37,7 @@ const useEventAlbum = (eventId: string, isModerationEnabled = false) => {
       action: async () => {
         const result = await getEventAlbum(eventId, {
           page,
-          limit: ALBUM_PAGE_SIZE,
+          limit: albumPageSize,
           guestId: guestId || undefined,
           status: statusFilter
         })

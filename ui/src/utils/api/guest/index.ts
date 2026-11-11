@@ -3,7 +3,7 @@ import axios from 'axios'
 import defaultConfig from '@assets/config'
 import { getClientDeviceId, getClientFingerprint } from '@hooks/usePinLockout'
 
-export const GUEST_TOKEN_STORAGE_PREFIX = 'uaitonafoto:guest:'
+export const guestTokenStoragePrefix = 'uaitonafoto:guest:'
 
 const guestApi = axios.create({ baseURL: defaultConfig.baseURL })
 
@@ -14,13 +14,13 @@ guestApi.interceptors.request.use((config) => {
 })
 
 export const getStoredGuestToken = (eventToken: string): string | null =>
-  localStorage.getItem(`${GUEST_TOKEN_STORAGE_PREFIX}${eventToken}`)
+  localStorage.getItem(`${guestTokenStoragePrefix}${eventToken}`)
 
 export const storeGuestToken = (eventToken: string, guestToken: string): void =>
-  localStorage.setItem(`${GUEST_TOKEN_STORAGE_PREFIX}${eventToken}`, guestToken)
+  localStorage.setItem(`${guestTokenStoragePrefix}${eventToken}`, guestToken)
 
 export const clearGuestToken = (eventToken: string): void =>
-  localStorage.removeItem(`${GUEST_TOKEN_STORAGE_PREFIX}${eventToken}`)
+  localStorage.removeItem(`${guestTokenStoragePrefix}${eventToken}`)
 
 export const withGuestToken = (guestToken: string) => ({ headers: { Authorization: `Bearer ${guestToken}` } })
 

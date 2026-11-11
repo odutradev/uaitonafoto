@@ -39,7 +39,7 @@ const formatPlanCard = (item: PlanApiItem): PlanCardData => {
   }
 }
 
-const DEFAULT_FALLBACK_PLANS: PlanCardData[] = [
+const defaultFallbackPlans: PlanCardData[] = [
   {
     id: 'prod_b2c_event_pass',
     abacateProductId: 'prod_b2c_event_pass',
@@ -135,7 +135,7 @@ const useLandingPageState = (): UseLandingPageReturn => {
       })
       .catch(() => {
         if (isMounted) {
-          setPlans(DEFAULT_FALLBACK_PLANS)
+          setPlans(defaultFallbackPlans)
         }
       })
       .finally(() => {

@@ -18,7 +18,7 @@ import { formFieldsStackStyles, pinCardBoxStyles, pinToggleRowStyles, twoColsRow
 import type { CreateEventPayload, EventCreditType, EventItem, EventType, PhotoVisibility, PinRotationMinutes } from '@utils/types/events'
 import type { EventFormFieldsProps, EventFormState } from './types'
 
-const DATETIME_INPUT_FORMAT = 'YYYY-MM-DDTHH:mm'
+const datetimeInputFormat = 'YYYY-MM-DDTHH:mm'
 
 export const buildInitialEventForm = (defaultCreditType: EventCreditType = 'paid'): EventFormState => {
   const start = dayjs().add(1, 'hour').startOf('hour')
@@ -27,7 +27,7 @@ export const buildInitialEventForm = (defaultCreditType: EventCreditType = 'paid
     name: '',
     type: 'wedding',
     creditType: defaultCreditType,
-    startsAt: start.format(DATETIME_INPUT_FORMAT),
+    startsAt: start.format(datetimeInputFormat),
     endsAt: '',
     photoVisibility: 'during_event',
     uploadWindowHours: 0,
@@ -46,8 +46,8 @@ export const toEventForm = (event: EventItem): EventFormState => ({
   name: event.name,
   type: event.type,
   creditType: event.creditType ?? 'paid',
-  startsAt: dayjs(event.startsAt).format(DATETIME_INPUT_FORMAT),
-  endsAt: dayjs(event.endsAt).format(DATETIME_INPUT_FORMAT),
+  startsAt: dayjs(event.startsAt).format(datetimeInputFormat),
+  endsAt: dayjs(event.endsAt).format(datetimeInputFormat),
   photoVisibility: event.settings.photoVisibility,
   uploadWindowHours: event.settings.uploadWindowHours,
   galleryDurationDays: event.settings.galleryDurationDays,

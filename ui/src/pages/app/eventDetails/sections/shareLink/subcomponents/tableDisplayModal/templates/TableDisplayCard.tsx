@@ -2,7 +2,7 @@ import { Box, Typography } from '@mui/material'
 import { CameraAltOutlined as CameraIcon, CloudUploadOutlined as UploadIcon, TvOutlined as TvIcon, LockOutlined as LockIcon, AutoAwesomeOutlined as SparkleIcon } from '@mui/icons-material'
 import { QRCodeSVG } from 'qrcode.react'
 
-import { TEMPLATE_THEMES, cardContainerStyles } from './styles'
+import { templateThemes, cardContainerStyles } from './styles'
 import type { TableDisplayCardProps, TableDisplayTemplateId } from '@pages/app/eventDetails/sections/shareLink/subcomponents/tableDisplayModal/types'
 
 export const TableDisplayCard = ({
@@ -11,7 +11,7 @@ export const TableDisplayCard = ({
   config,
   scale = 1
 }: TableDisplayCardProps) => {
-  const theme = TEMPLATE_THEMES[config.template]
+  const theme = templateThemes[config.template]
   const accentColor = config.customColor?.trim() || theme.accentColor
   const frameBorder = config.customColor?.trim()
     ? `1.5px solid ${config.customColor.trim()}`
@@ -369,7 +369,7 @@ interface StepItemProps {
   number: string
   text: string
   icon: React.ReactNode
-  theme: (typeof TEMPLATE_THEMES)[TableDisplayTemplateId]
+  theme: (typeof templateThemes)[TableDisplayTemplateId]
   scale: number
   customColor?: string
 }

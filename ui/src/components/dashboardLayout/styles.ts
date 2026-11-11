@@ -1,7 +1,7 @@
 import type { SxProps, Theme } from '@mui/material'
 import { brandColors } from '@styles/theme'
 
-export const SIDEBAR_WIDTH = 272
+export const sidebarWidth = 272
 
 export const layoutRootStyles: SxProps<Theme> = {
   height: '100dvh',
@@ -46,7 +46,7 @@ export const mobileBrandLinkStyles: SxProps<Theme> = {
 export const getDesktopSidebarStyles = (isDark: boolean): SxProps<Theme> => ({
   display: { xs: 'none', md: 'flex' },
   flexDirection: 'column',
-  width: SIDEBAR_WIDTH,
+  width: sidebarWidth,
   flexShrink: 0,
   height: '100%',
   borderRight: 1,
@@ -55,7 +55,7 @@ export const getDesktopSidebarStyles = (isDark: boolean): SxProps<Theme> => ({
 })
 
 export const getMobileDrawerPaperStyles = (isDark: boolean): SxProps<Theme> => ({
-  width: SIDEBAR_WIDTH,
+  width: sidebarWidth,
   maxWidth: '86vw',
   borderRadius: 0,
   border: 'none',

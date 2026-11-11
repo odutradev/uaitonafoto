@@ -1,10 +1,10 @@
-import { EVENT_PLAN_LIMITS } from '@assets/data/events'
+import { eventPlanLimits } from '@assets/data/events'
 
 import type { EventPlanTier } from '@utils/types/events'
 
 export const getEventLimits = (event?: { planTier?: EventPlanTier; maxOrganizers?: number; maxScreens?: number } | null) => {
   const tier: EventPlanTier = event?.planTier ?? 'single'
-  const fallback = EVENT_PLAN_LIMITS[tier] || EVENT_PLAN_LIMITS.single
+  const fallback = eventPlanLimits[tier] || eventPlanLimits.single
   return {
     tier,
     maxOrganizers: event?.maxOrganizers ?? fallback.maxOrganizers,

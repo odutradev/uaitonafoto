@@ -6,7 +6,7 @@ import { formatPriceInBrl } from '@utils/functions/formatters'
 import { blockWrapperStyles, cardTopMetaRowStyles, checkIconStyles, ctaButtonStyles, featureRowStyles, featuresListStyles, getPlanCardStyles, getSingleCreditsGridStyles, priceLineStyles, priceNumberStyles, singleCreditActionColStyles, singleCreditButtonStyles, singleCreditCardStyles, singleCreditInfoStyles, singleCreditTitleRowStyles, storeWrapperStyles, subscriptionPlansGridStyles } from './styles'
 import useBillingPage from '@pages/app/billing/hook'
 
-const EXTRA_CREDIT_ID = 'prod_agency_extra_credit'
+const extraCreditId = 'prod_agency_extra_credit'
 
 const CreditsAndPlans = () => {
   const { plans, isLoadingInitial: isLoading, checkoutPlanId, activeSubscriptionPlanIds, hasActiveSubscription, handleOpenCheckoutConfirmation: onSelectPlan } = useBillingPage()
@@ -14,7 +14,7 @@ const CreditsAndPlans = () => {
   const isCheckoutBusy = checkoutPlanId !== null
 
   const singlePurchasePlans = plans.filter((plan) => {
-    const isExtraCredit = plan.abacateProductId === EXTRA_CREDIT_ID || plan.id === EXTRA_CREDIT_ID
+    const isExtraCredit = plan.abacateProductId === extraCreditId || plan.id === extraCreditId
     if (isExtraCredit) return hasActiveSubscription
     return plan.type === 'ONE_TIME'
   })
@@ -63,7 +63,7 @@ const CreditsAndPlans = () => {
             singlePurchasePlans.map((plan) => {
               const targetId = plan.ctaHref || plan.id
               const isCurrentCheckingOut = checkoutPlanId === targetId
-              const isExtraCredit = plan.abacateProductId === EXTRA_CREDIT_ID || plan.id === EXTRA_CREDIT_ID
+              const isExtraCredit = plan.abacateProductId === extraCreditId || plan.id === extraCreditId
 
               return (
                 <Card key={plan.id} elevation={0} sx={singleCreditCardStyles}>

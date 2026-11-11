@@ -87,7 +87,7 @@ const renderAcquiredBadges = (purchase: PurchaseItem) => {
   return null
 }
 
-const ITEMS_PER_PAGE = 6
+const itemsPerPage = 6
 
 const TransactionsHistory = () => {
   const { purchases, creditUsages = [], transactions, transactionsPage: page, statusFilter, typeFilter, directionFilter = 'ALL', isLoadingTransactions: isLoading, handleStatusFilterChange: onStatusFilterChange, handleTypeFilterChange: onTypeFilterChange, handleDirectionFilterChange: onDirectionFilterChange, handlePageChange: onPageChange, setSelectedTransaction: onSelectTransaction } = useBillingPage()
@@ -163,12 +163,12 @@ const TransactionsHistory = () => {
   }, [creditUsages, directionFilter, purchases, statusFilter, transactions, typeFilter])
 
   const totalRecords = allEntries.length
-  const totalPages = Math.max(1, Math.ceil(totalRecords / ITEMS_PER_PAGE))
+  const totalPages = Math.max(1, Math.ceil(totalRecords / itemsPerPage))
   const safePage = Math.min(Math.max(1, page), totalPages)
 
   const paginatedEntries = useMemo(() => {
-    const startIndex = (safePage - 1) * ITEMS_PER_PAGE
-    return allEntries.slice(startIndex, startIndex + ITEMS_PER_PAGE)
+    const startIndex = (safePage - 1) * itemsPerPage
+    return allEntries.slice(startIndex, startIndex + itemsPerPage)
   }, [allEntries, safePage])
 
   return (

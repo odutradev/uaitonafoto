@@ -17,10 +17,10 @@ import usePinLockout from '@hooks/usePinLockout'
 
 import type { EventPhoto, ScreenEventInfo } from '@utils/types/events'
 
-const FAST_POLL_INTERVAL_MS = 5000
-const SYNC_POLL_INTERVAL_MS = 45000
-const ROTATE_INTERVAL_MS = 6000
-const NEW_ARRIVAL_DURATION_MS = 3500
+const fastPollIntervalMs = 5000
+const syncPollIntervalMs = 45000
+const rotateIntervalMs = 6000
+const newArrivalDurationMs = 3500
 
 const useEventScreenSession = (eventId: string) => {
   const [screenToken, setScreenToken] = useState<string | null>(() => getStoredScreenToken(eventId))
@@ -109,7 +109,7 @@ const useEventScreenSession = (eventId: string) => {
     newArrivalTimerRef.current = window.setTimeout(() => {
       setIsNewArrival(false)
       newArrivalTimerRef.current = null
-    }, NEW_ARRIVAL_DURATION_MS)
+    }, newArrivalDurationMs)
   }, [])
 
   useEffect(() => {
@@ -169,7 +169,7 @@ const useEventScreenSession = (eventId: string) => {
       eventSource.addEventListener('ready', () => {
         if (!isActive) return
         setIsLiveStreamConnected(true)
-        scheduleFallbackPoll(SYNC_POLL_INTERVAL_MS)
+        scheduleFallbackPoll(syncPollIntervalMs)
       })
 
       eventSource.addEventListener('photo:new', (e: MessageEvent) => {
@@ -238,10 +238,10 @@ const useEventScreenSession = (eventId: string) => {
       eventSource.onerror = () => {
         if (!isActive) return
         setIsLiveStreamConnected(false)
-        scheduleFallbackPoll(FAST_POLL_INTERVAL_MS)
+        scheduleFallbackPoll(fastPollIntervalMs)
       }
     } else {
-      scheduleFallbackPoll(FAST_POLL_INTERVAL_MS)
+      scheduleFallbackPoll(fastPollIntervalMs)
     }
 
     return () => {
@@ -260,7 +260,7 @@ const useEventScreenSession = (eventId: string) => {
 
     const intervalId = window.setInterval(() => {
       setCurrentIndex((index) => (index + 1) % photos.length)
-    }, ROTATE_INTERVAL_MS)
+    }, rotateIntervalMs)
 
     return () => window.clearInterval(intervalId)
   }, [photos.length, currentIndex, isNewArrival])
@@ -285,9 +285,9 @@ const useEventScreenSession = (eventId: string) => {
   }
 }
 
-const SCREEN_SHOW_PIN_STORAGE_KEY = 'uaitonafoto:screen:show_pin'
-const SCREEN_LAYOUT_STORAGE_KEY = 'uaitonafoto:screen:layout'
-const SCREEN_PHOTO_FIT_STORAGE_KEY = 'uaitonafoto:screen:photo_fit'
+const screenShowPinStorageKey = 'uaitonafoto:screen:show_pin'
+const screenLayoutStorageKey = 'uaitonafoto:screen:layout'
+const screenPhotoFitStorageKey = 'uaitonafoto:screen:photo_fit'
 
 const useEventScreenPageState = (): UseEventScreenPageReturn => {
   const { token, id } = useParams()
@@ -299,7 +299,7 @@ const useEventScreenPageState = (): UseEventScreenPageReturn => {
   const [isDisconnectModalOpen, setIsDisconnectModalOpen] = useState(false)
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false)
   const [layoutMode, setLayoutMode] = useState<ScreenLayoutMode>(() => {
-    const stored = localStorage.getItem(SCREEN_LAYOUT_STORAGE_KEY)
+    const stored = localStorage.getItem(screenLayoutStorageKey)
     if (
       stored === 'stories' ||
       stored === 'lateral' ||
@@ -316,33 +316,33 @@ const useEventScreenPageState = (): UseEventScreenPageReturn => {
     return 'stories'
   })
   const [photoFit, setPhotoFit] = useState<ScreenPhotoFit>(() => {
-    const stored = localStorage.getItem(SCREEN_PHOTO_FIT_STORAGE_KEY) as ScreenPhotoFit | null
+    const stored = localStorage.getItem(screenPhotoFitStorageKey) as ScreenPhotoFit | null
     if (stored && ['cover', 'contain'].includes(stored)) {
       return stored
     }
     return 'contain'
   })
   const [showPin, setShowPin] = useState<boolean>(() => {
-    const stored = localStorage.getItem(SCREEN_SHOW_PIN_STORAGE_KEY)
+    const stored = localStorage.getItem(screenShowPinStorageKey)
     return stored !== null ? stored === 'true' : true
   })
 
   const handleTogglePinVisibility = () => {
     setShowPin((prev) => {
       const next = !prev
-      localStorage.setItem(SCREEN_SHOW_PIN_STORAGE_KEY, String(next))
+      localStorage.setItem(screenShowPinStorageKey, String(next))
       return next
     })
   }
 
   const handleLayoutChange = (mode: ScreenLayoutMode) => {
     setLayoutMode(mode)
-    localStorage.setItem(SCREEN_LAYOUT_STORAGE_KEY, mode)
+    localStorage.setItem(screenLayoutStorageKey, mode)
   }
 
   const handlePhotoFitChange = (fit: ScreenPhotoFit) => {
     setPhotoFit(fit)
-    localStorage.setItem(SCREEN_PHOTO_FIT_STORAGE_KEY, fit)
+    localStorage.setItem(screenPhotoFitStorageKey, fit)
   }
 
   const handleFullscreen = () => {

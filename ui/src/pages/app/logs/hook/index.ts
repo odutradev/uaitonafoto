@@ -9,8 +9,8 @@ import type { LogCategoryFilter, LogLevelFilter } from '@pages/app/logs/types'
 import createPageContext from '@utils/functions/createPageContext'
 import type { UseLogsPageReturn } from './types'
 
-const LOGS_PER_PAGE = 10
-const SEARCH_DEBOUNCE_MS = 350
+const logsPerPage = 10
+const searchDebounceMs = 350
 
 const useLogsPageState = (): UseLogsPageReturn => {
   const user = useAuthStore((state) => state.auth.user)
@@ -37,7 +37,7 @@ const useLogsPageState = (): UseLogsPageReturn => {
     const timer = setTimeout(() => {
       setDebouncedSearch(searchInput.trim())
       setPage(1)
-    }, SEARCH_DEBOUNCE_MS)
+    }, searchDebounceMs)
 
     return () => clearTimeout(timer)
   }, [searchInput])
@@ -48,7 +48,7 @@ const useLogsPageState = (): UseLogsPageReturn => {
 
     getLogs({
       page,
-      limit: LOGS_PER_PAGE,
+      limit: logsPerPage,
       level: levelFilter === 'ALL' ? undefined : levelFilter,
       category: categoryFilter === 'ALL' ? undefined : categoryFilter,
       search: debouncedSearch || undefined,
