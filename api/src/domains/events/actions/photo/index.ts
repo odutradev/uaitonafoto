@@ -3,6 +3,7 @@ import { Types } from 'mongoose'
 import { eventUploadRateLimiter, guestFeedRateLimiter, guestLikeRateLimiter, guestUploadRateLimiter } from '@domains/events/middlewares/guestRateLimit'
 import { likeResponseSchema, listFeedQuerySchema, listFeedResponseSchema, photoParamsSchema, photoSchema } from './schemas'
 import { arePhotosVisible, canUploadPhotos, getEventPhase } from '@domains/events/utils/eventWindows'
+import { resolveNextUploadAt, resolveUploadCooldownSeconds } from '@domains/events/utils/eventLimits'
 import { buildPaginatedResponse, getPaginationOptions } from '@factories/pagination/utils'
 import { removePhotoFile, storeEventPhoto } from '@domains/events/utils/photoStorage'
 import guestSessionMiddleware from '@domains/events/middlewares/guestSession'
@@ -24,6 +25,13 @@ const PngSignature = [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]
 
 const startsWithSignature = (buffer: Buffer, signature: number[], offset = 0): boolean =>
   signature.every((byte, index) => buffer[offset + index] === byte)
+
+const formatWaitTime = (seconds: number): string => {
+  if (seconds < 60) return `${seconds} ${seconds === 1 ? 'segundo' : 'segundos'}`
+
+  const minutes = Math.ceil(seconds / 60)
+  return `${minutes} ${minutes === 1 ? 'minuto' : 'minutos'}`
+}
 
 const detectImageType = (buffer: Buffer): DetectedImageType | null => {
   if (startsWithSignature(buffer, JpegSignature)) return { contentType: 'image/jpeg', extension: 'jpg' }
@@ -109,6 +117,23 @@ export const uploadPhoto = defineAction(
     const imageType = detectImageType(file.buffer)
     if (!imageType) return manageError({ code: 'bad_request', details: 'Conteúdo do arquivo não é uma imagem válida' })
 
+    const cooldownSeconds = resolveUploadCooldownSeconds(event)
+    const uploadSlot = await guestRepository.claimUploadSlot(guest.id, cooldownSeconds)
+
+    if (!uploadSlot.isClaimed) {
+      const nextUploadAt = resolveNextUploadAt(guest, event)
+      const waitSeconds = nextUploadAt
+        ? Math.max(1, Math.ceil((new Date(nextUploadAt).getTime() - Date.now()) / 1000))
+        : cooldownSeconds
+      defaultExpress?.res?.setHeader('Retry-After', String(waitSeconds))
+      return manageError({
+        code: 'too_many_requests',
+        details: `Aguarde ${formatWaitTime(waitSeconds)} para enviar outra foto.`
+      })
+    }
+
+    const releaseUploadSlot = (): Promise<void> => guestRepository.releaseUploadSlot(guest.id, uploadSlot)
+
     const photoId = new Types.ObjectId().toString()
     const stored = await storeEventPhoto({
       eventId: event.id,
@@ -116,6 +141,9 @@ export const uploadPhoto = defineAction(
       extension: imageType.extension,
       buffer: file.buffer,
       contentType: imageType.contentType
+    }).catch(async (error: unknown) => {
+      await releaseUploadSlot()
+      throw error
     })
 
     const isModerationOn = Boolean(event.settings.moderationEnabled)
@@ -161,7 +189,7 @@ export const uploadPhoto = defineAction(
       broadcastEvent(event.id, isModerationOn ? 'photo:pending' : 'photo:new', response)
       return response
     } catch (error) {
-      await removePhotoFile(stored.path)
+      await Promise.all([removePhotoFile(stored.path), releaseUploadSlot()])
       return manageError({ code: 'internal_error', error })
     }
   }

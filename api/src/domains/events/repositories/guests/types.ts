@@ -9,6 +9,7 @@ export interface GuestEntity {
   deviceFingerprint?: string
   userAgent?: string
   lastActiveAt?: string
+  lastUploadAt?: string
 }
 
 export interface CreateGuestPayload {
@@ -36,4 +37,10 @@ export interface FindGuestForClientParams {
   fingerprint?: string
   ip?: string
   name?: string
+}
+
+export interface UploadSlotClaim {
+  isClaimed: boolean
+  claimedAt: string
+  previousUploadAt?: string
 }

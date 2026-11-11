@@ -33,7 +33,9 @@ const toEventEntity = (doc: EventDocument): EventEntity => {
       pinRotationMinutes: storedSettings.pinRotationMinutes ?? 15,
       pinUpdatedAt: storedSettings.pinUpdatedAt ?? rest.createdAt ?? new Date().toISOString(),
       moderationEnabled: Boolean(storedSettings.moderationEnabled),
-      challengesEnabled: Boolean(storedSettings.challengesEnabled)
+      challengesEnabled: Boolean(storedSettings.challengesEnabled),
+      challengesMode: storedSettings.challengesMode ?? 'choose',
+      uploadCooldownSeconds: storedSettings.uploadCooldownSeconds ?? 60
     }
   }
 }

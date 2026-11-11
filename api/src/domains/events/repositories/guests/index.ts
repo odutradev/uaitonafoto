@@ -1,7 +1,7 @@
 import eventRepository from '@domains/events/repositories/events'
 import GuestModel from './model'
 
-import type { CreateGuestPayload, FindGuestForClientParams, GuestEntity, UpdateGuestSessionPayload } from './types'
+import type { CreateGuestPayload, FindGuestForClientParams, GuestEntity, UpdateGuestSessionPayload, UploadSlotClaim } from './types'
 import type { EventEntity } from '@domains/events/repositories/events/types'
 import type { GuestDocument } from './model'
 
@@ -104,6 +104,31 @@ export const guestRepository = {
 
     const doc = await GuestModel.findByIdAndUpdate(id, { $set: update }, { new: true, lean: true })
     return doc ? toGuestEntity(doc) : null
+  },
+
+  claimUploadSlot: async (id: string, cooldownSeconds: number): Promise<UploadSlotClaim> => {
+    const now = new Date()
+    const claimedAt = now.toISOString()
+    const availableSince = new Date(now.getTime() - cooldownSeconds * 1000).toISOString()
+
+    const previous = await GuestModel.findOneAndUpdate(
+      {
+        _id: id,
+        $or: [{ lastUploadAt: { $exists: false } }, { lastUploadAt: null }, { lastUploadAt: { $lte: availableSince } }]
+      },
+      { $set: { lastUploadAt: claimedAt } },
+      { new: false, lean: true }
+    )
+
+    return { isClaimed: Boolean(previous), claimedAt, previousUploadAt: previous?.lastUploadAt ?? undefined }
+  },
+
+  releaseUploadSlot: async (id: string, claim: UploadSlotClaim): Promise<void> => {
+    const restore = claim.previousUploadAt
+      ? { $set: { lastUploadAt: claim.previousUploadAt } }
+      : { $unset: { lastUploadAt: 1 } }
+
+    await GuestModel.updateOne({ _id: id, lastUploadAt: claim.claimedAt }, restore)
   },
 
   listByEvent: async (eventId: string): Promise<GuestEntity[]> => {

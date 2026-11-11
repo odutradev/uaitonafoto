@@ -1,6 +1,10 @@
 import subscriptionRepository from '@domains/payments/repositories/subscriptions'
 
 import type { EventEntity, EventPlanTier } from '@domains/events/repositories/events/types'
+import type { GuestEntity } from '@domains/events/repositories/guests/types'
+
+export const DefaultUploadCooldownSeconds = 60
+export const MaxUploadCooldownSeconds = 1800
 
 export interface EventLimits {
   tier: EventPlanTier
@@ -53,6 +57,16 @@ export const resolveEventLimits = async (event: EventEntity): Promise<EventLimit
     tier,
     ...limits
   }
+}
+
+export const resolveUploadCooldownSeconds = (event: EventEntity): number =>
+  event.settings.uploadCooldownSeconds ?? DefaultUploadCooldownSeconds
+
+export const resolveNextUploadAt = (guest: GuestEntity, event: EventEntity): string | undefined => {
+  if (!guest.lastUploadAt) return undefined
+
+  const nextUploadTime = new Date(guest.lastUploadAt).getTime() + resolveUploadCooldownSeconds(event) * 1000
+  return nextUploadTime > Date.now() ? new Date(nextUploadTime).toISOString() : undefined
 }
 
 export default resolveEventLimits

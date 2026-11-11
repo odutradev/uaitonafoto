@@ -1,6 +1,7 @@
 import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi'
 import { z } from 'zod'
 
+import { DefaultUploadCooldownSeconds, MaxUploadCooldownSeconds } from '@domains/events/utils/eventLimits'
 import { createPaginatedSchema, paginationQuerySchema } from '@factories/pagination/schemas'
 
 extendZodWithOpenApi(z)
@@ -74,6 +75,10 @@ export const eventSettingsSchema = z
     challengesMode: z.enum(['choose', 'random']).default('choose').optional().openapi({
       example: 'choose',
       description: 'Modo de seleção dos desafios: choose (escolha do convidado) ou random (sorteado aleatoriamente)'
+    }),
+    uploadCooldownSeconds: z.number().int().min(0).max(MaxUploadCooldownSeconds).default(DefaultUploadCooldownSeconds).optional().openapi({
+      example: 60,
+      description: 'Intervalo mínimo, em segundos, entre duas fotos enviadas pelo mesmo convidado'
     })
   })
   .openapi('EventSettings')

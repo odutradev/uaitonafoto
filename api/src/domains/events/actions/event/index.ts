@@ -1,8 +1,8 @@
 import { createEventSchema, eventParamsSchema, eventSchema, listEventsQuerySchema, listEventsResponseSchema, updateEventSchema } from './schemas'
 import { computeEventWindows, getEventMaxDurationHours, getEventMaxEndsAt, getEventPhase } from '@domains/events/utils/eventWindows'
+import { DefaultUploadCooldownSeconds, EventPlanLimits, resolveUserPlanTier } from '@domains/events/utils/eventLimits'
 import { sendEventCreatedEmail, sendEventSummaryEmails } from '@domains/events/utils/notifyEventEmail'
 import { buildPaginatedResponse, getPaginationOptions } from '@factories/pagination/utils'
-import { EventPlanLimits, resolveUserPlanTier } from '@domains/events/utils/eventLimits'
 import { ensureCurrentEventPin, generatePin } from '@domains/events/utils/eventPin'
 import creditUsageRepository from '@domains/payments/repositories/creditUsages'
 import purchaseRepository from '@domains/payments/repositories/purchases'
@@ -35,7 +35,8 @@ const buildDefaultEventSettings = (creditType: EventCreditType = 'paid'): EventS
   pinRotationMinutes: 15,
   pinUpdatedAt: new Date().toISOString(),
   moderationEnabled: false,
-  challengesEnabled: false
+  challengesEnabled: false,
+  uploadCooldownSeconds: DefaultUploadCooldownSeconds
 })
 
 const toEventResponse = (entity: EventEntity, myRole: EventMemberRole): EventResponse => {

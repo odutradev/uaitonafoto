@@ -15,6 +15,7 @@ const guestSchema = new Schema<GuestDocument>(
     deviceFingerprint: { type: String },
     userAgent: { type: String },
     lastActiveAt: { type: String },
+    lastUploadAt: { type: String },
     createdAt: { type: String, default: () => new Date().toISOString() }
   },
   { timestamps: false, versionKey: false }

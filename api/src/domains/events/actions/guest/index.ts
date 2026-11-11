@@ -1,6 +1,7 @@
 import { guestEventInfoSchema, guestSessionResponseSchema, guestTokenParamsSchema, joinEventResponseSchema, joinEventSchema } from './schemas'
 import { joinDeviceRateLimiter, joinEventRateLimiter } from '@domains/events/middlewares/guestRateLimit'
 import { checkPinLockout, recordPinFailure, resetPinLockout } from '@domains/events/utils/pinLockout'
+import { resolveNextUploadAt, resolveUploadCooldownSeconds } from '@domains/events/utils/eventLimits'
 import guestSessionMiddleware from '@domains/events/middlewares/guestSession'
 import { getClientIdentity } from '@domains/events/utils/clientIdentity'
 import { ensureCurrentEventPin } from '@domains/events/utils/eventPin'
@@ -32,6 +33,7 @@ const toGuestEventInfo = (event: EventEntity): GuestEventInfo => ({
   challenges: event.settings.challengesEnabled
     ? (event.challenges?.filter((c) => c.active) ?? [])
     : [],
+  uploadCooldownSeconds: resolveUploadCooldownSeconds(event),
   phase: getEventPhase(event)
 })
 
@@ -180,6 +182,7 @@ export const getGuestSession = defineAction(
       guest: { id: guest.id, name: guest.name },
       event: toGuestEventInfo(event),
       photosSent,
+      nextUploadAt: resolveNextUploadAt(guest, event),
       completedChallengeIds
     }
   }
