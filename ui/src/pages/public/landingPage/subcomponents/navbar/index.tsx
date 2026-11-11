@@ -6,17 +6,16 @@ import { Link as RouterLink } from "react-router-dom";
 import Logo from "@components/logo";
 import useLandingPage from "@pages/public/landingPage/hook";
 
-import { Actions, Bar, Header, Links, LongLabel, ShortLabel, UserBadge } from "./styles";
+import { Actions, Bar, Header, Links, LogoLink, LongLabel, ShortLabel, UserBadge } from "./styles";
 
 export const Navbar = () => {
   const { user, data: content } = useLandingPage();
   const data = content.header;
   const headerRef = useRef<HTMLElement>(null);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isHidden, setIsHidden] = useState(false);
 
   useEffect(() => {
-    const state = { lastY: window.scrollY, frame: 0 };
+    const state = { frame: 0 };
 
     const update = () => {
       state.frame = 0;
@@ -24,8 +23,6 @@ export const Navbar = () => {
       const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
       headerRef.current?.style.setProperty("--read", (maxScroll > 0 ? currentY / maxScroll : 0).toFixed(4));
       setIsScrolled(currentY > 24);
-      setIsHidden(currentY > 400 && currentY > state.lastY + 4);
-      if (Math.abs(currentY - state.lastY) > 4) state.lastY = currentY;
     };
 
     const schedule = () => {
@@ -43,11 +40,11 @@ export const Navbar = () => {
   const displayName = user?.fullName || user?.name || user?.email?.split("@")[0] || "Usuário";
 
   return (
-    <Header ref={headerRef} data-hidden={isHidden}>
+    <Header ref={headerRef}>
       <Bar data-scrolled={isScrolled} aria-label="Navegação principal">
-        <RouterLink to="/" style={{ display: "inline-flex" }} aria-label="uaiToNaFoto, página inicial">
+        <LogoLink to="/" aria-label="uaiToNaFoto, página inicial">
           <Logo size="medium" variant="dark" animation="breathe" />
-        </RouterLink>
+        </LogoLink>
 
         <Links>
           {data.links.map((link) => (

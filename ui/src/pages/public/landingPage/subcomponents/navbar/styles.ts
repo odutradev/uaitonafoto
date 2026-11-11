@@ -13,11 +13,6 @@ export const Header = styled("header")`
   display: flex;
   justify-content: center;
   pointer-events: none;
-  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-
-  &[data-hidden="true"] {
-    transform: translateY(-140%);
-  }
 
   ${({ theme }) => theme.breakpoints.up("md")} {
     top: 18px;
@@ -44,7 +39,7 @@ export const Bar = styled("nav")`
 
   &[data-scrolled="true"] {
     border-color: ${landingColors.glassBorder};
-    background: ${landingColors.glass};
+    background: ${landingColors.glassStrong};
     backdrop-filter: blur(16px) saturate(1.4);
   }
 
@@ -159,5 +154,17 @@ export const LongLabel = styled("span")`
 
   ${({ theme }) => theme.breakpoints.up("sm")} {
     display: inline;
+  }
+`;
+
+export const LogoLink = styled(RouterLink)`
+  display: inline-flex;
+  color: inherit;
+  text-decoration: none;
+
+  &:hover,
+  &:visited {
+    color: inherit;
+    text-decoration: none;
   }
 `;

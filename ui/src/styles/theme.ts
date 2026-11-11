@@ -27,6 +27,7 @@ export const landingColors = {
   whatsapp: "#25D366",
   flashWhite: "#FFFDF5",
   glass: "rgba(23, 20, 15, 0.55)",
+  glassStrong: "rgba(23, 20, 15, 0.88)",
   glassLight: "rgba(251, 248, 241, 0.08)",
   glassBorder: "rgba(251, 248, 241, 0.12)",
   yellowGlow: "rgba(255, 207, 31, 0.35)",
