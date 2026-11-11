@@ -12,6 +12,7 @@ export interface UseGuestEventPageReturn {
   page: number;
   isLoading: boolean;
   isUploading: boolean;
+  uploadWaitSeconds: number;
   notFound: boolean;
   lockout: PinLockoutState;
   setPage: (page: number) => void;

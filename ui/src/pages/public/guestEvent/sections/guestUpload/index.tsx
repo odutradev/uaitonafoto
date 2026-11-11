@@ -41,6 +41,18 @@ import useGuestEventPage from "@pages/public/guestEvent/hook";
 
 const maxPhotoAgeMs = 5 * 60 * 1000;
 
+const formatWaitTime = (seconds: number): string => {
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+  return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
+};
+
+const formatCooldownLabel = (seconds: number): string => {
+  if (seconds < 60) return `${seconds} segundos`;
+  const minutes = Math.round(seconds / 60);
+  return minutes === 1 ? "1 minuto" : `${minutes} minutos`;
+};
+
 const GuestUpload = () => {
   const {
     event: eventValue,
@@ -48,6 +60,7 @@ const GuestUpload = () => {
     photosSent,
     completedChallengeIds = [],
     isUploading,
+    uploadWaitSeconds,
     upload: onUpload
   } = useGuestEventPage();
   const event = eventValue!;
@@ -58,7 +71,10 @@ const GuestUpload = () => {
   const [selectedChallenge, setSelectedChallenge] = useState<EventChallenge | null>(null);
   const [randomChallenge, setRandomChallenge] = useState<EventChallenge | null>(null);
 
-  const canUpload = event.phase === "open";
+  const isWaitingCooldown = uploadWaitSeconds > 0;
+  const canUpload = event.phase === "open" && !isWaitingCooldown;
+  const waitLabel = `Próxima foto em ${formatWaitTime(uploadWaitSeconds)}`;
+  const cooldownSeconds = event.uploadCooldownSeconds ?? 0;
   const hasChallenges = Boolean(event.challengesEnabled && (event.challenges?.length ?? 0) > 0);
   const isRandomMode = event.challengesMode === "random";
 
@@ -206,7 +222,7 @@ const GuestUpload = () => {
               onClick={handleNormalPhotoClick}
               sx={uploadButtonStyles}
             >
-              {isUploading && !selectedChallenge ? "Enviando foto..." : "Tirar foto normal"}
+              {isUploading && !selectedChallenge ? "Enviando foto..." : isWaitingCooldown ? waitLabel : "Tirar foto normal"}
             </Button>
 
             <Button
@@ -219,7 +235,9 @@ const GuestUpload = () => {
             >
               {isUploading && selectedChallenge
                 ? "Enviando missão..."
-                : isRandomMode
+                : isWaitingCooldown
+                  ? waitLabel
+                  : isRandomMode
                   ? "Sortear uma missão"
                   : "Cumprir um desafio"}
             </Button>
@@ -233,12 +251,13 @@ const GuestUpload = () => {
             onClick={handleNormalPhotoClick}
             sx={uploadButtonStyles}
           >
-            {isUploading ? "Enviando foto..." : "Tirar foto"}
+            {isUploading ? "Enviando foto..." : isWaitingCooldown ? waitLabel : "Tirar foto"}
           </Button>
         )}
 
         <Typography variant="caption" color="text.secondary" sx={{ textAlign: "center", display: "block" }}>
           Abre a câmera na hora • Fotos antigas da galeria não são permitidas
+          {cooldownSeconds > 0 && ` • Intervalo de ${formatCooldownLabel(cooldownSeconds)} entre fotos`}
         </Typography>
       </Paper>
 
