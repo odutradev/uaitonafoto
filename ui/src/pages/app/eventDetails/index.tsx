@@ -1,19 +1,8 @@
 import { Box, Button, Skeleton, Tab, Tabs } from '@mui/material'
-import {
-  ArrowBack as BackIcon,
-  CollectionsOutlined as AlbumIcon,
-  EmojiEventsOutlined as ChallengesIcon,
-  GroupOutlined as TeamIcon,
-  LiveTvOutlined as ScreenIcon,
-  PeopleAltOutlined as GuestIcon,
-  QrCode2Outlined as QrIcon,
-  SettingsOutlined as SettingsIcon
-} from '@mui/icons-material'
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
+import { ArrowBack as BackIcon, CollectionsOutlined as AlbumIcon, EmojiEventsOutlined as ChallengesIcon, GroupOutlined as TeamIcon, LiveTvOutlined as ScreenIcon, PeopleAltOutlined as GuestIcon, QrCode2Outlined as QrIcon, SettingsOutlined as SettingsIcon } from '@mui/icons-material'
 
-import useAuth from '@hooks/useAuth'
 
-import useEventDetails from './hooks/useEventDetails'
+import useEventDetailsPage, { EventDetailsPageProvider } from './hook'
 import EventAlbum from './sections/eventAlbum'
 import EventChallenges from './sections/eventChallenges'
 import EventGuests from './sections/eventGuests'
@@ -22,59 +11,10 @@ import EventSettings from './sections/eventSettings'
 import EventStatusControl from './sections/eventStatusControl'
 import EventTeam from './sections/eventTeam'
 import ShareLink from './sections/shareLink'
-import {
-  backButtonStyles,
-  pageStyles,
-  tabItemStyles,
-  tabsContainerStyles,
-  tabsStyles
-} from './styles'
-import type { EventDetailsTab } from './types'
+import { backButtonStyles, pageStyles, tabItemStyles, tabsContainerStyles, tabsStyles } from './styles'
 
-const VALID_TABS: readonly EventDetailsTab[] = ['access', 'screens', 'guests', 'challenges', 'album', 'team', 'settings']
-
-const isValidTab = (tab: string | null): tab is EventDetailsTab => {
-  return tab !== null && (VALID_TABS as readonly string[]).includes(tab)
-}
-
-const EventDetails = () => {
-  const { id = '' } = useParams()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const { user } = useAuth()
-  const {
-    event,
-    isLoading,
-    save,
-    remove,
-    addScreen,
-    disconnectScreen,
-    updateScreen,
-    toggleBlockScreen,
-    refresh,
-    start,
-    close,
-    reopen,
-    unlockPin
-  } = useEventDetails(id)
-
-  const rawTab = searchParams.get('tab')
-  const activeTab: EventDetailsTab = isValidTab(rawTab) ? rawTab : 'access'
-
-  const handleTabChange = (_: unknown, nextTab: EventDetailsTab) => {
-    setSearchParams(
-      (prev) => {
-        const next = new URLSearchParams(prev)
-        if (nextTab === 'access') {
-          next.delete('tab')
-        } else {
-          next.set('tab', nextTab)
-        }
-        return next
-      },
-      { replace: true }
-    )
-  }
+const EventDetailsContent = () => {
+  const { event, user, isLoading, activeTab, handleTabChange, handleBackToEvents } = useEventDetailsPage()
 
   if (isLoading || !event || !user) {
     return (
@@ -86,26 +26,19 @@ const EventDetails = () => {
     )
   }
 
-  const openScreen = () => navigate(`/e/${event.guestToken}/screen`)
-
   return (
     <Box sx={pageStyles}>
       <Button
         variant="text"
         size="small"
         startIcon={<BackIcon fontSize="small" />}
-        onClick={() => navigate('/app')}
+        onClick={handleBackToEvents}
         sx={backButtonStyles}
       >
         Voltar para eventos
       </Button>
 
-      <EventStatusControl
-        event={event}
-        onStart={start}
-        onClose={close}
-        onReopen={reopen}
-      />
+      <EventStatusControl />
 
       <Box sx={tabsContainerStyles}>
         <Tabs
@@ -170,32 +103,26 @@ const EventDetails = () => {
       </Box>
 
       {activeTab === 'access' && (
-        <ShareLink
-          event={event}
-          onUnlockLockouts={() => unlockPin('guest')}
-        />
+        <ShareLink />
       )}
       {activeTab === 'screens' && (
-        <EventScreens
-          event={event}
-          onOpenScreen={openScreen}
-          onAddScreen={addScreen}
-          onDisconnectScreen={disconnectScreen}
-          onUpdateScreen={updateScreen}
-          onToggleBlockScreen={toggleBlockScreen}
-          onRefresh={refresh}
-          onUnlockLockouts={() => unlockPin('screen')}
-        />
+        <EventScreens />
       )}
-      {activeTab === 'guests' && <EventGuests event={event} />}
+      {activeTab === 'guests' && <EventGuests />}
       {activeTab === 'challenges' && event.settings.challengesEnabled && (
-        <EventChallenges event={event} onRefresh={refresh} />
+        <EventChallenges />
       )}
-      {activeTab === 'album' && <EventAlbum event={event} />}
-      {activeTab === 'team' && <EventTeam event={event} currentUserId={user.id} />}
-      {activeTab === 'settings' && <EventSettings event={event} onSave={save} onDelete={remove} />}
+      {activeTab === 'album' && <EventAlbum />}
+      {activeTab === 'team' && <EventTeam />}
+      {activeTab === 'settings' && <EventSettings />}
     </Box>
   )
 }
+
+const EventDetails = () => (
+  <EventDetailsPageProvider>
+    <EventDetailsContent />
+  </EventDetailsPageProvider>
+)
 
 export default EventDetails

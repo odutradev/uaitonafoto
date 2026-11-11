@@ -1,44 +1,20 @@
 import { useState } from 'react'
-import {
-  Avatar,
-  Box,
-  Button,
-  Card,
-  CircularProgress,
-  IconButton,
-  Skeleton,
-  TextField,
-  Tooltip,
-  Typography
-} from '@mui/material'
-import {
-  DeleteOutline as DeleteIcon,
-  PersonAddAlt1Outlined as AddPersonIcon
-} from '@mui/icons-material'
+import { Avatar, Box, Button, Card, CircularProgress, IconButton, Skeleton, TextField, Tooltip, Typography } from '@mui/material'
+import { DeleteOutline as DeleteIcon, PersonAddAlt1Outlined as AddPersonIcon } from '@mui/icons-material'
 
 import Modal from '@components/modal'
-import { MAX_EVENT_ORGANIZERS } from '@assets/data/events'
 import { getEventLimits } from '@utils/functions/events'
 
-import useEventTeam from '@pages/app/eventDetails/hooks/useEventTeam'
-import {
-  addOrganizerRowStyles,
-  addOrganizerSectionStyles,
-  ellipsisStyles,
-  memberAvatarStyles,
-  memberRowStyles,
-  membersListStyles,
-  memberTextStyles,
-  roleBadgeStyles,
-  teamButtonStyles,
-  teamCardStyles,
-  teamSectionStackStyles
-} from './styles'
+import useEventTeam from '@pages/app/eventDetails/hook/team'
+import { addOrganizerRowStyles, addOrganizerSectionStyles, ellipsisStyles, memberAvatarStyles, memberRowStyles, membersListStyles, memberTextStyles, roleBadgeStyles, teamButtonStyles, teamCardStyles, teamSectionStackStyles } from './styles'
 import type { FormEvent } from 'react'
 import type { TeamMember } from '@utils/types/events'
-import type { EventTeamProps } from './types'
+import useEventDetailsPage from '@pages/app/eventDetails/hook'
 
-const EventTeam = ({ event, currentUserId }: EventTeamProps) => {
+const EventTeam = () => {
+  const { event: eventValue, currentUserId } = useEventDetailsPage()
+  const event = eventValue!
+
   const { members, isLoading, add, remove } = useEventTeam(event.id)
   const [email, setEmail] = useState('')
   const [isAdding, setIsAdding] = useState(false)

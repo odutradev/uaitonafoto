@@ -1,17 +1,6 @@
 import { useState } from 'react'
-import {
-  Alert,
-  Box,
-  Button,
-  Card,
-  CircularProgress,
-  Typography
-} from '@mui/material'
-import {
-  PlayArrow as StartIcon,
-  Replay as ReopenIcon,
-  StopCircleOutlined as CloseIcon
-} from '@mui/icons-material'
+import { Alert, Box, Button, Card, CircularProgress, Typography } from '@mui/material'
+import { PlayArrow as StartIcon, Replay as ReopenIcon, StopCircleOutlined as CloseIcon } from '@mui/icons-material'
 import dayjs from 'dayjs'
 
 import Modal from '@components/modal'
@@ -19,19 +8,13 @@ import { canReopenEvent, getEventPhase, getEventRemainingOpenTime } from '@utils
 import { eventPhaseLabels, eventTypeLabels } from '@assets/data/events'
 import { brandColors } from '@styles/theme'
 
-import {
-  liveDotStyles,
-  modalButtonStyles,
-  statusActionButtonStyles,
-  statusActionRowStyles,
-  statusBadgeStyles,
-  statusControlCardStyles,
-  statusHeaderRowStyles,
-  statusInfoColumnStyles
-} from './styles'
-import type { EventStatusControlProps } from './types'
+import { liveDotStyles, modalButtonStyles, statusActionButtonStyles, statusActionRowStyles, statusBadgeStyles, statusControlCardStyles, statusHeaderRowStyles, statusInfoColumnStyles } from './styles'
+import useEventDetailsPage from '@pages/app/eventDetails/hook'
 
-const EventStatusControl = ({ event, onStart, onClose, onReopen }: EventStatusControlProps) => {
+const EventStatusControl = () => {
+  const { event: eventValue, start: onStart, close: onClose, reopen: onReopen } = useEventDetailsPage()
+  const event = eventValue!
+
   const [isStartModalOpen, setIsStartModalOpen] = useState(false)
   const [isCloseModalOpen, setIsCloseModalOpen] = useState(false)
   const [isReopenModalOpen, setIsReopenModalOpen] = useState(false)

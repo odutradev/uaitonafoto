@@ -5,8 +5,10 @@ import { addOrganizer, getEventTeam, removeTeamMember } from '@actions/events'
 import { getErrorMessage } from '@utils/functions/events'
 
 import type { TeamMember } from '@utils/types/events'
+import useAction from '@hooks/useAction'
 
 const useEventTeam = (eventId: string) => {
+  const runAction = useAction()
   const [members, setMembers] = useState<TeamMember[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
@@ -19,27 +21,26 @@ const useEventTeam = (eventId: string) => {
 
   const add = useCallback(
     async (email: string): Promise<boolean> => {
-      try {
-        setMembers(await addOrganizer(eventId, email))
-        toast.success('Organizador adicionado!')
-        return true
-      } catch (error) {
-        toast.error(getErrorMessage(error, 'Não foi possível adicionar o organizador.'))
-        return false
-      }
+      const updatedMembers = await runAction({
+        action: () => addOrganizer(eventId, email),
+        toastMessages: { success: 'Organizador adicionado!', error: 'Não foi possível adicionar o organizador.' },
+        callback: setMembers
+      })
+      return updatedMembers !== undefined
     },
-    [eventId]
+    [eventId, runAction]
   )
 
   const remove = useCallback(
     async (userId: string) => {
-      try {
-        setMembers(await removeTeamMember(eventId, userId))
-      } catch (error) {
-        toast.error(getErrorMessage(error, 'Não foi possível remover o membro.'))
-      }
+      await runAction({
+        action: async () => {
+          setMembers(await removeTeamMember(eventId, userId))
+        },
+        toastMessages: { error: 'Não foi possível remover o membro.' }
+      })
     },
-    [eventId]
+    [eventId, runAction]
   )
 
   return { members, isLoading, add, remove }

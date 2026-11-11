@@ -1,34 +1,6 @@
 import { useState } from 'react'
-import {
-  Box,
-  Button,
-  Card,
-  Chip,
-  CircularProgress,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  IconButton,
-  Skeleton,
-  Tooltip,
-  Typography
-} from '@mui/material'
-import {
-  CheckCircleOutline as ApproveIcon,
-  Close as RejectIcon,
-  CollectionsOutlined as AlbumIcon,
-  DeleteOutline as DeleteIcon,
-  DoneAllOutlined as DoneAllIcon,
-  DownloadOutlined as DownloadIcon,
-  EmojiEventsOutlined as ChallengeIcon,
-  FavoriteBorder as LikeIcon,
-  FolderZipOutlined as ZipIcon,
-  ContentCopyOutlined as CopyIcon,
-  VisibilityOutlined as ViewIcon,
-  PhotoCameraOutlined as CameraIcon,
-  PeopleOutline as GuestsIcon,
-  AccessTimeOutlined as TimeIcon
-} from '@mui/icons-material'
+import { Box, Button, Card, Chip, CircularProgress, Dialog, DialogContent, DialogTitle, IconButton, Skeleton, Tooltip, Typography } from '@mui/material'
+import { CheckCircleOutline as ApproveIcon, Close as RejectIcon, CollectionsOutlined as AlbumIcon, DeleteOutline as DeleteIcon, DoneAllOutlined as DoneAllIcon, DownloadOutlined as DownloadIcon, EmojiEventsOutlined as ChallengeIcon, FavoriteBorder as LikeIcon, FolderZipOutlined as ZipIcon, ContentCopyOutlined as CopyIcon, VisibilityOutlined as ViewIcon, PhotoCameraOutlined as CameraIcon, PeopleOutline as GuestsIcon, AccessTimeOutlined as TimeIcon } from '@mui/icons-material'
 import dayjs from 'dayjs'
 import { toast } from 'react-toastify'
 
@@ -37,37 +9,11 @@ import Modal from '@components/modal'
 import Pagination from '@components/pagination'
 import { buildGuestLink, getErrorMessage } from '@utils/functions/events'
 
-import useEventAlbum, { type AlbumStatusFilter } from '@pages/app/eventDetails/hooks/useEventAlbum'
+import useEventAlbum, { type AlbumStatusFilter } from '@pages/app/eventDetails/hook/album'
 
-import {
-  albumCardStyles,
-  albumHeaderRowStyles,
-  approveAllButtonStyles,
-  approvePhotoButtonStyles,
-  deletePhotoButtonStyles,
-  downloadZipButtonStyles,
-  endedDownloadBigButtonStyles,
-  endedHeroCardStyles,
-  endedHeroIconBoxStyles,
-  endedHeroInfoStyles,
-  endedStatItemStyles,
-  endedStatsRowStyles,
-  moderationBarStyles,
-  moderationFilterButtonStyles,
-  moderationTabsStyles,
-  photoCardStyles,
-  photoDirectDownloadButtonStyles,
-  photoImageStyles,
-  photoOverlayNameStyles,
-  photoOverlayStyles,
-  photoStatusBadgeStyles,
-  photosGridStyles,
-  rejectPhotoButtonStyles,
-  stateBoxStyles,
-  stateIconWrapperStyles
-} from './styles'
+import { albumCardStyles, albumHeaderRowStyles, approveAllButtonStyles, approvePhotoButtonStyles, deletePhotoButtonStyles, downloadZipButtonStyles, endedDownloadBigButtonStyles, endedHeroCardStyles, endedHeroIconBoxStyles, endedHeroInfoStyles, endedStatItemStyles, endedStatsRowStyles, moderationBarStyles, moderationFilterButtonStyles, moderationTabsStyles, photoCardStyles, photoDirectDownloadButtonStyles, photoImageStyles, photoOverlayNameStyles, photoOverlayStyles, photoStatusBadgeStyles, photosGridStyles, rejectPhotoButtonStyles, stateBoxStyles, stateIconWrapperStyles } from './styles'
 import type { EventPhoto } from '@utils/types/events'
-import type { EventAlbumProps } from './types'
+import useEventDetailsPage from '@pages/app/eventDetails/hook'
 
 const downloadBlob = (blob: Blob, filename: string): void => {
   const blobUrl = window.URL.createObjectURL(blob)
@@ -105,7 +51,10 @@ const MODERATION_FILTERS: readonly { value: AlbumStatusFilter; label: string }[]
   { value: 'all', label: 'Todas' }
 ]
 
-const EventAlbum = ({ event }: EventAlbumProps) => {
+const EventAlbum = () => {
+  const { event: eventValue } = useEventDetailsPage()
+  const event = eventValue!
+
   const isEventEnded =
     dayjs().isAfter(dayjs(event.endsAt)) ||
     Boolean(event.closedAt) ||

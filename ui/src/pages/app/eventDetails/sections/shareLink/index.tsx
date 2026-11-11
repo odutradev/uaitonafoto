@@ -1,20 +1,6 @@
 import { useState } from 'react'
-import {
-  Box,
-  Button,
-  Card,
-  CircularProgress,
-  IconButton,
-  Tooltip,
-  Typography
-} from '@mui/material'
-import {
-  ContentCopyOutlined as CopyIcon,
-  LockOpenOutlined as LockOpenIcon,
-  LockOutlined as LockIcon,
-  OpenInNewOutlined as OpenIcon,
-  PrintOutlined as PrintIcon
-} from '@mui/icons-material'
+import { Box, Button, Card, CircularProgress, IconButton, Tooltip, Typography } from '@mui/material'
+import { ContentCopyOutlined as CopyIcon, LockOpenOutlined as LockOpenIcon, LockOutlined as LockIcon, OpenInNewOutlined as OpenIcon, PrintOutlined as PrintIcon } from '@mui/icons-material'
 import { QRCodeSVG } from 'qrcode.react'
 import { toast } from 'react-toastify'
 
@@ -23,24 +9,13 @@ import { buildGuestLink } from '@utils/functions/events'
 
 import { TableDisplayModal } from './subcomponents/tableDisplayModal'
 
-import {
-  compactIconButtonStyles,
-  linkFieldBoxStyles,
-  linkIconActionsStyles,
-  linkTextStyles,
-  pinBannerStyles,
-  pinCodeTextStyles,
-  qrBoxStyles,
-  shareButtonStyles,
-  shareCardStyles,
-  shareInfoColumnStyles,
-  shareMainRowStyles,
-  shareSectionStackStyles,
-  unlockButtonStyles
-} from './styles'
-import type { ShareLinkProps } from './types'
+import { compactIconButtonStyles, linkFieldBoxStyles, linkIconActionsStyles, linkTextStyles, pinBannerStyles, pinCodeTextStyles, qrBoxStyles, shareButtonStyles, shareCardStyles, shareInfoColumnStyles, shareMainRowStyles, shareSectionStackStyles, unlockButtonStyles } from './styles'
+import useEventDetailsPage from '@pages/app/eventDetails/hook'
 
-const ShareLink = ({ event, onUnlockLockouts }: ShareLinkProps) => {
+const ShareLink = () => {
+  const { event: eventValue, handleUnlockGuestLockouts: onUnlockLockouts } = useEventDetailsPage()
+  const event = eventValue!
+
   const link = buildGuestLink(event.guestToken)
   const [isUnlocking, setIsUnlocking] = useState(false)
   const [isDisplayModalOpen, setIsDisplayModalOpen] = useState(false)
@@ -160,29 +135,27 @@ const ShareLink = ({ event, onUnlockLockouts }: ShareLinkProps) => {
               </Box>
             </Box>
 
-            {onUnlockLockouts && (
-              <Tooltip title="Desbloqueia convidados bloqueados por tentativas incorretas de PIN">
-                <span>
-                  <Button
-                    size="small"
-                    variant="outlined"
-                    color="inherit"
-                    startIcon={
-                      isUnlocking ? (
-                        <CircularProgress size={13} color="inherit" />
-                      ) : (
-                        <LockOpenIcon sx={{ fontSize: 15 }} />
-                      )
-                    }
-                    onClick={handleUnlock}
-                    disabled={isUnlocking}
-                    sx={unlockButtonStyles}
-                  >
-                    Desbloquear acessos
-                  </Button>
-                </span>
-              </Tooltip>
-            )}
+            <Tooltip title="Desbloqueia convidados bloqueados por tentativas incorretas de PIN">
+              <span>
+                <Button
+                  size="small"
+                  variant="outlined"
+                  color="inherit"
+                  startIcon={
+                    isUnlocking ? (
+                      <CircularProgress size={13} color="inherit" />
+                    ) : (
+                      <LockOpenIcon sx={{ fontSize: 15 }} />
+                    )
+                  }
+                  onClick={handleUnlock}
+                  disabled={isUnlocking}
+                  sx={unlockButtonStyles}
+                >
+                  Desbloquear acessos
+                </Button>
+              </span>
+            </Tooltip>
           </Box>
         )}
       </Card>
