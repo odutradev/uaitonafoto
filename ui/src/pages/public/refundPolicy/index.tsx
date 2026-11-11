@@ -59,7 +59,7 @@ export const RefundPolicy = ({ lastUpdated = "04 de novembro de 2026" }: RefundP
                 <Typography variant="body2" sx={{ color: "text.primary", lineHeight: 1.6 }}>
                   Nos termos do{" "}
                   <strong>Artigo 49 da Lei Federal nº 8.078/1990 (Código de Defesa do Consumidor - CDC)</strong>, o
-                  cliente que contratar qualquer plano ou serviço na plataforma <strong>uai to na foto</strong> tem o
+                  cliente que contratar qualquer plano ou serviço na plataforma <strong>uaiToNaFoto</strong> tem o
                   direito incondicional de desistir da contratação no prazo de até{" "}
                   <strong>7 (sete) dias corridos</strong> a partir da confirmação do pagamento, com direito ao{" "}
                   <strong>reembolso integral de 100%</strong> dos valores pagos, sem multas, taxas de cancelamento ou
@@ -71,7 +71,7 @@ export const RefundPolicy = ({ lastUpdated = "04 de novembro de 2026" }: RefundP
 
           <Typography variant="body1" sx={paragraphStyles}>
             A presente Política de Cancelamento e Reembolso estabelece as regras e procedimentos aplicáveis às
-            contratações realizadas no <strong>uai to na foto</strong>, plataforma operada por{" "}
+            contratações realizadas no <strong>uaiToNaFoto</strong>, plataforma operada por{" "}
             <strong>Lite Technology LTDA</strong>, inscrita no CNPJ sob o nº <strong>55.717.105/0001-58</strong>.
           </Typography>
 
@@ -189,7 +189,7 @@ export const RefundPolicy = ({ lastUpdated = "04 de novembro de 2026" }: RefundP
             <Link component={RouterLink} to="/termos-de-uso" underline="hover" color="primary">
               Termos de Uso
             </Link>{" "}
-            do <strong>uai to na foto</strong> e foi elaborada em estrita conformidade com a legislação de proteção ao
+            do <strong>uaiToNaFoto</strong> e foi elaborada em estrita conformidade com a legislação de proteção ao
             consumidor brasileira.
           </Typography>
         </Paper>
@@ -198,7 +198,7 @@ export const RefundPolicy = ({ lastUpdated = "04 de novembro de 2026" }: RefundP
       <Box component="footer" sx={footerBoxStyles}>
         <Container maxWidth="lg">
           <Typography variant="body2" color="text.secondary">
-            © {new Date().getFullYear()} uai to na foto • Lite Technology LTDA • CNPJ 55.717.105/0001-58
+            © {new Date().getFullYear()} uaiToNaFoto • Lite Technology LTDA • CNPJ 55.717.105/0001-58
           </Typography>
         </Container>
       </Box>

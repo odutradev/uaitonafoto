@@ -4,7 +4,7 @@ import { enrichEmail } from '@email/utils'
 import type { TeamInviteEmailVariables } from './types'
 
 const teamInviteEmail = enrichEmail<TeamInviteEmailVariables>({
-  subject: ({ eventName }) => `Você entrou na equipe de "${eventName}" - uai to na foto`,
+  subject: ({ eventName }) => `Você entrou na equipe de "${eventName}" - uaiToNaFoto`,
   build: ({ memberName, inviterName, eventName, eventStartsAt, eventUrl }) => ({
     preheader: `${inviterName} adicionou você como organizador de ${eventName}.`,
     eyebrow: 'Equipe do evento',

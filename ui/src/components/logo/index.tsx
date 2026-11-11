@@ -187,7 +187,7 @@ const Logo = ({
       <svg
         ref={symbolRef}
         role="img"
-        aria-label="Símbolo uai to na foto"
+        aria-label="Símbolo uaiToNaFoto"
         width="100%"
         height="100%"
         viewBox="0 0 100 100"

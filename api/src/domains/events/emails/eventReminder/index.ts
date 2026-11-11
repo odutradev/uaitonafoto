@@ -4,7 +4,7 @@ import { enrichEmail } from '@email/utils'
 import type { EventReminderEmailVariables } from './types'
 
 const eventReminderEmail = enrichEmail<EventReminderEmailVariables>({
-  subject: ({ eventName }) => `Falta pouco para ${eventName}! Checklist do telão - uai to na foto`,
+  subject: ({ eventName }) => `Falta pouco para ${eventName}! Checklist do telão - uaiToNaFoto`,
   build: ({ userName, eventName, startsAt, screenUrl, guestUrl, eventUrl }) => ({
     preheader: `${eventName} começa em ${startsAt}. Veja o checklist para o telão funcionar sem susto.`,
     eyebrow: 'Lembrete do evento',

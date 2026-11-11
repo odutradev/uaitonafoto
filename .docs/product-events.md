@@ -1,4 +1,4 @@
-# UaiTôNaFoto — Produto e Regras de Negócio (Eventos)
+# uaiToNaFoto — Produto e Regras de Negócio (Eventos)
 
 ## 1. Definição do produto
 

@@ -9,7 +9,7 @@ const formatDaysLeft = (days: number): string => {
 }
 
 const galleryExpiringEmail = enrichEmail<GalleryExpiringEmailVariables>({
-  subject: ({ eventName, daysLeft }) => `As fotos de ${eventName} expiram ${formatDaysLeft(daysLeft)} - uai to na foto`,
+  subject: ({ eventName, daysLeft }) => `As fotos de ${eventName} expiram ${formatDaysLeft(daysLeft)} - uaiToNaFoto`,
   build: ({ userName, eventName, daysLeft, galleryExpiresAt, eventUrl }) => ({
     preheader: `Baixe o álbum antes de ${galleryExpiresAt}. Depois disso as fotos são apagadas.`,
     eyebrow: 'Álbum expirando',

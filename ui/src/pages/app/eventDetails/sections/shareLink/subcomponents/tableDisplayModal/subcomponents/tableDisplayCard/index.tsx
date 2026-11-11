@@ -329,7 +329,7 @@ export const TableDisplayCard = ({ event, guestUrl, config, scale = 1 }: TableDi
           }}
         >
           <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-            <span style={{ fontWeight: 800, color: theme.color }}>uai to na foto</span>
+            <span style={{ fontWeight: 800, color: theme.color }}>uaiToNaFoto</span>
             <span>•</span>
             <span>fotos ao vivo</span>
           </Box>

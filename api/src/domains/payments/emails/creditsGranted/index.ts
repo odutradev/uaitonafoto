@@ -6,7 +6,7 @@ import type { CreditsGrantedEmailVariables } from './types'
 const formatCreditsLabel = (amount: number): string => `${amount} ${amount === 1 ? 'crédito' : 'créditos'}`
 
 const creditsGrantedEmail = enrichEmail<CreditsGrantedEmailVariables>({
-  subject: ({ creditsAdded }) => `Você recebeu ${formatCreditsLabel(creditsAdded)} - uai to na foto`,
+  subject: ({ creditsAdded }) => `Você recebeu ${formatCreditsLabel(creditsAdded)} - uaiToNaFoto`,
   build: ({ userName, creditsAdded, creditTypeLabel, reason, totalCredits, appUrl }) => ({
     preheader: `Adicionamos ${formatCreditsLabel(creditsAdded)} na sua conta.`,
     eyebrow: 'Créditos adicionados',

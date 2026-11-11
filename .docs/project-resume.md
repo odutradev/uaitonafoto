@@ -1,6 +1,6 @@
-# Visão Geral e Especificação Unificada — uai to na foto
+# Visão Geral e Especificação Unificada — uaiToNaFoto
 
-Documento mestre contendo todas as decisões de produto, modelo comercial, pagamentos e arquitetura técnica definidas para o **uai to na foto** (`uaitonafoto`).
+Documento mestre contendo todas as decisões de produto, modelo comercial, pagamentos e arquitetura técnica definidas para o **uaiToNaFoto** (`uaitonafoto`).
 
 ---
 

@@ -10,7 +10,7 @@ const formatDaysLabel = (days: number): string => {
 }
 
 const subscriptionRenewalReminderEmail = enrichEmail<SubscriptionRenewalReminderEmailVariables>({
-  subject: ({ planName, daysUntilBilling }) => `Sua assinatura ${planName} renova ${formatDaysLabel(daysUntilBilling)} - uai to na foto`,
+  subject: ({ planName, daysUntilBilling }) => `Sua assinatura ${planName} renova ${formatDaysLabel(daysUntilBilling)} - uaiToNaFoto`,
   build: ({ userName, planName, amountFormatted, billingDate, daysUntilBilling, paymentMethodLabel, billingUrl }) => ({
     preheader: `A próxima cobrança de ${amountFormatted} acontece em ${billingDate}.`,
     eyebrow: 'Lembrete de renovação',

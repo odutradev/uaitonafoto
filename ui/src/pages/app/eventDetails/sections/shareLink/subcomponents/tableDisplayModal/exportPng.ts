@@ -292,7 +292,7 @@ export async function exportTableDisplayPng({ event, guestUrl, config }: ExportP
     ctx.fillStyle = theme.secondaryColor;
     ctx.font = "600 26px system-ui, -apple-system, sans-serif";
     ctx.textAlign = "left";
-    ctx.fillText("uai to na foto • fotos ao vivo", 100, footerY + 24);
+    ctx.fillText("uaiToNaFoto • fotos ao vivo", 100, footerY + 24);
 
     const customOrAgency = config.customFooter?.trim() || event.customization?.agencyName?.trim() || "uaitonafoto.com";
     ctx.textAlign = "right";

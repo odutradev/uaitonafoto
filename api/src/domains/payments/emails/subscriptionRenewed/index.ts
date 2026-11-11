@@ -4,7 +4,7 @@ import { enrichEmail } from '@email/utils'
 import type { SubscriptionRenewedEmailVariables } from './types'
 
 const subscriptionRenewedEmail = enrichEmail<SubscriptionRenewedEmailVariables>({
-  subject: ({ planName }) => `Renovação confirmada: ${planName} - uai to na foto`,
+  subject: ({ planName }) => `Renovação confirmada: ${planName} - uaiToNaFoto`,
   build: ({ userName, planName, amountFormatted, creditsAdded, nextBillingDate, appUrl }) => ({
     preheader: `Pagamento confirmado. +${creditsAdded} créditos já estão na sua conta.`,
     eyebrow: 'Assinatura renovada',

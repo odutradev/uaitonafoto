@@ -6,7 +6,7 @@ import type { EventSummaryEmailVariables } from './types'
 const formatCount = (count: number, singular: string, plural: string): string => `${count} ${count === 1 ? singular : plural}`
 
 const eventSummaryEmail = enrichEmail<EventSummaryEmailVariables>({
-  subject: ({ eventName }) => `${eventName} terminou: veja o resumo - uai to na foto`,
+  subject: ({ eventName }) => `${eventName} terminou: veja o resumo - uaiToNaFoto`,
   build: ({ userName, eventName, photosCount, guestsCount, galleryExpiresAt, eventUrl }) => ({
     preheader: `${formatCount(photosCount, 'foto', 'fotos')} de ${formatCount(guestsCount, 'convidado', 'convidados')}. Baixe o álbum completo.`,
     eyebrow: 'Evento encerrado',

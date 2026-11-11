@@ -4,7 +4,7 @@ import { enrichEmail } from '@email/utils'
 import type { SubscriptionActivatedEmailVariables } from './types'
 
 const subscriptionActivatedEmail = enrichEmail<SubscriptionActivatedEmailVariables>({
-  subject: ({ planName }) => `Assinatura ativada: ${planName} - uai to na foto`,
+  subject: ({ planName }) => `Assinatura ativada: ${planName} - uaiToNaFoto`,
   build: ({ userName, planName, amountFormatted, creditsAdded, paymentMethodLabel, nextBillingDate, appUrl }) => ({
     preheader: `Sua assinatura ${planName} está ativa e +${creditsAdded} créditos já estão na conta.`,
     eyebrow: 'Assinatura ativada',

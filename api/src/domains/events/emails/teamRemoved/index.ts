@@ -4,7 +4,7 @@ import { enrichEmail } from '@email/utils'
 import type { TeamRemovedEmailVariables } from './types'
 
 const teamRemovedEmail = enrichEmail<TeamRemovedEmailVariables>({
-  subject: ({ eventName }) => `Você saiu da equipe de "${eventName}" - uai to na foto`,
+  subject: ({ eventName }) => `Você saiu da equipe de "${eventName}" - uaiToNaFoto`,
   build: ({ memberName, eventName, appUrl }) => ({
     preheader: `Seu acesso de organizador ao evento ${eventName} foi removido.`,
     eyebrow: 'Equipe do evento',
