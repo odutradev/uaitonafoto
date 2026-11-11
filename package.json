@@ -1,9 +1,12 @@
 {
   "name": "uaitonafoto",
-  "version": "1.8.5",
+  "version": "1.8.6",
   "private": true,
   "description": "Plataforma em tempo real para compartilhamento e exibição de fotos em eventos — uai to na foto",
-  "workspaces": ["api", "ui"],
+  "workspaces": [
+    "api",
+    "ui"
+  ],
   "scripts": {
     "dev": "concurrently -n \"api,web\" \"npm run dev:api\" \"npm run dev:web\"",
     "dev:api": "npm run dev -w api",
