@@ -1,3 +1,4 @@
+import { sendGalleryExpiredEmails } from '@domains/events/utils/notifyEventEmail'
 import { purgeEventPhotos } from '@domains/events/utils/photoStorage'
 import eventRepository from '@domains/events/repositories/events'
 import { defineRoutine } from '@config/routine'
@@ -12,6 +13,7 @@ export const runExpireGalleries = async (): Promise<void> => {
     try {
       await purgeEventPhotos(event.id)
       await eventRepository.markGalleryCleaned(event.id)
+      await sendGalleryExpiredEmails(event)
       return true
     } catch (error) {
       logger.error(`Failed to clean gallery of event ${event.id}:`, error)

@@ -68,6 +68,10 @@ export interface EventCustomization {
   primaryColor?: string
 }
 
+export type EventNotificationKey = 'reminderSentAt' | 'summarySentAt' | 'galleryExpiringSentAt' | 'galleryExpiredSentAt'
+
+export type EventNotifications = Partial<Record<EventNotificationKey, string>>
+
 export interface EventEntity {
   id: string
   name: string
@@ -84,6 +88,7 @@ export interface EventEntity {
   galleryExpiresAt: string
   galleryCleanedAt?: string
   closedAt?: string
+  notifications?: EventNotifications
   challenges?: EventChallenge[]
   members: EventMember[]
   screens: EventScreenSlot[]

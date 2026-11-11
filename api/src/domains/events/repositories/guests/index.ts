@@ -38,6 +38,10 @@ export const guestRepository = {
     return event ? { guest, event } : null
   },
 
+  countByEvent: async (eventId: string): Promise<number> => {
+    return GuestModel.countDocuments({ eventId })
+  },
+
   findByIds: async (ids: string[]): Promise<GuestEntity[]> => {
     const docs = await GuestModel.find({ _id: { $in: ids } }).lean()
     return docs.map(toGuestEntity)

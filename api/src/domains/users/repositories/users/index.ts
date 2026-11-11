@@ -2,7 +2,7 @@ import { buildCreatedAtFilter } from '@utils/date'
 import { removeUndefined } from '@utils/object'
 import UserModel from './model'
 
-import type { CreditType, ListUsersParams, UpdateUserPayload, UpsertUserPayload, UserEntity } from './types'
+import type { CreditType, ListUsersParams, UpdateUserPayload, UpsertUserPayload, UserEntity, UserRole } from './types'
 import type { CreatedAtRange } from '@utils/date/types'
 import type { UserDocument } from './model'
 
@@ -28,6 +28,17 @@ export const userRepository = {
     const doc = await UserModel.findById(id).lean()
     if (!doc) return null
     return toUserEntity(doc)
+  },
+
+  findByIds: async (ids: string[]): Promise<UserEntity[]> => {
+    if (ids.length === 0) return []
+    const docs = await UserModel.find({ _id: { $in: ids } }).lean()
+    return docs.map(toUserEntity)
+  },
+
+  listByRole: async (role: UserRole): Promise<UserEntity[]> => {
+    const docs = await UserModel.find({ role }).lean()
+    return docs.map(toUserEntity)
   },
 
   findByEmail: async (email: string): Promise<UserEntity | null> => {

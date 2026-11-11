@@ -87,6 +87,10 @@ export const photoRepository = {
     return doc ? toPhotoEntity(doc) : null
   },
 
+  countApprovedByEvent: async (eventId: string): Promise<number> => {
+    return PhotoModel.countDocuments({ eventId, status: 'approved' })
+  },
+
   countPendingByEvent: async (eventId: string): Promise<number> => {
     return PhotoModel.countDocuments({ eventId, status: 'pending' })
   },

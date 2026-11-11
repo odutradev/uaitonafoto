@@ -2,6 +2,7 @@ import { createEventSchema, eventParamsSchema, eventSchema, listEventsQuerySchem
 import { computeEventWindows, getEventMaxDurationHours, getEventMaxEndsAt, getEventPhase } from '@domains/events/utils/eventWindows'
 import { buildPaginatedResponse, getPaginationOptions } from '@factories/pagination/utils'
 import { EventPlanLimits, resolveUserPlanTier } from '@domains/events/utils/eventLimits'
+import { sendEventCreatedEmail, sendEventSummaryEmails } from '@domains/events/utils/notifyEventEmail'
 import { ensureCurrentEventPin, generatePin } from '@domains/events/utils/eventPin'
 import creditUsageRepository from '@domains/payments/repositories/creditUsages'
 import purchaseRepository from '@domains/payments/repositories/purchases'
@@ -158,6 +159,8 @@ export const createEvent = defineAction(
           galleryDurationDays: settings.galleryDurationDays
         }
       })
+
+      void sendEventCreatedEmail(event, user)
 
       return toEventResponse(event, 'creator')
     } catch (error) {
@@ -420,6 +423,7 @@ export const closeEvent = defineAction(
 
     const currentEvent = await ensureCurrentEventPin(updated)
     broadcastEvent(currentEvent.id, 'event:closed', { closedAt })
+    void sendEventSummaryEmails(currentEvent)
     return toEventResponse(currentEvent, role)
   }
 )

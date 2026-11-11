@@ -1,3 +1,4 @@
+import { sendTeamInviteEmail, sendTeamRemovedEmail } from '@domains/events/utils/notifyEventEmail'
 import { addOrganizerSchema, removeMemberParamsSchema, teamListResponseSchema, teamParamsSchema } from './schemas'
 import { resolveEventLimits } from '@domains/events/utils/eventLimits'
 import eventRepository from '@domains/events/repositories/events'
@@ -93,6 +94,8 @@ export const addOrganizer = defineAction(
     const updated = await eventRepository.addMember(event.id, user.id, 'organizer')
     if (!updated) return manageError({ code: 'conflict' })
 
+    void sendTeamInviteEmail(updated, user, ids.userId)
+
     return buildTeamResponse(updated)
   }
 )
@@ -123,6 +126,8 @@ export const removeMember = defineAction(
 
     const updated = await eventRepository.removeMember(event.id, params.userId)
     if (!updated) return manageError({ code: 'not_found' })
+
+    if (params.userId !== ids.userId) void sendTeamRemovedEmail(updated, params.userId)
 
     return buildTeamResponse(updated)
   }

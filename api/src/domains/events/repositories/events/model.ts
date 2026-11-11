@@ -95,6 +95,12 @@ const eventSchema = new Schema<EventDocument>(
     galleryExpiresAt: { type: String, required: true, index: true },
     galleryCleanedAt: { type: String },
     closedAt: { type: String },
+    notifications: {
+      reminderSentAt: { type: String },
+      summarySentAt: { type: String },
+      galleryExpiringSentAt: { type: String },
+      galleryExpiredSentAt: { type: String }
+    },
     challenges: { type: [challengeSchema], default: [] },
     members: { type: [memberSchema], required: true },
     screens: { type: [screenSlotSchema], default: [] },
