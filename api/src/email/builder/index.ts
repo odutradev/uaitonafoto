@@ -1,13 +1,13 @@
 import { BrandName, EmailColors, EmailFonts, EmailFontsUrl } from '@email/builder/theme'
 import { renderBlockHtml, renderBlockText } from '@email/builder/blocks'
 import { escapeHtml } from '@email/builder/inline'
-import env from '@config/env'
+import { buildFrontendUrl } from '@email/links'
 
 import type { EmailContent, RenderedEmail } from '@email/builder/types'
 
 const DefaultFooterNote = `Você recebeu este e-mail porque tem uma conta no ${BrandName}.`
 
-const resolveSiteUrl = (): string => env.FRONTEND_URL.replace(/\/+$/, '')
+const resolveSiteUrl = (): string => buildFrontendUrl()
 
 const renderLogoHtml = (): string => `
   <table role="presentation" cellpadding="0" cellspacing="0" border="0">
