@@ -5,9 +5,12 @@ import PinInput from '@components/pinInput'
 
 import { joinButtonStyles, joinPaperStyles } from './styles'
 import type { FormEvent } from 'react'
-import type { GuestJoinProps } from './types'
+import useGuestEventPage from '@pages/public/guestEvent/hook'
 
-const GuestJoin = ({ event, onJoin, lockout }: GuestJoinProps) => {
+const GuestJoin = () => {
+  const { event: eventValue, join: onJoin, lockout } = useGuestEventPage()
+  const event = eventValue!
+
   const [name, setName] = useState('')
   const [pin, setPin] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)

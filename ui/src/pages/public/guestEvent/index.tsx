@@ -1,47 +1,19 @@
 import { Avatar, Box, Button, Chip, Container, Skeleton, Typography } from '@mui/material'
 import { Chat as WhatsAppIcon } from '@mui/icons-material'
-import { useParams } from 'react-router-dom'
 
 import Logo from '@components/logo'
 import ThemeToggle from '@components/themeToggle'
 import { eventPhaseLabels, eventTypeLabels } from '@assets/data/events'
 import NotFound from '@pages/public/notFound'
 
-import useGuestEvent from './hooks/useGuestEvent'
+import useGuestEventPage, { GuestEventPageProvider } from './hook'
 import GuestJoin from './sections/guestJoin'
 import GuestPhotosFeed from './sections/guestPhotosFeed'
 import GuestUpload from './sections/guestUpload'
-import {
-  chipsStyles,
-  containerStyles,
-  guestAgencyCardStyles,
-  guestWhatsappButtonStyles,
-  headerStyles,
-  pageRootStyles,
-  titleStyles,
-  topBarStyles
-} from './styles'
+import { chipsStyles, containerStyles, guestAgencyCardStyles, guestWhatsappButtonStyles, headerStyles, pageRootStyles, titleStyles, topBarStyles } from './styles'
 
-const GuestEvent = () => {
-  const { token = '' } = useParams()
-  const {
-    event,
-    guest,
-    photosSent,
-    completedChallengeIds,
-    photos,
-    meta,
-    page,
-    isLoading,
-    isUploading,
-    notFound,
-    lockout,
-    setPage,
-    join,
-    upload,
-    toggleLike,
-    removePhoto
-  } = useGuestEvent(token)
+const GuestEventContent = () => {
+  const { event, guest, isLoading, notFound } = useGuestEventPage()
 
   if (notFound) return <NotFound />
 
@@ -123,26 +95,11 @@ const GuestEvent = () => {
             </Box>
 
             {!guest ? (
-              <GuestJoin event={event} onJoin={join} lockout={lockout} />
+              <GuestJoin />
             ) : (
               <>
-                <GuestUpload
-                  event={event}
-                  guest={guest}
-                  photosSent={photosSent}
-                  completedChallengeIds={completedChallengeIds}
-                  isUploading={isUploading}
-                  onUpload={upload}
-                />
-                <GuestPhotosFeed
-                  event={event}
-                  photos={photos}
-                  meta={meta}
-                  page={page}
-                  onPageChange={setPage}
-                  onToggleLike={toggleLike}
-                  onRemovePhoto={removePhoto}
-                />
+                <GuestUpload />
+                <GuestPhotosFeed />
               </>
             )}
           </>
@@ -151,6 +108,12 @@ const GuestEvent = () => {
     </Box>
   )
 }
+
+const GuestEvent = () => (
+  <GuestEventPageProvider>
+    <GuestEventContent />
+  </GuestEventPageProvider>
+)
 
 export default GuestEvent
 
