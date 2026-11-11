@@ -13,12 +13,14 @@ This repository holds the API in `api/` and the frontend in `ui/`. This guide de
 ├── api/
 │   ├── .dockerignore
 │   ├── CLAUDE.md  # API guide
+│   ├── .env.example
 │   ├── Dockerfile
 │   ├── package.json
 │   └── src  # API code
 ├── ui/
 │   ├── .dockerignore
 │   ├── CLAUDE.md  # frontend guide
+│   ├── .env.example
 │   ├── Dockerfile
 │   ├── nginx.conf
 │   ├── package.json
@@ -62,8 +64,8 @@ This repository holds the API in `api/` and the frontend in `ui/`. This guide de
 
 ## 3. Environment variables
 
-- **Location:** Um .env na raiz. Um único .env e .env.example na raiz, lido pelo docker-compose e pelos dois apps.
-- Never commit `.env`. Every new variable goes into `.env.example` with a safe example value.
+- **Location:** Three .env files. The root `.env` is read by docker-compose in the deploy (Dokploy). Locally each app reads its own `api/.env` and `ui/.env`. Each one has a matching `.env.example`.
+- Never commit `.env`. Every new variable goes into the root `.env.example` and into the app's `.env.example`, with a safe example value.
 - Variables read by the frontend use the `VITE_` prefix and are public: never put secrets in them.
 - `VITE_API_URL` points to the API's public URL in each environment.
 

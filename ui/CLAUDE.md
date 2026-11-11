@@ -15,7 +15,7 @@ This guide defines this frontend's architecture, component, state and code rules
 | Global state | Zustand |
 | Requests | Axios |
 | Forms | Zod |
-| E2E tests | Cypress |
+| Tests | No tests |
 
 ## 2. Architecture: Folders by type
 
@@ -34,14 +34,6 @@ The root of `src` splits code by role: API actions, components, hooks, pages, ro
 
 ```text
 .
-├── cypress/
-│   ├── e2e/
-│   │   ├── 01.auth.cy.ts  # E2E
-│   │   └── 02.users.cy.ts  # E2E
-│   ├── fixtures/
-│   │   └── users.json
-│   └── support/
-│       └── commands.ts  # comandos customizados
 └── src/
     ├── actions/
     │   └── user/
@@ -308,10 +300,7 @@ create<UserStore>()(persist((set) => ({ ... }), { name: 'user' }))
 
 ## 10. Tests
 
-- Unit tests are not required.
-- E2E: **Cypress**. Numbered scenarios in `cypress/e2e`, with custom commands and factories.
-- Scenarios numbered by run order (`01.auth.cy.ts`, `02.users.cy.ts`). Test data in `cypress/fixtures` and reusable commands (login, factories) in `cypress/support`.
-- Before opening a PR, run the linter and the E2E suite in headless mode.
+This frontend does not use automated tests. Before delivering, run the linter, the typecheck and the build.
 
 ## 11. Commits and Git
 
