@@ -1,7 +1,7 @@
 {
   "name": "uaitonafoto-api",
   "version": "1.0.1",
-  "description": "API do uai to na foto",
+  "description": "API do uaiToNaFoto",
   "license": "ISC",
   "author": "https://github.com/odutradev",
   "main": "dist/server.js",

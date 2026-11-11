@@ -4,7 +4,7 @@ import { enrichEmail } from '@email/utils'
 import type { PaymentExpiredEmailVariables } from './types'
 
 const paymentExpiredEmail = enrichEmail<PaymentExpiredEmailVariables>({
-  subject: ({ planName }) => `Pagamento expirado: ${planName} - uai to na foto`,
+  subject: ({ planName }) => `Pagamento expirado: ${planName} - uaiToNaFoto`,
   build: ({ userName, planName, amountFormatted, billingUrl }) => ({
     preheader: 'O prazo do seu pagamento acabou e nenhum valor foi cobrado.',
     eyebrow: 'Pagamento expirado',

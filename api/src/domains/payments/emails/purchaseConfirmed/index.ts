@@ -4,7 +4,7 @@ import { enrichEmail } from '@email/utils'
 import type { PurchaseConfirmedEmailVariables } from './types'
 
 const purchaseConfirmedEmail = enrichEmail<PurchaseConfirmedEmailVariables>({
-  subject: ({ planName }) => `Compra confirmada: ${planName} - uai to na foto`,
+  subject: ({ planName }) => `Compra confirmada: ${planName} - uaiToNaFoto`,
   build: ({ userName, planName, amountFormatted, creditsAdded, paymentMethodLabel, paidAt, receiptUrl, appUrl }) => ({
     preheader: `Pagamento aprovado. +${creditsAdded} ${creditsAdded === 1 ? 'crédito já está' : 'créditos já estão'} na sua conta.`,
     eyebrow: 'Compra confirmada',

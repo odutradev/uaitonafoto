@@ -4,7 +4,7 @@ import { enrichEmail } from '@email/utils'
 import type { SubscriptionCancelledEmailVariables } from './types'
 
 const subscriptionCancelledEmail = enrichEmail<SubscriptionCancelledEmailVariables>({
-  subject: ({ planName }) => `Assinatura cancelada: ${planName} - uai to na foto`,
+  subject: ({ planName }) => `Assinatura cancelada: ${planName} - uaiToNaFoto`,
   build: ({ userName, planName, validUntil, billingUrl }) => ({
     preheader: validUntil
       ? `A recorrência de ${planName} foi cancelada. O ciclo atual vale até ${validUntil}.`

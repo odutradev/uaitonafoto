@@ -49,7 +49,7 @@ export const TermsOfUse = ({ lastUpdated = "04 de novembro de 2026" }: TermsOfUs
           </Typography>
 
           <Typography variant="body1" sx={paragraphStyles}>
-            Estes Termos de Uso regem a utilização da plataforma <strong>uai to na foto</strong>{" "}
+            Estes Termos de Uso regem a utilização da plataforma <strong>uaiToNaFoto</strong>{" "}
             (&quot;Plataforma&quot;), desenvolvida e operada por <strong>Lite Technology LTDA</strong>, pessoa jurídica
             de direito privado, inscrita no CNPJ sob o nº <strong>55.717.105/0001-58</strong>.
           </Typography>
@@ -64,7 +64,7 @@ export const TermsOfUse = ({ lastUpdated = "04 de novembro de 2026" }: TermsOfUs
             1. Objeto e Definição dos Serviços
           </Typography>
           <Typography variant="body1" sx={paragraphStyles}>
-            O <strong>uai to na foto</strong> é uma plataforma SaaS (Software as a Service) voltada para transmissão e
+            O <strong>uaiToNaFoto</strong> é uma plataforma SaaS (Software as a Service) voltada para transmissão e
             compartilhamento em tempo real de fotografias em eventos sociais e corporativos (como casamentos,
             formaturas, aniversários e encontros empresariais).
           </Typography>
@@ -103,7 +103,7 @@ export const TermsOfUse = ({ lastUpdated = "04 de novembro de 2026" }: TermsOfUs
             3. Conduta, Uso Aceitável e Moderação de Conteúdo
           </Typography>
           <Typography variant="body1" sx={paragraphStyles}>
-            É expressamente vedado utilizar o <strong>uai to na foto</strong> para publicar, transmitir ou exibir
+            É expressamente vedado utilizar o <strong>uaiToNaFoto</strong> para publicar, transmitir ou exibir
             conteúdos que contenham:
           </Typography>
           <Box component="ul" sx={listStyles}>
@@ -233,7 +233,7 @@ export const TermsOfUse = ({ lastUpdated = "04 de novembro de 2026" }: TermsOfUs
       <Box component="footer" sx={footerBoxStyles}>
         <Container maxWidth="lg">
           <Typography variant="body2" color="text.secondary">
-            © {new Date().getFullYear()} uai to na foto • Lite Technology LTDA • CNPJ 55.717.105/0001-58
+            © {new Date().getFullYear()} uaiToNaFoto • Lite Technology LTDA • CNPJ 55.717.105/0001-58
           </Typography>
         </Container>
       </Box>

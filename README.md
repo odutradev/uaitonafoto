@@ -1,8 +1,8 @@
-# uai to na foto
+# uaiToNaFoto
 
 > **Suas fotos no telão em tempo real.** Sem app, sem cadastro.
 
-O **uai to na foto** transforma os convidados de um evento em fotógrafos da festa. Cada um aponta a câmera do celular para um QR Code, digita o primeiro nome e começa a enviar fotos — que aparecem **na hora** no telão do salão e no mural interativo que todos acompanham pelo celular.
+O **uaiToNaFoto** transforma os convidados de um evento em fotógrafos da festa. Cada um aponta a câmera do celular para um QR Code, digita o primeiro nome e começa a enviar fotos — que aparecem **na hora** no telão do salão e no mural interativo que todos acompanham pelo celular.
 
 Feito para casamentos, aniversários, formaturas, eventos corporativos e confraternizações — e para as **assessorias e cerimonialistas** que organizam esses eventos todo mês.
 

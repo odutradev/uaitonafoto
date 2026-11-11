@@ -4,7 +4,7 @@ import { enrichEmail } from '@email/utils'
 import type { EventCreatedEmailVariables } from './types'
 
 const eventCreatedEmail = enrichEmail<EventCreatedEmailVariables>({
-  subject: ({ eventName }) => `Evento criado: ${eventName} - uai to na foto`,
+  subject: ({ eventName }) => `Evento criado: ${eventName} - uaiToNaFoto`,
   build: ({ userName, eventName, startsAt, endsAt, galleryExpiresAt, pinDescription, guestUrl, eventUrl }) => ({
     preheader: `${eventName} está pronto. Compartilhe o link com seus convidados.`,
     eyebrow: 'Evento criado',

@@ -4,7 +4,7 @@ import { enrichEmail } from '@email/utils'
 import type { PaymentPendingEmailVariables } from './types'
 
 const paymentPendingEmail = enrichEmail<PaymentPendingEmailVariables>({
-  subject: ({ planName }) => `Pagamento aguardando: ${planName} - uai to na foto`,
+  subject: ({ planName }) => `Pagamento aguardando: ${planName} - uaiToNaFoto`,
   build: ({ userName, planName, amountFormatted, checkoutUrl, expiresAt, isPixAvailable }) => ({
     preheader: `Seu pagamento de ${amountFormatted} está aguardando. O link vale até ${expiresAt}.`,
     eyebrow: 'Aguardando pagamento',
