@@ -1,96 +1,12 @@
-import { useState } from 'react'
-import {
-  Alert,
-  Avatar,
-  Box,
-  Button,
-  Card,
-  Chip,
-  CircularProgress,
-  Switch,
-  Tab,
-  Tabs,
-  TextField,
-  Typography
-} from '@mui/material'
-import {
-  Chat as WhatsAppIcon,
-  PaletteOutlined as PaletteIcon,
-  SaveOutlined as SaveIcon,
-  TvOutlined as ScreenIcon,
-  SmartphoneOutlined as MobileIcon,
-  StarOutline as ProIcon
-} from '@mui/icons-material'
-import { useNavigate } from 'react-router-dom'
-import { toast } from 'react-toastify'
+import useCustomizationPage, { CustomizationPageProvider } from './hook'
+import { Alert, Avatar, Box, Button, Card, Chip, CircularProgress, Switch, Tab, Tabs, TextField, Typography } from '@mui/material'
+import { Chat as WhatsAppIcon, PaletteOutlined as PaletteIcon, SaveOutlined as SaveIcon, TvOutlined as ScreenIcon, SmartphoneOutlined as MobileIcon, StarOutline as ProIcon } from '@mui/icons-material'
 
-import { getMeData, updateMeData } from '@actions/auth'
-import useAuth from '@hooks/useAuth'
-import useAuthStore from '@stores/auth'
 
-import {
-  customizationRootStyles,
-  formCardStyles,
-  headerBoxStyles,
-  mainGridStyles,
-  previewCardStyles,
-  previewFrameStyles,
-  switchCardStyles,
-  whatsappPreviewButtonStyles
-} from './styles'
-import type { FormEvent } from 'react'
-import type { CustomizationFormState } from './types'
+import { customizationRootStyles, formCardStyles, headerBoxStyles, mainGridStyles, previewCardStyles, previewFrameStyles, switchCardStyles, whatsappPreviewButtonStyles } from './styles'
 
-const Customization = () => {
-  const navigate = useNavigate()
-  const { user } = useAuth()
-  const setAuthUser = useAuthStore((state) => state.updateUser)
-
-  const hasPlan = Boolean(user?.hasActiveSubscription)
-
-  const [form, setForm] = useState<CustomizationFormState>(() => ({
-    enabled: user?.customization?.enabled ?? true,
-    agencyName: user?.customization?.agencyName ?? '',
-    agencyLogoUrl: user?.customization?.agencyLogoUrl ?? '',
-    agencyWhatsapp: user?.customization?.agencyWhatsapp ?? '',
-    agencyTagline: user?.customization?.agencyTagline ?? 'Assessoria & Cerimonial',
-    whatsappMessage:
-      user?.customization?.whatsappMessage ??
-      'Olá! Vi a marca de vocês no evento e gostaria de mais informações para um orçamento.',
-    primaryColor: user?.customization?.primaryColor ?? '#FFD21F'
-  }))
-
-  const [previewTab, setPreviewTab] = useState<'screen' | 'app'>('screen')
-  const [isSaving, setIsSaving] = useState(false)
-
-  const setField = <K extends keyof CustomizationFormState>(key: K, value: CustomizationFormState[K]) =>
-    setForm((prev) => ({ ...prev, [key]: value }))
-
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-
-    if (!hasPlan) {
-      toast.error('É necessário um plano de agência ativo para salvar a personalização.')
-      return
-    }
-
-    setIsSaving(true)
-    try {
-      await updateMeData({
-        customization: form
-      })
-      const freshUser = await getMeData()
-      setAuthUser(freshUser)
-      toast.success('Configurações de personalização salvas!')
-    } catch {
-      toast.error('Não foi possível salvar as configurações.')
-    } finally {
-      setIsSaving(false)
-    }
-  }
-
-  const cleanPhone = form.agencyWhatsapp?.replace(/\D/g, '') || ''
-  const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(form.whatsappMessage || '')}`
+const CustomizationContent = () => {
+  const { navigate, hasPlan, form, setField, previewTab, setPreviewTab, isSaving, handleSubmit, cleanPhone, whatsappUrl } = useCustomizationPage()
 
   return (
     <Box sx={customizationRootStyles}>
@@ -404,5 +320,11 @@ const Customization = () => {
     </Box>
   )
 }
+
+const Customization = () => (
+  <CustomizationPageProvider>
+    <CustomizationContent />
+  </CustomizationPageProvider>
+)
 
 export default Customization
