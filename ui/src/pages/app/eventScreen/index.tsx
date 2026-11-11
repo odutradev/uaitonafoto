@@ -8,11 +8,11 @@ import { brandColors } from '@styles/theme'
 
 import useEventScreenPage, { EventScreenPageProvider } from './hook'
 import ScreenSettingsModal from './subcomponents/screenSettingsModal'
-import LateralLayout from './subcomponents/layouts/lateralLayout'
-import StageLayout from './subcomponents/layouts/stageLayout'
-import MosaicLayout from './subcomponents/layouts/mosaicLayout'
-import DuoLayout from './subcomponents/layouts/duoLayout'
-import StoriesLayout from './subcomponents/layouts/storiesLayout'
+import LateralLayout from './subcomponents/lateralLayout'
+import StageLayout from './subcomponents/stageLayout'
+import MosaicLayout from './subcomponents/mosaicLayout'
+import DuoLayout from './subcomponents/duoLayout'
+import StoriesLayout from './subcomponents/storiesLayout'
 import { activationCardStyles, activationWrapperStyles, controlsChipStyles, iconButtonStyles, screenAgencyBadgeStyles, screenRootStyles, stageContainerStyles, stageFrameStyles, topBarStyles } from './styles'
 
 const EventScreenContent = () => {
