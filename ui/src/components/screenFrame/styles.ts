@@ -19,6 +19,7 @@ export const Bezel = styled("div")`
   position: relative;
   width: 100%;
   aspect-ratio: 16 / 9;
+  min-height: 0;
   padding: 6px;
   border-radius: 14px;
   background: ${brandColors.ink};
