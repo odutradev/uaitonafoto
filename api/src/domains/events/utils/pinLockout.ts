@@ -87,7 +87,9 @@ const applyResponseHeaders = (res: Response | undefined, status: PinLockoutStatu
   if (status.isPermanent) {
     res.setHeader('X-Lockout-Permanent', 'true')
     res.setHeader('X-Lockout-Attempts', String(status.attempts))
-  } else if (status.isLocked && status.remainingSeconds > 0) {
+    return
+  }
+  if (status.isLocked && status.remainingSeconds > 0) {
     res.setHeader('Retry-After', String(status.remainingSeconds))
     res.setHeader('X-Lockout-Remaining-Seconds', String(status.remainingSeconds))
     res.setHeader('X-Lockout-Permanent', 'false')

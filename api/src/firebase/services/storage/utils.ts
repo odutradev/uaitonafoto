@@ -87,25 +87,20 @@ export const deleteFiles = async (
   paths: string[],
   options?: DeleteFileOptions
 ): Promise<DeleteFilesResult> => {
-  const deleted: string[] = []
-  const failed: string[] = []
-
-  await Promise.allSettled(
+  const results = await Promise.all(
     paths.map(async (path) => {
       try {
-        const success = await deleteFile(path, options)
-        if (success) {
-          deleted.push(path)
-        } else {
-          failed.push(path)
-        }
+        return { path, isDeleted: await deleteFile(path, options) }
       } catch {
-        failed.push(path)
+        return { path, isDeleted: false }
       }
     })
   )
 
-  return { deleted, failed }
+  return {
+    deleted: results.filter((result) => result.isDeleted).map((result) => result.path),
+    failed: results.filter((result) => !result.isDeleted).map((result) => result.path)
+  }
 }
 
 export const deleteDirectory = async (prefix: string, options?: { bucketName?: string }): Promise<void> => {

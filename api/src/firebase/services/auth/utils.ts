@@ -103,7 +103,7 @@ export const deleteUsers = async (
 
 export const setCustomUserClaims = async (
   uid: string,
-  customClaims: Record<string, any> | null
+  customClaims: Record<string, unknown> | null
 ): Promise<void> => {
   const auth = getFirebaseAuth()
   await auth.setCustomUserClaims(uid, customClaims)
@@ -111,9 +111,9 @@ export const setCustomUserClaims = async (
 
 export const getCustomUserClaims = async (
   uid: string
-): Promise<Record<string, any> | null> => {
+): Promise<Record<string, unknown> | null> => {
   const user = await getUser(uid)
-  return (user?.customClaims as Record<string, any>) ?? null
+  return (user?.customClaims as Record<string, unknown>) ?? null
 }
 
 export const createCustomToken = async (

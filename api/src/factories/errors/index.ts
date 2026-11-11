@@ -21,14 +21,9 @@ const sendError = ({ res, code, error, details, local }: SendErrorParams): void 
 
   const entry = ErrorCatalog[code] ?? ErrorCatalog.internal_error
 
-  if (entry.status >= 500 || error) {
-    const logger = createLogger(local || 'error')
-    if (entry.status >= 500) {
-      logger.error(entry.message, error ?? details ?? '')
-    } else if (error) {
-      logger.warn(`${code}: ${entry.message}`, error)
-    }
-  }
+  const isServerError = entry.status >= 500
+  if (isServerError) createLogger(local || 'error').error(entry.message, error ?? details ?? '')
+  if (!isServerError && error) createLogger(local || 'error').warn(`${code}: ${entry.message}`, error)
 
   res.status(entry.status).json({
     error: code,

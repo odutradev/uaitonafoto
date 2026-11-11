@@ -44,11 +44,8 @@ const setupGracefulShutdown = (server: Server): void => {
     forceExitTimer.unref()
 
     server.close(async (err) => {
-      if (err) {
-        logger.error('Error closing HTTP server:', err)
-      } else {
-        logger.info('HTTP server closed')
-      }
+      if (err) logger.error('Error closing HTTP server:', err)
+      if (!err) logger.info('HTTP server closed')
 
       try {
         await disconnectDatabase()
