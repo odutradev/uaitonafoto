@@ -25,6 +25,7 @@ export const guestSessionMiddleware = async (req: Request, res: Response, next: 
   }
 
   res.locals.guestId = guest.id
+  res.locals.guestEventId = guest.eventId
   next()
 }
 
