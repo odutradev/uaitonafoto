@@ -1,3 +1,4 @@
+import notifyAdmins from '@domains/system/utils/notifyAdmins'
 import { removeUndefined } from '@utils/object'
 import createLogger from '@utils/logger'
 import LogModel from './model'
@@ -9,6 +10,22 @@ import type { LogDocument } from './model'
 const logger = createLogger('log-repository')
 
 const escapeRegex = (value: string): string => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+
+const alertAdminsAboutError = (payload: CreateLogPayload): void => {
+  if (payload.level !== 'error') return
+
+  void notifyAdmins({
+    key: payload.action,
+    title: payload.title,
+    description: payload.description ?? payload.errorMessage ?? payload.title,
+    details: [
+      { label: 'Ação', value: payload.action },
+      ...(payload.targetName || payload.targetId ? [{ label: 'Alvo', value: payload.targetName ?? payload.targetId ?? '' }] : []),
+      ...(payload.userEmail ? [{ label: 'Usuário', value: payload.userEmail }] : []),
+      ...(payload.errorMessage ? [{ label: 'Erro', value: payload.errorMessage }] : [])
+    ]
+  })
+}
 
 const toLogEntity = (doc: LogDocument & { id?: string }): LogEntity => ({
   id: String(doc._id || doc.id),
@@ -31,6 +48,8 @@ const toLogEntity = (doc: LogDocument & { id?: string }): LogEntity => ({
 
 export const logRepository = {
   create: async (payload: CreateLogPayload): Promise<LogEntity | null> => {
+    alertAdminsAboutError(payload)
+
     try {
       const entry = {
         ...removeUndefined(payload),
