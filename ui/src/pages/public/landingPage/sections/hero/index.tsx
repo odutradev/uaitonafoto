@@ -1,14 +1,22 @@
-import { Box, Button, Chip, Container, Stack, Typography } from '@mui/material'
-import { ArrowForward as ArrowForwardIcon } from '@mui/icons-material'
-import { Link as RouterLink } from 'react-router-dom'
-import { brandColors } from '@styles/theme'
+import { Box, Button, Chip, Container, Stack, Typography } from "@mui/material";
+import { ArrowForward as ArrowForwardIcon } from "@mui/icons-material";
+import { Link as RouterLink } from "react-router-dom";
+import { brandColors } from "@styles/theme";
 
-import { getChipStyles, heroContainerStyles, heroDescriptionStyles, heroStackStyles, heroTitleStyles, primaryButtonStyles, secondaryButtonStyles } from './styles'
-import useLandingPage from '@pages/public/landingPage/hook'
+import {
+  getChipStyles,
+  heroContainerStyles,
+  heroDescriptionStyles,
+  heroStackStyles,
+  heroTitleStyles,
+  primaryButtonStyles,
+  secondaryButtonStyles
+} from "./styles";
+import useLandingPage from "@pages/public/landingPage/hook";
 
 export const Hero = () => {
-  const { isDark, data: content } = useLandingPage()
-  const data = content.hero
+  const { isDark, data: content } = useLandingPage();
+  const data = content.hero;
 
   return (
     <Container maxWidth="lg" sx={heroContainerStyles}>
@@ -19,7 +27,7 @@ export const Hero = () => {
               sx={{
                 width: 8,
                 height: 8,
-                borderRadius: '50%',
+                borderRadius: "50%",
                 bgcolor: isDark ? brandColors.flashYellow : brandColors.ink,
                 ml: 1
               }}
@@ -37,11 +45,7 @@ export const Hero = () => {
           {data.description}
         </Typography>
 
-        <Stack
-          direction={{ xs: 'column', sm: 'row' }}
-          spacing={2}
-          sx={{ pt: 1.5, width: { xs: '100%', sm: 'auto' } }}
-        >
+        <Stack direction={{ xs: "column", sm: "row" }} spacing={2} sx={{ pt: 1.5, width: { xs: "100%", sm: "auto" } }}>
           <Button
             component={RouterLink}
             to={data.primaryCta.href}
@@ -66,7 +70,7 @@ export const Hero = () => {
         </Stack>
       </Stack>
     </Container>
-  )
-}
+  );
+};
 
-export default Hero
+export default Hero;

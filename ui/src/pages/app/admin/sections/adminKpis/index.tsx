@@ -1,4 +1,4 @@
-import { Box, Card, Skeleton, Stack, Typography } from '@mui/material'
+import { Box, Card, Skeleton, Stack, Typography } from "@mui/material";
 import {
   AutoAwesomeOutlined as EngagementIcon,
   EventAvailableOutlined as EventIcon,
@@ -8,21 +8,20 @@ import {
   StarsOutlined as CreditsIcon,
   TrendingUpOutlined as TicketIcon,
   WorkspacePremiumOutlined as PlanIcon
-} from '@mui/icons-material'
+} from "@mui/icons-material";
 
-import { kpiCardStyles, kpiGridStyles } from '@pages/app/admin/styles'
-import useAdminDashboardPage from '@pages/app/admin/hook'
-
+import { kpiCardStyles, kpiGridStyles } from "@pages/app/admin/styles";
+import useAdminDashboardPage from "@pages/app/admin/hook";
 
 const formatCurrencyBrl = (cents: number): string => {
-  return (cents / 100).toLocaleString('pt-BR', {
-    style: 'currency',
-    currency: 'BRL'
-  })
-}
+  return (cents / 100).toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL"
+  });
+};
 
 export const AdminKpis = () => {
-  const { metrics, isLoadingMetrics: isLoading } = useAdminDashboardPage()
+  const { metrics, isLoadingMetrics: isLoading } = useAdminDashboardPage();
 
   if (isLoading || !metrics) {
     return (
@@ -35,10 +34,10 @@ export const AdminKpis = () => {
           </Card>
         ))}
       </Box>
-    )
+    );
   }
 
-  const { users, events, plans } = metrics
+  const { users, events, plans } = metrics;
 
   return (
     <Box sx={kpiGridStyles}>
@@ -80,7 +79,7 @@ export const AdminKpis = () => {
           <PhotoIcon fontSize="small" color="secondary" />
         </Stack>
         <Typography variant="h4" fontWeight={800}>
-          {events.totalPhotos.toLocaleString('pt-BR')}
+          {events.totalPhotos.toLocaleString("pt-BR")}
         </Typography>
         <Typography variant="caption" color="text.secondary">
           Total de fotos enviadas por convidados
@@ -162,8 +161,7 @@ export const AdminKpis = () => {
         </Typography>
       </Card>
     </Box>
-  )
-}
+  );
+};
 
-export default AdminKpis
-
+export default AdminKpis;

@@ -1,4 +1,4 @@
-import type { LogCategory, LogLevel } from '@utils/types/logs'
+import type { LogCategory, LogLevel } from "@utils/types/logs";
 
-export type LogLevelFilter = 'ALL' | LogLevel
-export type LogCategoryFilter = 'ALL' | LogCategory
+export type LogLevelFilter = "ALL" | LogLevel;
+export type LogCategoryFilter = "ALL" | LogCategory;

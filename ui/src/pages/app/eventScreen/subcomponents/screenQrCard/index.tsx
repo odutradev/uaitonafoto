@@ -1,26 +1,29 @@
-import { Box, Typography } from '@mui/material'
-import { QRCodeSVG } from 'qrcode.react'
+import { Box, Typography } from "@mui/material";
+import { QRCodeSVG } from "qrcode.react";
 
-import { brandColors } from '@styles/theme'
+import { brandColors } from "@styles/theme";
 
-import { qrFrameStyles, qrPinBadgeStyles, qrPinCodeStyles, qrPinLabelStyles, qrSubtitleStyles, qrTextContainerStyles, qrTitleStyles, rightCardStyles } from '@pages/app/eventScreen/styles'
-import type { SxProps, Theme } from '@mui/material'
+import {
+  qrFrameStyles,
+  qrPinBadgeStyles,
+  qrPinCodeStyles,
+  qrPinLabelStyles,
+  qrSubtitleStyles,
+  qrTextContainerStyles,
+  qrTitleStyles,
+  rightCardStyles
+} from "@pages/app/eventScreen/styles";
+import type { SxProps, Theme } from "@mui/material";
 
 interface ScreenQrCardProps {
-  guestLink: string
-  pin: string | null
-  showPin: boolean
-  compact?: boolean
-  sx?: SxProps<Theme>
+  guestLink: string;
+  pin: string | null;
+  showPin: boolean;
+  compact?: boolean;
+  sx?: SxProps<Theme>;
 }
 
-export const ScreenQrCard = ({
-  guestLink,
-  pin,
-  showPin,
-  compact = false,
-  sx
-}: ScreenQrCardProps) => {
+export const ScreenQrCard = ({ guestLink, pin, showPin, compact = false, sx }: ScreenQrCardProps) => {
   return (
     <Box sx={[rightCardStyles, ...(Array.isArray(sx) ? sx : [sx])]}>
       <Box sx={qrFrameStyles}>
@@ -56,8 +59,7 @@ export const ScreenQrCard = ({
         )}
       </Box>
     </Box>
-  )
-}
+  );
+};
 
-export default ScreenQrCard
-
+export default ScreenQrCard;

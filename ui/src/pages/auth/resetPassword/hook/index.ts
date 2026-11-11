@@ -1,36 +1,36 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { confirmPasswordReset, requestPasswordReset } from '@actions/auth'
-import useQueryParams from '@hooks/useQueryParams'
-import type { FormEvent } from 'react'
-import type { UseResetPasswordPageReturn } from './types'
-import createPageContext from '@utils/functions/createPageContext'
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { confirmPasswordReset, requestPasswordReset } from "@actions/auth";
+import useQueryParams from "@hooks/useQueryParams";
+import type { FormEvent } from "react";
+import type { UseResetPasswordPageReturn } from "./types";
+import createPageContext from "@utils/functions/createPageContext";
 
 const useResetPasswordPageState = (): UseResetPasswordPageReturn => {
-  const { token } = useQueryParams<{ token?: string }>()
-  const navigate = useNavigate()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [submitting, setSubmitting] = useState(false)
-  const [submitted, setSubmitted] = useState(false)
+  const { token } = useQueryParams<{ token?: string }>();
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    setSubmitting(true)
+    event.preventDefault();
+    setSubmitting(true);
 
     try {
       if (token) {
-        await confirmPasswordReset({ token, password })
-        navigate('/signin')
-        return
+        await confirmPasswordReset({ token, password });
+        navigate("/signin");
+        return;
       }
 
-      await requestPasswordReset({ email })
-      setSubmitted(true)
+      await requestPasswordReset({ email });
+      setSubmitted(true);
     } finally {
-      setSubmitting(false)
+      setSubmitting(false);
     }
-  }
+  };
 
   return {
     token,
@@ -41,13 +41,13 @@ const useResetPasswordPageState = (): UseResetPasswordPageReturn => {
     submitting,
     submitted,
     handleSubmit
-  }
-}
+  };
+};
 
 const { PageProvider: ResetPasswordPageProvider, usePage: useResetPasswordPage } = createPageContext(
   useResetPasswordPageState,
-  'useResetPasswordPage'
-)
+  "useResetPasswordPage"
+);
 
-export { ResetPasswordPageProvider }
-export default useResetPasswordPage
+export { ResetPasswordPageProvider };
+export default useResetPasswordPage;

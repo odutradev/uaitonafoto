@@ -1,4 +1,3 @@
 export interface TermsOfUseProps {
-  lastUpdated?: string
+  lastUpdated?: string;
 }
-

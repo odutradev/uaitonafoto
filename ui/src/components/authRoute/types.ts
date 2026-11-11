@@ -1,5 +1,5 @@
-import type { PageMetadata } from '@utils/types/permissions'
+import type { PageMetadata } from "@utils/types/permissions";
 
 export interface AuthRouteProps {
-  metadata: PageMetadata
+  metadata: PageMetadata;
 }

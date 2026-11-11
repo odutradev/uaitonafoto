@@ -1,5 +1,5 @@
-import type { SVGProps } from 'react'
+import type { SVGProps } from "react";
 
 export interface GoogleIconProps extends SVGProps<SVGSVGElement> {
-  size?: number | string
+  size?: number | string;
 }

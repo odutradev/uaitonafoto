@@ -1,85 +1,85 @@
-import type { SxProps, Theme } from '@mui/material'
+import type { SxProps, Theme } from "@mui/material";
 
 export const stepperContainerStyles: SxProps<Theme> = {
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  width: '100%',
-  position: 'relative',
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+  width: "100%",
+  position: "relative",
   py: 1
-}
+};
 
 export const stepItemStyles = (isClickable: boolean): SxProps<Theme> => ({
-  display: 'flex',
-  alignItems: 'center',
+  display: "flex",
+  alignItems: "center",
   gap: 1.25,
-  cursor: isClickable ? 'pointer' : 'default',
-  userSelect: 'none',
+  cursor: isClickable ? "pointer" : "default",
+  userSelect: "none",
   flexShrink: 0,
-  transition: 'opacity 0.2s ease',
-  '&:hover': {
+  transition: "opacity 0.2s ease",
+  "&:hover": {
     opacity: isClickable ? 0.8 : 1
   }
-})
+});
 
-export const stepBadgeStyles = (status: 'completed' | 'active' | 'upcoming'): SxProps<Theme> => ({
+export const stepBadgeStyles = (status: "completed" | "active" | "upcoming"): SxProps<Theme> => ({
   width: 32,
   height: 32,
-  borderRadius: '50%',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  fontSize: '0.875rem',
+  borderRadius: "50%",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  fontSize: "0.875rem",
   fontWeight: 700,
   flexShrink: 0,
-  transition: 'all 0.25s ease',
-  ...(status === 'completed' && {
-    bgcolor: 'primary.main',
-    color: 'primary.contrastText'
+  transition: "all 0.25s ease",
+  ...(status === "completed" && {
+    bgcolor: "primary.main",
+    color: "primary.contrastText"
   }),
-  ...(status === 'active' && {
-    bgcolor: 'action.hover',
-    color: 'primary.main',
+  ...(status === "active" && {
+    bgcolor: "action.hover",
+    color: "primary.main",
     border: 2,
-    borderColor: 'primary.main'
+    borderColor: "primary.main"
   }),
-  ...(status === 'upcoming' && {
-    bgcolor: 'transparent',
-    color: 'text.secondary',
+  ...(status === "upcoming" && {
+    bgcolor: "transparent",
+    color: "text.secondary",
     border: 1,
-    borderColor: 'divider'
+    borderColor: "divider"
   })
-})
+});
 
 export const stepLabelWrapperStyles: SxProps<Theme> = {
-  display: 'flex',
-  flexDirection: 'column',
+  display: "flex",
+  flexDirection: "column",
   minWidth: { xs: 60, sm: 115 },
   maxWidth: { xs: 80, sm: 130 }
-}
+};
 
-export const stepLabelStyles = (status: 'completed' | 'active' | 'upcoming'): SxProps<Theme> => ({
-  fontSize: { xs: '0.75rem', sm: '0.875rem' },
-  fontWeight: status === 'active' ? 700 : 500,
-  color: status === 'upcoming' ? 'text.secondary' : 'text.primary',
-  whiteSpace: 'nowrap',
-  transition: 'color 0.2s ease'
-})
+export const stepLabelStyles = (status: "completed" | "active" | "upcoming"): SxProps<Theme> => ({
+  fontSize: { xs: "0.75rem", sm: "0.875rem" },
+  fontWeight: status === "active" ? 700 : 500,
+  color: status === "upcoming" ? "text.secondary" : "text.primary",
+  whiteSpace: "nowrap",
+  transition: "color 0.2s ease"
+});
 
 export const stepDescriptionStyles: SxProps<Theme> = {
-  fontSize: '0.725rem',
-  color: 'text.secondary',
-  display: { xs: 'none', sm: 'block' },
-  whiteSpace: 'nowrap',
-  overflow: 'hidden',
-  textOverflow: 'ellipsis'
-}
+  fontSize: "0.725rem",
+  color: "text.secondary",
+  display: { xs: "none", sm: "block" },
+  whiteSpace: "nowrap",
+  overflow: "hidden",
+  textOverflow: "ellipsis"
+};
 
 export const stepConnectorStyles = (isCompleted: boolean): SxProps<Theme> => ({
   flex: 1,
   height: 2,
   mx: { xs: 1, sm: 2 },
   borderRadius: 1,
-  bgcolor: isCompleted ? 'primary.main' : 'divider',
-  transition: 'background-color 0.3s ease'
-})
+  bgcolor: isCompleted ? "primary.main" : "divider",
+  transition: "background-color 0.3s ease"
+});

@@ -1,26 +1,51 @@
-import { Box, Button, Card, Chip, CircularProgress, Skeleton, Typography } from '@mui/material'
-import { Check as CheckIcon } from '@mui/icons-material'
+import { Box, Button, Card, Chip, CircularProgress, Skeleton, Typography } from "@mui/material";
+import { Check as CheckIcon } from "@mui/icons-material";
 
-import { formatPriceInBrl } from '@utils/functions/formatters'
+import { formatPriceInBrl } from "@utils/functions/formatters";
 
-import { blockWrapperStyles, cardTopMetaRowStyles, checkIconStyles, ctaButtonStyles, featureRowStyles, featuresListStyles, getPlanCardStyles, getSingleCreditsGridStyles, priceLineStyles, priceNumberStyles, singleCreditActionColStyles, singleCreditButtonStyles, singleCreditCardStyles, singleCreditInfoStyles, singleCreditTitleRowStyles, storeWrapperStyles, subscriptionPlansGridStyles } from './styles'
-import useBillingPage from '@pages/app/billing/hook'
+import {
+  blockWrapperStyles,
+  cardTopMetaRowStyles,
+  checkIconStyles,
+  ctaButtonStyles,
+  featureRowStyles,
+  featuresListStyles,
+  getPlanCardStyles,
+  getSingleCreditsGridStyles,
+  priceLineStyles,
+  priceNumberStyles,
+  singleCreditActionColStyles,
+  singleCreditButtonStyles,
+  singleCreditCardStyles,
+  singleCreditInfoStyles,
+  singleCreditTitleRowStyles,
+  storeWrapperStyles,
+  subscriptionPlansGridStyles
+} from "./styles";
+import useBillingPage from "@pages/app/billing/hook";
 
-const extraCreditId = 'prod_agency_extra_credit'
+const extraCreditId = "prod_agency_extra_credit";
 
 const CreditsAndPlans = () => {
-  const { plans, isLoadingInitial: isLoading, checkoutPlanId, activeSubscriptionPlanIds, hasActiveSubscription, handleOpenCheckoutConfirmation: onSelectPlan } = useBillingPage()
+  const {
+    plans,
+    isLoadingInitial: isLoading,
+    checkoutPlanId,
+    activeSubscriptionPlanIds,
+    hasActiveSubscription,
+    handleOpenCheckoutConfirmation: onSelectPlan
+  } = useBillingPage();
 
-  const isCheckoutBusy = checkoutPlanId !== null
+  const isCheckoutBusy = checkoutPlanId !== null;
 
   const singlePurchasePlans = plans.filter((plan) => {
-    const isExtraCredit = plan.abacateProductId === extraCreditId || plan.id === extraCreditId
-    if (isExtraCredit) return hasActiveSubscription
-    return plan.type === 'ONE_TIME'
-  })
+    const isExtraCredit = plan.abacateProductId === extraCreditId || plan.id === extraCreditId;
+    if (isExtraCredit) return hasActiveSubscription;
+    return plan.type === "ONE_TIME";
+  });
 
-  const subscriptionPlans = plans.filter((plan) => plan.type === 'SUBSCRIPTION')
-  const singleCreditsCount = hasActiveSubscription ? 2 : 1
+  const subscriptionPlans = plans.filter((plan) => plan.type === "SUBSCRIPTION");
+  const singleCreditsCount = hasActiveSubscription ? 2 : 1;
 
   return (
     <Box component="section" sx={storeWrapperStyles}>
@@ -35,35 +60,35 @@ const CreditsAndPlans = () => {
               <Card key={idx} elevation={0} sx={singleCreditCardStyles}>
                 <Box sx={singleCreditInfoStyles}>
                   <Box sx={singleCreditTitleRowStyles}>
-                    <Skeleton width={130} height={24} sx={{ borderRadius: '6px' }} />
-                    <Skeleton width={68} height={22} sx={{ borderRadius: '9999px' }} />
+                    <Skeleton width={130} height={24} sx={{ borderRadius: "6px" }} />
+                    <Skeleton width={68} height={22} sx={{ borderRadius: "9999px" }} />
                   </Box>
-                  <Skeleton width={idx === 1 ? '85%' : '65%'} height={16} sx={{ borderRadius: '4px', mt: 0.5 }} />
+                  <Skeleton width={idx === 1 ? "85%" : "65%"} height={16} sx={{ borderRadius: "4px", mt: 0.5 }} />
                 </Box>
 
                 <Box sx={singleCreditActionColStyles}>
                   <Box
                     sx={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: { xs: 'flex-start', sm: 'flex-end' },
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: { xs: "flex-start", sm: "flex-end" },
                       gap: 0.5
                     }}
                   >
-                    <Skeleton width={56} height={22} sx={{ borderRadius: '6px' }} />
-                    <Skeleton width={80} height={14} sx={{ borderRadius: '4px' }} />
+                    <Skeleton width={56} height={22} sx={{ borderRadius: "6px" }} />
+                    <Skeleton width={80} height={14} sx={{ borderRadius: "4px" }} />
                   </Box>
 
-                  <Skeleton width={96} height={40} sx={{ borderRadius: '9999px', flexShrink: 0 }} />
+                  <Skeleton width={96} height={40} sx={{ borderRadius: "9999px", flexShrink: 0 }} />
                 </Box>
               </Card>
             ))}
 
           {!isLoading &&
             singlePurchasePlans.map((plan) => {
-              const targetId = plan.ctaHref || plan.id
-              const isCurrentCheckingOut = checkoutPlanId === targetId
-              const isExtraCredit = plan.abacateProductId === extraCreditId || plan.id === extraCreditId
+              const targetId = plan.ctaHref || plan.id;
+              const isCurrentCheckingOut = checkoutPlanId === targetId;
+              const isExtraCredit = plan.abacateProductId === extraCreditId || plan.id === extraCreditId;
 
               return (
                 <Card key={plan.id} elevation={0} sx={singleCreditCardStyles}>
@@ -74,9 +99,9 @@ const CreditsAndPlans = () => {
                       </Typography>
                       <Chip
                         size="small"
-                        color={isExtraCredit ? 'primary' : 'default'}
-                        variant={isExtraCredit ? 'filled' : 'outlined'}
-                        label={`+${plan.credits} ${plan.credits === 1 ? 'crédito' : 'créditos'}`}
+                        color={isExtraCredit ? "primary" : "default"}
+                        variant={isExtraCredit ? "filled" : "outlined"}
+                        label={`+${plan.credits} ${plan.credits === 1 ? "crédito" : "créditos"}`}
                         sx={{ fontWeight: 700, height: 22 }}
                       />
                     </Box>
@@ -86,12 +111,12 @@ const CreditsAndPlans = () => {
                   </Box>
 
                   <Box sx={singleCreditActionColStyles}>
-                    <Box sx={{ textAlign: { xs: 'left', sm: 'right' } }}>
+                    <Box sx={{ textAlign: { xs: "left", sm: "right" } }}>
                       <Typography variant="h6" component="p" fontWeight={800} sx={{ lineHeight: 1.1 }}>
                         {formatPriceInBrl(plan.price)}
                       </Typography>
                       <Typography variant="caption" color="text.secondary">
-                        {plan.period || 'pagamento único'}
+                        {plan.period || "pagamento único"}
                       </Typography>
                     </Box>
 
@@ -104,11 +129,11 @@ const CreditsAndPlans = () => {
                       startIcon={isCurrentCheckingOut ? <CircularProgress size={16} color="inherit" /> : undefined}
                       sx={singleCreditButtonStyles}
                     >
-                      {isCurrentCheckingOut ? 'Iniciando...' : 'Comprar'}
+                      {isCurrentCheckingOut ? "Iniciando..." : "Comprar"}
                     </Button>
                   </Box>
                 </Card>
-              )
+              );
             })}
         </Box>
       </Box>
@@ -124,36 +149,36 @@ const CreditsAndPlans = () => {
               <Card key={skeletonKey} elevation={0} sx={getPlanCardStyles(skeletonKey === 1)}>
                 <Box>
                   <Box sx={cardTopMetaRowStyles}>
-                    <Skeleton width={130} height={26} sx={{ borderRadius: '6px' }} />
-                    <Skeleton width={88} height={22} sx={{ borderRadius: '9999px' }} />
+                    <Skeleton width={130} height={26} sx={{ borderRadius: "6px" }} />
+                    <Skeleton width={88} height={22} sx={{ borderRadius: "9999px" }} />
                   </Box>
 
                   <Box sx={{ ...priceLineStyles, mt: 1 }}>
-                    <Skeleton width={96} height={32} sx={{ borderRadius: '6px' }} />
-                    <Skeleton width={42} height={18} sx={{ borderRadius: '4px' }} />
+                    <Skeleton width={96} height={32} sx={{ borderRadius: "6px" }} />
+                    <Skeleton width={42} height={18} sx={{ borderRadius: "4px" }} />
                   </Box>
 
-                  <Skeleton width={180} height={14} sx={{ borderRadius: '4px', mt: 0.5 }} />
+                  <Skeleton width={180} height={14} sx={{ borderRadius: "4px", mt: 0.5 }} />
                 </Box>
 
                 <Box sx={featuresListStyles}>
                   {[1, 2, 3, 4, 5].map((featureKey) => (
                     <Box key={featureKey} sx={featureRowStyles}>
-                      <Skeleton variant="circular" width={16} height={16} sx={{ flexShrink: 0, mt: '3px' }} />
-                      <Skeleton width={`${85 - featureKey * 5}%`} height={16} sx={{ borderRadius: '4px' }} />
+                      <Skeleton variant="circular" width={16} height={16} sx={{ flexShrink: 0, mt: "3px" }} />
+                      <Skeleton width={`${85 - featureKey * 5}%`} height={16} sx={{ borderRadius: "4px" }} />
                     </Box>
                   ))}
                 </Box>
 
-                <Skeleton width="100%" height={42} sx={{ borderRadius: '9999px', mt: 'auto' }} />
+                <Skeleton width="100%" height={42} sx={{ borderRadius: "9999px", mt: "auto" }} />
               </Card>
             ))}
 
           {!isLoading &&
             subscriptionPlans.map((plan) => {
-              const targetId = plan.ctaHref || plan.id
-              const isCurrentCheckingOut = checkoutPlanId === targetId
-              const isSubscribedToThis = activeSubscriptionPlanIds.includes(plan.id)
+              const targetId = plan.ctaHref || plan.id;
+              const isCurrentCheckingOut = checkoutPlanId === targetId;
+              const isSubscribedToThis = activeSubscriptionPlanIds.includes(plan.id);
 
               return (
                 <Card key={plan.id} elevation={0} sx={getPlanCardStyles(plan.highlighted)}>
@@ -165,8 +190,8 @@ const CreditsAndPlans = () => {
                       {(isSubscribedToThis || plan.highlighted) && (
                         <Chip
                           size="small"
-                          color={isSubscribedToThis ? 'success' : 'primary'}
-                          label={isSubscribedToThis ? 'Plano atual' : 'Mais escolhido'}
+                          color={isSubscribedToThis ? "success" : "primary"}
+                          label={isSubscribedToThis ? "Plano atual" : "Mais escolhido"}
                           sx={{ fontWeight: 700, height: 22 }}
                         />
                       )}
@@ -177,12 +202,12 @@ const CreditsAndPlans = () => {
                         {formatPriceInBrl(plan.price)}
                       </Typography>
                       <Typography component="span" variant="body2" color="text.secondary">
-                        {plan.period || '/mês'}
+                        {plan.period || "/mês"}
                       </Typography>
                     </Box>
 
                     {plan.costPerEvent && (
-                      <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.25 }}>
+                      <Typography variant="caption" color="text.secondary" sx={{ display: "block", mt: 0.25 }}>
                         {plan.costPerEvent}
                       </Typography>
                     )}
@@ -200,26 +225,22 @@ const CreditsAndPlans = () => {
                   </Box>
 
                   <Button
-                    variant={plan.highlighted ? 'contained' : 'outlined'}
+                    variant={plan.highlighted ? "contained" : "outlined"}
                     color="primary"
                     disabled={isCheckoutBusy || isSubscribedToThis}
                     onClick={() => onSelectPlan(targetId)}
                     startIcon={isCurrentCheckingOut ? <CircularProgress size={16} color="inherit" /> : undefined}
                     sx={ctaButtonStyles}
                   >
-                    {isCurrentCheckingOut
-                      ? 'Abrindo...'
-                      : isSubscribedToThis
-                        ? 'Plano atual'
-                        : 'Assinar plano'}
+                    {isCurrentCheckingOut ? "Abrindo..." : isSubscribedToThis ? "Plano atual" : "Assinar plano"}
                   </Button>
                 </Card>
-              )
+              );
             })}
         </Box>
       </Box>
     </Box>
-  )
-}
+  );
+};
 
-export default CreditsAndPlans
+export default CreditsAndPlans;

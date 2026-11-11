@@ -1,15 +1,7 @@
-import {
-  Box,
-  Button,
-  Card,
-  Chip,
-  Paper,
-  Skeleton,
-  Typography
-} from '@mui/material'
-import { VisibilityOutlined as InspectIcon } from '@mui/icons-material'
+import { Box, Button, Card, Chip, Paper, Skeleton, Typography } from "@mui/material";
+import { VisibilityOutlined as InspectIcon } from "@mui/icons-material";
 
-import Pagination from '@components/pagination'
+import Pagination from "@components/pagination";
 
 import {
   detailsBtnStyles,
@@ -19,49 +11,59 @@ import {
   logCardStyles,
   logInfoColumnStyles,
   timelineSectionStyles
-} from './styles'
-import type { LogCategory, LogLevel } from '@utils/types/logs'
-import useLogsPage from '@pages/app/logs/hook'
+} from "./styles";
+import type { LogCategory, LogLevel } from "@utils/types/logs";
+import useLogsPage from "@pages/app/logs/hook";
 
 const formatDateTimePtBr = (isoDate: string): string => {
-  const parsed = new Date(isoDate)
-  if (Number.isNaN(parsed.getTime())) return isoDate
-  return parsed.toLocaleString('pt-BR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  })
-}
+  const parsed = new Date(isoDate);
+  if (Number.isNaN(parsed.getTime())) return isoDate;
+  return parsed.toLocaleString("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit"
+  });
+};
 
 const getLevelMeta = (level: LogLevel) => {
-  if (level === 'error') return { label: 'Erro', color: 'error' as const }
-  if (level === 'warn') return { label: 'Alerta', color: 'warning' as const }
-  return { label: 'Info', color: 'info' as const }
-}
+  if (level === "error") return { label: "Erro", color: "error" as const };
+  if (level === "warn") return { label: "Alerta", color: "warning" as const };
+  return { label: "Info", color: "info" as const };
+};
 
 const getCategoryLabel = (category: LogCategory): string => {
-  if (category === 'admin') return 'Admin'
-  if (category === 'system') return 'Sistema'
-  return 'Usuário'
-}
+  if (category === "admin") return "Admin";
+  if (category === "system") return "Sistema";
+  return "Usuário";
+};
 
 const LogsTimeline = () => {
-  const { logs, isAdmin, scope, page, total, totalPages, isLoading, handlePageChange: onPageChange, setSelectedLog: onSelectLog } = useLogsPage()
+  const {
+    logs,
+    isAdmin,
+    scope,
+    page,
+    total,
+    totalPages,
+    isLoading,
+    handlePageChange: onPageChange,
+    setSelectedLog: onSelectLog
+  } = useLogsPage();
 
-  const showUserBadge = isAdmin && scope === 'all'
+  const showUserBadge = isAdmin && scope === "all";
 
   return (
     <Box component="section" sx={timelineSectionStyles}>
       <Typography variant="body2" color="text.secondary">
-        Exibindo {logs.length} de {total} {total === 1 ? 'registro' : 'registros'}.
+        Exibindo {logs.length} de {total} {total === 1 ? "registro" : "registros"}.
       </Typography>
 
       {isLoading && logs.length === 0 && (
         <Box sx={getLogsStackStyles(false)}>
           {[0, 1, 2, 3].map((item) => (
-            <Skeleton key={item} variant="rounded" height={96} sx={{ borderRadius: '20px' }} />
+            <Skeleton key={item} variant="rounded" height={96} sx={{ borderRadius: "20px" }} />
           ))}
         </Box>
       )}
@@ -80,24 +82,17 @@ const LogsTimeline = () => {
       {logs.length > 0 && (
         <Box sx={getLogsStackStyles(isLoading)}>
           {logs.map((entry) => {
-            const levelMeta = getLevelMeta(entry.level)
+            const levelMeta = getLevelMeta(entry.level);
 
             return (
               <Card key={entry.id} elevation={0} sx={logCardStyles}>
                 <Box sx={logInfoColumnStyles}>
                   <Box sx={logBadgesRowStyles}>
-                    <Chip
-                      size="small"
-                      color={levelMeta.color}
-                      label={levelMeta.label}
-                      sx={{ fontWeight: 700 }}
-                    />
+                    <Chip size="small" color={levelMeta.color} label={levelMeta.label} sx={{ fontWeight: 700 }} />
                     <Typography variant="subtitle1" fontWeight={700}>
                       {entry.title}
                     </Typography>
-                    {showUserBadge && (
-                      <Chip size="small" variant="outlined" label={getCategoryLabel(entry.category)} />
-                    )}
+                    {showUserBadge && <Chip size="small" variant="outlined" label={getCategoryLabel(entry.category)} />}
                   </Box>
 
                   {entry.description && (
@@ -108,8 +103,10 @@ const LogsTimeline = () => {
 
                   <Typography variant="caption" color="text.secondary">
                     {formatDateTimePtBr(entry.createdAt)}
-                    {showUserBadge && entry.userEmail ? ` • ${entry.userName ? `${entry.userName} (${entry.userEmail})` : entry.userEmail}` : ''}
-                    {entry.targetName ? ` • Alvo: ${entry.targetName}` : ''}
+                    {showUserBadge && entry.userEmail
+                      ? ` • ${entry.userName ? `${entry.userName} (${entry.userEmail})` : entry.userEmail}`
+                      : ""}
+                    {entry.targetName ? ` • Alvo: ${entry.targetName}` : ""}
                   </Typography>
                 </Box>
 
@@ -123,7 +120,7 @@ const LogsTimeline = () => {
                   Ver detalhes
                 </Button>
               </Card>
-            )
+            );
           })}
         </Box>
       )}
@@ -139,8 +136,7 @@ const LogsTimeline = () => {
         />
       )}
     </Box>
-  )
-}
+  );
+};
 
-export default LogsTimeline
-
+export default LogsTimeline;

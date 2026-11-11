@@ -1,11 +1,11 @@
 export const motionTokens = {
-  easePop: 'cubic-bezier(.34, 1.56, .64, 1)',
-  easeOut: 'cubic-bezier(.16, 1, .3, 1)',
-  easeInOut: 'cubic-bezier(.65, 0, .35, 1)',
-  durFast: '150ms',
-  durBase: '300ms',
-  durSlow: '600ms'
-} as const
+  easePop: "cubic-bezier(.34, 1.56, .64, 1)",
+  easeOut: "cubic-bezier(.16, 1, .3, 1)",
+  easeInOut: "cubic-bezier(.65, 0, .35, 1)",
+  durFast: "150ms",
+  durBase: "300ms",
+  durSlow: "600ms"
+} as const;
 
 export const logoAnimationKeyframes = `
 @keyframes uai-enter-frame {
@@ -132,4 +132,4 @@ export const logoAnimationKeyframes = `
     transition-duration: 1ms !important;
   }
 }
-`
+`;

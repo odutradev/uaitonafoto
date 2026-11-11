@@ -1,123 +1,123 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from "react";
 
-import { getLogs } from '@actions/logs'
-import useSystemStore from '@stores/system'
-import useAuthStore from '@stores/auth'
+import { getLogs } from "@actions/logs";
+import useSystemStore from "@stores/system";
+import useAuthStore from "@stores/auth";
 
-import type { LogItem, LogScope } from '@utils/types/logs'
-import type { LogCategoryFilter, LogLevelFilter } from '@pages/app/logs/types'
-import createPageContext from '@utils/functions/createPageContext'
-import type { UseLogsPageReturn } from './types'
+import type { LogItem, LogScope } from "@utils/types/logs";
+import type { LogCategoryFilter, LogLevelFilter } from "@pages/app/logs/types";
+import createPageContext from "@utils/functions/createPageContext";
+import type { UseLogsPageReturn } from "./types";
 
-const logsPerPage = 10
-const searchDebounceMs = 350
+const logsPerPage = 10;
+const searchDebounceMs = 350;
 
 const useLogsPageState = (): UseLogsPageReturn => {
-  const user = useAuthStore((state) => state.auth.user)
-  const hasPermissions = useSystemStore((state) => state.hasPermissions)
-  const isAdmin = hasPermissions(user?.role, ['view_all_logs'])
-  const defaultScope: LogScope = isAdmin ? 'all' : 'me'
+  const user = useAuthStore((state) => state.auth.user);
+  const hasPermissions = useSystemStore((state) => state.hasPermissions);
+  const isAdmin = hasPermissions(user?.role, ["view_all_logs"]);
+  const defaultScope: LogScope = isAdmin ? "all" : "me";
 
-  const [logs, setLogs] = useState<LogItem[]>([])
-  const [page, setPage] = useState(1)
-  const [total, setTotal] = useState(0)
-  const [totalPages, setTotalPages] = useState(1)
+  const [logs, setLogs] = useState<LogItem[]>([]);
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
 
-  const [searchInput, setSearchInputState] = useState('')
-  const [debouncedSearch, setDebouncedSearch] = useState('')
-  const [levelFilter, setLevelFilter] = useState<LogLevelFilter>('ALL')
-  const [categoryFilter, setCategoryFilter] = useState<LogCategoryFilter>('ALL')
-  const [scope, setScope] = useState<LogScope>(defaultScope)
+  const [searchInput, setSearchInputState] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [levelFilter, setLevelFilter] = useState<LogLevelFilter>("ALL");
+  const [categoryFilter, setCategoryFilter] = useState<LogCategoryFilter>("ALL");
+  const [scope, setScope] = useState<LogScope>(defaultScope);
 
-  const [isLoading, setIsLoading] = useState(true)
-  const [selectedLog, setSelectedLog] = useState<LogItem | null>(null)
-  const [refreshTick, setRefreshTick] = useState(0)
+  const [isLoading, setIsLoading] = useState(true);
+  const [selectedLog, setSelectedLog] = useState<LogItem | null>(null);
+  const [refreshTick, setRefreshTick] = useState(0);
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setDebouncedSearch(searchInput.trim())
-      setPage(1)
-    }, searchDebounceMs)
+      setDebouncedSearch(searchInput.trim());
+      setPage(1);
+    }, searchDebounceMs);
 
-    return () => clearTimeout(timer)
-  }, [searchInput])
+    return () => clearTimeout(timer);
+  }, [searchInput]);
 
   useEffect(() => {
-    let isMounted = true
-    setIsLoading(true)
+    let isMounted = true;
+    setIsLoading(true);
 
     getLogs({
       page,
       limit: logsPerPage,
-      level: levelFilter === 'ALL' ? undefined : levelFilter,
-      category: categoryFilter === 'ALL' ? undefined : categoryFilter,
+      level: levelFilter === "ALL" ? undefined : levelFilter,
+      category: categoryFilter === "ALL" ? undefined : categoryFilter,
       search: debouncedSearch || undefined,
-      scope: isAdmin ? scope : 'me'
+      scope: isAdmin ? scope : "me"
     })
       .then((response) => {
-        if (!isMounted) return
-        setLogs(response.data)
-        setTotal(response.meta.total)
-        setTotalPages(Math.max(1, response.meta.totalPages))
+        if (!isMounted) return;
+        setLogs(response.data);
+        setTotal(response.meta.total);
+        setTotalPages(Math.max(1, response.meta.totalPages));
       })
       .catch(() => {
-        if (!isMounted) return
-        setLogs([])
-        setTotal(0)
-        setTotalPages(1)
+        if (!isMounted) return;
+        setLogs([]);
+        setTotal(0);
+        setTotalPages(1);
       })
       .finally(() => {
-        if (isMounted) setIsLoading(false)
-      })
+        if (isMounted) setIsLoading(false);
+      });
 
     return () => {
-      isMounted = false
-    }
-  }, [categoryFilter, debouncedSearch, isAdmin, levelFilter, page, refreshTick, scope])
+      isMounted = false;
+    };
+  }, [categoryFilter, debouncedSearch, isAdmin, levelFilter, page, refreshTick, scope]);
 
   const setSearchInput = useCallback((value: string) => {
-    setSearchInputState(value)
-  }, [])
+    setSearchInputState(value);
+  }, []);
 
   const handleLevelChange = useCallback((nextLevel: LogLevelFilter) => {
-    setLevelFilter(nextLevel)
-    setPage(1)
-  }, [])
+    setLevelFilter(nextLevel);
+    setPage(1);
+  }, []);
 
   const handleCategoryChange = useCallback((nextCategory: LogCategoryFilter) => {
-    setCategoryFilter(nextCategory)
-    setPage(1)
-  }, [])
+    setCategoryFilter(nextCategory);
+    setPage(1);
+  }, []);
 
   const handleScopeChange = useCallback((nextScope: LogScope) => {
-    setScope(nextScope)
-    setPage(1)
-  }, [])
+    setScope(nextScope);
+    setPage(1);
+  }, []);
 
   const handleClearFilters = useCallback(() => {
-    setSearchInputState('')
-    setDebouncedSearch('')
-    setLevelFilter('ALL')
-    setCategoryFilter('ALL')
-    setScope(defaultScope)
-    setPage(1)
-  }, [defaultScope])
+    setSearchInputState("");
+    setDebouncedSearch("");
+    setLevelFilter("ALL");
+    setCategoryFilter("ALL");
+    setScope(defaultScope);
+    setPage(1);
+  }, [defaultScope]);
 
   const handlePageChange = useCallback((nextPage: number) => {
-    setPage(nextPage)
-  }, [])
+    setPage(nextPage);
+  }, []);
 
-  const handleCloseLog = useCallback(() => setSelectedLog(null), [])
+  const handleCloseLog = useCallback(() => setSelectedLog(null), []);
 
   const handleRefresh = useCallback(() => {
-    setRefreshTick((prev) => prev + 1)
-  }, [])
+    setRefreshTick((prev) => prev + 1);
+  }, []);
 
   const hasActiveFilters =
     Boolean(searchInput.trim()) ||
-    levelFilter !== 'ALL' ||
-    categoryFilter !== 'ALL' ||
-    (isAdmin && scope !== defaultScope)
+    levelFilter !== "ALL" ||
+    categoryFilter !== "ALL" ||
+    (isAdmin && scope !== defaultScope);
 
   return {
     isAdmin,
@@ -141,13 +141,10 @@ const useLogsPageState = (): UseLogsPageReturn => {
     handlePageChange,
     handleCloseLog,
     handleRefresh
-  }
-}
+  };
+};
 
-const { PageProvider: LogsPageProvider, usePage: useLogsPage } = createPageContext(
-  useLogsPageState,
-  'useLogsPage'
-)
+const { PageProvider: LogsPageProvider, usePage: useLogsPage } = createPageContext(useLogsPageState, "useLogsPage");
 
-export { LogsPageProvider }
-export default useLogsPage
+export { LogsPageProvider };
+export default useLogsPage;

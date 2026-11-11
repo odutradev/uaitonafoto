@@ -1,11 +1,11 @@
-import { Alert, Box, Button, Divider, Link, Paper, Stack, TextField, Typography } from '@mui/material'
-import { Link as RouterLink, useLocation } from 'react-router-dom'
+import { Alert, Box, Button, Divider, Link, Paper, Stack, TextField, Typography } from "@mui/material";
+import { Link as RouterLink, useLocation } from "react-router-dom";
 
-import GoogleIcon from '@components/googleIcon'
-import Logo from '@components/logo'
-import ThemeToggle from '@components/themeToggle'
+import GoogleIcon from "@components/googleIcon";
+import Logo from "@components/logo";
+import ThemeToggle from "@components/themeToggle";
 
-import useAuthPage, { AuthPageProvider } from './hook'
+import useAuthPage, { AuthPageProvider } from "./hook";
 import {
   authCardStyles,
   authWrapperStyles,
@@ -17,10 +17,10 @@ import {
   submitButtonStyles,
   switchLinkBoxStyles,
   themeToggleWrapperStyles
-} from './styles'
+} from "./styles";
 
 const AuthPageContent = () => {
-  const location = useLocation()
+  const location = useLocation();
   const {
     isSignUp,
     toggleMode,
@@ -36,7 +36,7 @@ const AuthPageContent = () => {
     submitting,
     handleSubmit,
     handleGoogleLogin
-  } = useAuthPage()
+  } = useAuthPage();
 
   return (
     <Box sx={authWrapperStyles}>
@@ -50,19 +50,19 @@ const AuthPageContent = () => {
             component={RouterLink}
             to="/"
             sx={logoWrapperStyles}
-            style={{ textDecoration: 'none', color: 'inherit' }}
+            style={{ textDecoration: "none", color: "inherit" }}
           >
             <Logo size="medium" animation="eye" />
           </Box>
 
           <Typography variant="body2" color="text.secondary" textAlign="center">
             {isSignUp
-              ? 'Crie sua conta para criar eventos e compartilhar fotos no telão'
-              : 'Acesse sua conta para gerenciar eventos e telões'}
+              ? "Crie sua conta para criar eventos e compartilhar fotos no telão"
+              : "Acesse sua conta para gerenciar eventos e telões"}
           </Typography>
 
           {errorMessage && (
-            <Alert severity="error" sx={{ borderRadius: '12px' }}>
+            <Alert severity="error" sx={{ borderRadius: "12px" }}>
               {errorMessage}
             </Alert>
           )}
@@ -97,7 +97,7 @@ const AuthPageContent = () => {
             required
             fullWidth
             size="medium"
-            helperText={isSignUp ? 'Mínimo de 6 caracteres' : undefined}
+            helperText={isSignUp ? "Mínimo de 6 caracteres" : undefined}
           />
 
           {isSignUp && (
@@ -136,13 +136,7 @@ const AuthPageContent = () => {
             startIcon={submitting ? <Logo display="symbol" loading="l3" size={20} /> : undefined}
             sx={submitButtonStyles}
           >
-            {submitting
-              ? isSignUp
-                ? 'Cadastrando...'
-                : 'Entrando...'
-              : isSignUp
-                ? 'Criar conta'
-                : 'Entrar'}
+            {submitting ? (isSignUp ? "Cadastrando..." : "Entrando...") : isSignUp ? "Criar conta" : "Entrar"}
           </Button>
 
           <Divider sx={dividerStyles}>ou</Divider>
@@ -162,43 +156,36 @@ const AuthPageContent = () => {
 
           <Box sx={switchLinkBoxStyles}>
             <Typography variant="body2" color="text.secondary">
-              {isSignUp ? 'Já tem uma conta? ' : 'Não tem uma conta? '}
+              {isSignUp ? "Já tem uma conta? " : "Não tem uma conta? "}
               <Link
                 component={RouterLink}
                 to={isSignUp ? `/signin${location.search}` : `/signup${location.search}`}
                 onClick={(e) => {
-                  e.preventDefault()
-                  toggleMode()
+                  e.preventDefault();
+                  toggleMode();
                 }}
                 fontWeight={700}
                 color="primary.dark"
                 underline="hover"
               >
-                {isSignUp ? 'Entre' : 'Cadastre-se'}
+                {isSignUp ? "Entre" : "Cadastre-se"}
               </Link>
             </Typography>
           </Box>
 
-          <Button
-            component={RouterLink}
-            to="/"
-            variant="text"
-            size="small"
-            sx={backButtonStyles}
-          >
+          <Button component={RouterLink} to="/" variant="text" size="small" sx={backButtonStyles}>
             Voltar ao início
           </Button>
         </Stack>
       </Paper>
     </Box>
-  )
-}
+  );
+};
 
 export const AuthPage = () => (
   <AuthPageProvider>
     <AuthPageContent />
   </AuthPageProvider>
-)
+);
 
-export default AuthPage
-
+export default AuthPage;

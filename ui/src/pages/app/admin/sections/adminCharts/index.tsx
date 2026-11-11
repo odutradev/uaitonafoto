@@ -1,4 +1,4 @@
-import { Box, Card, Skeleton, Typography, useTheme } from '@mui/material'
+import { Box, Card, Skeleton, Typography, useTheme } from "@mui/material";
 import {
   Area,
   AreaChart,
@@ -13,24 +13,23 @@ import {
   Tooltip,
   XAxis,
   YAxis
-} from 'recharts'
+} from "recharts";
 
-import { chartCardStyles, chartsGridStyles } from '@pages/app/admin/styles'
-import useAdminDashboardPage from '@pages/app/admin/hook'
+import { chartCardStyles, chartsGridStyles } from "@pages/app/admin/styles";
+import useAdminDashboardPage from "@pages/app/admin/hook";
 
-
-const pieColors = ['#6366f1', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6', '#3b82f6', '#14b8a6']
+const pieColors = ["#6366f1", "#10b981", "#f59e0b", "#ec4899", "#8b5cf6", "#3b82f6", "#14b8a6"];
 
 export const AdminCharts = () => {
-  const { metrics, isLoadingMetrics: isLoading } = useAdminDashboardPage()
+  const { metrics, isLoadingMetrics: isLoading } = useAdminDashboardPage();
 
-  const theme = useTheme()
-  const isDark = theme.palette.mode === 'dark'
+  const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
 
-  const gridColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)'
-  const textColor = isDark ? '#94a3b8' : '#64748b'
-  const tooltipBg = isDark ? '#1e293b' : '#ffffff'
-  const tooltipBorder = isDark ? '#334155' : '#e2e8f0'
+  const gridColor = isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)";
+  const textColor = isDark ? "#94a3b8" : "#64748b";
+  const tooltipBg = isDark ? "#1e293b" : "#ffffff";
+  const tooltipBorder = isDark ? "#334155" : "#e2e8f0";
 
   if (isLoading || !metrics) {
     return (
@@ -38,32 +37,33 @@ export const AdminCharts = () => {
         {Array.from({ length: 4 }).map((_, index) => (
           <Card key={index} elevation={0} sx={chartCardStyles}>
             <Skeleton variant="text" width="40%" height={32} />
-            <Skeleton variant="rectangular" width="100%" height={300} sx={{ borderRadius: '12px' }} />
+            <Skeleton variant="rectangular" width="100%" height={300} sx={{ borderRadius: "12px" }} />
           </Card>
         ))}
       </Box>
-    )
+    );
   }
 
-  const { timeline, plans, events, users } = metrics
+  const { timeline, plans, events, users } = metrics;
 
-  const pieData = plans.distribution.length > 0
-    ? plans.distribution
-    : [
-        { name: 'Planos Ativos', count: plans.activeSubscriptions || 1 },
-        { name: 'Cancelados', count: plans.cancelledSubscriptions || 0 }
-      ]
+  const pieData =
+    plans.distribution.length > 0
+      ? plans.distribution
+      : [
+          { name: "Planos Ativos", count: plans.activeSubscriptions || 1 },
+          { name: "Cancelados", count: plans.cancelledSubscriptions || 0 }
+        ];
 
   const eventBarData = [
-    { name: 'Ativos', valor: events.active, fill: '#10b981' },
-    { name: 'Encerrados', valor: events.closed, fill: '#64748b' },
-    { name: 'Média Fotos/Evt', valor: events.avgPhotosPerEvent, fill: '#6366f1' }
-  ]
+    { name: "Ativos", valor: events.active, fill: "#10b981" },
+    { name: "Encerrados", valor: events.closed, fill: "#64748b" },
+    { name: "Média Fotos/Evt", valor: events.avgPhotosPerEvent, fill: "#6366f1" }
+  ];
 
   const creditsPieData = [
-    { name: 'Créditos Pagos', count: users.totalPaidCredits, fill: '#6366f1' },
-    { name: 'Créditos Cortesia', count: users.totalFreeCredits, fill: '#f59e0b' }
-  ]
+    { name: "Créditos Pagos", count: users.totalPaidCredits, fill: "#6366f1" },
+    { name: "Créditos Cortesia", count: users.totalFreeCredits, fill: "#f59e0b" }
+  ];
 
   return (
     <Box sx={chartsGridStyles}>
@@ -78,7 +78,7 @@ export const AdminCharts = () => {
           </Typography>
         </Box>
 
-        <Box sx={{ width: '100%', height: 300, mt: 1 }}>
+        <Box sx={{ width: "100%", height: 300, mt: 1 }}>
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={timeline} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
               <defs>
@@ -103,8 +103,8 @@ export const AdminCharts = () => {
                   backgroundColor: tooltipBg,
                   borderColor: tooltipBorder,
                   borderRadius: 10,
-                  boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
-                  color: isDark ? '#fff' : '#000'
+                  boxShadow: "0 4px 20px rgba(0,0,0,0.15)",
+                  color: isDark ? "#fff" : "#000"
                 }}
               />
               <Legend wrapperStyle={{ paddingTop: 10, fontSize: 13 }} />
@@ -151,7 +151,7 @@ export const AdminCharts = () => {
           </Typography>
         </Box>
 
-        <Box sx={{ width: '100%', height: 300, mt: 1 }}>
+        <Box sx={{ width: "100%", height: 300, mt: 1 }}>
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
@@ -173,8 +173,8 @@ export const AdminCharts = () => {
                   backgroundColor: tooltipBg,
                   borderColor: tooltipBorder,
                   borderRadius: 10,
-                  boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
-                  color: isDark ? '#fff' : '#000'
+                  boxShadow: "0 4px 20px rgba(0,0,0,0.15)",
+                  color: isDark ? "#fff" : "#000"
                 }}
               />
               <Legend wrapperStyle={{ paddingTop: 10, fontSize: 12 }} />
@@ -194,7 +194,7 @@ export const AdminCharts = () => {
           </Typography>
         </Box>
 
-        <Box sx={{ width: '100%', height: 300, mt: 1 }}>
+        <Box sx={{ width: "100%", height: 300, mt: 1 }}>
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={eventBarData} margin={{ top: 20, right: 10, left: -20, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
@@ -205,8 +205,8 @@ export const AdminCharts = () => {
                   backgroundColor: tooltipBg,
                   borderColor: tooltipBorder,
                   borderRadius: 10,
-                  boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
-                  color: isDark ? '#fff' : '#000'
+                  boxShadow: "0 4px 20px rgba(0,0,0,0.15)",
+                  color: isDark ? "#fff" : "#000"
                 }}
               />
               <Bar dataKey="valor" name="Quantidade" radius={[8, 8, 0, 0]}>
@@ -230,7 +230,7 @@ export const AdminCharts = () => {
           </Typography>
         </Box>
 
-        <Box sx={{ width: '100%', height: 300, mt: 1 }}>
+        <Box sx={{ width: "100%", height: 300, mt: 1 }}>
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
@@ -252,8 +252,8 @@ export const AdminCharts = () => {
                   backgroundColor: tooltipBg,
                   borderColor: tooltipBorder,
                   borderRadius: 10,
-                  boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
-                  color: isDark ? '#fff' : '#000'
+                  boxShadow: "0 4px 20px rgba(0,0,0,0.15)",
+                  color: isDark ? "#fff" : "#000"
                 }}
               />
               <Legend wrapperStyle={{ paddingTop: 10, fontSize: 12 }} />
@@ -262,7 +262,7 @@ export const AdminCharts = () => {
         </Box>
       </Card>
     </Box>
-  )
-}
+  );
+};
 
-export default AdminCharts
+export default AdminCharts;

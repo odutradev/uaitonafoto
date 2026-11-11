@@ -1,27 +1,35 @@
-import { Box, Card, CardContent, Container, Stack, Typography } from '@mui/material'
-import { ConnectedTv as ConnectedTvIcon, QrCode2 as QrCodeIcon } from '@mui/icons-material'
+import { Box, Card, CardContent, Container, Stack, Typography } from "@mui/material";
+import { ConnectedTv as ConnectedTvIcon, QrCode2 as QrCodeIcon } from "@mui/icons-material";
 
-import Logo from '@components/logo'
+import Logo from "@components/logo";
 
-import { getSectionBoxStyles, getStepIconBoxStyles, sectionHeaderStyles, sectionSubtitleStyles, sectionTitleStyles, stepCardStyles, stepsGridStyles } from './styles'
-import useLandingPage from '@pages/public/landingPage/hook'
+import {
+  getSectionBoxStyles,
+  getStepIconBoxStyles,
+  sectionHeaderStyles,
+  sectionSubtitleStyles,
+  sectionTitleStyles,
+  stepCardStyles,
+  stepsGridStyles
+} from "./styles";
+import useLandingPage from "@pages/public/landingPage/hook";
 
 const renderStepIcon = (iconName: string) => {
-  const iconSx = { fontSize: { xs: 26, sm: 32 } }
+  const iconSx = { fontSize: { xs: 26, sm: 32 } };
   switch (iconName) {
-    case 'camera':
-      return <Logo display="symbol" size={{ xs: 26, sm: 32 }} animation="enter" />
-    case 'tv':
-      return <ConnectedTvIcon sx={iconSx} />
-    case 'qr_code':
+    case "camera":
+      return <Logo display="symbol" size={{ xs: 26, sm: 32 }} animation="enter" />;
+    case "tv":
+      return <ConnectedTvIcon sx={iconSx} />;
+    case "qr_code":
     default:
-      return <QrCodeIcon sx={iconSx} />
+      return <QrCodeIcon sx={iconSx} />;
   }
-}
+};
 
 export const HowItWorks = () => {
-  const { isDark, data: content } = useLandingPage()
-  const data = content.howItWorks
+  const { isDark, data: content } = useLandingPage();
+  const data = content.howItWorks;
 
   return (
     <Box sx={getSectionBoxStyles(isDark)}>
@@ -37,28 +45,37 @@ export const HowItWorks = () => {
 
         <Box sx={stepsGridStyles}>
           {data.steps.map((step, index) => {
-            const isStep2 = index === 1
+            const isStep2 = index === 1;
 
             return (
               <Card key={step.id || step.title} elevation={0} sx={stepCardStyles}>
-                <CardContent sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: { xs: 1.5, sm: 2 }, p: { xs: 2, sm: 2.5 } }}>
-                  <Box sx={getStepIconBoxStyles(isStep2, isDark)}>
-                    {renderStepIcon(step.icon)}
-                  </Box>
-                  <Typography variant="h4" sx={{ fontSize: { xs: '1.35rem', sm: '1.6rem' }, color: 'text.primary' }}>
+                <CardContent
+                  sx={{
+                    flex: 1,
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: { xs: 1.5, sm: 2 },
+                    p: { xs: 2, sm: 2.5 }
+                  }}
+                >
+                  <Box sx={getStepIconBoxStyles(isStep2, isDark)}>{renderStepIcon(step.icon)}</Box>
+                  <Typography variant="h4" sx={{ fontSize: { xs: "1.35rem", sm: "1.6rem" }, color: "text.primary" }}>
                     {step.title}
                   </Typography>
-                  <Typography variant="body1" sx={{ fontSize: { xs: '0.9375rem', sm: '1rem' }, lineHeight: 1.6, color: 'text.secondary' }}>
+                  <Typography
+                    variant="body1"
+                    sx={{ fontSize: { xs: "0.9375rem", sm: "1rem" }, lineHeight: 1.6, color: "text.secondary" }}
+                  >
                     {step.description}
                   </Typography>
                 </CardContent>
               </Card>
-            )
+            );
           })}
         </Box>
       </Container>
     </Box>
-  )
-}
+  );
+};
 
-export default HowItWorks
+export default HowItWorks;

@@ -1,30 +1,30 @@
-import type { EventCreditType, EventCustomization, EventItem, PinRotationMinutes } from '@utils/types/events'
+import type { EventCreditType, EventCustomization, EventItem, PinRotationMinutes } from "@utils/types/events";
 
 export interface EventFormState {
-  name: string
-  type: EventItem['type']
-  creditType: EventCreditType
-  startsAt: string
-  endsAt: string
-  photoVisibility: EventItem['settings']['photoVisibility']
-  uploadWindowHours: number
-  galleryDurationDays: number
-  pinEnabled: boolean
-  pin: string
-  pinRotate: boolean
-  pinRotationMinutes: PinRotationMinutes
-  moderationEnabled: boolean
-  challengesEnabled: boolean
-  challengesMode?: 'choose' | 'random'
-  customization?: EventCustomization
+  name: string;
+  type: EventItem["type"];
+  creditType: EventCreditType;
+  startsAt: string;
+  endsAt: string;
+  photoVisibility: EventItem["settings"]["photoVisibility"];
+  uploadWindowHours: number;
+  galleryDurationDays: number;
+  pinEnabled: boolean;
+  pin: string;
+  pinRotate: boolean;
+  pinRotationMinutes: PinRotationMinutes;
+  moderationEnabled: boolean;
+  challengesEnabled: boolean;
+  challengesMode?: "choose" | "random";
+  customization?: EventCustomization;
 }
 
 export interface EventFormFieldsProps {
-  form: EventFormState
-  onChange: <K extends keyof EventFormState>(key: K, value: EventFormState[K]) => void
-  isCreate?: boolean
-  isEventStarted?: boolean
-  step?: number
-  paidCredits?: number
-  freeCredits?: number
+  form: EventFormState;
+  onChange: <K extends keyof EventFormState>(key: K, value: EventFormState[K]) => void;
+  isCreate?: boolean;
+  isEventStarted?: boolean;
+  step?: number;
+  paidCredits?: number;
+  freeCredits?: number;
 }

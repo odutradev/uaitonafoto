@@ -1,8 +1,8 @@
-export type Permission = 'manage_platform' | 'view_all_logs'
+export type Permission = "manage_platform" | "view_all_logs";
 
-export type PageAccess = 'public' | 'guest' | 'private'
+export type PageAccess = "public" | "guest" | "private";
 
 export interface PageMetadata {
-  access: PageAccess
-  requiredPermissions?: Permission[]
+  access: PageAccess;
+  requiredPermissions?: Permission[];
 }

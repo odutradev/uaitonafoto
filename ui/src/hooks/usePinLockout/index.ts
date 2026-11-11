@@ -1,11 +1,11 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import { clientDeviceIdKey, getClientDeviceId, getClientFingerprint } from '@utils/functions/deviceIdentity'
-import type { PinLockoutOptions, PinLockoutState, StoredPinLockout } from './types'
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { clientDeviceIdKey, getClientDeviceId, getClientFingerprint } from "@utils/functions/deviceIdentity";
+import type { PinLockoutOptions, PinLockoutState, StoredPinLockout } from "./types";
 
-export { clientDeviceIdKey, getClientDeviceId, getClientFingerprint }
-export const pinLockoutStoragePrefix = 'uaitonafoto:lockout:'
-export const pinLockoutMaxFreeAttempts = 4
-export const pinLockoutPermanentThreshold = 10
+export { clientDeviceIdKey, getClientDeviceId, getClientFingerprint };
+export const pinLockoutStoragePrefix = "uaitonafoto:lockout:";
+export const pinLockoutMaxFreeAttempts = 4;
+export const pinLockoutPermanentThreshold = 10;
 
 export const pinLockoutDurations: Record<number, number> = {
   5: 60,
@@ -13,62 +13,59 @@ export const pinLockoutDurations: Record<number, number> = {
   7: 900,
   8: 3600,
   9: 3600
-}
+};
 
-const getStorageKey = (scope: string, targetId: string): string =>
-  `${pinLockoutStoragePrefix}${scope}:${targetId}`
+const getStorageKey = (scope: string, targetId: string): string => `${pinLockoutStoragePrefix}${scope}:${targetId}`;
 
 const readStoredLockout = (storageKey: string): StoredPinLockout => {
   try {
-    const raw = localStorage.getItem(storageKey)
-    if (!raw) return { attempts: 0, lockedUntil: null, isPermanent: false }
-    return JSON.parse(raw) as StoredPinLockout
+    const raw = localStorage.getItem(storageKey);
+    if (!raw) return { attempts: 0, lockedUntil: null, isPermanent: false };
+    return JSON.parse(raw) as StoredPinLockout;
   } catch {
-    return { attempts: 0, lockedUntil: null, isPermanent: false }
+    return { attempts: 0, lockedUntil: null, isPermanent: false };
   }
-}
+};
 
 const writeStoredLockout = (storageKey: string, data: StoredPinLockout): void => {
   try {
-    localStorage.setItem(storageKey, JSON.stringify(data))
-  } catch {
-  }
-}
+    localStorage.setItem(storageKey, JSON.stringify(data));
+  } catch {}
+};
 
 const clearStoredLockout = (storageKey: string): void => {
   try {
-    localStorage.removeItem(storageKey)
-  } catch {
-  }
-}
+    localStorage.removeItem(storageKey);
+  } catch {}
+};
 
 const formatLockoutCountdown = (seconds: number): string => {
-  if (seconds <= 0) return '00:00'
-  const mins = Math.floor(seconds / 60)
-  const secs = seconds % 60
-  const formattedMins = mins.toString().padStart(2, '0')
-  const formattedSecs = secs.toString().padStart(2, '0')
-  return `${formattedMins}:${formattedSecs}`
-}
+  if (seconds <= 0) return "00:00";
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  const formattedMins = mins.toString().padStart(2, "0");
+  const formattedSecs = secs.toString().padStart(2, "0");
+  return `${formattedMins}:${formattedSecs}`;
+};
 
 const parseLockoutError = (error: unknown) => {
   const axiosError = error as {
     response?: {
-      status?: number
+      status?: number;
       data?: {
-        message?: string
+        message?: string;
         details?: {
-          locked?: boolean
-          isPermanent?: boolean
-          retryAfterSeconds?: number
-          attempts?: number
-        }
-      }
-    }
-  }
+          locked?: boolean;
+          isPermanent?: boolean;
+          retryAfterSeconds?: number;
+          attempts?: number;
+        };
+      };
+    };
+  };
 
-  const details = axiosError?.response?.data?.details
-  const status = axiosError?.response?.status
+  const details = axiosError?.response?.data?.details;
+  const status = axiosError?.response?.status;
 
   if (status === 429 || status === 403 || details?.locked) {
     return {
@@ -76,120 +73,120 @@ const parseLockoutError = (error: unknown) => {
       isPermanent: Boolean(details?.isPermanent),
       retryAfterSeconds: details?.retryAfterSeconds,
       serverAttempts: details?.attempts
-    }
+    };
   }
 
-  return { isLocked: false }
-}
+  return { isLocked: false };
+};
 
 const usePinLockout = ({ scope, targetId }: PinLockoutOptions): PinLockoutState => {
-  const storageKey = useMemo(() => getStorageKey(scope, targetId), [scope, targetId])
+  const storageKey = useMemo(() => getStorageKey(scope, targetId), [scope, targetId]);
 
   const initialStored = useMemo<StoredPinLockout>(() => {
-    if (!targetId) return { attempts: 0, lockedUntil: null, isPermanent: false }
-    return readStoredLockout(storageKey)
-  }, [storageKey, targetId])
+    if (!targetId) return { attempts: 0, lockedUntil: null, isPermanent: false };
+    return readStoredLockout(storageKey);
+  }, [storageKey, targetId]);
 
-  const [attempts, setAttempts] = useState<number>(initialStored.attempts)
-  const [isPermanent, setIsPermanent] = useState<boolean>(initialStored.isPermanent)
-  const [lockedUntil, setLockedUntil] = useState<number | null>(initialStored.lockedUntil)
+  const [attempts, setAttempts] = useState<number>(initialStored.attempts);
+  const [isPermanent, setIsPermanent] = useState<boolean>(initialStored.isPermanent);
+  const [lockedUntil, setLockedUntil] = useState<number | null>(initialStored.lockedUntil);
   const [remainingSeconds, setRemainingSeconds] = useState<number>(() => {
-    if (initialStored.isPermanent) return Infinity
+    if (initialStored.isPermanent) return Infinity;
     if (initialStored.lockedUntil && initialStored.lockedUntil > Date.now()) {
-      return Math.max(0, Math.ceil((initialStored.lockedUntil - Date.now()) / 1000))
+      return Math.max(0, Math.ceil((initialStored.lockedUntil - Date.now()) / 1000));
     }
-    return 0
-  })
+    return 0;
+  });
 
   useEffect(() => {
-    if (!targetId) return
-    const stored = readStoredLockout(storageKey)
-    setAttempts(stored.attempts)
-    setIsPermanent(stored.isPermanent)
-    setLockedUntil(stored.lockedUntil)
+    if (!targetId) return;
+    const stored = readStoredLockout(storageKey);
+    setAttempts(stored.attempts);
+    setIsPermanent(stored.isPermanent);
+    setLockedUntil(stored.lockedUntil);
 
     if (stored.isPermanent) {
-      setRemainingSeconds(Infinity)
+      setRemainingSeconds(Infinity);
     } else if (stored.lockedUntil && stored.lockedUntil > Date.now()) {
-      setRemainingSeconds(Math.max(0, Math.ceil((stored.lockedUntil - Date.now()) / 1000)))
+      setRemainingSeconds(Math.max(0, Math.ceil((stored.lockedUntil - Date.now()) / 1000)));
     } else {
-      setRemainingSeconds(0)
+      setRemainingSeconds(0);
     }
-  }, [storageKey, targetId])
+  }, [storageKey, targetId]);
 
   useEffect(() => {
-    if (isPermanent || !lockedUntil || remainingSeconds <= 0) return
+    if (isPermanent || !lockedUntil || remainingSeconds <= 0) return;
 
     const interval = window.setInterval(() => {
-      const diff = Math.ceil((lockedUntil - Date.now()) / 1000)
+      const diff = Math.ceil((lockedUntil - Date.now()) / 1000);
       if (diff <= 0) {
-        setRemainingSeconds(0)
-        setLockedUntil(null)
+        setRemainingSeconds(0);
+        setLockedUntil(null);
         writeStoredLockout(storageKey, {
           attempts,
           lockedUntil: null,
           isPermanent: false
-        })
+        });
       } else {
-        setRemainingSeconds(diff)
+        setRemainingSeconds(diff);
       }
-    }, 1000)
+    }, 1000);
 
-    return () => window.clearInterval(interval)
-  }, [isPermanent, lockedUntil, remainingSeconds, storageKey, attempts])
+    return () => window.clearInterval(interval);
+  }, [isPermanent, lockedUntil, remainingSeconds, storageKey, attempts]);
 
-  const isLocked = isPermanent || remainingSeconds > 0
+  const isLocked = isPermanent || remainingSeconds > 0;
 
   const recordFailure = useCallback(
     (error?: unknown) => {
-      if (!targetId) return
+      if (!targetId) return;
 
-      const currentStored = readStoredLockout(storageKey)
-      const parsed = parseLockoutError(error)
+      const currentStored = readStoredLockout(storageKey);
+      const parsed = parseLockoutError(error);
 
-      const nextAttempts = parsed.serverAttempts ?? currentStored.attempts + 1
+      const nextAttempts = parsed.serverAttempts ?? currentStored.attempts + 1;
       const becomesPermanent =
-        currentStored.isPermanent || parsed.isPermanent || nextAttempts >= pinLockoutPermanentThreshold
+        currentStored.isPermanent || parsed.isPermanent || nextAttempts >= pinLockoutPermanentThreshold;
 
-      let nextLockedUntil: number | null = null
-      let nextRemaining = 0
+      let nextLockedUntil: number | null = null;
+      let nextRemaining = 0;
 
       if (becomesPermanent) {
-        nextRemaining = Infinity
+        nextRemaining = Infinity;
       } else if (parsed.retryAfterSeconds !== undefined && parsed.retryAfterSeconds > 0) {
-        nextRemaining = parsed.retryAfterSeconds
-        nextLockedUntil = Date.now() + parsed.retryAfterSeconds * 1000
+        nextRemaining = parsed.retryAfterSeconds;
+        nextLockedUntil = Date.now() + parsed.retryAfterSeconds * 1000;
       } else if (nextAttempts >= 5) {
-        const duration = pinLockoutDurations[nextAttempts] ?? 3600
-        nextRemaining = duration
-        nextLockedUntil = Date.now() + duration * 1000
+        const duration = pinLockoutDurations[nextAttempts] ?? 3600;
+        nextRemaining = duration;
+        nextLockedUntil = Date.now() + duration * 1000;
       }
 
       const updatedRecord: StoredPinLockout = {
         attempts: nextAttempts,
         lockedUntil: nextLockedUntil,
         isPermanent: becomesPermanent
-      }
+      };
 
-      writeStoredLockout(storageKey, updatedRecord)
-      setAttempts(nextAttempts)
-      setIsPermanent(becomesPermanent)
-      setLockedUntil(nextLockedUntil)
-      setRemainingSeconds(nextRemaining)
+      writeStoredLockout(storageKey, updatedRecord);
+      setAttempts(nextAttempts);
+      setIsPermanent(becomesPermanent);
+      setLockedUntil(nextLockedUntil);
+      setRemainingSeconds(nextRemaining);
     },
     [storageKey, targetId]
-  )
+  );
 
   const resetLockout = useCallback(() => {
-    if (!targetId) return
-    clearStoredLockout(storageKey)
-    setAttempts(0)
-    setIsPermanent(false)
-    setLockedUntil(null)
-    setRemainingSeconds(0)
-  }, [storageKey, targetId])
+    if (!targetId) return;
+    clearStoredLockout(storageKey);
+    setAttempts(0);
+    setIsPermanent(false);
+    setLockedUntil(null);
+    setRemainingSeconds(0);
+  }, [storageKey, targetId]);
 
-  const formattedTime = useMemo(() => formatLockoutCountdown(remainingSeconds), [remainingSeconds])
+  const formattedTime = useMemo(() => formatLockoutCountdown(remainingSeconds), [remainingSeconds]);
 
   return {
     isLocked,
@@ -199,7 +196,7 @@ const usePinLockout = ({ scope, targetId }: PinLockoutOptions): PinLockoutState 
     attempts,
     recordFailure,
     resetLockout
-  }
-}
+  };
+};
 
-export default usePinLockout
+export default usePinLockout;

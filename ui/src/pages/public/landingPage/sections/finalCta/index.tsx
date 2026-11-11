@@ -1,18 +1,18 @@
-import { Box, Button, Container, Typography } from '@mui/material'
-import { ArrowForward as ArrowForwardIcon } from '@mui/icons-material'
-import { Link as RouterLink } from 'react-router-dom'
+import { Box, Button, Container, Typography } from "@mui/material";
+import { ArrowForward as ArrowForwardIcon } from "@mui/icons-material";
+import { Link as RouterLink } from "react-router-dom";
 
-import Logo from '@components/logo'
+import Logo from "@components/logo";
 
-import { ctaButtonStyles, ctaDescriptionStyles, ctaTitleStyles, getCtaBoxStyles } from './styles'
-import useLandingPage from '@pages/public/landingPage/hook'
+import { ctaButtonStyles, ctaDescriptionStyles, ctaTitleStyles, getCtaBoxStyles } from "./styles";
+import useLandingPage from "@pages/public/landingPage/hook";
 
 export const FinalCta = () => {
-  const { isDark, data: content } = useLandingPage()
-  const data = content.finalCta
+  const { isDark, data: content } = useLandingPage();
+  const data = content.finalCta;
 
   return (
-    <Box component="section" sx={{ width: '100%', py: { xs: 6, sm: 8, md: 10 } }}>
+    <Box component="section" sx={{ width: "100%", py: { xs: 6, sm: 8, md: 10 } }}>
       <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3 } }}>
         <Box sx={getCtaBoxStyles(isDark)}>
           <Logo size="large" variant="auto" animation="flash" />
@@ -39,7 +39,7 @@ export const FinalCta = () => {
         </Box>
       </Container>
     </Box>
-  )
-}
+  );
+};
 
-export default FinalCta
+export default FinalCta;

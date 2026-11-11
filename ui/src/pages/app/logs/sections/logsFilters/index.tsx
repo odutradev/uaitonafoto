@@ -1,23 +1,25 @@
-import {
-  Box,
-  Button,
-  Card,
-  FormControl,
-  InputAdornment,
-  InputLabel,
-  MenuItem,
-  Select,
-  TextField
-} from '@mui/material'
-import { FilterAltOff as ClearIcon, Search as SearchIcon } from '@mui/icons-material'
+import { Box, Button, Card, FormControl, InputAdornment, InputLabel, MenuItem, Select, TextField } from "@mui/material";
+import { FilterAltOff as ClearIcon, Search as SearchIcon } from "@mui/icons-material";
 
-import { clearButtonStyles, clearRowStyles, filterCardStyles, getFilterGridStyles } from './styles'
-import type { LogScope } from '@utils/types/logs'
-import type { LogCategoryFilter, LogLevelFilter } from '@pages/app/logs/types'
-import useLogsPage from '@pages/app/logs/hook'
+import { clearButtonStyles, clearRowStyles, filterCardStyles, getFilterGridStyles } from "./styles";
+import type { LogScope } from "@utils/types/logs";
+import type { LogCategoryFilter, LogLevelFilter } from "@pages/app/logs/types";
+import useLogsPage from "@pages/app/logs/hook";
 
 const LogsFilters = () => {
-  const { isAdmin, searchInput, levelFilter, categoryFilter, scope, hasActiveFilters, setSearchInput: onSearchChange, handleLevelChange: onLevelChange, handleCategoryChange: onCategoryChange, handleScopeChange: onScopeChange, handleClearFilters: onClearFilters } = useLogsPage()
+  const {
+    isAdmin,
+    searchInput,
+    levelFilter,
+    categoryFilter,
+    scope,
+    hasActiveFilters,
+    setSearchInput: onSearchChange,
+    handleLevelChange: onLevelChange,
+    handleCategoryChange: onCategoryChange,
+    handleScopeChange: onScopeChange,
+    handleClearFilters: onClearFilters
+  } = useLogsPage();
 
   return (
     <Card component="section" elevation={0} sx={filterCardStyles}>
@@ -87,20 +89,13 @@ const LogsFilters = () => {
 
       {hasActiveFilters && (
         <Box sx={clearRowStyles}>
-          <Button
-            size="small"
-            variant="text"
-            startIcon={<ClearIcon />}
-            onClick={onClearFilters}
-            sx={clearButtonStyles}
-          >
+          <Button size="small" variant="text" startIcon={<ClearIcon />} onClick={onClearFilters} sx={clearButtonStyles}>
             Limpar filtros
           </Button>
         </Box>
       )}
     </Card>
-  )
-}
+  );
+};
 
-export default LogsFilters
-
+export default LogsFilters;

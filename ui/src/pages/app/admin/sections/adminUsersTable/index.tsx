@@ -19,29 +19,38 @@ import {
   TextField,
   Tooltip,
   Typography
-} from '@mui/material'
-import {
-  AddCircleOutline as AddCreditsIcon,
-  Search as SearchIcon
-} from '@mui/icons-material'
+} from "@mui/material";
+import { AddCircleOutline as AddCreditsIcon, Search as SearchIcon } from "@mui/icons-material";
 
-import { filterRowStyles, tableCardStyles, tableContainerStyles } from '@pages/app/admin/styles'
-import useAdminDashboardPage from '@pages/app/admin/hook'
-
+import { filterRowStyles, tableCardStyles, tableContainerStyles } from "@pages/app/admin/styles";
+import useAdminDashboardPage from "@pages/app/admin/hook";
 
 const formatDatePtBr = (isoDate?: string): string => {
-  if (!isoDate) return '-'
-  const parsed = new Date(isoDate)
-  if (Number.isNaN(parsed.getTime())) return '-'
-  return parsed.toLocaleDateString('pt-BR', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric'
-  })
-}
+  if (!isoDate) return "-";
+  const parsed = new Date(isoDate);
+  if (Number.isNaN(parsed.getTime())) return "-";
+  return parsed.toLocaleDateString("pt-BR", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric"
+  });
+};
 
 export const AdminUsersTable = () => {
-  const { users, totalUsers, page, limit, isLoadingUsers: isLoading, searchInput, roleFilter, setSearchInput: onSearchChange, setRoleFilter: onRoleFilterChange, setPage: onPageChange, setLimit: onLimitChange, handleOpenAddCredits: onAddCredits } = useAdminDashboardPage()
+  const {
+    users,
+    totalUsers,
+    page,
+    limit,
+    isLoadingUsers: isLoading,
+    searchInput,
+    roleFilter,
+    setSearchInput: onSearchChange,
+    setRoleFilter: onRoleFilterChange,
+    setPage: onPageChange,
+    setLimit: onLimitChange,
+    handleOpenAddCredits: onAddCredits
+  } = useAdminDashboardPage();
 
   return (
     <Card elevation={0} sx={tableCardStyles}>
@@ -55,7 +64,7 @@ export const AdminUsersTable = () => {
           </Typography>
         </Box>
 
-        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} alignItems="center">
+        <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} alignItems="center">
           <TextField
             size="small"
             placeholder="Buscar por nome ou e-mail..."
@@ -68,13 +77,13 @@ export const AdminUsersTable = () => {
                 </InputAdornment>
               )
             }}
-            sx={{ minWidth: { xs: '100%', sm: 260 } }}
+            sx={{ minWidth: { xs: "100%", sm: 260 } }}
           />
 
           <Select
             size="small"
             value={roleFilter}
-            onChange={(e) => onRoleFilterChange(e.target.value as 'all' | 'admin' | 'user')}
+            onChange={(e) => onRoleFilterChange(e.target.value as "all" | "admin" | "user")}
             sx={{ minWidth: 140 }}
           >
             <MenuItem value="all">Todos os papéis</MenuItem>
@@ -87,13 +96,15 @@ export const AdminUsersTable = () => {
       <TableContainer sx={tableContainerStyles}>
         <Table sx={{ minWidth: 700 }}>
           <TableHead>
-            <TableRow sx={{ bgcolor: 'action.hover' }}>
+            <TableRow sx={{ bgcolor: "action.hover" }}>
               <TableCell sx={{ fontWeight: 700 }}>Usuário</TableCell>
               <TableCell sx={{ fontWeight: 700 }}>Papel</TableCell>
               <TableCell sx={{ fontWeight: 700 }}>Plano / Assinatura</TableCell>
               <TableCell sx={{ fontWeight: 700 }}>Saldo de Créditos</TableCell>
               <TableCell sx={{ fontWeight: 700 }}>Cadastro</TableCell>
-              <TableCell align="right" sx={{ fontWeight: 700 }}>Ações</TableCell>
+              <TableCell align="right" sx={{ fontWeight: 700 }}>
+                Ações
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -119,8 +130,8 @@ export const AdminUsersTable = () => {
               </TableRow>
             ) : (
               users.map((user) => {
-                const displayName = user.fullName || user.name
-                const isAdmin = user.role === 'admin'
+                const displayName = user.fullName || user.name;
+                const isAdmin = user.role === "admin";
 
                 return (
                   <TableRow key={user.id} hover>
@@ -148,9 +159,9 @@ export const AdminUsersTable = () => {
                     <TableCell>
                       <Chip
                         size="small"
-                        color={isAdmin ? 'secondary' : 'default'}
-                        variant={isAdmin ? 'filled' : 'outlined'}
-                        label={isAdmin ? 'Admin' : 'Usuário'}
+                        color={isAdmin ? "secondary" : "default"}
+                        variant={isAdmin ? "filled" : "outlined"}
+                        label={isAdmin ? "Admin" : "Usuário"}
                         sx={{ fontWeight: 700 }}
                       />
                     </TableCell>
@@ -160,7 +171,7 @@ export const AdminUsersTable = () => {
                         <Chip
                           size="small"
                           color="primary"
-                          label={user.planName || 'Assinatura Ativa'}
+                          label={user.planName || "Assinatura Ativa"}
                           sx={{ fontWeight: 600 }}
                         />
                       ) : (
@@ -204,14 +215,14 @@ export const AdminUsersTable = () => {
                           color="primary"
                           startIcon={<AddCreditsIcon fontSize="small" />}
                           onClick={() => onAddCredits(user)}
-                          sx={{ textTransform: 'none', fontWeight: 600, borderRadius: '8px' }}
+                          sx={{ textTransform: "none", fontWeight: 600, borderRadius: "8px" }}
                         >
                           + Créditos
                         </Button>
                       </Tooltip>
                     </TableCell>
                   </TableRow>
-                )
+                );
               })
             )}
           </TableBody>
@@ -227,22 +238,20 @@ export const AdminUsersTable = () => {
         onRowsPerPageChange={(e) => onLimitChange(parseInt(e.target.value, 10))}
         rowsPerPageOptions={[5, 10, 20, 50]}
         labelRowsPerPage="Usuários por página:"
-        labelDisplayedRows={({ from, to, count }) =>
-          `${from}–${to} de ${count !== -1 ? count : `mais de ${to}`}`
-        }
+        labelDisplayedRows={({ from, to, count }) => `${from}–${to} de ${count !== -1 ? count : `mais de ${to}`}`}
         disabled={isLoading}
         sx={{
           borderTop: 1,
-          borderColor: 'divider',
-          '.MuiTablePagination-toolbar': {
-            flexWrap: 'wrap',
-            justifyContent: { xs: 'center', sm: 'flex-end' },
+          borderColor: "divider",
+          ".MuiTablePagination-toolbar": {
+            flexWrap: "wrap",
+            justifyContent: { xs: "center", sm: "flex-end" },
             px: 1
           }
         }}
       />
     </Card>
-  )
-}
+  );
+};
 
-export default AdminUsersTable
+export default AdminUsersTable;

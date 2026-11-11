@@ -1,9 +1,9 @@
-import { createJSONStorage, persist } from 'zustand/middleware'
-import { create } from 'zustand'
+import { createJSONStorage, persist } from "zustand/middleware";
+import { create } from "zustand";
 
-import { authStoreDefaultValues } from './defaultValues'
+import { authStoreDefaultValues } from "./defaultValues";
 
-import type { AuthStore } from './types'
+import type { AuthStore } from "./types";
 
 const useAuthStore = create<AuthStore>()(
   persist(
@@ -53,9 +53,9 @@ const useAuthStore = create<AuthStore>()(
     }),
     {
       storage: createJSONStorage(() => localStorage),
-      name: 'uaitonafoto-auth-store'
+      name: "uaitonafoto-auth-store"
     }
   )
-)
+);
 
-export default useAuthStore
+export default useAuthStore;

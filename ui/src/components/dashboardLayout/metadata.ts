@@ -1,5 +1,5 @@
-import type { PageMetadata } from '@utils/types/permissions'
+import type { PageMetadata } from "@utils/types/permissions";
 
-export const metadata: PageMetadata = { access: 'private' }
+export const metadata: PageMetadata = { access: "private" };
 
-export default metadata
+export default metadata;

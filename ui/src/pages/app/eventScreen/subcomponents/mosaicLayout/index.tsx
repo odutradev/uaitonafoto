@@ -1,31 +1,43 @@
-import { Box } from '@mui/material'
+import { Box } from "@mui/material";
 
-import ScreenBrand from '@pages/app/eventScreen/subcomponents/screenBrand'
-import ScreenPhotoTile from '@pages/app/eventScreen/subcomponents/screenPhotoTile'
-import ScreenQrBlock from '@pages/app/eventScreen/subcomponents/screenQrBlock'
-import useEventScreenPage from '@pages/app/eventScreen/hook'
-
+import ScreenBrand from "@pages/app/eventScreen/subcomponents/screenBrand";
+import ScreenPhotoTile from "@pages/app/eventScreen/subcomponents/screenPhotoTile";
+import ScreenQrBlock from "@pages/app/eventScreen/subcomponents/screenQrBlock";
+import useEventScreenPage from "@pages/app/eventScreen/hook";
 
 export const MosaicLayout = () => {
-  const { currentPhoto, isNewArrival, photos, currentIndex, selectPhoto: onSelectPhoto, guestLink, pin, showPin, photoFit, handleFullscreen: onFullscreen, handleOpenSettings: onOpenSettings, event } = useEventScreenPage()
-  const customization = event?.customization
+  const {
+    currentPhoto,
+    isNewArrival,
+    photos,
+    currentIndex,
+    selectPhoto: onSelectPhoto,
+    guestLink,
+    pin,
+    showPin,
+    photoFit,
+    handleFullscreen: onFullscreen,
+    handleOpenSettings: onOpenSettings,
+    event
+  } = useEventScreenPage();
+  const customization = event?.customization;
 
   // Pega até 5 fotos recentes
   const recentPhotos = Array.from({ length: 5 }, (_, idx) => {
-    if (photos.length <= 1) return null
-    const targetIdx = (currentIndex - 1 - idx + photos.length) % photos.length
-    return { photo: photos[targetIdx], index: targetIdx }
-  })
+    if (photos.length <= 1) return null;
+    const targetIdx = (currentIndex - 1 - idx + photos.length) % photos.length;
+    return { photo: photos[targetIdx], index: targetIdx };
+  });
 
   return (
     <Box
       sx={{
-        height: '100%',
-        display: 'grid',
-        gridTemplateColumns: '53.4cqh 1fr',
-        gap: '2cqh',
-        p: '2.5cqh',
-        position: 'relative',
+        height: "100%",
+        display: "grid",
+        gridTemplateColumns: "53.4cqh 1fr",
+        gap: "2cqh",
+        p: "2.5cqh",
+        position: "relative",
         zIndex: 1,
         minHeight: 0
       }}
@@ -38,16 +50,16 @@ export const MosaicLayout = () => {
         isNewArrival={isNewArrival}
         showOverlay
         aspectRatio="9 / 16"
-        sx={{ height: '100%' }}
+        sx={{ height: "100%" }}
       />
 
       {/* Coluna da direita: Mosaico com 5 fotos recentes e QR Code em span 3 */}
       <Box
         sx={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(4, 1fr)',
-          gridTemplateRows: '1fr 1fr',
-          gap: '2cqh',
+          display: "grid",
+          gridTemplateColumns: "repeat(4, 1fr)",
+          gridTemplateRows: "1fr 1fr",
+          gap: "2cqh",
           minHeight: 0
         }}
       >
@@ -58,18 +70,18 @@ export const MosaicLayout = () => {
             photo={item?.photo || null}
             photoFit={photoFit}
             aspectRatio="9 / 16"
-            sx={{ height: '100%', justifySelf: 'center' }}
+            sx={{ height: "100%", justifySelf: "center" }}
             onClick={item?.photo ? () => onSelectPhoto(item.index) : undefined}
           />
         ))}
 
         {/* Linha inferior: 5ª foto recente */}
         <ScreenPhotoTile
-          key={recentPhotos[4]?.photo ? recentPhotos[4].photo.id : 'mosaic-bottom-0'}
+          key={recentPhotos[4]?.photo ? recentPhotos[4].photo.id : "mosaic-bottom-0"}
           photo={recentPhotos[4]?.photo || null}
           photoFit={photoFit}
           aspectRatio="9 / 16"
-          sx={{ height: '100%', justifySelf: 'center' }}
+          sx={{ height: "100%", justifySelf: "center" }}
           onClick={recentPhotos[4]?.photo ? () => onSelectPhoto(recentPhotos[4]!.index) : undefined}
         />
 
@@ -80,7 +92,7 @@ export const MosaicLayout = () => {
           showPin={showPin}
           variant="mosaic"
           headerContent={
-            <Box sx={{ mb: '1cqh' }}>
+            <Box sx={{ mb: "1cqh" }}>
               <ScreenBrand
                 customization={customization}
                 hideLiveBadge
@@ -92,7 +104,7 @@ export const MosaicLayout = () => {
         />
       </Box>
     </Box>
-  )
-}
+  );
+};
 
-export default MosaicLayout
+export default MosaicLayout;

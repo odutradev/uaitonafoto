@@ -1,10 +1,10 @@
-import type { ReactElement, ReactNode } from 'react'
+import type { ReactElement, ReactNode } from "react";
 
 export interface PageProviderProps {
-  children: ReactNode
+  children: ReactNode;
 }
 
 export interface PageContext<Value> {
-  PageProvider: (props: PageProviderProps) => ReactElement
-  usePage: () => Value
+  PageProvider: (props: PageProviderProps) => ReactElement;
+  usePage: () => Value;
 }

@@ -1,22 +1,22 @@
-import { Box, Button, Container, Stack, Typography } from '@mui/material'
-import { Link as RouterLink } from 'react-router-dom'
+import { Box, Button, Container, Stack, Typography } from "@mui/material";
+import { Link as RouterLink } from "react-router-dom";
 
-import Logo from '@components/logo'
+import Logo from "@components/logo";
 
-import { errorTitleStyles, errorWrapperStyles } from './styles'
-import type { ErrorContentProps } from './types'
+import { errorTitleStyles, errorWrapperStyles } from "./styles";
+import type { ErrorContentProps } from "./types";
 
 export const ErrorContent = ({
-  title = 'ops! algo deu errado',
+  title = "ops! algo deu errado",
   message,
-  homeHref = '/',
-  buttonText = 'Voltar ao início'
+  homeHref = "/",
+  buttonText = "Voltar ao início"
 }: ErrorContentProps) => {
   return (
     <Container maxWidth="sm">
       <Box sx={errorWrapperStyles}>
         <Stack spacing={3} alignItems="center">
-          <RouterLink to={homeHref} style={{ textDecoration: 'none' }}>
+          <RouterLink to={homeHref} style={{ textDecoration: "none" }}>
             <Logo size="medium" />
           </RouterLink>
           <Typography variant="h3" component="h1" sx={errorTitleStyles}>
@@ -31,8 +31,7 @@ export const ErrorContent = ({
         </Stack>
       </Box>
     </Container>
-  )
-}
+  );
+};
 
-export default ErrorContent
-
+export default ErrorContent;

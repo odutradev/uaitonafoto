@@ -1,18 +1,18 @@
-import { createJSONStorage, persist } from 'zustand/middleware'
-import { create } from 'zustand'
+import { createJSONStorage, persist } from "zustand/middleware";
+import { create } from "zustand";
 
-import { rolePermissions } from '@assets/data/permissions'
-import { systemStoreDefaultValues } from './defaultValues'
+import { rolePermissions } from "@assets/data/permissions";
+import { systemStoreDefaultValues } from "./defaultValues";
 
-import type { SystemStore } from './types'
+import type { SystemStore } from "./types";
 
 const useSystemStore = create<SystemStore>()(
   persist(
     (set) => ({
       system: systemStoreDefaultValues,
       hasPermissions: (role, requiredPermissions = []) => {
-        const grantedPermissions = role ? rolePermissions[role] ?? [] : []
-        return requiredPermissions.every((permission) => grantedPermissions.includes(permission))
+        const grantedPermissions = role ? (rolePermissions[role] ?? []) : [];
+        return requiredPermissions.every((permission) => grantedPermissions.includes(permission));
       },
       setSystem: (system) => set({ system }),
       updateSystem: (partialSystem) =>
@@ -40,19 +40,19 @@ const useSystemStore = create<SystemStore>()(
         set((state) => ({
           system: {
             ...state.system,
-            themeMode: state.system.themeMode === 'light' ? 'dark' : 'light'
+            themeMode: state.system.themeMode === "light" ? "dark" : "light"
           }
         })),
       reset: () => {
-        set({ system: systemStoreDefaultValues })
-        localStorage.removeItem('uaitonafoto-system-store')
+        set({ system: systemStoreDefaultValues });
+        localStorage.removeItem("uaitonafoto-system-store");
       }
     }),
     {
       storage: createJSONStorage(() => localStorage),
-      name: 'uaitonafoto-system-store'
+      name: "uaitonafoto-system-store"
     }
   )
-)
+);
 
-export default useSystemStore
+export default useSystemStore;

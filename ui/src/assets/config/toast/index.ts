@@ -1,15 +1,15 @@
-import { Bounce } from 'react-toastify'
+import { Bounce } from "react-toastify";
 
-import type { ToastContainerProps, ToastPosition } from 'react-toastify'
+import type { ToastContainerProps, ToastPosition } from "react-toastify";
 
 export interface ToastMessages {
-  success?: string
-  pending?: string
-  error?: string
+  success?: string;
+  pending?: string;
+  error?: string;
 }
 
-export const getToastContainerConfig = (theme: 'light' | 'dark'): ToastContainerProps => ({
-  position: 'top-center' as ToastPosition,
+export const getToastContainerConfig = (theme: "light" | "dark"): ToastContainerProps => ({
+  position: "top-center" as ToastPosition,
   hideProgressBar: false,
   pauseOnFocusLoss: true,
   transition: Bounce,
@@ -20,10 +20,10 @@ export const getToastContainerConfig = (theme: 'light' | 'dark'): ToastContainer
   draggable: true,
   rtl: false,
   theme
-})
+});
 
 export const defaultToastMessages: ToastMessages = {
-  success: 'Requisição realizada com sucesso',
-  pending: 'Inicializando requisição',
-  error: 'Erro na requisição'
-}
+  success: "Requisição realizada com sucesso",
+  pending: "Inicializando requisição",
+  error: "Erro na requisição"
+};

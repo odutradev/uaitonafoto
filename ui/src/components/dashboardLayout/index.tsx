@@ -1,16 +1,6 @@
-import { useEffect, useRef, useState } from 'react'
-import {
-  Avatar,
-  Box,
-  Button,
-  Chip,
-  Container,
-  Drawer,
-  IconButton,
-  Stack,
-  Typography
-} from '@mui/material'
-import { useTheme } from '@mui/material/styles'
+import { useEffect, useRef, useState } from "react";
+import { Avatar, Box, Button, Chip, Container, Drawer, IconButton, Stack, Typography } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import {
   AdminPanelSettingsOutlined as AdminIcon,
   ArrowForwardIos as ArrowIcon,
@@ -21,13 +11,13 @@ import {
   PaletteOutlined as PaletteIcon,
   PhotoCameraOutlined as EventsIcon,
   ReceiptLongOutlined as BillingIcon
-} from '@mui/icons-material'
-import { Link as RouterLink, Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom'
+} from "@mui/icons-material";
+import { Link as RouterLink, Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
 
-import Logo from '@components/logo'
-import ThemeToggle from '@components/themeToggle'
-import useAuth from '@hooks/useAuth'
-import useSystemStore from '@stores/system'
+import Logo from "@components/logo";
+import ThemeToggle from "@components/themeToggle";
+import useAuth from "@hooks/useAuth";
+import useSystemStore from "@stores/system";
 
 import {
   adminBadgeStyles,
@@ -52,8 +42,8 @@ import {
   sidebarInnerStyles,
   userAvatarStyles,
   userTextBoxStyles
-} from './styles'
-import type { DashboardNavItem, SidebarContentProps } from './types'
+} from "./styles";
+import type { DashboardNavItem, SidebarContentProps } from "./types";
 
 const SidebarContent = ({
   isDark,
@@ -70,26 +60,28 @@ const SidebarContent = ({
 }: SidebarContentProps) => {
   const navItems: DashboardNavItem[] = [
     {
-      label: 'Meus eventos',
-      path: '/app',
+      label: "Meus eventos",
+      path: "/app",
       icon: <EventsIcon fontSize="small" />,
       exact: true,
-      matchPrefixes: ['/app/events']
+      matchPrefixes: ["/app/events"]
     },
     ...(hasActiveSubscription
-      ? [{ label: 'Personalização', path: '/app/customization', icon: <PaletteIcon fontSize="small" /> }]
+      ? [{ label: "Personalização", path: "/app/customization", icon: <PaletteIcon fontSize="small" /> }]
       : []),
-    { label: 'Plano e transações', path: '/app/billing', icon: <BillingIcon fontSize="small" /> },
-    { label: 'Logs de atividade', path: '/app/logs', icon: <LogsIcon fontSize="small" /> },
-    ...(isAdmin
-      ? [{ label: 'Gestão geral', path: '/app/admin', icon: <AdminIcon fontSize="small" /> }]
-      : [])
-  ]
+    { label: "Plano e transações", path: "/app/billing", icon: <BillingIcon fontSize="small" /> },
+    { label: "Logs de atividade", path: "/app/logs", icon: <LogsIcon fontSize="small" /> },
+    ...(isAdmin ? [{ label: "Gestão geral", path: "/app/admin", icon: <AdminIcon fontSize="small" /> }] : [])
+  ];
 
   return (
     <Box sx={sidebarInnerStyles}>
       <Box sx={sidebarHeaderStyles}>
-        <RouterLink to="/app" onClick={() => onNavigate('/app')} style={{ textDecoration: 'none', display: 'inline-flex' }}>
+        <RouterLink
+          to="/app"
+          onClick={() => onNavigate("/app")}
+          style={{ textDecoration: "none", display: "inline-flex" }}
+        >
           <Logo size="small" variant="auto" />
         </RouterLink>
         <ThemeToggle />
@@ -98,11 +90,11 @@ const SidebarContent = ({
       <Box
         role="button"
         tabIndex={0}
-        onClick={() => onNavigate('/app/billing')}
+        onClick={() => onNavigate("/app/billing")}
         onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault()
-            onNavigate('/app/billing')
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            onNavigate("/app/billing");
           }
         }}
         sx={getCreditsBannerStyles(isDark)}
@@ -111,11 +103,11 @@ const SidebarContent = ({
           <Typography variant="caption" color="text.secondary" fontWeight={700}>
             SALDO DISPONÍVEL
           </Typography>
-          <ArrowIcon sx={{ fontSize: 12, color: 'text.secondary' }} />
+          <ArrowIcon sx={{ fontSize: 12, color: "text.secondary" }} />
         </Box>
         <Box sx={creditsValueRowStyles}>
           <Typography variant="h6" component="span" fontWeight={800}>
-            {paidCredits} {paidCredits === 1 ? 'crédito' : 'créditos'}
+            {paidCredits} {paidCredits === 1 ? "crédito" : "créditos"}
           </Typography>
           {freeCredits > 0 && (
             <Chip size="small" color="primary" label={`+${freeCredits} grátis`} sx={{ fontWeight: 700, height: 22 }} />
@@ -127,13 +119,11 @@ const SidebarContent = ({
         {navItems.map((item) => {
           const isDirectMatch = item.exact
             ? currentPath === item.path
-            : currentPath === item.path || currentPath.startsWith(`${item.path}/`)
+            : currentPath === item.path || currentPath.startsWith(`${item.path}/`);
           const isPrefixMatch = Boolean(
-            item.matchPrefixes?.some(
-              (prefix) => currentPath === prefix || currentPath.startsWith(`${prefix}/`)
-            )
-          )
-          const isActive = isDirectMatch || isPrefixMatch
+            item.matchPrefixes?.some((prefix) => currentPath === prefix || currentPath.startsWith(`${prefix}/`))
+          );
+          const isActive = isDirectMatch || isPrefixMatch;
 
           return (
             <Button
@@ -146,7 +136,7 @@ const SidebarContent = ({
             >
               {item.label}
             </Button>
-          )
+          );
         })}
       </Box>
 
@@ -155,15 +145,15 @@ const SidebarContent = ({
           role="button"
           tabIndex={0}
           aria-label="Acessar meu perfil"
-          onClick={() => onNavigate('/app/profile')}
+          onClick={() => onNavigate("/app/profile")}
           onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault()
-              onNavigate('/app/profile')
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              onNavigate("/app/profile");
             }
           }}
           sx={getUserSummaryRowStyles(
-            currentPath === '/app/profile' || currentPath.startsWith('/app/profile/'),
+            currentPath === "/app/profile" || currentPath.startsWith("/app/profile/"),
             isDark
           )}
         >
@@ -194,41 +184,41 @@ const SidebarContent = ({
         </Button>
       </Box>
     </Box>
-  )
-}
+  );
+};
 
 const DashboardLayout = () => {
-  const hasPermissions = useSystemStore((state) => state.hasPermissions)
-  const theme = useTheme()
-  const isDark = theme.palette.mode === 'dark'
-  const location = useLocation()
-  const navigate = useNavigate()
-  const { user, logout } = useAuth()
-  const [mobileOpen, setMobileOpen] = useState(false)
-  const mainRef = useRef<HTMLElement | null>(null)
+  const hasPermissions = useSystemStore((state) => state.hasPermissions);
+  const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const mainRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
-    mainRef.current?.scrollTo({ top: 0 })
-  }, [location.pathname])
+    mainRef.current?.scrollTo({ top: 0 });
+  }, [location.pathname]);
 
-  if (!user) return null
+  if (!user) return null;
 
-  const searchParams = new URLSearchParams(location.search)
-  if (location.pathname === '/app' && (searchParams.has('checkout') || searchParams.has('payment'))) {
-    return <Navigate to={`/app/billing${location.search}`} replace />
+  const searchParams = new URLSearchParams(location.search);
+  if (location.pathname === "/app" && (searchParams.has("checkout") || searchParams.has("payment"))) {
+    return <Navigate to={`/app/billing${location.search}`} replace />;
   }
 
   const handleNavigate = (path: string) => {
-    setMobileOpen(false)
+    setMobileOpen(false);
     if (location.pathname !== path) {
-      navigate(path)
+      navigate(path);
     }
-  }
+  };
 
   const handleLogout = () => {
-    setMobileOpen(false)
-    logout()
-  }
+    setMobileOpen(false);
+    logout();
+  };
 
   const sidebarProps: SidebarContentProps = {
     isDark,
@@ -236,22 +226,18 @@ const DashboardLayout = () => {
     userName: user.fullName || user.name,
     userEmail: user.email,
     userPhotoUrl: user.photoUrl,
-    isAdmin: hasPermissions(user.role, ['manage_platform']),
+    isAdmin: hasPermissions(user.role, ["manage_platform"]),
     hasActiveSubscription: Boolean(user.hasActiveSubscription),
     paidCredits: user.paidCredits,
     freeCredits: user.freeCredits,
     onNavigate: handleNavigate,
     onLogout: handleLogout
-  }
+  };
 
   return (
     <Box sx={layoutRootStyles}>
       <Box component="header" sx={getMobileTopBarStyles(isDark)}>
-        <IconButton
-          onClick={() => setMobileOpen(true)}
-          aria-label="Abrir menu lateral"
-          sx={mobileMenuButtonStyles}
-        >
+        <IconButton onClick={() => setMobileOpen(true)} aria-label="Abrir menu lateral" sx={mobileMenuButtonStyles}>
           <MenuIcon />
         </IconButton>
 
@@ -267,15 +253,11 @@ const DashboardLayout = () => {
         open={mobileOpen}
         onClose={() => setMobileOpen(false)}
         ModalProps={{ keepMounted: true }}
-        sx={{ display: { xs: 'block', md: 'none' } }}
+        sx={{ display: { xs: "block", md: "none" } }}
         slotProps={{ paper: { sx: getMobileDrawerPaperStyles(isDark) } }}
       >
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end', pt: 1, pr: 1 }}>
-          <IconButton
-            onClick={() => setMobileOpen(false)}
-            aria-label="Fechar menu lateral"
-            sx={mobileMenuButtonStyles}
-          >
+        <Box sx={{ display: "flex", justifyContent: "flex-end", pt: 1, pr: 1 }}>
+          <IconButton onClick={() => setMobileOpen(false)} aria-label="Fechar menu lateral" sx={mobileMenuButtonStyles}>
             <CloseIcon />
           </IconButton>
         </Box>
@@ -292,7 +274,7 @@ const DashboardLayout = () => {
         </Container>
       </Box>
     </Box>
-  )
-}
+  );
+};
 
-export default DashboardLayout
+export default DashboardLayout;

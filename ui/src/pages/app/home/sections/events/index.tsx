@@ -1,9 +1,9 @@
-import { Box, Button, Card, CardActionArea, Chip, Paper, Skeleton, Typography } from '@mui/material'
-import { PhotoCameraOutlined as PhotoCameraIcon } from '@mui/icons-material'
-import dayjs from 'dayjs'
+import { Box, Button, Card, CardActionArea, Chip, Paper, Skeleton, Typography } from "@mui/material";
+import { PhotoCameraOutlined as PhotoCameraIcon } from "@mui/icons-material";
+import dayjs from "dayjs";
 
-import { eventPhaseLabels, eventTypeLabels } from '@assets/data/events'
-import { getEventPhase } from '@utils/functions/eventPhase'
+import { eventPhaseLabels, eventTypeLabels } from "@assets/data/events";
+import { getEventPhase } from "@utils/functions/eventPhase";
 
 import {
   emptyButtonStyles,
@@ -16,11 +16,11 @@ import {
   eventCardNameStyles,
   eventCardStyles,
   eventsGridStyles
-} from './styles'
-import useHomePage from '@pages/app/home/hook'
+} from "./styles";
+import useHomePage from "@pages/app/home/hook";
 
 const Events = () => {
-  const { events, isLoading, handleOpenCreate: onCreateEvent, handleOpenEvent: onOpenEvent } = useHomePage()
+  const { events, isLoading, handleOpenCreate: onCreateEvent, handleOpenEvent: onOpenEvent } = useHomePage();
   return (
     <Box component="section">
       {isLoading && (
@@ -39,12 +39,17 @@ const Events = () => {
                   {event.name}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  {dayjs(event.startsAt).format('DD/MM/YYYY [às] HH:mm')}
+                  {dayjs(event.startsAt).format("DD/MM/YYYY [às] HH:mm")}
                 </Typography>
                 <Box sx={eventCardChipsStyles}>
                   <Chip size="small" label={eventTypeLabels[event.type]} />
-                  <Chip size="small" color="primary" variant="outlined" label={eventPhaseLabels[getEventPhase(event)]} />
-                  {event.myRole === 'organizer' && <Chip size="small" variant="outlined" label="Organizador" />}
+                  <Chip
+                    size="small"
+                    color="primary"
+                    variant="outlined"
+                    label={eventPhaseLabels[getEventPhase(event)]}
+                  />
+                  {event.myRole === "organizer" && <Chip size="small" variant="outlined" label="Organizador" />}
                 </Box>
               </CardActionArea>
             </Card>
@@ -61,8 +66,8 @@ const Events = () => {
             Você ainda não tem eventos
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={emptyDescriptionStyles}>
-            Crie seu primeiro evento, compartilhe o QR Code com os convidados e veja as fotos
-            aparecerem no telão em tempo real.
+            Crie seu primeiro evento, compartilhe o QR Code com os convidados e veja as fotos aparecerem no telão em
+            tempo real.
           </Typography>
           <Button variant="outlined" size="large" onClick={onCreateEvent} sx={emptyButtonStyles}>
             Criar meu primeiro evento
@@ -70,7 +75,7 @@ const Events = () => {
         </Paper>
       )}
     </Box>
-  )
-}
+  );
+};
 
-export default Events
+export default Events;

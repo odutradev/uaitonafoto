@@ -1,43 +1,43 @@
-import type { EventPhoto, ScreenEventInfo } from '@utils/types/events'
-import type { ScreenLayoutMode, ScreenPhotoFit } from '@pages/app/eventScreen/types'
-import type { PinLockoutState } from '@hooks/usePinLockout/types'
-import type { FormEvent } from 'react'
+import type { EventPhoto, ScreenEventInfo } from "@utils/types/events";
+import type { ScreenLayoutMode, ScreenPhotoFit } from "@pages/app/eventScreen/types";
+import type { PinLockoutState } from "@hooks/usePinLockout/types";
+import type { FormEvent } from "react";
 
 export interface UseEventScreenPageReturn {
-  isActivated: boolean
-  isActivating: boolean
-  activationError: string | null
-  activate: (pin: string) => Promise<void>
-  disconnect: () => Promise<void>
-  lockout: PinLockoutState
-  event: ScreenEventInfo | null
-  pin: string | null
-  photos: EventPhoto[]
-  currentIndex: number
-  selectPhoto: (index: number) => void
-  currentPhoto: EventPhoto
-  photosCount: number
-  message: string | null
-  isLiveStreamConnected: boolean
-  isNewArrival: boolean
-  token?: string
-  guestLink: string
-  pinInput: string
-  setPinInput: (value: string) => void
-  isDisconnectModalOpen: boolean
-  isSettingsModalOpen: boolean
-  layoutMode: ScreenLayoutMode
-  photoFit: ScreenPhotoFit
-  showPin: boolean
-  hasPin: boolean
-  handleTogglePinVisibility: () => void
-  handleLayoutChange: (mode: ScreenLayoutMode) => void
-  handlePhotoFitChange: (fit: ScreenPhotoFit) => void
-  handleFullscreen: () => void
-  handleActivateSubmit: (submitEvent: FormEvent<HTMLFormElement>) => Promise<void>
-  handleOpenSettings: () => void
-  handleCloseSettings: () => void
-  handleOpenDisconnect: () => void
-  handleCloseDisconnect: () => void
-  handleConfirmDisconnect: () => Promise<void>
+  isActivated: boolean;
+  isActivating: boolean;
+  activationError: string | null;
+  activate: (pin: string) => Promise<void>;
+  disconnect: () => Promise<void>;
+  lockout: PinLockoutState;
+  event: ScreenEventInfo | null;
+  pin: string | null;
+  photos: EventPhoto[];
+  currentIndex: number;
+  selectPhoto: (index: number) => void;
+  currentPhoto: EventPhoto;
+  photosCount: number;
+  message: string | null;
+  isLiveStreamConnected: boolean;
+  isNewArrival: boolean;
+  token?: string;
+  guestLink: string;
+  pinInput: string;
+  setPinInput: (value: string) => void;
+  isDisconnectModalOpen: boolean;
+  isSettingsModalOpen: boolean;
+  layoutMode: ScreenLayoutMode;
+  photoFit: ScreenPhotoFit;
+  showPin: boolean;
+  hasPin: boolean;
+  handleTogglePinVisibility: () => void;
+  handleLayoutChange: (mode: ScreenLayoutMode) => void;
+  handlePhotoFitChange: (fit: ScreenPhotoFit) => void;
+  handleFullscreen: () => void;
+  handleActivateSubmit: (submitEvent: FormEvent<HTMLFormElement>) => Promise<void>;
+  handleOpenSettings: () => void;
+  handleCloseSettings: () => void;
+  handleOpenDisconnect: () => void;
+  handleCloseDisconnect: () => void;
+  handleConfirmDisconnect: () => Promise<void>;
 }
