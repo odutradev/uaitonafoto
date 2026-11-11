@@ -1,30 +1,10 @@
-import { useResetPasswordForm } from './hooks/useResetPasswordForm'
 import { ResetPasswordForm } from './subcomponents/resetPasswordForm'
+import { ResetPasswordPageProvider } from './hook'
 
-const ResetPassword = () => {
-  const {
-    token,
-    email,
-    setEmail,
-    password,
-    setPassword,
-    submitting,
-    submitted,
-    handleSubmit
-  } = useResetPasswordForm()
-
-  return (
-    <ResetPasswordForm
-      token={token}
-      email={email}
-      setEmail={setEmail}
-      password={password}
-      setPassword={setPassword}
-      submitting={submitting}
-      submitted={submitted}
-      onSubmit={handleSubmit}
-    />
-  )
-}
+const ResetPassword = () => (
+  <ResetPasswordPageProvider>
+    <ResetPasswordForm />
+  </ResetPasswordPageProvider>
+)
 
 export default ResetPassword
