@@ -19,23 +19,12 @@ import {
 } from '@mui/material'
 import { AddCircleOutline as AddIcon } from '@mui/icons-material'
 
-import type { AddCreditsPayload, AdminUserItem } from '@actions/admin'
+import useAdminDashboardPage from '@pages/app/admin/hook'
 
-interface AddCreditsDialogProps {
-  open: boolean
-  user: AdminUserItem | null
-  isSubmitting: boolean
-  onClose: () => void
-  onConfirm: (payload: AddCreditsPayload) => void
-}
 
-export const AddCreditsDialog = ({
-  open,
-  user,
-  isSubmitting,
-  onClose,
-  onConfirm
-}: AddCreditsDialogProps) => {
+export const AddCreditsDialog = () => {
+  const { isAddCreditsOpen: open, selectedUserForCredits: user, isSubmittingCredits: isSubmitting, handleCloseAddCredits: onClose, handleConfirmAddCredits: onConfirm } = useAdminDashboardPage()
+
   const [amount, setAmount] = useState<number>(1)
   const [creditType, setCreditType] = useState<'paid' | 'free'>('paid')
   const [reason, setReason] = useState('')

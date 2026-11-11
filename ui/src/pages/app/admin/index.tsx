@@ -13,42 +13,17 @@ import {
   Refresh as RefreshIcon
 } from '@mui/icons-material'
 
-import type { AdminPeriod } from '@actions/admin'
-import useAdminDashboard from './hooks/useAdminDashboard'
+import useAdminDashboardPage, { AdminDashboardPageProvider } from './hook'
+
+import type { AdminPeriod } from '@utils/types/admin'
 import AdminCharts from './sections/adminCharts'
 import AdminKpis from './sections/adminKpis'
 import AdminUsersTable from './sections/adminUsersTable'
 import AddCreditsDialog from './subcomponents/addCreditsDialog'
 import { adminPageStyles, headerRowStyles, pageTitleStyles } from './styles'
 
-export const AdminDashboard = () => {
-  const {
-    period,
-    setPeriod,
-    metrics,
-    isLoadingMetrics,
-    users,
-    totalUsers,
-    page,
-    limit,
-    totalPages,
-    setLimit,
-    isLoadingUsers,
-    searchInput,
-    setSearchInput,
-    roleFilter,
-    setRoleFilter,
-    setPage,
-    handleRefresh,
-    selectedUserForCredits,
-    isAddCreditsOpen,
-    isSubmittingCredits,
-    handleOpenAddCredits,
-    handleCloseAddCredits,
-    handleConfirmAddCredits
-  } = useAdminDashboard()
-
-  const isRefreshing = isLoadingMetrics || isLoadingUsers
+const AdminDashboardContent = () => {
+  const { period, setPeriod, isLoadingMetrics, isRefreshing, handleRefresh } = useAdminDashboardPage()
 
   return (
     <Box sx={adminPageStyles}>
@@ -92,36 +67,22 @@ export const AdminDashboard = () => {
         </Stack>
       </Box>
 
-      <AdminKpis metrics={metrics} isLoading={isLoadingMetrics} />
+      <AdminKpis />
 
-      <AdminCharts metrics={metrics} isLoading={isLoadingMetrics} />
+      <AdminCharts />
 
-      <AdminUsersTable
-        users={users}
-        totalUsers={totalUsers}
-        page={page}
-        limit={limit}
-        totalPages={totalPages}
-        isLoading={isLoadingUsers}
-        searchInput={searchInput}
-        roleFilter={roleFilter}
-        onSearchChange={setSearchInput}
-        onRoleFilterChange={setRoleFilter}
-        onPageChange={setPage}
-        onLimitChange={setLimit}
-        onAddCredits={handleOpenAddCredits}
-      />
+      <AdminUsersTable />
 
-      <AddCreditsDialog
-        open={isAddCreditsOpen}
-        user={selectedUserForCredits}
-        isSubmitting={isSubmittingCredits}
-        onClose={handleCloseAddCredits}
-        onConfirm={handleConfirmAddCredits}
-      />
+      <AddCreditsDialog />
     </Box>
   )
 }
+
+export const AdminDashboard = () => (
+  <AdminDashboardPageProvider>
+    <AdminDashboardContent />
+  </AdminDashboardPageProvider>
+)
 
 export default AdminDashboard
 

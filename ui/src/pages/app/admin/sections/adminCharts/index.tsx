@@ -16,16 +16,14 @@ import {
 } from 'recharts'
 
 import { chartCardStyles, chartsGridStyles } from '@pages/app/admin/styles'
-import type { AdminMetrics } from '@actions/admin'
+import useAdminDashboardPage from '@pages/app/admin/hook'
 
-interface AdminChartsProps {
-  metrics: AdminMetrics | null
-  isLoading: boolean
-}
 
 const PIE_COLORS = ['#6366f1', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6', '#3b82f6', '#14b8a6']
 
-export const AdminCharts = ({ metrics, isLoading }: AdminChartsProps) => {
+export const AdminCharts = () => {
+  const { metrics, isLoadingMetrics: isLoading } = useAdminDashboardPage()
+
   const theme = useTheme()
   const isDark = theme.palette.mode === 'dark'
 
