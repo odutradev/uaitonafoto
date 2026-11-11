@@ -2,18 +2,18 @@ import { useState } from 'react'
 import { Box, Button, Card, Chip, CircularProgress, Dialog, DialogContent, DialogTitle, IconButton, Skeleton, Tooltip, Typography } from '@mui/material'
 import { CheckCircleOutline as ApproveIcon, Close as RejectIcon, CollectionsOutlined as AlbumIcon, DeleteOutline as DeleteIcon, DoneAllOutlined as DoneAllIcon, DownloadOutlined as DownloadIcon, EmojiEventsOutlined as ChallengeIcon, FavoriteBorder as LikeIcon, FolderZipOutlined as ZipIcon, ContentCopyOutlined as CopyIcon, VisibilityOutlined as ViewIcon, PhotoCameraOutlined as CameraIcon, PeopleOutline as GuestsIcon, AccessTimeOutlined as TimeIcon } from '@mui/icons-material'
 import dayjs from 'dayjs'
-import { toast } from 'react-toastify'
 
 import { downloadEventAlbumZip } from '@actions/events'
 import Modal from '@components/modal'
 import Pagination from '@components/pagination'
-import { buildGuestLink, getErrorMessage } from '@utils/functions/events'
+import { buildGuestLink } from '@utils/functions/events'
 
 import useEventAlbum, { type AlbumStatusFilter } from '@pages/app/eventDetails/hook/album'
 
 import { albumCardStyles, albumHeaderRowStyles, approveAllButtonStyles, approvePhotoButtonStyles, deletePhotoButtonStyles, downloadZipButtonStyles, endedDownloadBigButtonStyles, endedHeroCardStyles, endedHeroIconBoxStyles, endedHeroInfoStyles, endedStatItemStyles, endedStatsRowStyles, moderationBarStyles, moderationFilterButtonStyles, moderationTabsStyles, photoCardStyles, photoDirectDownloadButtonStyles, photoImageStyles, photoOverlayNameStyles, photoOverlayStyles, photoStatusBadgeStyles, photosGridStyles, rejectPhotoButtonStyles, stateBoxStyles, stateIconWrapperStyles } from './styles'
 import type { EventPhoto } from '@utils/types/events'
 import useEventDetailsPage from '@pages/app/eventDetails/hook'
+import useAction from '@hooks/useAction'
 
 const downloadBlob = (blob: Blob, filename: string): void => {
   const blobUrl = window.URL.createObjectURL(blob)
@@ -52,6 +52,7 @@ const MODERATION_FILTERS: readonly { value: AlbumStatusFilter; label: string }[]
 ]
 
 const EventAlbum = () => {
+  const runAction = useAction()
   const { event: eventValue } = useEventDetailsPage()
   const event = eventValue!
 
@@ -111,40 +112,41 @@ const EventAlbum = () => {
   }
 
   const handleDownloadPhoto = async (photo: EventPhoto) => {
-    try {
-      const extension = photo.url.split('?')[0].split('.').pop() || 'jpg'
-      const sanitizedEventName = event.name.replace(/[^a-zA-Z0-9_-]/g, '_')
-      const sanitizedGuestName = photo.guestName.replace(/[^a-zA-Z0-9_-]/g, '_')
-      const filename = `${sanitizedEventName}_${sanitizedGuestName}_${photo.id}.${extension}`
-      await downloadPhotoFromUrl(photo.url, filename)
-      toast.success('Download da foto iniciado!')
-    } catch {
-      toast.error('Não foi possível baixar a foto.')
-    }
+    await runAction({
+      action: async () => {
+        const extension = photo.url.split('?')[0].split('.').pop() || 'jpg'
+        const sanitizedEventName = event.name.replace(/[^a-zA-Z0-9_-]/g, '_')
+        const sanitizedGuestName = photo.guestName.replace(/[^a-zA-Z0-9_-]/g, '_')
+        const filename = `${sanitizedEventName}_${sanitizedGuestName}_${photo.id}.${extension}`
+        await downloadPhotoFromUrl(photo.url, filename)
+      },
+      toastMessages: { success: 'Download da foto iniciado!', error: 'Não foi possível baixar a foto.' },
+      shouldUseApiError: false
+    })
   }
 
   const handleDownloadZip = async () => {
     setIsDownloadingZip(true)
-    try {
-      const blob = await downloadEventAlbumZip(event.id)
-      const sanitizedEventName = event.name.replace(/[^a-zA-Z0-9_-]/g, '_')
-      const filename = `${sanitizedEventName || 'evento'}_fotos.zip`
-      downloadBlob(blob, filename)
-      toast.success('Download do álbum (.zip) iniciado!')
-    } catch (error) {
-      toast.error(getErrorMessage(error, 'Não foi possível baixar o álbum em .zip.'))
-    } finally {
-      setIsDownloadingZip(false)
-    }
+    await runAction({
+      action: async () => {
+        const blob = await downloadEventAlbumZip(event.id)
+        const sanitizedEventName = event.name.replace(/[^a-zA-Z0-9_-]/g, '_')
+        const filename = `${sanitizedEventName || 'evento'}_fotos.zip`
+        downloadBlob(blob, filename)
+      },
+      toastMessages: { success: 'Download do álbum (.zip) iniciado!', error: 'Não foi possível baixar o álbum em .zip.' }
+    })
+    setIsDownloadingZip(false)
   }
 
   const handleCopyGuestLink = async () => {
-    try {
-      await navigator.clipboard.writeText(guestLink)
-      toast.success('Link da galeria pública copiado!')
-    } catch {
-      toast.error('Não foi possível copiar o link.')
-    }
+    await runAction({
+      action: async () => {
+        await navigator.clipboard.writeText(guestLink)
+      },
+      toastMessages: { success: 'Link da galeria pública copiado!', error: 'Não foi possível copiar o link.' },
+      shouldUseApiError: false
+    })
   }
 
   const totalPhotosCount = meta?.total ?? photos.length

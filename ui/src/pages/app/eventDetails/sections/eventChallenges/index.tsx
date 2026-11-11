@@ -1,17 +1,17 @@
 import { useEffect, useState } from 'react'
 import { Box, Button, Card, CircularProgress, IconButton, Switch, TextField, Tooltip, Typography } from '@mui/material'
 import { AddOutlined as AddIcon, DeleteOutline as DeleteIcon, RestartAltOutlined as ResetIcon } from '@mui/icons-material'
-import { toast } from 'react-toastify'
 
 import { addEventChallenge, deleteEventChallenge, getEventChallenges, resetEventChallenges, toggleEventChallenge } from '@actions/events'
 import Modal from '@components/modal'
-import { getErrorMessage } from '@utils/functions/events'
 
 import { addChallengeButtonStyles, addChallengeFormRowStyles, challengeActionsRowStyles, challengeItemCardStyles, challengeListStackStyles, challengesCardStyles, challengesHeaderRowStyles, countBadgeStyles, resetButtonStyles } from './styles'
 import type { EventChallenge } from '@utils/types/events'
 import useEventDetailsPage from '@pages/app/eventDetails/hook'
+import useAction from '@hooks/useAction'
 
 const EventChallenges = () => {
+  const runAction = useAction()
   const { event: eventValue, refresh: onRefresh } = useEventDetailsPage()
   const event = eventValue!
 
@@ -25,14 +25,14 @@ const EventChallenges = () => {
 
   const loadChallenges = async () => {
     setIsLoading(true)
-    try {
-      const list = await getEventChallenges(event.id)
-      setChallenges(list)
-    } catch (error) {
-      toast.error(getErrorMessage(error, 'Não foi possível carregar os desafios.'))
-    } finally {
-      setIsLoading(false)
-    }
+    await runAction({
+      action: async () => {
+        const list = await getEventChallenges(event.id)
+        setChallenges(list)
+      },
+      toastMessages: { error: 'Não foi possível carregar os desafios.' }
+    })
+    setIsLoading(false)
   }
 
   useEffect(() => {
@@ -45,57 +45,55 @@ const EventChallenges = () => {
     if (!trimmed) return
 
     setIsAdding(true)
-    try {
-      const updated = await addEventChallenge(event.id, trimmed)
-      setChallenges(updated)
-      setNewTitle('')
-      toast.success('Desafio adicionado com sucesso!')
-      onRefresh?.()
-    } catch (error) {
-      toast.error(getErrorMessage(error, 'Não foi possível adicionar o desafio.'))
-    } finally {
-      setIsAdding(false)
-    }
+    await runAction({
+      action: async () => {
+        const updated = await addEventChallenge(event.id, trimmed)
+        setChallenges(updated)
+        setNewTitle('')
+        onRefresh?.()
+      },
+      toastMessages: { success: 'Desafio adicionado com sucesso!', error: 'Não foi possível adicionar o desafio.' }
+    })
+    setIsAdding(false)
   }
 
   const handleToggle = async (challengeId: string) => {
-    try {
-      const updated = await toggleEventChallenge(event.id, challengeId)
-      setChallenges(updated)
-      onRefresh?.()
-    } catch (error) {
-      toast.error(getErrorMessage(error, 'Não foi possível atualizar o status do desafio.'))
-    }
+    await runAction({
+      action: async () => {
+        const updated = await toggleEventChallenge(event.id, challengeId)
+        setChallenges(updated)
+        onRefresh?.()
+      },
+      toastMessages: { error: 'Não foi possível atualizar o status do desafio.' }
+    })
   }
 
   const handleDelete = async () => {
     if (!challengeToDelete) return
     setIsDeleting(true)
-    try {
-      const updated = await deleteEventChallenge(event.id, challengeToDelete.id)
-      setChallenges(updated)
-      toast.success('Desafio removido.')
-      setChallengeToDelete(null)
-      onRefresh?.()
-    } catch (error) {
-      toast.error(getErrorMessage(error, 'Não foi possível remover o desafio.'))
-    } finally {
-      setIsDeleting(false)
-    }
+    await runAction({
+      action: async () => {
+        const updated = await deleteEventChallenge(event.id, challengeToDelete.id)
+        setChallenges(updated)
+        setChallengeToDelete(null)
+        onRefresh?.()
+      },
+      toastMessages: { success: 'Desafio removido.', error: 'Não foi possível remover o desafio.' }
+    })
+    setIsDeleting(false)
   }
 
   const handleReset = async () => {
     setIsResetting(true)
-    try {
-      const updated = await resetEventChallenges(event.id)
-      setChallenges(updated)
-      toast.success('Desafios restaurados para o padrão do evento!')
-      onRefresh?.()
-    } catch (error) {
-      toast.error(getErrorMessage(error, 'Não foi possível restaurar os desafios.'))
-    } finally {
-      setIsResetting(false)
-    }
+    await runAction({
+      action: async () => {
+        const updated = await resetEventChallenges(event.id)
+        setChallenges(updated)
+        onRefresh?.()
+      },
+      toastMessages: { success: 'Desafios restaurados para o padrão do evento!', error: 'Não foi possível restaurar os desafios.' }
+    })
+    setIsResetting(false)
   }
 
   const activeCount = challenges.filter((c) => c.active).length
