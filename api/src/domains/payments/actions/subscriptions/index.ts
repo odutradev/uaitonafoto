@@ -1,4 +1,5 @@
 import { cancelSubscriptionParamsSchema, subscriptionListResponseSchema, subscriptionSchema } from './schemas'
+import { sendSubscriptionCancelledEmail } from '@domains/payments/utils/notifySubscriptionEmail'
 import ensureSubscriptionRecord from '@domains/payments/utils/ensureSubscriptionRecord'
 import subscriptionRepository from '@domains/payments/repositories/subscriptions'
 import transactionRepository from '@domains/payments/repositories/transactions'
@@ -112,6 +113,8 @@ export const cancelMySubscription = defineAction(
       })
 
       if (!updated) return manageError({ code: 'internal_error' })
+
+      void sendSubscriptionCancelledEmail(updated)
 
       const user = await userRepository.findById(ids.userId)
       const userEmail = user?.email ?? 'unknown@user'

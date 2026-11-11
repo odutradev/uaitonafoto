@@ -20,6 +20,7 @@ export interface SubscriptionEntity {
   cyclesCompleted: number
   lastPaidAt: string
   nextBillingAt?: string
+  renewalReminderSentFor?: string
   cancelledAt?: string
   cancelReason?: string
   devMode: boolean

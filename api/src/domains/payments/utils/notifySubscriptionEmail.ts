@@ -1,25 +1,31 @@
+import subscriptionRenewalReminderEmail from '@domains/payments/emails/subscriptionRenewalReminder'
 import subscriptionPaymentFailedEmail from '@domains/payments/emails/subscriptionPaymentFailed'
+import subscriptionCancelledEmail from '@domains/payments/emails/subscriptionCancelled'
 import subscriptionRenewedEmail from '@domains/payments/emails/subscriptionRenewed'
 import transactionRepository from '@domains/payments/repositories/transactions'
 import userRepository from '@domains/users/repositories/users'
+import { formatPaymentMethodLabel } from './emailFormat'
+import { formatCurrencyBRL } from '@utils/currency'
+import { buildFrontendUrl } from '@email/links'
 import { formatDateBR } from '@utils/date'
-import { checkEmailHealth } from '@email'
-import createLogger from '@utils/logger'
-import env from '@config/env'
 
 import type { SubscriptionEntity } from '@domains/payments/repositories/subscriptions/types'
 
-const logger = createLogger('payments:email')
+const DayMs = 24 * 60 * 60 * 1000
 
-const formatAmountBrl = (amountInCents: number): string =>
-  (amountInCents / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+type Subscriber = {
+  email: string
+  name: string
+}
 
-const resolveAppUrl = (): string => `${env.FRONTEND_URL.replace(/\/+$/, '')}/app`
+const resolveSubscriber = async (subscription: SubscriptionEntity): Promise<Subscriber | null> => {
+  const user = await userRepository.findById(subscription.userId)
+  const initialTransaction = user ? null : await transactionRepository.findById(subscription.initialTransactionId)
 
-const formatPaymentMethodLabel = (method?: string): string => {
-  if (method === 'PIX') return 'PIX'
-  if (method === 'CARD') return 'Cartão de crédito'
-  return 'Cartão/PIX'
+  const email = user?.email ?? initialTransaction?.userEmail
+  if (!email) return null
+
+  return { email, name: user?.fullName || user?.name || initialTransaction?.userName || 'Assinante' }
 }
 
 export interface SendRenewedEmailParams {
@@ -39,53 +45,70 @@ export const sendSubscriptionRenewedEmail = async ({
   creditsAdded,
   nextBillingAt
 }: SendRenewedEmailParams): Promise<void> => {
-  if (checkEmailHealth() === 'disabled' || !userEmail.includes('@') || userEmail === 'unknown@user') {
-    return
-  }
-
-  const result = await subscriptionRenewedEmail.send({
+  await subscriptionRenewedEmail.send({
     to: userEmail,
     variables: {
       userName,
       planName,
-      amountFormatted: formatAmountBrl(amount),
+      amountFormatted: formatCurrencyBRL(amount),
       creditsAdded,
       nextBillingDate: formatDateBR(new Date(nextBillingAt)),
-      appUrl: resolveAppUrl()
+      appUrl: buildFrontendUrl('/app')
     }
   })
-
-  if (!result.success) {
-    logger.warn(`Failed to send subscription renewed email to ${userEmail}: ${result.error}`)
-  }
 }
 
-export const sendSubscriptionPaymentFailedEmail = async (
-  subscription: SubscriptionEntity,
-  method?: string
-): Promise<void> => {
-  if (checkEmailHealth() === 'disabled') return
+export const sendSubscriptionPaymentFailedEmail = async (subscription: SubscriptionEntity, method?: string): Promise<void> => {
+  const subscriber = await resolveSubscriber(subscription)
+  if (!subscriber) return
 
-  const user = await userRepository.findById(subscription.userId)
-  const initialTx = user ? null : await transactionRepository.findById(subscription.initialTransactionId)
-
-  const userEmail = user?.email ?? initialTx?.userEmail
-  if (!userEmail) return
-
-  const userName = user?.fullName || user?.name || initialTx?.userName || 'Assinante'
-
-  const result = await subscriptionPaymentFailedEmail.send({
-    to: userEmail,
+  await subscriptionPaymentFailedEmail.send({
+    to: subscriber.email,
     variables: {
-      userName,
+      userName: subscriber.name,
       planName: subscription.planName,
-      amountFormatted: formatAmountBrl(subscription.amount),
+      amountFormatted: formatCurrencyBRL(subscription.amount),
       paymentMethodLabel: formatPaymentMethodLabel(method ?? subscription.method),
-      appUrl: resolveAppUrl()
+      appUrl: buildFrontendUrl('/app/billing')
+    }
+  })
+}
+
+export const sendSubscriptionCancelledEmail = async (subscription: SubscriptionEntity): Promise<void> => {
+  const subscriber = await resolveSubscriber(subscription)
+  if (!subscriber) return
+
+  const hasFutureBilling = subscription.nextBillingAt && new Date(subscription.nextBillingAt).getTime() > Date.now()
+
+  await subscriptionCancelledEmail.send({
+    to: subscriber.email,
+    variables: {
+      userName: subscriber.name,
+      planName: subscription.planName,
+      validUntil: hasFutureBilling && subscription.nextBillingAt ? formatDateBR(new Date(subscription.nextBillingAt)) : undefined,
+      billingUrl: buildFrontendUrl('/app/billing')
+    }
+  })
+}
+
+export const sendSubscriptionRenewalReminderEmail = async (subscription: SubscriptionEntity, billingAt: string): Promise<boolean> => {
+  const subscriber = await resolveSubscriber(subscription)
+  if (!subscriber) return false
+
+  const daysUntilBilling = Math.max(0, Math.ceil((new Date(billingAt).getTime() - Date.now()) / DayMs))
+
+  const result = await subscriptionRenewalReminderEmail.send({
+    to: subscriber.email,
+    variables: {
+      userName: subscriber.name,
+      planName: subscription.planName,
+      amountFormatted: formatCurrencyBRL(subscription.amount),
+      billingDate: formatDateBR(new Date(billingAt)),
+      daysUntilBilling,
+      paymentMethodLabel: formatPaymentMethodLabel(subscription.method),
+      billingUrl: buildFrontendUrl('/app/billing')
     }
   })
 
-  if (!result.success) {
-    logger.warn(`Failed to send subscription payment failed email to ${userEmail}: ${result.error}`)
-  }
+  return result.success
 }

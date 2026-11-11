@@ -114,6 +114,19 @@ export const subscriptionRepository = {
     return doc ? toSubscriptionEntity(doc) : null
   },
 
+  listDueForRenewalReminder: async (fromIso: string, untilIso: string): Promise<SubscriptionEntity[]> => {
+    const docs = await SubscriptionModel.find({
+      status: 'ACTIVE',
+      nextBillingAt: { $gt: fromIso, $lte: untilIso },
+      $expr: { $ne: ['$renewalReminderSentFor', '$nextBillingAt'] }
+    }).lean()
+    return docs.map(toSubscriptionEntity)
+  },
+
+  markRenewalReminderSent: async (id: string, billingAt: string): Promise<void> => {
+    await SubscriptionModel.updateOne({ _id: id }, { $set: { renewalReminderSentFor: billingAt } })
+  },
+
   hasActiveByUser: async (userId: string): Promise<boolean> => {
     const count = await SubscriptionModel.countDocuments({ userId, status: 'ACTIVE' })
     return count > 0

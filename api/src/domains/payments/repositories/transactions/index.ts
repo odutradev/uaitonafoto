@@ -130,22 +130,27 @@ export const transactionRepository = {
     return docs.map(toTransactionEntity)
   },
 
-  expirePendingOlderThan: async (cutoffIsoDate: string, userId?: string): Promise<number> => {
+  expirePendingOlderThan: async (cutoffIsoDate: string, userId?: string): Promise<TransactionEntity[]> => {
     const filter: Record<string, unknown> = {
       status: 'PENDING',
       createdAt: { $lte: cutoffIsoDate }
     }
     if (userId) filter.userId = userId
 
-    const result = await TransactionModel.updateMany(filter, {
-      $set: {
-        status: 'EXPIRED' as const,
-        cancelReason: 'checkout_expired',
-        updatedAt: new Date().toISOString()
-      }
-    })
+    const candidates = await TransactionModel.find(filter).select('_id').lean()
+    const updatedAt = new Date().toISOString()
 
-    return result.modifiedCount ?? 0
+    const expiredDocs = await Promise.all(
+      candidates.map((candidate) =>
+        TransactionModel.findOneAndUpdate(
+          { _id: candidate._id, status: 'PENDING' },
+          { $set: { status: 'EXPIRED' as const, cancelReason: 'checkout_expired', updatedAt } },
+          { new: true, lean: true }
+        )
+      )
+    )
+
+    return expiredDocs.flatMap((doc) => (doc ? [toTransactionEntity(doc)] : []))
   },
 
   countPaid: async (range?: CreatedAtRange): Promise<number> => {

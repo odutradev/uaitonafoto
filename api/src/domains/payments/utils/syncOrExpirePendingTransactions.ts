@@ -1,9 +1,10 @@
 import transactionRepository from '@domains/payments/repositories/transactions'
+import { resolveCheckoutExpirationHours } from './emailFormat'
+import { sendPaymentExpiredEmail } from './notifyTransactionEmail'
 import confirmPayment from './confirmPayment'
 import { getPaymentClient } from '@payment'
 import runSequentially from '@utils/async'
 import createLogger from '@utils/logger'
-import env from '@config/env'
 
 import type { TransactionEntity } from '@domains/payments/repositories/transactions/types'
 
@@ -70,10 +71,11 @@ const syncTransactionWithGateway = async (tx: TransactionEntity): Promise<boolea
       }
 
       if (checkout.status === 'EXPIRED') {
-        await transactionRepository.update(tx.id, {
+        const expired = await transactionRepository.transitionStatus(tx.id, ['PENDING'], {
           status: 'EXPIRED',
           cancelReason: 'checkout_expired'
         })
+        if (expired) await sendPaymentExpiredEmail(expired)
         return true
       }
 
@@ -95,11 +97,14 @@ const syncTransactionWithGateway = async (tx: TransactionEntity): Promise<boolea
 export const syncOrExpirePendingTransactions = async (
   options?: SyncOrExpireOptions
 ): Promise<SyncOrExpireResult> => {
-  const expirationHours = options?.expirationHours ?? env.CHECKOUT_EXPIRATION_HOURS ?? 24
+  const expirationHours = options?.expirationHours ?? resolveCheckoutExpirationHours()
   const cutoffTimeMs = Date.now() - expirationHours * 60 * 60 * 1000
   const cutoffIso = new Date(cutoffTimeMs).toISOString()
 
-  const expiredCount = await transactionRepository.expirePendingOlderThan(cutoffIso, options?.userId)
+  const expiredTransactions = await transactionRepository.expirePendingOlderThan(cutoffIso, options?.userId)
+  const expiredCount = expiredTransactions.length
+
+  await runSequentially(expiredTransactions, (transaction) => sendPaymentExpiredEmail(transaction))
 
   if (!options?.checkGateway) return { expiredCount, gatewayUpdatedCount: 0 }
 

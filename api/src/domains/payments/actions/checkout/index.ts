@@ -1,5 +1,6 @@
 import { PaymentMethod } from '@abacatepay/types/v2'
 
+import { sendPaymentPendingEmail } from '@domains/payments/utils/notifyTransactionEmail'
 import subscriptionRepository from '@domains/payments/repositories/subscriptions'
 import transactionRepository from '@domains/payments/repositories/transactions'
 import { checkoutResponseSchema, createCheckoutBodySchema } from './schemas'
@@ -151,6 +152,8 @@ export const createCheckout = defineAction(
         completionUrl,
         gatewayResponse: checkout.raw
       })
+
+      void sendPaymentPendingEmail(transaction, checkout.url, checkout.methods)
 
       logRepository.create({
         category: 'user',

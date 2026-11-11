@@ -30,6 +30,7 @@ const subscriptionSchema = new Schema<SubscriptionDocument>(
     cyclesCompleted: { type: Number, required: true, default: 1, min: 1 },
     lastPaidAt: { type: String, required: true },
     nextBillingAt: { type: String },
+    renewalReminderSentFor: { type: String },
     cancelledAt: { type: String },
     cancelReason: { type: String },
     devMode: { type: Boolean, default: false },
