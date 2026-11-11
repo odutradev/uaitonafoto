@@ -24,10 +24,10 @@ export const Bar = styled("nav")`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${({ theme }) => theme.spacing(1)};
   width: 100%;
   max-width: 1180px;
-  padding: 8px 8px 8px 16px;
+  padding: 8px 6px 8px 12px;
   overflow: hidden;
   border: 1px solid transparent;
   border-radius: 999px;
@@ -36,6 +36,11 @@ export const Bar = styled("nav")`
     background 0.4s ease,
     border-color 0.4s ease,
     backdrop-filter 0.4s ease;
+
+  ${({ theme }) => theme.breakpoints.up("sm")} {
+    gap: ${({ theme }) => theme.spacing(2)};
+    padding: 8px 8px 8px 16px;
+  }
 
   &[data-scrolled="true"] {
     border-color: ${landingColors.glassBorder};
@@ -89,12 +94,30 @@ export const Links = styled("ul")`
 export const Actions = styled("div")`
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 2px;
   flex-shrink: 0;
 
   & .MuiButton-root {
-    padding: 8px 18px;
-    font-size: 0.92rem;
+    padding: 8px 14px;
+    font-size: 0.86rem;
+    white-space: nowrap;
+  }
+
+  & .MuiButton-endIcon {
+    display: none;
+  }
+
+  ${({ theme }) => theme.breakpoints.up("sm")} {
+    gap: 8px;
+
+    & .MuiButton-root {
+      padding: 8px 18px;
+      font-size: 0.92rem;
+    }
+
+    & .MuiButton-endIcon {
+      display: inherit;
+    }
   }
 `;
 
@@ -166,5 +189,20 @@ export const LogoLink = styled(RouterLink)`
   &:visited {
     color: inherit;
     text-decoration: none;
+  }
+`;
+
+export const LoginLink = styled(RouterLink)`
+  padding: 8px;
+  white-space: nowrap;
+  border-radius: 999px;
+  color: ${brandColors.paper};
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: ${landingColors.glassLight};
   }
 `;

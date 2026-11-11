@@ -6,7 +6,7 @@ import { Link as RouterLink } from "react-router-dom";
 import Logo from "@components/logo";
 import useLandingPage from "@pages/public/landingPage/hook";
 
-import { Actions, Bar, Header, Links, LogoLink, LongLabel, ShortLabel, UserBadge } from "./styles";
+import { Actions, Bar, Header, Links, LoginLink, LogoLink, LongLabel, ShortLabel, UserBadge } from "./styles";
 
 export const Navbar = () => {
   const { user, data: content } = useLandingPage();
@@ -78,15 +78,19 @@ export const Navbar = () => {
               </Button>
             </>
           ) : (
-            <Button
-              component={RouterLink}
-              to={data.loginButton.href}
-              variant="contained"
-              color="primary"
-              endIcon={<ArrowForwardIcon />}
-            >
-              {data.loginButton.text}
-            </Button>
+            <>
+              <LoginLink to={data.loginButton.href}>{data.loginButton.text}</LoginLink>
+              <Button
+                component={RouterLink}
+                to={data.signupButton.href}
+                variant="contained"
+                color="primary"
+                endIcon={<ArrowForwardIcon />}
+                data-cursor="bora!"
+              >
+                {data.signupButton.text}
+              </Button>
+            </>
           )}
         </Actions>
       </Bar>
