@@ -25,8 +25,8 @@ const crossIn = keyframes`
 const fly = keyframes`
   0% { opacity: 0; transform: translate(0, 0) scale(0.32) rotate(-10deg); }
   12% { opacity: 1; }
-  70% { opacity: 1; transform: translate(var(--fly-x), var(--fly-y)) scale(0.95) rotate(2deg); }
-  100% { opacity: 0; transform: translate(var(--fly-x), var(--fly-y)) scale(1) rotate(0deg); }
+  70% { opacity: 1; transform: translate(var(--fly-x), var(--fly-y)) scale(1.2) rotate(2deg); }
+  100% { opacity: 0; transform: translate(var(--fly-x), var(--fly-y)) scale(1.3) rotate(0deg); }
 `;
 
 const toastIn = keyframes`
@@ -135,6 +135,8 @@ export const Title = styled("h1")`
 export const Word = styled("span")`
   display: inline-block;
   overflow: hidden;
+  padding-top: 0.16em;
+  margin-top: -0.16em;
   padding-bottom: 0.08em;
   margin-bottom: -0.08em;
   vertical-align: top;
@@ -413,8 +415,8 @@ export const ShootButton = styled("span")`
 `;
 
 export const FlyingPhoto = styled("div")`
-  --fly-x: 120%;
-  --fly-y: -230%;
+  --fly-x: 22%;
+  --fly-y: -48%;
   position: absolute;
   left: 4%;
   bottom: 4%;
