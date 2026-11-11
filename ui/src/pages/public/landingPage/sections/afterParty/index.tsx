@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import useInView from "@hooks/useInView";
 import useLandingPage from "@pages/public/landingPage/hook";
 import Reveal from "@pages/public/landingPage/subcomponents/reveal";
-import ScenePhoto from "@pages/public/landingPage/subcomponents/scenePhoto";
+import ScenePhoto from "@components/scenePhoto";
 import SectionHeading from "@pages/public/landingPage/subcomponents/sectionHeading";
 import { photoTones } from "@styles/theme";
 

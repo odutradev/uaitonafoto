@@ -4,7 +4,7 @@ import { DownloadRounded as DownloadIcon } from "@mui/icons-material";
 
 import useScrollProgress from "@hooks/useScrollProgress";
 import useLandingPage from "@pages/public/landingPage/hook";
-import ScenePhoto from "@pages/public/landingPage/subcomponents/scenePhoto";
+import ScenePhoto from "@components/scenePhoto";
 import { brandColors } from "@styles/theme";
 
 import {

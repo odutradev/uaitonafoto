@@ -7,7 +7,7 @@ import { QRCodeSVG } from "qrcode.react";
 import useScrollProgress from "@hooks/useScrollProgress";
 import useLandingPage from "@pages/public/landingPage/hook";
 import Reveal from "@pages/public/landingPage/subcomponents/reveal";
-import ScenePhoto from "@pages/public/landingPage/subcomponents/scenePhoto";
+import ScenePhoto from "@components/scenePhoto";
 import { brandColors } from "@styles/theme";
 
 import { Block, ButtonWrap, Content, Copy, Floating, QrBox, Section } from "./styles";
