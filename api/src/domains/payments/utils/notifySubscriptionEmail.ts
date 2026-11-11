@@ -1,5 +1,5 @@
-import { subscriptionPaymentFailedTemplate } from '@email/templates/subscriptionPaymentFailed'
-import { subscriptionRenewedTemplate } from '@email/templates/subscriptionRenewed'
+import subscriptionPaymentFailedEmail from '@domains/payments/emails/subscriptionPaymentFailed'
+import subscriptionRenewedEmail from '@domains/payments/emails/subscriptionRenewed'
 import transactionRepository from '@domains/payments/repositories/transactions'
 import userRepository from '@domains/users/repositories/users'
 import { formatDateBR } from '@utils/date'
@@ -43,7 +43,7 @@ export const sendSubscriptionRenewedEmail = async ({
     return
   }
 
-  const result = await subscriptionRenewedTemplate.send({
+  const result = await subscriptionRenewedEmail.send({
     to: userEmail,
     variables: {
       userName,
@@ -74,7 +74,7 @@ export const sendSubscriptionPaymentFailedEmail = async (
 
   const userName = user?.fullName || user?.name || initialTx?.userName || 'Assinante'
 
-  const result = await subscriptionPaymentFailedTemplate.send({
+  const result = await subscriptionPaymentFailedEmail.send({
     to: userEmail,
     variables: {
       userName,

@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken'
 import { forgotPasswordSchema, resetPasswordSchema, syncResponseSchema, updateUserSchema, syncUserSchema, userSchema } from './schemas'
 import { getUserByEmail, updateUser, verifyIdToken } from '@firebase/services/auth'
 import subscriptionRepository from '@domains/payments/repositories/subscriptions'
-import { passwordResetTemplate } from '@email/templates/passwordReset'
+import passwordResetEmail from '@domains/users/emails/passwordReset'
 import userRepository from '@domains/users/repositories/users'
 import logRepository from '@domains/system/repositories/logs'
 import { authRateLimiter } from '@middlewares/rateLimit'
@@ -242,7 +242,7 @@ export const forgotPassword = defineAction(
       const baseUrl = resolveFrontendBaseUrl(data.redirectUrl, defaultExpress.req.headers.origin)
       const resetLink = `${baseUrl}/reset-password?token=${encodeURIComponent(resetToken)}`
 
-      const emailResult = await passwordResetTemplate.send({
+      const emailResult = await passwordResetEmail.send({
         to: targetEmail,
         variables: {
           userName: displayName,
