@@ -4,7 +4,7 @@ import { buildCreatedAtFilter } from '@utils/date'
 import { removeUndefined } from '@utils/object'
 import EventModel from './model'
 
-import type { CreateEventPayload, EventEntity, EventMemberRole, EventScreenHistoryEntry, EventScreenSlot, ListEventsByMemberParams, UpdateEventPayload } from './types'
+import type { CreateEventPayload, EventEntity, EventMemberRole, EventNotificationKey, EventScreenHistoryEntry, EventScreenSlot, ListEventsByMemberParams, UpdateEventPayload } from './types'
 import type { CreatedAtRange } from '@utils/date/types'
 import type { EventDocument } from './model'
 
@@ -113,6 +113,42 @@ export const eventRepository = {
       galleryCleanedAt: { $exists: false }
     }).lean()
     return docs.map(toEventEntity)
+  },
+
+  listPendingReminders: async (nowIso: string, untilIso: string): Promise<EventEntity[]> => {
+    const docs = await EventModel.find({
+      startsAt: { $gt: nowIso, $lte: untilIso },
+      closedAt: { $exists: false },
+      'notifications.reminderSentAt': { $exists: false }
+    }).lean()
+    return docs.map(toEventEntity)
+  },
+
+  listPendingSummaries: async (sinceIso: string, nowIso: string): Promise<EventEntity[]> => {
+    const docs = await EventModel.find({
+      'notifications.summarySentAt': { $exists: false },
+      galleryCleanedAt: { $exists: false },
+      $or: [{ closedAt: { $gte: sinceIso, $lte: nowIso } }, { endsAt: { $gte: sinceIso, $lte: nowIso } }]
+    }).lean()
+    return docs.map(toEventEntity)
+  },
+
+  listGalleriesExpiringSoon: async (nowIso: string, untilIso: string): Promise<EventEntity[]> => {
+    const docs = await EventModel.find({
+      galleryExpiresAt: { $gt: nowIso, $lte: untilIso },
+      galleryCleanedAt: { $exists: false },
+      'notifications.galleryExpiringSentAt': { $exists: false }
+    }).lean()
+    return docs.map(toEventEntity)
+  },
+
+  claimNotification: async (id: string, key: EventNotificationKey): Promise<boolean> => {
+    const field = `notifications.${key}`
+    const result = await EventModel.updateOne(
+      { _id: id, [field]: { $exists: false } },
+      { $set: { [field]: new Date().toISOString() } }
+    )
+    return result.modifiedCount > 0
   },
 
   markGalleryCleaned: async (id: string): Promise<void> => {
