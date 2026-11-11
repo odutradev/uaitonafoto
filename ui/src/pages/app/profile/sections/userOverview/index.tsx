@@ -2,6 +2,8 @@ import { Avatar, Box, Card, Chip, IconButton, Tooltip, Typography } from '@mui/m
 import { ContentCopy as CopyIcon } from '@mui/icons-material'
 import { toast } from 'react-toastify'
 
+import useSystemStore from '@stores/system'
+
 import {
   avatarIdentityGroupStyles,
   badgesRowStyles,
@@ -36,7 +38,8 @@ const formatProviderLabel = (provider?: string): string => {
 
 const UserOverview = ({ user }: UserOverviewProps) => {
   const displayName = user.fullName || user.name
-  const isAdmin = user.role === 'admin'
+  const hasPermissions = useSystemStore((state) => state.hasPermissions)
+  const isAdmin = hasPermissions(user.role, ['manage_platform'])
 
   const handleCopyId = async () => {
     try {

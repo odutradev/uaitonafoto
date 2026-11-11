@@ -1,3 +1,5 @@
+import type { Permission } from '@utils/types/permissions'
+
 export interface SystemStoreData {
   themeMode: 'light' | 'dark'
   sidebarOpen: boolean
@@ -5,6 +7,7 @@ export interface SystemStoreData {
 }
 
 export interface SystemStore {
+  hasPermissions: (role: string | undefined, requiredPermissions?: Permission[]) => boolean
   updateSystem: (partialSystem: Partial<SystemStoreData>) => void
   setSystem: (system: SystemStoreData) => void
   setLoading: (currentLoading?: boolean) => void

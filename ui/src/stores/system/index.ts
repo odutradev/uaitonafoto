@@ -1,6 +1,7 @@
 import { createJSONStorage, persist } from 'zustand/middleware'
 import { create } from 'zustand'
 
+import { rolePermissions } from '@assets/data/permissions'
 import { systemStoreDefaultValues } from './defaultValues'
 
 import type { SystemStore } from './types'
@@ -9,6 +10,10 @@ const useSystemStore = create<SystemStore>()(
   persist(
     (set) => ({
       system: systemStoreDefaultValues,
+      hasPermissions: (role, requiredPermissions = []) => {
+        const grantedPermissions = role ? rolePermissions[role] ?? [] : []
+        return requiredPermissions.every((permission) => grantedPermissions.includes(permission))
+      },
       setSystem: (system) => set({ system }),
       updateSystem: (partialSystem) =>
         set((state) => ({
