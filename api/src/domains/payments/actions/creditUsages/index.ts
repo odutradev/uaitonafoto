@@ -1,10 +1,10 @@
-import defineAction from '@factories/defineAction'
+import creditUsageRepository from '@domains/payments/repositories/creditUsages'
 import eventRepository from '@domains/events/repositories/events'
-import creditUsageRepository from '../../repositories/creditUsages'
-import type { CreditUsageEntity } from '../../repositories/creditUsages/types'
-import type { CreditUsageItemResponse, CreditUsageListResponse } from './types'
 import { creditUsageListResponseSchema } from './schemas'
+import defineAction from '@factories/defineAction'
 
+import type { CreditUsageEntity } from '@domains/payments/repositories/creditUsages/types'
+import type { CreditUsageItemResponse, CreditUsageListResponse } from './types'
 import type { ManageRequestResponse } from '@middlewares/manageRequest/types'
 
 const toCreditUsageResponse = (entity: CreditUsageEntity): CreditUsageItemResponse => ({

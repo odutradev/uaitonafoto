@@ -1,17 +1,7 @@
 import { getFirebaseAuth } from './index'
+
+import type { AuthActionCodeSettings, AuthCreateUserRequest, AuthDecodedIdToken, AuthDeleteUsersResult, AuthListUsersResult, AuthSessionCookieOptions, AuthUpdateUserRequest, AuthUserRecord, DeleteUserOptions, GetUserOptions } from './types'
 import type * as admin from 'firebase-admin'
-import type {
-  AuthActionCodeSettings,
-  AuthCreateUserRequest,
-  AuthDecodedIdToken,
-  AuthDeleteUsersResult,
-  AuthListUsersResult,
-  AuthSessionCookieOptions,
-  AuthUpdateUserRequest,
-  AuthUserRecord,
-  DeleteUserOptions,
-  GetUserOptions
-} from './types'
 
 export const verifyIdToken = async (
   token: string,

@@ -12,7 +12,6 @@
     "outDir": "./dist",
     "baseUrl": "./",
     "paths": {
-      "@/*": ["./src/*"],
       "@config/*": ["./src/config/*"],
       "@database": ["./src/database/index.ts"],
       "@database/*": ["./src/database/*"],

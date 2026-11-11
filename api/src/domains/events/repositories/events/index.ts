@@ -1,15 +1,9 @@
 import { isValidObjectId } from 'mongoose'
+
 import { removeUndefined } from '@utils/object'
 import EventModel from './model'
-import type {
-  CreateEventPayload,
-  EventEntity,
-  EventMemberRole,
-  EventScreenHistoryEntry,
-  EventScreenSlot,
-  ListEventsByMemberParams,
-  UpdateEventPayload
-} from './types'
+
+import type { CreateEventPayload, EventEntity, EventMemberRole, EventScreenHistoryEntry, EventScreenSlot, ListEventsByMemberParams, UpdateEventPayload } from './types'
 
 const toEventEntity = (doc: any): EventEntity => {
   const { _id, settings = {}, screens = [], ...rest } = doc

@@ -1,5 +1,5 @@
-import type { z } from 'zod'
 import type { webhookBodySchema, webhookResponseSchema } from './schemas'
+import type { z } from 'zod'
 
 export type WebhookRequest = { body: z.infer<typeof webhookBodySchema> }
 

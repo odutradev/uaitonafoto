@@ -1,23 +1,15 @@
-import { getPaymentClient } from '@payment'
-import defineAction from '@factories/defineAction'
+import { cancelSubscriptionParamsSchema, subscriptionListResponseSchema, subscriptionSchema } from './schemas'
+import ensureSubscriptionRecord from '@domains/payments/utils/ensureSubscriptionRecord'
+import subscriptionRepository from '@domains/payments/repositories/subscriptions'
+import transactionRepository from '@domains/payments/repositories/transactions'
 import userRepository from '@domains/users/repositories'
 import logRepository from '@domains/system/repositories'
-import transactionRepository from '../../repositories/transactions'
-import subscriptionRepository from '../../repositories/subscriptions'
-import ensureSubscriptionRecord from '../../utils/ensureSubscriptionRecord'
-import type { SubscriptionEntity } from '../../repositories/subscriptions/types'
-import {
-  cancelSubscriptionParamsSchema,
-  subscriptionListResponseSchema,
-  subscriptionSchema
-} from './schemas'
+import defineAction from '@factories/defineAction'
+import { getPaymentClient } from '@payment'
 
+import type { CancelSubscriptionRequest, SubscriptionListResponse, SubscriptionResponse } from './types'
 import type { ManageRequestBody, ManageRequestResponse } from '@middlewares/manageRequest/types'
-import type {
-  CancelSubscriptionRequest,
-  SubscriptionListResponse,
-  SubscriptionResponse
-} from './types'
+import type { SubscriptionEntity } from '@domains/payments/repositories/subscriptions/types'
 
 const cancelGatewaySubscription = async (subscriptionId: string): Promise<void> => {
   const client = await getPaymentClient()

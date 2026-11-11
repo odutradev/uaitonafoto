@@ -1,9 +1,9 @@
-import { freeTrialPlan } from '@payment/plans'
-import defineAction from '@factories/defineAction'
+import purchaseRepository from '@domains/payments/repositories/purchases'
 import logRepository from '@domains/system/repositories'
 import userRepository from '@domains/users/repositories'
-import purchaseRepository from '../../repositories/purchases'
 import { claimFreeTrialResponseSchema } from './schemas'
+import defineAction from '@factories/defineAction'
+import { freeTrialPlan } from '@payment/plans'
 
 import type { ManageRequestResponse } from '@middlewares/manageRequest/types'
 import type { ClaimFreeTrialResponse } from './types'

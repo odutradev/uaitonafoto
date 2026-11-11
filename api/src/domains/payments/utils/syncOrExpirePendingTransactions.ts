@@ -1,10 +1,10 @@
-import env from '@config/env'
+import transactionRepository from '@domains/payments/repositories/transactions'
+import confirmPayment from './confirmPayment'
 import { getPaymentClient } from '@payment'
 import createLogger from '@utils/logger'
-import transactionRepository from '../repositories/transactions'
-import confirmPayment from './confirmPayment'
+import env from '@config/env'
 
-import type { TransactionEntity } from '../repositories/transactions/types'
+import type { TransactionEntity } from '@domains/payments/repositories/transactions/types'
 
 const logger = createLogger('payments:expire-sync')
 

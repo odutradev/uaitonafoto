@@ -1,11 +1,6 @@
+import type { likeResponseSchema, listFeedQuerySchema, listFeedResponseSchema, photoParamsSchema, photoSchema } from './schemas'
+
 ﻿import type { z } from 'zod'
-import type {
-  likeResponseSchema,
-  listFeedQuerySchema,
-  listFeedResponseSchema,
-  photoParamsSchema,
-  photoSchema
-} from './schemas'
 
 export type PhotoResponse = z.infer<typeof photoSchema>
 

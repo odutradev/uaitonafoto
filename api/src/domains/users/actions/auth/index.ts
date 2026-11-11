@@ -1,15 +1,18 @@
 import jwt from 'jsonwebtoken'
 
 import { forgotPasswordSchema, resetPasswordSchema, syncResponseSchema, updateUserSchema, syncUserSchema, userSchema } from './schemas'
-import env from '@config/env'
+import { getUserByEmail, updateUser, verifyIdToken } from '@firebase/services/auth'
+import subscriptionRepository from '@domains/payments/repositories/subscriptions'
 import { passwordResetTemplate } from '@email/templates/passwordReset'
 import { authRateLimiter } from '@middlewares/rateLimit'
-import { getJwtSecret } from '@config/env'
-import { getUserByEmail, updateUser, verifyIdToken } from '@firebase/services/auth'
-import userRepository from '../../repositories'
-import subscriptionRepository from '@domains/payments/repositories/subscriptions'
+import userRepository from '@domains/users/repositories'
 import logRepository from '@domains/system/repositories'
 import defineAction from '@factories/defineAction'
+import { getJwtSecret } from '@config/env'
+import env from '@config/env'
+
+import type { ForgotPasswordRequest, ResetPasswordRequest, SyncUserResponse, UpdateUserRequest, SyncUserRequest, UserResponse, PasswordResetTokenPayload } from './types'
+import type { ManageRequestResponse, ManageRequestBody } from '@middlewares/manageRequest/types'
 
 const resolveFrontendBaseUrl = (redirectUrl?: string, requestOrigin?: string): string => {
   const allowedOrigins = env.CORS_ORIGIN
@@ -40,9 +43,6 @@ const resolveFrontendBaseUrl = (redirectUrl?: string, requestOrigin?: string): s
 
   return env.FRONTEND_URL.replace(/\/+$/, '')
 }
-
-import type { ForgotPasswordRequest, ResetPasswordRequest, SyncUserResponse, UpdateUserRequest, SyncUserRequest, UserResponse, PasswordResetTokenPayload } from './types'
-import type { ManageRequestResponse, ManageRequestBody } from '@middlewares/manageRequest/types'
 
 export const syncAuthUser = defineAction(
   {

@@ -1,6 +1,8 @@
 import { Router } from 'express'
-import createLogger from '@utils/logger'
+
 import { createRateLimiter } from '@middlewares/rateLimit'
+import createLogger from '@utils/logger'
+
 import type { DomainDefinition, DomainRegistry, ActionDefinition, ActionHandler } from './types'
 
 const logger = createLogger('domain')

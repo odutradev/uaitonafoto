@@ -1,7 +1,9 @@
 import { AbacatePay } from '@abacatepay/sdk'
-import env from '@config/env'
+
 import createLogger from '@utils/logger'
 import { syncPlansCache } from './plans'
+import env from '@config/env'
+
 import type { PaymentInstance, PaymentModule, AbacatePayClient } from './types'
 
 const logger = createLogger('payment')

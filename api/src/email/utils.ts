@@ -1,15 +1,7 @@
-import email from '@email'
 import env from '@config/env'
+import email from '@email'
 
-import type {
-  ProcessTemplateResult,
-  ProcessTemplateParams,
-  SendEmailResult,
-  SendEmailParams,
-  LocalEmailTemplate,
-  EnrichedEmailTemplate,
-  SendEnrichedEmailParams
-} from '@email/types'
+import type { ProcessTemplateResult, ProcessTemplateParams, SendEmailResult, SendEmailParams, LocalEmailTemplate, EnrichedEmailTemplate, SendEnrichedEmailParams } from '@email/types'
 
 export const processTemplate = ({ template, variables = {} }: ProcessTemplateParams): ProcessTemplateResult => {
   const processed = Object.entries(variables).reduce((acc, [key, value]) => {

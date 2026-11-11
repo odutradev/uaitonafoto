@@ -1,11 +1,5 @@
+import type { guestEventInfoSchema, guestSessionResponseSchema, guestTokenParamsSchema, joinEventResponseSchema, joinEventSchema } from './schemas'
 import type { z } from 'zod'
-import type {
-  guestEventInfoSchema,
-  guestSessionResponseSchema,
-  guestTokenParamsSchema,
-  joinEventResponseSchema,
-  joinEventSchema
-} from './schemas'
 
 export type GetGuestEventRequest = { params: z.infer<typeof guestTokenParamsSchema> }
 

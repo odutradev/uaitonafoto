@@ -1,16 +1,7 @@
 import { getStorageBucket } from './index'
+
+import type { DeleteFileOptions, DeleteFilesResult, ListFilesOptions, ListFilesResult, SignedUploadUrlOptions, SignedUrlOptions, StorageFileMetadata, UploadFileOptions, UploadFileResult } from './types'
 import type { File } from '@google-cloud/storage'
-import type {
-  DeleteFileOptions,
-  DeleteFilesResult,
-  ListFilesOptions,
-  ListFilesResult,
-  SignedUploadUrlOptions,
-  SignedUrlOptions,
-  StorageFileMetadata,
-  UploadFileOptions,
-  UploadFileResult
-} from './types'
 
 const sanitizePath = (path: string): string => {
   return path.replace(/^\/+/, '').trim()

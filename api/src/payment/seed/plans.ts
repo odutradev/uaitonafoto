@@ -1,6 +1,8 @@
 import { ProductCycle } from '@abacatepay/types/v2'
-import type { AbacatePayClient } from '@payment'
+
 import createLogger from '@utils/logger'
+
+import type { AbacatePayClient } from '@payment'
 
 const logger = createLogger('payment:seed:plans')
 

@@ -1,12 +1,6 @@
+import type { createEventSchema, eventParamsSchema, eventSchema, listEventsQuerySchema, listEventsResponseSchema, updateEventSchema } from './schemas'
+
 ﻿import type { z } from 'zod'
-import type {
-  createEventSchema,
-  eventParamsSchema,
-  eventSchema,
-  listEventsQuerySchema,
-  listEventsResponseSchema,
-  updateEventSchema
-} from './schemas'
 
 export type CreateEventRequest = { body: z.infer<typeof createEventSchema> }
 

@@ -1,4 +1,5 @@
 import mongoose, { Schema } from 'mongoose'
+
 import type { PhotoEntity } from './types'
 
 export type PhotoDocument = Omit<PhotoEntity, 'id'> & { _id: string }

@@ -1,5 +1,6 @@
-import type { Request, Response } from 'express'
 import { getClientDeviceId, getClientFingerprint, getClientIp } from './clientIdentity'
+
+import type { Request, Response } from 'express'
 
 export type PinLockoutScope = 'screen' | 'guest'
 

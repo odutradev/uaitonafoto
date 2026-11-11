@@ -1,6 +1,8 @@
 import rateLimit from 'express-rate-limit'
-import sendError from '@error/index'
+
 import { errorResponseSchema } from '@factories/errors/schemas'
+import sendError from '@error/index'
+
 import type { RateLimitConfig, DocumentedMiddleware } from './types'
 
 export const createRateLimiter = (config: RateLimitConfig = {}): DocumentedMiddleware => {

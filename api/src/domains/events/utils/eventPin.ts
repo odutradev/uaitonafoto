@@ -1,7 +1,9 @@
 import { randomInt } from 'crypto'
+
+import eventRepository from '@domains/events/repositories/events'
 import { broadcastEvent } from '@realtime'
-import eventRepository from '../repositories/events'
-import type { EventEntity, EventSettings } from '../repositories/events/types'
+
+import type { EventEntity, EventSettings } from '@domains/events/repositories/events/types'
 
 export const generatePin = (excludePin?: string | string[]): string => {
   const excluded = Array.isArray(excludePin) ? excludePin : excludePin ? [excludePin] : []

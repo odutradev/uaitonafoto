@@ -1,5 +1,6 @@
 import createLogger from '@utils/logger'
-import type { AbacatePayClient } from '../types'
+
+import type { AbacatePayClient } from '@payment/types'
 import type { CachedPlan, PlanConfig } from './types'
 
 const logger = createLogger('payment:plans')

@@ -1,4 +1,5 @@
 import * as admin from 'firebase-admin'
+
 import type { Bucket } from '@google-cloud/storage'
 
 export * from './types'

@@ -1,5 +1,6 @@
 import { removeUndefined } from '@utils/object'
 import UserModel from './model'
+
 import type { CreditType, ListUsersParams, UpdateUserPayload, UpsertUserPayload, UserEntity } from './types'
 
 const toUserEntity = (doc: any): UserEntity => ({
@@ -180,7 +181,5 @@ export const userRepository = {
     }
   }
 }
-
-
 
 export default userRepository

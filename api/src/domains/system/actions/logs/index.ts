@@ -1,10 +1,13 @@
-import defineAction from '@factories/defineAction'
 import { buildPaginatedResponse, getPaginationOptions } from '@factories/pagination/utils'
-import userRepository from '@domains/users/repositories'
-import logRepository from '../../repositories'
-import type { LogEntity } from '../../repositories/types'
-import type { LogItemResponse } from './types'
 import { listLogsQuerySchema, listLogsResponseSchema } from './schemas'
+import userRepository from '@domains/users/repositories'
+import logRepository from '@domains/system/repositories'
+import defineAction from '@factories/defineAction'
+
+import type { ManageRequestBody, ManageRequestResponse } from '@middlewares/manageRequest/types'
+import type { LogEntity } from '@domains/system/repositories/types'
+import type { ListLogsRequest, ListLogsResponse } from './types'
+import type { LogItemResponse } from './types'
 
 const replaceLegacyFreeTrialLabel = (text?: string): string | undefined =>
   text ? text.replace(/Modo Degustação/gi, 'Teste Grátis') : text
@@ -26,9 +29,6 @@ const toLogItemResponse = (entity: LogEntity, isAdmin: boolean): LogItemResponse
   ipAddress: isAdmin ? entity.ipAddress : undefined,
   createdAt: entity.createdAt
 })
-
-import type { ManageRequestBody, ManageRequestResponse } from '@middlewares/manageRequest/types'
-import type { ListLogsRequest, ListLogsResponse } from './types'
 
 export const listLogs = defineAction(
   {

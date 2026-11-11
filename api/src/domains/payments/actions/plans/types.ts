@@ -1,5 +1,5 @@
-import type { z } from 'zod'
 import type { planSchema, plansListResponseSchema, getPlanParamsSchema, getPlansQuerySchema } from './schemas'
+import type { z } from 'zod'
 
 export type PlanResponse = z.infer<typeof planSchema>
 export type PlansListResponse = z.infer<typeof plansListResponseSchema>

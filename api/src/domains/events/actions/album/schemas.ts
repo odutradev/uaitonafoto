@@ -1,9 +1,9 @@
 import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi'
 import { z } from 'zod'
 
+import { eventChallengeSchema, eventCustomizationSchema, eventPinSchema, eventScreenSlotSchema } from '@domains/events/actions/event/schemas'
 import { createPaginatedSchema, paginationQuerySchema } from '@factories/pagination/schemas'
-import { eventChallengeSchema, eventCustomizationSchema, eventPinSchema, eventScreenSlotSchema } from '../event/schemas'
-import { photoSchema } from '../photo/schemas'
+import { photoSchema } from '@domains/events/actions/photo/schemas'
 
 extendZodWithOpenApi(z)
 

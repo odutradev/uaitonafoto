@@ -1,4 +1,5 @@
 import { Router } from 'express'
+
 import { registerDomainEndpoints } from '@config/domain'
 
 export const createApiRouter = (): Router => {

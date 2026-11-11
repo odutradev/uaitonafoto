@@ -1,5 +1,5 @@
-import type * as admin from 'firebase-admin'
 import type { Bucket } from '@google-cloud/storage'
+import type * as admin from 'firebase-admin'
 
 export type FirebaseInstance = {
   app: admin.app.App

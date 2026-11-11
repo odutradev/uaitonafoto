@@ -1,10 +1,10 @@
-import sendError from '@error/index'
+import { verifyScreenToken } from '@domains/events/utils/screenToken'
+import eventRepository from '@domains/events/repositories/events'
 import { errorResponseSchema } from '@factories/errors/schemas'
-import eventRepository from '../../repositories/events'
-import { verifyScreenToken } from '../../utils/screenToken'
+import sendError from '@error/index'
 
-import type { NextFunction, Request, Response } from 'express'
 import type { DocumentedMiddleware, ResponseConfig } from '@factories/defineAction/types'
+import type { NextFunction, Request, Response } from 'express'
 
 export const screenSessionMiddleware = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const authHeader = req.headers.authorization

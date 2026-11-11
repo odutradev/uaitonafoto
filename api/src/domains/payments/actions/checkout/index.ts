@@ -1,17 +1,18 @@
-import env from '@config/env'
-import createLogger from '@utils/logger'
 import { PaymentMethod } from '@abacatepay/types/v2'
-import { getPaymentClient } from '@payment'
-import { getPlanByProductId } from '@payment/plans'
-import defineAction from '@factories/defineAction'
+
+import subscriptionRepository from '@domains/payments/repositories/subscriptions'
+import transactionRepository from '@domains/payments/repositories/transactions'
+import { checkoutResponseSchema, createCheckoutBodySchema } from './schemas'
 import logRepository from '@domains/system/repositories'
 import userRepository from '@domains/users/repositories'
-import subscriptionRepository from '../../repositories/subscriptions'
-import transactionRepository from '../../repositories/transactions'
-import { checkoutResponseSchema, createCheckoutBodySchema } from './schemas'
+import { getPlanByProductId } from '@payment/plans'
+import defineAction from '@factories/defineAction'
+import { getPaymentClient } from '@payment'
+import createLogger from '@utils/logger'
+import env from '@config/env'
 
-import type { ManageRequestBody, ManageRequestResponse } from '@middlewares/manageRequest/types'
 import type { CheckoutResponse, CreateCheckoutRequest, GatewayCheckoutParams, GatewayCheckoutResult } from './types'
+import type { ManageRequestBody, ManageRequestResponse } from '@middlewares/manageRequest/types'
 
 const logger = createLogger('payment:checkout')
 

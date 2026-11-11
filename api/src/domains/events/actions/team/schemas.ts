@@ -1,7 +1,8 @@
-﻿import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi'
 import { z } from 'zod'
 
-import { eventMemberRoleSchema, eventParamsSchema } from '../event/schemas'
+import { eventMemberRoleSchema, eventParamsSchema } from '@domains/events/actions/event/schemas'
+
+﻿import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi'
 
 extendZodWithOpenApi(z)
 

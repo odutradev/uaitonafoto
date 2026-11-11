@@ -1,15 +1,19 @@
+import { guestEventInfoSchema, guestSessionResponseSchema, guestTokenParamsSchema, joinEventResponseSchema, joinEventSchema } from './schemas'
+import { checkPinLockout, recordPinFailure, resetPinLockout } from '@domains/events/utils/pinLockout'
+import guestSessionMiddleware from '@domains/events/middlewares/guestSession'
+import { getClientIdentity } from '@domains/events/utils/clientIdentity'
+import { ensureCurrentEventPin } from '@domains/events/utils/eventPin'
+import { getEventPhase } from '@domains/events/utils/eventWindows'
+import eventRepository from '@domains/events/repositories/events'
+import guestRepository from '@domains/events/repositories/guests'
+import photoRepository from '@domains/events/repositories/photos'
+import { signGuestToken } from '@domains/events/utils/guestToken'
 import defineAction from '@factories/defineAction'
-import eventRepository from '../../repositories/events'
-import guestRepository from '../../repositories/guests'
-import photoRepository from '../../repositories/photos'
-import guestSessionMiddleware from '../../middlewares/guestSession'
-import { ensureCurrentEventPin } from '../../utils/eventPin'
-import { checkPinLockout, recordPinFailure, resetPinLockout } from '../../utils/pinLockout'
-import { getEventPhase } from '../../utils/eventWindows'
-import { signGuestToken } from '../../utils/guestToken'
-import { getClientIdentity } from '../../utils/clientIdentity'
-import type { EventEntity } from '../../repositories/events/types'
-import type { GuestEntity } from '../../repositories/guests/types'
+
+import type { GetGuestEventRequest, GuestEventInfo, GuestSessionResponse, JoinEventRequest, JoinEventResponse } from './types'
+import type { ManageRequestBody, ManageRequestResponse } from '@middlewares/manageRequest/types'
+import type { EventEntity } from '@domains/events/repositories/events/types'
+import type { GuestEntity } from '@domains/events/repositories/guests/types'
 
 const toGuestEventInfo = (event: EventEntity): GuestEventInfo => ({
   name: event.name,
@@ -29,22 +33,6 @@ const toGuestEventInfo = (event: EventEntity): GuestEventInfo => ({
     : [],
   phase: getEventPhase(event)
 })
-import {
-  guestEventInfoSchema,
-  guestSessionResponseSchema,
-  guestTokenParamsSchema,
-  joinEventResponseSchema,
-  joinEventSchema
-} from './schemas'
-
-import type { ManageRequestBody, ManageRequestResponse } from '@middlewares/manageRequest/types'
-import type {
-  GetGuestEventRequest,
-  GuestEventInfo,
-  GuestSessionResponse,
-  JoinEventRequest,
-  JoinEventResponse
-} from './types'
 
 export const getGuestEvent = defineAction(
   {

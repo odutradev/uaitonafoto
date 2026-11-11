@@ -1,13 +1,13 @@
+import subscriptionRepository from '@domains/payments/repositories/subscriptions'
+import transactionRepository from '@domains/payments/repositories/transactions'
+import purchaseRepository from '@domains/payments/repositories/purchases'
+import computeNextBillingDate from './computeNextBillingDate'
 import { getPaymentClient } from '@payment'
 import createLogger from '@utils/logger'
-import transactionRepository from '../repositories/transactions'
-import purchaseRepository from '../repositories/purchases'
-import subscriptionRepository from '../repositories/subscriptions'
-import computeNextBillingDate from './computeNextBillingDate'
 
+import type { SubscriptionEntity } from '@domains/payments/repositories/subscriptions/types'
+import type { TransactionEntity } from '@domains/payments/repositories/transactions/types'
 import type { CachedPlan } from '@payment/plans/types'
-import type { TransactionEntity } from '../repositories/transactions/types'
-import type { SubscriptionEntity } from '../repositories/subscriptions/types'
 
 const logger = createLogger('payments:subscription')
 

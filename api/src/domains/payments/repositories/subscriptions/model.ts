@@ -1,4 +1,5 @@
 import mongoose, { Schema } from 'mongoose'
+
 import type { SubscriptionEntity } from './types'
 
 export type SubscriptionDocument = Omit<SubscriptionEntity, 'id'> & { _id: string }

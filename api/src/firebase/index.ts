@@ -1,10 +1,10 @@
 import * as admin from 'firebase-admin'
 
+import firebaseStorage, { getStorageBucket } from '@firebase/services/storage'
 import suppressPunycodeWarning from '@utils/warning'
 import firebaseAuth from '@firebase/services/auth'
-import firebaseStorage, { getStorageBucket } from '@firebase/services/storage'
-import env from '@config/env'
 import createLogger from '@utils/logger'
+import env from '@config/env'
 
 import type { FirebaseInstance, FirebaseModule } from './types'
 

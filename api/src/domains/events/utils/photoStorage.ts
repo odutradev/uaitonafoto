@@ -1,6 +1,6 @@
 import { deleteDirectory, deleteFile, uploadFile } from '@firebase/services/storage'
-import likeRepository from '../repositories/likes'
-import photoRepository from '../repositories/photos'
+import photoRepository from '@domains/events/repositories/photos'
+import likeRepository from '@domains/events/repositories/likes'
 
 import type { StoreEventPhotoParams } from './types'
 

@@ -1,12 +1,8 @@
 import { randomUUID } from 'crypto'
+
 import createLogger from '@utils/logger'
 
-import type {
-  RealtimeClient,
-  RealtimeRoom,
-  RealtimeStats,
-  SubscribeRealtimeParams
-} from './types'
+import type { RealtimeClient, RealtimeRoom, RealtimeStats, SubscribeRealtimeParams } from './types'
 
 const logger = createLogger('realtime')
 
