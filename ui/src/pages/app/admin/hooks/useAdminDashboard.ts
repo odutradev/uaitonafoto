@@ -98,8 +98,8 @@ export const useAdminDashboard = () => {
     if (!selectedUserForCredits) return
     try {
       setIsSubmittingCredits(true)
-      const res = await addAdminUserCredits(selectedUserForCredits.id, payload)
-      toast.success(res.message || 'Créditos concedidos com sucesso!')
+      await addAdminUserCredits(selectedUserForCredits.id, payload)
+      toast.success(`${payload.amount} crédito(s) adicionado(s) com sucesso.`)
       handleCloseAddCredits()
       await Promise.all([fetchUsers(), fetchMetrics()])
     } catch (err: unknown) {

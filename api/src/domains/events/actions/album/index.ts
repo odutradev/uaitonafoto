@@ -865,11 +865,7 @@ export const resetEventLockouts = defineAction(
       timestamp: new Date().toISOString()
     })
 
-    return {
-      success: true,
-      clearedCount,
-      message: 'Bloqueios de PIN resetados com sucesso.'
-    }
+    return { clearedCount }
   }
 )
 

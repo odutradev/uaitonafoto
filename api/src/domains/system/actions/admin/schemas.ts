@@ -116,8 +116,7 @@ export const addAdminUserCreditsBodySchema = z
 
 export const addAdminUserCreditsResponseSchema = z
   .object({
-    user: adminUserItemSchema,
-    message: z.string().openapi({ example: 'Créditos adicionados com sucesso.' })
+    user: adminUserItemSchema
   })
   .openapi('AddAdminUserCreditsResponse')
 

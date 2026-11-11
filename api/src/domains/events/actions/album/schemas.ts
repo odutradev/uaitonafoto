@@ -157,9 +157,7 @@ export const resetEventLockoutsSchema = z
 
 export const resetEventLockoutsResponseSchema = z
   .object({
-    success: z.boolean().openapi({ example: true }),
-    clearedCount: z.number().openapi({ example: 2, description: 'Quantidade de registros de bloqueio removidos' }),
-    message: z.string().openapi({ example: 'Dispositivos desbloqueados com sucesso.' })
+    clearedCount: z.number().openapi({ example: 2, description: 'Quantidade de registros de bloqueio removidos' })
   })
   .openapi('ResetEventLockoutsResponse')
 
