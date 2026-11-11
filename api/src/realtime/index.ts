@@ -8,7 +8,7 @@ const logger = createLogger('realtime')
 
 const realtimeRooms = new Map<string, RealtimeRoom>()
 
-const PING_INTERVAL_MS = 25000
+const PingIntervalMs = 25000
 
 export const subscribeRealtimeStream = ({
   eventId,
@@ -31,7 +31,7 @@ export const subscribeRealtimeStream = ({
     if (!res.writableEnded) {
       res.write(': ping\n\n')
     }
-  }, PING_INTERVAL_MS)
+  }, PingIntervalMs)
 
   pingTimer.unref()
 

@@ -29,10 +29,10 @@ import type { ManageRequestBody, ManageRequestResponse } from '@middlewares/mana
 import type { PhotoResponse } from '@domains/events/actions/photo/types'
 import type { TeamAccess } from '@domains/events/utils/types'
 
-const DEFAULT_CHALLENGES_BY_TYPE: Record<EventType, string[]> = challengesData as Record<EventType, string[]>
+const DefaultChallengesByType: Record<EventType, string[]> = challengesData as Record<EventType, string[]>
 
 const buildDefaultChallenges = (eventType: EventType): EventChallenge[] => {
-  const titles = DEFAULT_CHALLENGES_BY_TYPE[eventType] || DEFAULT_CHALLENGES_BY_TYPE.other
+  const titles = DefaultChallengesByType[eventType] || DefaultChallengesByType.other
   return titles.map((title) => ({
     id: randomUUID(),
     title,
@@ -49,8 +49,8 @@ const loadTeamAccess = async (eventId: string, userId: string): Promise<TeamAcce
   return role ? { event, role } : { error: 'forbidden' }
 }
 
-const SCREEN_DEFAULT_LIMIT = 50
-const MAX_ACTIVE_SCREENS = 2
+const ScreenDefaultLimit = 50
+const MaxActiveScreens = 2
 
 export const createScreenSlot = defineAction(
   {
@@ -383,7 +383,7 @@ export const getScreen = defineAction(
       ? await photoRepository.listSince({
           eventId: event.id,
           since: query?.since,
-          limit: query?.limit ?? SCREEN_DEFAULT_LIMIT
+          limit: query?.limit ?? ScreenDefaultLimit
         })
       : []
 

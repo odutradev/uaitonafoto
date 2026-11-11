@@ -1,7 +1,7 @@
 import { createEventSchema, eventParamsSchema, eventSchema, listEventsQuerySchema, listEventsResponseSchema, updateEventSchema } from './schemas'
 import { computeEventWindows, getEventMaxDurationHours, getEventMaxEndsAt, getEventPhase } from '@domains/events/utils/eventWindows'
 import { buildPaginatedResponse, getPaginationOptions } from '@factories/pagination/utils'
-import { EVENT_PLAN_LIMITS, resolveUserPlanTier } from '@domains/events/utils/eventLimits'
+import { EventPlanLimits, resolveUserPlanTier } from '@domains/events/utils/eventLimits'
 import { ensureCurrentEventPin, generatePin } from '@domains/events/utils/eventPin'
 import creditUsageRepository from '@domains/payments/repositories/creditUsages'
 import purchaseRepository from '@domains/payments/repositories/purchases'
@@ -38,7 +38,7 @@ const buildDefaultEventSettings = (creditType: EventCreditType = 'paid'): EventS
 
 const toEventResponse = (entity: EventEntity, myRole: EventMemberRole): EventResponse => {
   const tier = entity.planTier || 'single'
-  const limits = EVENT_PLAN_LIMITS[tier] || EVENT_PLAN_LIMITS.single
+  const limits = EventPlanLimits[tier] || EventPlanLimits.single
 
   return {
     id: entity.id,

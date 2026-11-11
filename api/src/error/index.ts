@@ -2,7 +2,7 @@ import createLogger from '@utils/logger'
 
 import type { ErrorCatalogEntry, ResponseErrorsParams, SendErrorParams } from './types'
 
-const ERROR_CATALOG: Record<ResponseErrorsParams, ErrorCatalogEntry> = {
+const ErrorCatalog: Record<ResponseErrorsParams, ErrorCatalogEntry> = {
   bad_request: { status: 400, message: 'Requisição inválida.' },
   validation_error: { status: 400, message: 'Dados inválidos na requisição.' },
   unauthorized: { status: 401, message: 'Não autorizado.' },
@@ -19,7 +19,7 @@ const ERROR_CATALOG: Record<ResponseErrorsParams, ErrorCatalogEntry> = {
 const sendError = ({ res, code, error, details, local }: SendErrorParams): void => {
   if (res.headersSent) return
 
-  const entry = ERROR_CATALOG[code] ?? ERROR_CATALOG.internal_error
+  const entry = ErrorCatalog[code] ?? ErrorCatalog.internal_error
 
   if (entry.status >= 500 || error) {
     const logger = createLogger(local || 'error')

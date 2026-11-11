@@ -1,14 +1,14 @@
 import type { EventCreditType, EventSettings } from '@domains/events/repositories/events/types'
 import type { EventPhase, EventWindows, EventWindowsInput } from './types'
 
-const HOUR_MS = 60 * 60 * 1000
-const DAY_MS = 24 * HOUR_MS
+const HourMs = 60 * 60 * 1000
+const DayMs = 24 * HourMs
 
 const addMs = (iso: string, ms: number): string => new Date(new Date(iso).getTime() + ms).toISOString()
 
 export const computeEventWindows = (endsAt: string, settings: EventSettings): EventWindows => ({
-  uploadsCloseAt: addMs(endsAt, settings.uploadWindowHours * HOUR_MS),
-  galleryExpiresAt: addMs(endsAt, settings.galleryDurationDays * DAY_MS)
+  uploadsCloseAt: addMs(endsAt, settings.uploadWindowHours * HourMs),
+  galleryExpiresAt: addMs(endsAt, settings.galleryDurationDays * DayMs)
 })
 
 export const getEventMaxDurationHours = (creditType: EventCreditType = 'paid'): number =>
@@ -16,7 +16,7 @@ export const getEventMaxDurationHours = (creditType: EventCreditType = 'paid'): 
 
 export const getEventMaxEndsAt = (startsAt: string, creditType: EventCreditType = 'paid'): string => {
   const durationHours = getEventMaxDurationHours(creditType)
-  return new Date(new Date(startsAt).getTime() + durationHours * HOUR_MS).toISOString()
+  return new Date(new Date(startsAt).getTime() + durationHours * HourMs).toISOString()
 }
 
 export const canReopenEvent = (

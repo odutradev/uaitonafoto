@@ -8,7 +8,7 @@ export interface EventLimits {
   maxScreens: number
 }
 
-export const EVENT_PLAN_LIMITS: Record<EventPlanTier, { maxOrganizers: number; maxScreens: number }> = {
+export const EventPlanLimits: Record<EventPlanTier, { maxOrganizers: number; maxScreens: number }> = {
   single: {
     maxOrganizers: 1,
     maxScreens: 2
@@ -37,8 +37,8 @@ export const resolveUserPlanTier = async (userId: string): Promise<EventPlanTier
 }
 
 export const resolveEventLimits = async (event: EventEntity): Promise<EventLimits> => {
-  if (event.planTier && EVENT_PLAN_LIMITS[event.planTier]) {
-    const limits = EVENT_PLAN_LIMITS[event.planTier]
+  if (event.planTier && EventPlanLimits[event.planTier]) {
+    const limits = EventPlanLimits[event.planTier]
     return {
       tier: event.planTier,
       ...limits
@@ -47,7 +47,7 @@ export const resolveEventLimits = async (event: EventEntity): Promise<EventLimit
 
   const creator = event.members?.find((member) => member.role === 'creator')
   const tier = creator ? await resolveUserPlanTier(creator.userId) : 'single'
-  const limits = EVENT_PLAN_LIMITS[tier]
+  const limits = EventPlanLimits[tier]
 
   return {
     tier,

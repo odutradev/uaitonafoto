@@ -54,7 +54,7 @@ export const listTeam = defineAction(
   }
 )
 
-export const MAX_ORGANIZERS = 5
+export const MaxOrganizers = 5
 
 export const addOrganizer = defineAction(
   {

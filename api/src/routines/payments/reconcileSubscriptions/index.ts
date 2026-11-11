@@ -13,7 +13,7 @@ import type { AbacatePayClient } from '@payment/types'
 
 const logger = createLogger('payments:routine')
 
-const MIN_RENEWAL_GAP_MS = 24 * 60 * 60 * 1000
+const MinRenewalGapMs = 24 * 60 * 60 * 1000
 
 const fetchConfirmedStatementCharges = async (client: AbacatePayClient): Promise<ConfirmedStatementCharge[]> => {
   const response = await client.bankStatement.list({ limit: 100 })
@@ -113,7 +113,7 @@ export const runSubscriptionReconciliation = async (): Promise<void> => {
       const initialCreatedTime = new Date(sub.createdAt).getTime()
       const renewalCharges = subCharges
         .slice(1)
-        .filter((charge) => new Date(charge.createdAt).getTime() - initialCreatedTime >= MIN_RENEWAL_GAP_MS)
+        .filter((charge) => new Date(charge.createdAt).getTime() - initialCreatedTime >= MinRenewalGapMs)
 
       await runSequentially(renewalCharges, (charge) =>
         grantSubscriptionRenewal({
