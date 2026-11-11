@@ -18,7 +18,8 @@ import {
 import { QRCodeSVG } from 'qrcode.react'
 import { toast } from 'react-toastify'
 
-import { buildGuestLink, pinRotationLabels } from '@config/events'
+import { pinRotationLabels } from '@assets/data/events'
+import { buildGuestLink } from '@utils/functions/events'
 
 import { TableDisplayModal } from './subcomponents/tableDisplayModal'
 

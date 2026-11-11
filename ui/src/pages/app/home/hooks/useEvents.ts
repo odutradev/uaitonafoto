@@ -2,9 +2,9 @@ import { useCallback, useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 
 import { getMyEvents } from '@actions/events'
-import { getErrorMessage } from '@config/events'
+import { getErrorMessage } from '@utils/functions/events'
 
-import type { EventItem } from '@actions/events/types'
+import type { EventItem } from '@utils/types/events'
 
 const useEvents = () => {
   const [events, setEvents] = useState<EventItem[]>([])

@@ -1,5 +1,5 @@
-import type { LogScope } from '@actions/logs/types'
-import type { LogCategoryFilter, LogLevelFilter } from '../../types'
+import type { LogScope } from '@utils/types/logs'
+import type { LogCategoryFilter, LogLevelFilter } from '@pages/app/logs/types'
 
 export interface LogsFiltersProps {
   isAdmin: boolean

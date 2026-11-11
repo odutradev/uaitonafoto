@@ -1,4 +1,4 @@
-import { brandColors } from '@theme'
+import { brandColors } from '@styles/theme'
 import type { SxProps, Theme } from '@mui/material'
 
 export const statusControlCardStyles: SxProps<Theme> = (theme) => ({

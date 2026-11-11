@@ -31,7 +31,7 @@ import {
 } from '@mui/icons-material'
 import { toast } from 'react-toastify'
 
-import type { EventItem } from '@actions/events/types'
+import type { EventItem } from '@utils/types/events'
 import { TableDisplayCard } from './templates/TableDisplayCard'
 import { exportTableDisplayPng } from './exportPng'
 import type {

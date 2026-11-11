@@ -51,16 +51,15 @@ export default defineConfig({
   resolve: {
     alias: {
       '@mui/styled-engine': '@mui/styled-engine-sc',
-      '@actions': path.resolve(__dirname, './src/api/actions'),
+      '@actions': path.resolve(__dirname, './src/actions'),
       '@assets': path.resolve(__dirname, './src/assets'),
       '@components': path.resolve(__dirname, './src/components'),
-      '@config': path.resolve(__dirname, './src/config'),
       '@hooks': path.resolve(__dirname, './src/hooks'),
-      '@interceptor': path.resolve(__dirname, './src/api/interceptor'),
       '@pages': path.resolve(__dirname, './src/pages'),
+      '@routes': path.resolve(__dirname, './src/routes'),
       '@stores': path.resolve(__dirname, './src/stores'),
-      '@theme': path.resolve(__dirname, './src/theme'),
-      '@': path.resolve(__dirname, './src')
+      '@styles': path.resolve(__dirname, './src/styles'),
+      '@utils': path.resolve(__dirname, './src/utils')
     }
   },
   build: {

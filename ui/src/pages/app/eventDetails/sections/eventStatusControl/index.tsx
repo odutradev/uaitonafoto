@@ -15,9 +15,9 @@ import {
 import dayjs from 'dayjs'
 
 import Modal from '@components/modal'
-import { canReopenEvent, getEventPhase, getEventRemainingOpenTime } from '@config/eventPhase'
-import { eventPhaseLabels, eventTypeLabels } from '@config/events'
-import { brandColors } from '@theme'
+import { canReopenEvent, getEventPhase, getEventRemainingOpenTime } from '@utils/functions/eventPhase'
+import { eventPhaseLabels, eventTypeLabels } from '@assets/data/events'
+import { brandColors } from '@styles/theme'
 
 import {
   liveDotStyles,

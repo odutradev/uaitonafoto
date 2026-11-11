@@ -6,7 +6,7 @@ import useAuthStore from '@stores/auth'
 
 import type { FormEvent } from 'react'
 import type { AuthUser } from '@stores/auth/types'
-import type { ProfileFormValues, UseProfileReturn } from '../types'
+import type { ProfileFormValues, UseProfileReturn } from '@pages/app/profile/types'
 
 const toFormValues = (user: AuthUser | null): ProfileFormValues => ({
   name: user?.name ?? '',

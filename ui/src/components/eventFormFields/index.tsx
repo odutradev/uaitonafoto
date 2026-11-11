@@ -11,15 +11,11 @@ import {
 import { RefreshOutlined as RefreshIcon } from '@mui/icons-material'
 import dayjs from 'dayjs'
 
-import {
-  eventTypeLabels,
-  generateRandomPin,
-  photoVisibilityLabels,
-  pinRotationLabels
-} from '@config/events'
+import { eventTypeLabels, photoVisibilityLabels, pinRotationLabels } from '@assets/data/events'
+import { generateRandomPin } from '@utils/functions/events'
 
 import { formFieldsStackStyles, pinCardBoxStyles, pinToggleRowStyles, twoColsRowStyles } from './styles'
-import type { CreateEventPayload, EventCreditType, EventItem, EventType, PhotoVisibility, PinRotationMinutes } from '@actions/events/types'
+import type { CreateEventPayload, EventCreditType, EventItem, EventType, PhotoVisibility, PinRotationMinutes } from '@utils/types/events'
 import type { EventFormFieldsProps, EventFormState } from './types'
 
 const DATETIME_INPUT_FORMAT = 'YYYY-MM-DDTHH:mm'

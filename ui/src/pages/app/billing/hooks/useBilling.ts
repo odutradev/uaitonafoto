@@ -23,14 +23,14 @@ import type {
   PurchaseItem,
   SubscriptionItem,
   TransactionItem
-} from '@actions/payments/types'
+} from '@utils/types/payments'
 import type {
   BillingQueryParams,
   TransactionDirectionFilter,
   TransactionStatusFilter,
   TransactionTypeFilter,
   UseBillingReturn
-} from '../types'
+} from '@pages/app/billing/types'
 
 const FREE_PLAN_ID = 'free_trial'
 const TRANSACTIONS_FETCH_LIMIT = 100

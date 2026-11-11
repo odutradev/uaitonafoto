@@ -1,5 +1,5 @@
-import type { LandingPageData } from '../data'
-import type { PlanCardData } from '../sections/plans/types'
+import type { LandingPageData } from '@pages/public/landingPage/data'
+import type { PlanCardData } from '@pages/public/landingPage/sections/plans/types'
 import type { AuthUser } from '@stores/auth/types'
 
 export interface UseLandingPageReturn {

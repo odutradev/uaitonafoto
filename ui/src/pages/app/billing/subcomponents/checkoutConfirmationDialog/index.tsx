@@ -15,7 +15,7 @@ import {
   ShieldOutlined as ShieldIcon
 } from '@mui/icons-material'
 
-import { formatPriceInBrl } from '@config/formatters'
+import { formatPriceInBrl } from '@utils/functions/formatters'
 
 import {
   cancelButtonStyles,

@@ -5,7 +5,7 @@ import type {
   SubscriptionItem,
   TransactionItem,
   TransactionStatus
-} from '@actions/payments/types'
+} from '@utils/types/payments'
 import type { AuthUser } from '@stores/auth/types'
 
 export type TransactionTypeFilter = 'ALL' | 'SUBSCRIPTION' | 'ONE_TIME' | 'UPSELL' | 'FREE'

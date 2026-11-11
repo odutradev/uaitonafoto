@@ -3,8 +3,8 @@ import { useCallback, useEffect, useState } from 'react'
 import { getLogs } from '@actions/logs'
 import useAuthStore from '@stores/auth'
 
-import type { LogItem, LogScope } from '@actions/logs/types'
-import type { LogCategoryFilter, LogLevelFilter, UseLogsReturn } from '../types'
+import type { LogItem, LogScope } from '@utils/types/logs'
+import type { LogCategoryFilter, LogLevelFilter, UseLogsReturn } from '@pages/app/logs/types'
 
 const LOGS_PER_PAGE = 10
 const SEARCH_DEBOUNCE_MS = 350

@@ -18,7 +18,7 @@ import { OpenInNew as PayNowIcon } from '@mui/icons-material'
 
 import Pagination from '@components/pagination'
 
-import { formatPriceInBrl } from '@config/formatters'
+import { formatPriceInBrl } from '@utils/functions/formatters'
 import { Link as RouterLink } from 'react-router-dom'
 
 import {
@@ -36,8 +36,8 @@ import {
   rowRightColStyles,
   rowTitleBadgesStyles
 } from './styles'
-import type { PurchaseItem, TransactionStatus } from '@actions/payments/types'
-import type { TransactionStatusFilter, TransactionTypeFilter } from '../../types'
+import type { PurchaseItem, TransactionStatus } from '@utils/types/payments'
+import type { TransactionStatusFilter, TransactionTypeFilter } from '@pages/app/billing/types'
 import type { TransactionsHistoryProps, UnifiedHistoryEntry } from './types'
 
 const toTimestampMs = (isoDate?: string): number => {

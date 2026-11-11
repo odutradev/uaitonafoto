@@ -10,12 +10,12 @@ import {
   toggleGuestPhotoLike,
   uploadGuestPhoto
 } from '@actions/guest'
-import { buildRoomStreamUrl, clearGuestToken, getStoredGuestToken, storeGuestToken } from '@actions/guest/client'
-import { getErrorMessage } from '@config/events'
+import { buildRoomStreamUrl, clearGuestToken, getStoredGuestToken, storeGuestToken } from '@utils/api/guest'
+import { getErrorMessage } from '@utils/functions/events'
 import usePinLockout from '@hooks/usePinLockout'
 
-import type { PaginationMeta } from '@actions/events/types'
-import type { GuestEventInfo, GuestPhoto, GuestProfile } from '@actions/guest/types'
+import type { PaginationMeta } from '@utils/types/events'
+import type { GuestEventInfo, GuestPhoto, GuestProfile } from '@utils/types/guest'
 
 const FEED_PAGE_SIZE = 24
 

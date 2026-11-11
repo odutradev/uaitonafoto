@@ -31,8 +31,8 @@ import {
   setEventGuestBlock,
   updateEventGuest
 } from '@actions/events'
-import { getErrorMessage } from '@config/events'
-import type { EventGuest } from '@actions/events/types'
+import { getErrorMessage } from '@utils/functions/events'
+import type { EventGuest } from '@utils/types/events'
 import type { EventGuestsProps } from './types'
 import {
   compactIconButtonStyles,

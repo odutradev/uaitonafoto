@@ -1,4 +1,4 @@
-import type { LogItem } from '@actions/logs/types'
+import type { LogItem } from '@utils/types/logs'
 
 export interface LogDetailsDialogProps {
   log: LogItem | null

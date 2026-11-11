@@ -1,9 +1,9 @@
 import { Box, Typography } from '@mui/material'
 import { Favorite as LikeIcon, PhotoCameraOutlined as CameraIcon } from '@mui/icons-material'
 
-import { formatGuestTaNaFoto } from '@config/events'
-import type { EventPhoto } from '@actions/events/types'
-import type { ScreenPhotoFit } from '../../types'
+import { formatGuestTaNaFoto } from '@utils/functions/events'
+import type { EventPhoto } from '@utils/types/events'
+import type { ScreenPhotoFit } from '@pages/app/eventScreen/types'
 import type { SxProps, Theme } from '@mui/material'
 
 interface ScreenPhotoTileProps {

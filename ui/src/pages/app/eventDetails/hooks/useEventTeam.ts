@@ -2,9 +2,9 @@ import { useCallback, useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 
 import { addOrganizer, getEventTeam, removeTeamMember } from '@actions/events'
-import { getErrorMessage } from '@config/events'
+import { getErrorMessage } from '@utils/functions/events'
 
-import type { TeamMember } from '@actions/events/types'
+import type { TeamMember } from '@utils/types/events'
 
 const useEventTeam = (eventId: string) => {
   const [members, setMembers] = useState<TeamMember[]>([])

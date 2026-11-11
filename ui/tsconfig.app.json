@@ -18,16 +18,16 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
     "paths": {
-      "@/*": ["./src/*"],
-      "@actions/*": ["./src/api/actions/*"],
+      "@actions/*": ["./src/actions/*"],
       "@assets/*": ["./src/assets/*"],
       "@components/*": ["./src/components/*"],
-      "@config/*": ["./src/config/*"],
       "@hooks/*": ["./src/hooks/*"],
-      "@interceptor": ["./src/api/interceptor"],
       "@pages/*": ["./src/pages/*"],
+      "@routes": ["./src/routes"],
+      "@routes/*": ["./src/routes/*"],
       "@stores/*": ["./src/stores/*"],
-      "@theme": ["./src/theme"]
+      "@styles/*": ["./src/styles/*"],
+      "@utils/*": ["./src/utils/*"]
     }
   },
   "include": ["src"]

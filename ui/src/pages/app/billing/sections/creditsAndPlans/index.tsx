@@ -9,7 +9,7 @@ import {
 } from '@mui/material'
 import { Check as CheckIcon } from '@mui/icons-material'
 
-import { formatPriceInBrl } from '@config/formatters'
+import { formatPriceInBrl } from '@utils/functions/formatters'
 
 import {
   blockWrapperStyles,

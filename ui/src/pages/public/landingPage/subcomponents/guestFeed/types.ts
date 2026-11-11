@@ -1,4 +1,4 @@
-import type { GuestFeedData } from '../../data'
+import type { GuestFeedData } from '@pages/public/landingPage/data'
 
 export interface GuestFeedProps {
   data: GuestFeedData

@@ -35,7 +35,7 @@ import { toast } from 'react-toastify'
 
 import Logo from '@components/logo'
 import ThemeToggle from '@components/themeToggle'
-import { brandColors } from '@theme'
+import { brandColors } from '@styles/theme'
 import {
   BACKGROUND_COLORS,
   COLOR_SCHEMES,
@@ -47,7 +47,7 @@ import {
   type LogoBackgroundOption,
   type LogoColorScheme,
   type LogoType
-} from '@/utils/brandAssets'
+} from '@utils/functions/brandAssets'
 import type { BrandAnimation } from '@components/logo/types'
 
 import {

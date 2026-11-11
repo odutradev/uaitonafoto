@@ -1,4 +1,4 @@
-import type { GuestEventInfo, GuestProfile } from '@actions/guest/types'
+import type { GuestEventInfo, GuestProfile } from '@utils/types/guest'
 
 export interface GuestUploadProps {
   event: GuestEventInfo

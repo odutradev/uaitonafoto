@@ -1,4 +1,4 @@
-import type { HowItWorksData } from '../../data'
+import type { HowItWorksData } from '@pages/public/landingPage/data'
 
 export interface HowItWorksProps {
   data: HowItWorksData

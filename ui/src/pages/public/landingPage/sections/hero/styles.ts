@@ -1,5 +1,5 @@
 import type { SxProps, Theme } from '@mui/material'
-import { brandColors } from '@theme'
+import { brandColors } from '@styles/theme'
 
 export const heroContainerStyles: SxProps<Theme> = {
   pt: { xs: 5, sm: 7, md: 10 },

@@ -9,11 +9,11 @@ import {
   getStoredScreenToken,
   storeScreenCredential,
   storeScreenPin
-} from '@actions/events/screenClient'
-import { getErrorMessage } from '@config/events'
+} from '@utils/api/screen'
+import { getErrorMessage } from '@utils/functions/events'
 import usePinLockout from '@hooks/usePinLockout'
 
-import type { EventPhoto, ScreenEventInfo } from '@actions/events/types'
+import type { EventPhoto, ScreenEventInfo } from '@utils/types/events'
 
 const FAST_POLL_INTERVAL_MS = 5000
 const SYNC_POLL_INTERVAL_MS = 45000

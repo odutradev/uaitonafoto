@@ -1,9 +1,9 @@
-import type { CreditUsageItem, PurchaseItem, TransactionItem } from '@actions/payments/types'
+import type { CreditUsageItem, PurchaseItem, TransactionItem } from '@utils/types/payments'
 import type {
   TransactionDirectionFilter,
   TransactionStatusFilter,
   TransactionTypeFilter
-} from '../../types'
+} from '@pages/app/billing/types'
 
 export type UnifiedHistoryEntry =
   | {

@@ -1,6 +1,6 @@
 import { Box, Typography } from '@mui/material'
 
-import { version } from '@config/default'
+import { version } from '@assets/config'
 import useProfile from './hooks/useProfile'
 import ProfileDetailsForm from './sections/profileDetailsForm'
 import UserOverview from './sections/userOverview'

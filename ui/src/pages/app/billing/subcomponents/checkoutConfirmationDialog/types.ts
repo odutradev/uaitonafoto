@@ -1,4 +1,4 @@
-import type { PlanApiItem } from '@actions/payments/types'
+import type { PlanApiItem } from '@utils/types/payments'
 
 export interface CheckoutConfirmationDialogProps {
   plan: PlanApiItem | null

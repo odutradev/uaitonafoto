@@ -1,4 +1,4 @@
-import type { EventItem, UpdateEventPayload } from '@actions/events/types'
+import type { EventItem, UpdateEventPayload } from '@utils/types/events'
 
 export interface EventSettingsProps {
   event: EventItem

@@ -2,13 +2,13 @@ import { useEffect, useState } from 'react'
 import { useTheme } from '@mui/material/styles'
 
 import { getPlans } from '@actions/payments'
-import { trackEvent } from '@actions/auth/firebase'
-import { formatPriceInBrl } from '@config/formatters'
+import { trackEvent } from '@utils/functions/firebase'
+import { formatPriceInBrl } from '@utils/functions/formatters'
 import useAuth from '@hooks/useAuth'
-import type { PlanApiItem } from '@actions/payments/types'
+import type { PlanApiItem } from '@utils/types/payments'
 
-import landingPageData from '../data'
-import type { PlanCardData } from '../sections/plans/types'
+import landingPageData from '@pages/public/landingPage/data'
+import type { PlanCardData } from '@pages/public/landingPage/sections/plans/types'
 import type { UseLandingPageReturn } from './types'
 
 const formatPlanCard = (item: PlanApiItem): PlanCardData => {

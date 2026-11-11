@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { CLIENT_DEVICE_ID_KEY, getClientDeviceId, getClientFingerprint } from '@/utils/deviceIdentity'
+import { CLIENT_DEVICE_ID_KEY, getClientDeviceId, getClientFingerprint } from '@utils/functions/deviceIdentity'
 import type { PinLockoutOptions, PinLockoutState, StoredPinLockout } from './types'
 
 export { CLIENT_DEVICE_ID_KEY, getClientDeviceId, getClientFingerprint }

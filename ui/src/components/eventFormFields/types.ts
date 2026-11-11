@@ -1,4 +1,4 @@
-import type { EventCreditType, EventCustomization, EventItem, PinRotationMinutes } from '@actions/events/types'
+import type { EventCreditType, EventCustomization, EventItem, PinRotationMinutes } from '@utils/types/events'
 
 export interface EventFormState {
   name: string

@@ -2,8 +2,8 @@ import { Box, Button, Card, CardActionArea, Chip, Paper, Skeleton, Typography } 
 import { PhotoCameraOutlined as PhotoCameraIcon } from '@mui/icons-material'
 import dayjs from 'dayjs'
 
-import { eventPhaseLabels, eventTypeLabels } from '@config/events'
-import { getEventPhase } from '@config/eventPhase'
+import { eventPhaseLabels, eventTypeLabels } from '@assets/data/events'
+import { getEventPhase } from '@utils/functions/eventPhase'
 
 import {
   emptyButtonStyles,

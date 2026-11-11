@@ -17,9 +17,10 @@ import {
 } from '@mui/icons-material'
 
 import Modal from '@components/modal'
-import { getEventLimits, MAX_EVENT_ORGANIZERS } from '@config/events'
+import { MAX_EVENT_ORGANIZERS } from '@assets/data/events'
+import { getEventLimits } from '@utils/functions/events'
 
-import useEventTeam from '../../hooks/useEventTeam'
+import useEventTeam from '@pages/app/eventDetails/hooks/useEventTeam'
 import {
   addOrganizerRowStyles,
   addOrganizerSectionStyles,
@@ -34,7 +35,7 @@ import {
   teamSectionStackStyles
 } from './styles'
 import type { FormEvent } from 'react'
-import type { TeamMember } from '@actions/events/types'
+import type { TeamMember } from '@utils/types/events'
 import type { EventTeamProps } from './types'
 
 const EventTeam = ({ event, currentUserId }: EventTeamProps) => {

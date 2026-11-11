@@ -1,4 +1,4 @@
-import type { LogItem, LogScope } from '@actions/logs/types'
+import type { LogItem, LogScope } from '@utils/types/logs'
 
 export interface LogsTimelineProps {
   logs: LogItem[]

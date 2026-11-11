@@ -9,10 +9,10 @@ import {
   getEventGuests,
   rejectEventPhoto
 } from '@actions/events'
-import { buildRoomStreamUrl } from '@actions/guest/client'
-import { getErrorMessage } from '@config/events'
+import { buildRoomStreamUrl } from '@utils/api/guest'
+import { getErrorMessage } from '@utils/functions/events'
 
-import type { EventGuest, EventPhoto, PaginationMeta } from '@actions/events/types'
+import type { EventGuest, EventPhoto, PaginationMeta } from '@utils/types/events'
 
 const ALBUM_PAGE_SIZE = 24
 

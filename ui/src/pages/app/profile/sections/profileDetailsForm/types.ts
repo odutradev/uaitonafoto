@@ -1,5 +1,5 @@
 import type { FormEvent } from 'react'
-import type { ProfileFormValues } from '../../types'
+import type { ProfileFormValues } from '@pages/app/profile/types'
 
 export interface ProfileDetailsFormProps {
   email: string
