@@ -1,25 +1,14 @@
-import { Box, Container, Link, Stack, Typography } from "@mui/material";
-import { Link as RouterLink } from "react-router-dom";
-
-import {
-  footerBoxStyles,
-  footerCompanyStyles,
-  footerContainerStyles,
-  footerCopyrightStyles,
-  footerLinkItemStyles,
-  footerLinksStyles
-} from "./styles";
+import Logo from "@components/logo";
 import useLandingPage from "@pages/public/landingPage/hook";
 
-const formatCompanyName = (name: string): string => {
-  return name.toLowerCase().replace(/(?:^|\s|-)\S/g, (char) => char.toUpperCase());
-};
+import { Bottom, Brand, FooterBox, FooterLink, Inner, Links, Top } from "./styles";
+
+const formatCompanyName = (name: string): string =>
+  name.toLowerCase().replace(/(?:^|\s|-)\S/g, (char) => char.toUpperCase());
 
 const formatCnpj = (cnpj: string): string => {
   const digits = cnpj.replace(/\D/g, "");
-  if (digits.length === 14) {
-    return digits.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, "$1.$2.$3/$4-$5");
-  }
+  if (digits.length === 14) return digits.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, "$1.$2.$3/$4-$5");
   return cnpj;
 };
 
@@ -39,37 +28,25 @@ export const Footer = () => {
     .join(" • ");
 
   return (
-    <Box component="footer" sx={footerBoxStyles}>
-      <Container maxWidth="lg" sx={footerContainerStyles}>
-        <Typography variant="body2" color="text.secondary" sx={footerCopyrightStyles}>
-          {copyrightText}
-        </Typography>
-
-        <Stack direction="row" spacing={1.5} sx={footerLinksStyles}>
-          <Link component={RouterLink} to="/termos-de-uso" color="text.secondary" sx={footerLinkItemStyles}>
-            Termos de Uso
-          </Link>
-          <Typography variant="body2" color="text.secondary">
-            •
-          </Typography>
-          <Link component={RouterLink} to="/politica-de-cancelamento" color="text.secondary" sx={footerLinkItemStyles}>
-            Cancelamento e Reembolso
-          </Link>
-          <Typography variant="body2" color="text.secondary">
-            •
-          </Typography>
-          <Link component={RouterLink} to="/id" color="text.secondary" sx={footerLinkItemStyles}>
-            Identidade Visual
-          </Link>
-        </Stack>
-
-        {companyInfo && (
-          <Typography variant="body2" color="text.secondary" sx={footerCompanyStyles}>
-            {companyInfo}
-          </Typography>
-        )}
-      </Container>
-    </Box>
+    <FooterBox>
+      <Inner>
+        <Top>
+          <Brand>
+            <Logo size="medium" variant="dark" />
+            <p>{content.hero.description.split(".")[0]}.</p>
+          </Brand>
+          <Links aria-label="Links institucionais">
+            <FooterLink to="/termos-de-uso">Termos de Uso</FooterLink>
+            <FooterLink to="/politica-de-cancelamento">Cancelamento e Reembolso</FooterLink>
+            <FooterLink to="/id">Identidade Visual</FooterLink>
+          </Links>
+        </Top>
+        <Bottom>
+          <span>{copyrightText}</span>
+          {companyInfo && <span>{companyInfo}</span>}
+        </Bottom>
+      </Inner>
+    </FooterBox>
   );
 };
 
