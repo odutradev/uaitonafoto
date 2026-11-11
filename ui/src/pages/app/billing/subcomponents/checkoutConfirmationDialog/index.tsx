@@ -1,20 +1,53 @@
-import { Box, Button, Chip, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from '@mui/material'
-import { CheckCircle as CheckCircleIcon, LockOutlined as LockIcon, ShieldOutlined as ShieldIcon } from '@mui/icons-material'
+import {
+  Box,
+  Button,
+  Chip,
+  CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Typography
+} from "@mui/material";
+import {
+  CheckCircle as CheckCircleIcon,
+  LockOutlined as LockIcon,
+  ShieldOutlined as ShieldIcon
+} from "@mui/icons-material";
 
-import { formatPriceInBrl } from '@utils/functions/formatters'
+import { formatPriceInBrl } from "@utils/functions/formatters";
 
-import { cancelButtonStyles, checkIconStyles, confirmButtonStyles, confirmationDialogPaperStyles, dialogActionsStyles, dialogContentBoxStyles, featureRowStyles, featuresContainerStyles, noticeBoxStyles, planSummaryCardStyles, priceRowStyles, priceValueStyles } from './styles'
-import useBillingPage from '@pages/app/billing/hook'
+import {
+  cancelButtonStyles,
+  checkIconStyles,
+  confirmButtonStyles,
+  confirmationDialogPaperStyles,
+  dialogActionsStyles,
+  dialogContentBoxStyles,
+  featureRowStyles,
+  featuresContainerStyles,
+  noticeBoxStyles,
+  planSummaryCardStyles,
+  priceRowStyles,
+  priceValueStyles
+} from "./styles";
+import useBillingPage from "@pages/app/billing/hook";
 
 export const CheckoutConfirmationDialog = () => {
-  const { confirmingPlan: plan, isConfirmingCheckout: open, isCheckoutBusy: isLoading, handleCloseCheckoutConfirmation: onClose, handleConfirmCheckout: onConfirm } = useBillingPage()
+  const {
+    confirmingPlan: plan,
+    isConfirmingCheckout: open,
+    isCheckoutBusy: isLoading,
+    handleCloseCheckoutConfirmation: onClose,
+    handleConfirmCheckout: onConfirm
+  } = useBillingPage();
 
-  if (!plan) return null
+  if (!plan) return null;
 
-  const formattedPrice = formatPriceInBrl(plan.price)
-  const isSubscription = plan.type === 'SUBSCRIPTION'
-  const periodText = plan.period || (isSubscription ? '/mês' : 'pagamento único')
-  const planCreditsLabel = plan.credits > 0 ? `+${plan.credits} ${plan.credits === 1 ? 'crédito' : 'créditos'}` : null
+  const formattedPrice = formatPriceInBrl(plan.price);
+  const isSubscription = plan.type === "SUBSCRIPTION";
+  const periodText = plan.period || (isSubscription ? "/mês" : "pagamento único");
+  const planCreditsLabel = plan.credits > 0 ? `+${plan.credits} ${plan.credits === 1 ? "crédito" : "créditos"}` : null;
 
   return (
     <Dialog
@@ -32,11 +65,13 @@ export const CheckoutConfirmationDialog = () => {
       <DialogContent sx={{ px: 3, py: 1 }}>
         <Box sx={dialogContentBoxStyles}>
           <Box sx={planSummaryCardStyles}>
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1, flexWrap: 'wrap' }}>
+            <Box
+              sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 1, flexWrap: "wrap" }}
+            >
               <Typography variant="h6" component="h3" fontWeight={800}>
                 {plan.title || plan.name}
               </Typography>
-              <Box sx={{ display: 'flex', gap: 0.75, alignItems: 'center' }}>
+              <Box sx={{ display: "flex", gap: 0.75, alignItems: "center" }}>
                 {plan.tag && (
                   <Chip
                     size="small"
@@ -47,12 +82,7 @@ export const CheckoutConfirmationDialog = () => {
                   />
                 )}
                 {planCreditsLabel && (
-                  <Chip
-                    size="small"
-                    label={planCreditsLabel}
-                    color="primary"
-                    sx={{ fontWeight: 700, height: 22 }}
-                  />
+                  <Chip size="small" label={planCreditsLabel} color="primary" sx={{ fontWeight: 700, height: 22 }} />
                 )}
               </Box>
             </Box>
@@ -67,7 +97,7 @@ export const CheckoutConfirmationDialog = () => {
             </Box>
 
             {plan.costPerEvent && (
-              <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1, fontWeight: 600 }}>
+              <Typography variant="caption" color="text.secondary" sx={{ display: "block", mb: 1, fontWeight: 600 }}>
                 {plan.costPerEvent}
               </Typography>
             )}
@@ -78,7 +108,12 @@ export const CheckoutConfirmationDialog = () => {
 
             {Array.isArray(plan.features) && plan.features.length > 0 && (
               <Box sx={featuresContainerStyles}>
-                <Typography variant="caption" fontWeight={700} color="text.secondary" sx={{ textTransform: 'uppercase' }}>
+                <Typography
+                  variant="caption"
+                  fontWeight={700}
+                  color="text.secondary"
+                  sx={{ textTransform: "uppercase" }}
+                >
                   O que está incluso:
                 </Typography>
                 {plan.features.map((feature, idx) => (
@@ -100,7 +135,8 @@ export const CheckoutConfirmationDialog = () => {
                 Ambiente de pagamento seguro
               </Typography>
               <Typography variant="caption" color="text.secondary" component="p" sx={{ mt: 0.25 }}>
-                Ao confirmar, você será direcionado ao checkout oficial da <strong>AbacatePay</strong> para escolher entre <strong>PIX</strong> ou <strong>Cartão de Crédito</strong> com total segurança.
+                Ao confirmar, você será direcionado ao checkout oficial da <strong>AbacatePay</strong> para escolher
+                entre <strong>PIX</strong> ou <strong>Cartão de Crédito</strong> com total segurança.
               </Typography>
             </Box>
           </Box>
@@ -108,13 +144,7 @@ export const CheckoutConfirmationDialog = () => {
       </DialogContent>
 
       <DialogActions disableSpacing sx={dialogActionsStyles}>
-        <Button
-          variant="outlined"
-          color="inherit"
-          disabled={isLoading}
-          onClick={onClose}
-          sx={cancelButtonStyles}
-        >
+        <Button variant="outlined" color="inherit" disabled={isLoading} onClick={onClose} sx={cancelButtonStyles}>
           Cancelar
         </Button>
         <Button
@@ -126,11 +156,11 @@ export const CheckoutConfirmationDialog = () => {
           startIcon={isLoading ? <CircularProgress size={18} color="inherit" /> : <LockIcon fontSize="small" />}
           sx={confirmButtonStyles}
         >
-          {isLoading ? 'Gerando checkout...' : 'Confirmar e ir para pagamento'}
+          {isLoading ? "Gerando checkout..." : "Confirmar e ir para pagamento"}
         </Button>
       </DialogActions>
     </Dialog>
-  )
-}
+  );
+};
 
-export default CheckoutConfirmationDialog
+export default CheckoutConfirmationDialog;

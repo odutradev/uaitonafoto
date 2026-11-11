@@ -1,134 +1,168 @@
-import { useEffect, useMemo, useState } from 'react'
-import { Avatar, Box, Button, Card, CircularProgress, IconButton, InputAdornment, TextField, Tooltip, Typography } from '@mui/material'
-import { CollectionsOutlined as PhotoIcon, DeleteOutline as DeleteIcon, EditOutlined as EditIcon, LockOpenOutlined as LockOpenIcon, LockOutlined as LockIcon, PeopleAltOutlined as GuestIcon, RefreshOutlined as RefreshIcon, SearchOutlined as SearchIcon } from '@mui/icons-material'
-import dayjs from 'dayjs'
-import { toast } from 'react-toastify'
+import { useEffect, useMemo, useState } from "react";
+import {
+  Avatar,
+  Box,
+  Button,
+  Card,
+  CircularProgress,
+  IconButton,
+  InputAdornment,
+  TextField,
+  Tooltip,
+  Typography
+} from "@mui/material";
+import {
+  CollectionsOutlined as PhotoIcon,
+  DeleteOutline as DeleteIcon,
+  EditOutlined as EditIcon,
+  LockOpenOutlined as LockOpenIcon,
+  LockOutlined as LockIcon,
+  PeopleAltOutlined as GuestIcon,
+  RefreshOutlined as RefreshIcon,
+  SearchOutlined as SearchIcon
+} from "@mui/icons-material";
+import dayjs from "dayjs";
+import { toast } from "react-toastify";
 
-import Modal from '@components/modal'
-import { deleteEventGuest, getEventGuests, setEventGuestBlock, updateEventGuest } from '@actions/events'
-import type { EventGuest } from '@utils/types/events'
-import { compactIconButtonStyles, countBadgeStyles, guestCardStyles, guestHeaderStyles, guestsCardStyles, guestsGridStyles, guestsHeaderActionsStyles, guestsHeaderRowStyles, guestsSectionStackStyles, guestStatusPillStyles } from './styles'
-import useEventDetailsPage from '@pages/app/eventDetails/hook'
-import useAction from '@hooks/useAction'
+import Modal from "@components/modal";
+import { deleteEventGuest, getEventGuests, setEventGuestBlock, updateEventGuest } from "@actions/events";
+import type { EventGuest } from "@utils/types/events";
+import {
+  compactIconButtonStyles,
+  countBadgeStyles,
+  guestCardStyles,
+  guestHeaderStyles,
+  guestsCardStyles,
+  guestsGridStyles,
+  guestsHeaderActionsStyles,
+  guestsHeaderRowStyles,
+  guestsSectionStackStyles,
+  guestStatusPillStyles
+} from "./styles";
+import useEventDetailsPage from "@pages/app/eventDetails/hook";
+import useAction from "@hooks/useAction";
 
 const EventGuests = () => {
-  const runAction = useAction()
-  const { event: eventValue } = useEventDetailsPage()
-  const event = eventValue!
+  const runAction = useAction();
+  const { event: eventValue } = useEventDetailsPage();
+  const event = eventValue!;
 
-  const [guests, setGuests] = useState<EventGuest[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [isRefreshing, setIsRefreshing] = useState(false)
-  const [searchQuery, setSearchQuery] = useState('')
-  const [actionLoadingId, setActionLoadingId] = useState<string | null>(null)
+  const [guests, setGuests] = useState<EventGuest[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [actionLoadingId, setActionLoadingId] = useState<string | null>(null);
 
-  const [editingGuest, setEditingGuest] = useState<EventGuest | null>(null)
-  const [editNameInput, setEditNameInput] = useState('')
+  const [editingGuest, setEditingGuest] = useState<EventGuest | null>(null);
+  const [editNameInput, setEditNameInput] = useState("");
 
-  const [deletingGuest, setDeletingGuest] = useState<EventGuest | null>(null)
+  const [deletingGuest, setDeletingGuest] = useState<EventGuest | null>(null);
 
   const loadGuests = async (showLoading = true) => {
-    if (showLoading) setIsLoading(true)
+    if (showLoading) setIsLoading(true);
     await runAction({
       action: async () => {
-        const data = await getEventGuests(event.id)
-        setGuests(data)
+        const data = await getEventGuests(event.id);
+        setGuests(data);
       },
-      toastMessages: { error: 'Não foi possível carregar a lista de convidados.' }
-    })
-    if (showLoading) setIsLoading(false)
-  }
+      toastMessages: { error: "Não foi possível carregar a lista de convidados." }
+    });
+    if (showLoading) setIsLoading(false);
+  };
 
   useEffect(() => {
-    loadGuests()
-  }, [event.id])
+    loadGuests();
+  }, [event.id]);
 
   const handleRefresh = async () => {
-    setIsRefreshing(true)
+    setIsRefreshing(true);
     try {
-      await loadGuests(false)
-      toast.success('Lista de convidados atualizada!')
+      await loadGuests(false);
+      toast.success("Lista de convidados atualizada!");
     } finally {
-      setIsRefreshing(false)
+      setIsRefreshing(false);
     }
-  }
+  };
 
   const handleToggleBlock = async (guest: EventGuest) => {
-    setActionLoadingId(guest.id)
-    const nextBlock = !guest.isBlocked
+    setActionLoadingId(guest.id);
+    const nextBlock = !guest.isBlocked;
     await runAction({
       action: async () => {
-        const updated = await setEventGuestBlock(event.id, guest.id, nextBlock)
-        setGuests((prev) => prev.map((g) => (g.id === guest.id ? updated : g)))
+        const updated = await setEventGuestBlock(event.id, guest.id, nextBlock);
+        setGuests((prev) => prev.map((g) => (g.id === guest.id ? updated : g)));
       },
-      toastMessages: { success: nextBlock ? `${guest.name} foi bloqueado(a).` : `${guest.name} foi desbloqueado(a)!`, error: nextBlock ? 'Não foi possível bloquear o convidado.' : 'Não foi possível desbloquear o convidado.' }
-    })
-    setActionLoadingId(null)
-  }
+      toastMessages: {
+        success: nextBlock ? `${guest.name} foi bloqueado(a).` : `${guest.name} foi desbloqueado(a)!`,
+        error: nextBlock ? "Não foi possível bloquear o convidado." : "Não foi possível desbloquear o convidado."
+      }
+    });
+    setActionLoadingId(null);
+  };
 
   const handleOpenEdit = (guest: EventGuest) => {
-    setEditingGuest(guest)
-    setEditNameInput(guest.name)
-  }
+    setEditingGuest(guest);
+    setEditNameInput(guest.name);
+  };
 
   const handleConfirmEdit = async () => {
-    if (!editingGuest) return
-    const trimmed = editNameInput.trim()
+    if (!editingGuest) return;
+    const trimmed = editNameInput.trim();
     if (!trimmed) {
-      toast.error('Informe um nome válido.')
-      return
+      toast.error("Informe um nome válido.");
+      return;
     }
 
-    setActionLoadingId(editingGuest.id)
+    setActionLoadingId(editingGuest.id);
     await runAction({
       action: async () => {
-        const updated = await updateEventGuest(event.id, editingGuest.id, trimmed)
-        setGuests((prev) => prev.map((g) => (g.id === editingGuest.id ? updated : g)))
-        setEditingGuest(null)
+        const updated = await updateEventGuest(event.id, editingGuest.id, trimmed);
+        setGuests((prev) => prev.map((g) => (g.id === editingGuest.id ? updated : g)));
+        setEditingGuest(null);
       },
-      toastMessages: { success: 'Nome do convidado atualizado!', error: 'Não foi possível atualizar o convidado.' }
-    })
-    setActionLoadingId(null)
-  }
+      toastMessages: { success: "Nome do convidado atualizado!", error: "Não foi possível atualizar o convidado." }
+    });
+    setActionLoadingId(null);
+  };
 
   const handleOpenDelete = (guest: EventGuest) => {
-    setDeletingGuest(guest)
-  }
+    setDeletingGuest(guest);
+  };
 
   const handleConfirmDelete = async () => {
-    if (!deletingGuest) return
-    setActionLoadingId(deletingGuest.id)
+    if (!deletingGuest) return;
+    setActionLoadingId(deletingGuest.id);
     await runAction({
       action: async () => {
-        await deleteEventGuest(event.id, deletingGuest.id)
-        setGuests((prev) => prev.filter((g) => g.id !== deletingGuest.id))
-        setDeletingGuest(null)
+        await deleteEventGuest(event.id, deletingGuest.id);
+        setGuests((prev) => prev.filter((g) => g.id !== deletingGuest.id));
+        setDeletingGuest(null);
       },
-      toastMessages: { success: 'Convidado removido do evento.', error: 'Não foi possível remover o convidado.' }
-    })
-    setActionLoadingId(null)
-  }
+      toastMessages: { success: "Convidado removido do evento.", error: "Não foi possível remover o convidado." }
+    });
+    setActionLoadingId(null);
+  };
 
   const filteredGuests = useMemo(() => {
-    const q = searchQuery.trim().toLowerCase()
-    if (!q) return guests
-    return guests.filter((g) => g.name.toLowerCase().includes(q))
-  }, [guests, searchQuery])
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return guests;
+    return guests.filter((g) => g.name.toLowerCase().includes(q));
+  }, [guests, searchQuery]);
 
   const stats = useMemo(() => {
-    const total = guests.length
-    const blocked = guests.filter((g) => g.isBlocked).length
-    const active = total - blocked
-    const totalPhotos = guests.reduce((acc, g) => acc + (g.photosCount || 0), 0)
-    return { total, active, blocked, totalPhotos }
-  }, [guests])
+    const total = guests.length;
+    const blocked = guests.filter((g) => g.isBlocked).length;
+    const active = total - blocked;
+    const totalPhotos = guests.reduce((acc, g) => acc + (g.photosCount || 0), 0);
+    return { total, active, blocked, totalPhotos };
+  }, [guests]);
 
   return (
     <Box sx={guestsSectionStackStyles}>
       <Card variant="outlined" sx={guestsCardStyles}>
         <Box sx={guestsHeaderRowStyles}>
           <Box>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
               <Typography variant="h6" fontWeight={700}>
                 Gestão de Convidados
               </Typography>
@@ -139,7 +173,8 @@ const EventGuests = () => {
               )}
             </Box>
             <Typography variant="caption" color="text.secondary">
-              Gerencie individualmente os convidados que acessaram o evento, com opção de renomear, desbloquear e moderar.
+              Gerencie individualmente os convidados que acessaram o evento, com opção de renomear, desbloquear e
+              moderar.
             </Typography>
           </Box>
 
@@ -147,17 +182,19 @@ const EventGuests = () => {
             <Button
               variant="outlined"
               size="small"
-              startIcon={isRefreshing ? <CircularProgress size={14} color="inherit" /> : <RefreshIcon fontSize="small" />}
+              startIcon={
+                isRefreshing ? <CircularProgress size={14} color="inherit" /> : <RefreshIcon fontSize="small" />
+              }
               onClick={handleRefresh}
               disabled={isRefreshing || isLoading}
-              sx={{ borderColor: 'divider', color: 'text.secondary' }}
+              sx={{ borderColor: "divider", color: "text.secondary" }}
             >
               Atualizar
             </Button>
           </Box>
         </Box>
 
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 2 }}>
+        <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 2 }}>
           <TextField
             size="small"
             placeholder="Buscar convidado por nome..."
@@ -167,15 +204,15 @@ const EventGuests = () => {
               input: {
                 startAdornment: (
                   <InputAdornment position="start">
-                    <SearchIcon fontSize="small" sx={{ color: 'text.secondary' }} />
+                    <SearchIcon fontSize="small" sx={{ color: "text.secondary" }} />
                   </InputAdornment>
                 )
               }
             }}
-            sx={{ width: { xs: '100%', sm: 300 } }}
+            sx={{ width: { xs: "100%", sm: 300 } }}
           />
 
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: 'wrap' }}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, flexWrap: "wrap" }}>
             <Typography variant="caption" color="text.secondary">
               Ativos: <strong>{stats.active}</strong>
             </Typography>
@@ -191,25 +228,23 @@ const EventGuests = () => {
         </Box>
 
         {isLoading ? (
-          <Box sx={{ display: 'flex', justifyContent: 'center', py: 6 }}>
+          <Box sx={{ display: "flex", justifyContent: "center", py: 6 }}>
             <CircularProgress size={32} />
           </Box>
         ) : filteredGuests.length === 0 ? (
           <Box
             sx={{
               p: 4,
-              textAlign: 'center',
-              borderRadius: '12px',
-              border: '1px dashed',
-              borderColor: 'divider',
-              bgcolor: 'action.hover'
+              textAlign: "center",
+              borderRadius: "12px",
+              border: "1px dashed",
+              borderColor: "divider",
+              bgcolor: "action.hover"
             }}
           >
-            <GuestIcon sx={{ fontSize: 36, color: 'text.secondary', mb: 1, opacity: 0.7 }} />
+            <GuestIcon sx={{ fontSize: 36, color: "text.secondary", mb: 1, opacity: 0.7 }} />
             <Typography variant="body2" color="text.secondary" fontWeight={500}>
-              {searchQuery
-                ? 'Nenhum convidado encontrado com esse nome.'
-                : 'Nenhum convidado entrou no evento ainda.'}
+              {searchQuery ? "Nenhum convidado encontrado com esse nome." : "Nenhum convidado entrou no evento ainda."}
             </Typography>
             <Typography variant="caption" color="text.secondary">
               Assim que os participantes escanearem o QR Code e entrarem, eles aparecerão aqui.
@@ -218,18 +253,18 @@ const EventGuests = () => {
         ) : (
           <Box sx={guestsGridStyles}>
             {filteredGuests.map((guest) => {
-              const isActionLoading = actionLoadingId === guest.id
+              const isActionLoading = actionLoadingId === guest.id;
               return (
                 <Box key={guest.id} sx={guestCardStyles}>
                   <Box sx={guestHeaderStyles}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 0 }}>
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1, minWidth: 0 }}>
                       <Avatar
                         sx={{
                           width: 32,
                           height: 32,
-                          fontSize: '0.8125rem',
+                          fontSize: "0.8125rem",
                           fontWeight: 700,
-                          bgcolor: guest.isBlocked ? 'error.dark' : 'primary.main'
+                          bgcolor: guest.isBlocked ? "error.dark" : "primary.main"
                         }}
                       >
                         {guest.name.charAt(0).toUpperCase()}
@@ -238,12 +273,12 @@ const EventGuests = () => {
                         <Typography variant="subtitle2" fontWeight={700} noWrap>
                           {guest.name}
                         </Typography>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, flexWrap: 'wrap' }}>
+                        <Box sx={{ display: "flex", alignItems: "center", gap: 0.75, flexWrap: "wrap" }}>
                           <Box component="span" sx={guestStatusPillStyles(guest.isBlocked)}>
-                            {guest.isBlocked ? 'Bloqueado' : 'Ativo'}
+                            {guest.isBlocked ? "Bloqueado" : "Ativo"}
                           </Box>
-                          {guest.ip && guest.ip !== 'unknown' && (
-                            <Typography variant="caption" sx={{ fontSize: '0.6875rem', color: 'text.disabled' }}>
+                          {guest.ip && guest.ip !== "unknown" && (
+                            <Typography variant="caption" sx={{ fontSize: "0.6875rem", color: "text.disabled" }}>
                               {guest.ip}
                             </Typography>
                           )}
@@ -251,18 +286,18 @@ const EventGuests = () => {
                       </Box>
                     </Box>
 
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.25, flexShrink: 0 }}>
-                      <Tooltip title={guest.isBlocked ? 'Desbloquear convidado' : 'Bloquear convidado'}>
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 0.25, flexShrink: 0 }}>
+                      <Tooltip title={guest.isBlocked ? "Desbloquear convidado" : "Bloquear convidado"}>
                         <IconButton
                           size="small"
                           onClick={() => handleToggleBlock(guest)}
                           disabled={isActionLoading}
-                          aria-label={guest.isBlocked ? 'Desbloquear convidado' : 'Bloquear convidado'}
+                          aria-label={guest.isBlocked ? "Desbloquear convidado" : "Bloquear convidado"}
                           sx={{
                             ...compactIconButtonStyles,
-                            color: guest.isBlocked ? 'warning.main' : 'text.secondary',
-                            '&:hover': {
-                              color: guest.isBlocked ? 'warning.light' : 'text.primary'
+                            color: guest.isBlocked ? "warning.main" : "text.secondary",
+                            "&:hover": {
+                              color: guest.isBlocked ? "warning.light" : "text.primary"
                             }
                           }}
                         >
@@ -293,7 +328,7 @@ const EventGuests = () => {
                           onClick={() => handleOpenDelete(guest)}
                           disabled={isActionLoading}
                           aria-label="Remover convidado"
-                          sx={{ ...compactIconButtonStyles, color: 'error.main' }}
+                          sx={{ ...compactIconButtonStyles, color: "error.main" }}
                         >
                           <DeleteIcon sx={{ fontSize: 16 }} />
                         </IconButton>
@@ -301,20 +336,20 @@ const EventGuests = () => {
                     </Box>
                   </Box>
 
-                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                      <PhotoIcon sx={{ fontSize: 15, color: 'text.secondary' }} />
+                  <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 1 }}>
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                      <PhotoIcon sx={{ fontSize: 15, color: "text.secondary" }} />
                       <Typography variant="caption" color="text.secondary">
-                        {guest.photosCount} {guest.photosCount === 1 ? 'foto' : 'fotos'}
+                        {guest.photosCount} {guest.photosCount === 1 ? "foto" : "fotos"}
                       </Typography>
                     </Box>
 
                     <Typography variant="caption" color="text.secondary">
-                      {dayjs(guest.createdAt).format('DD/MM [às] HH:mm')}
+                      {dayjs(guest.createdAt).format("DD/MM [às] HH:mm")}
                     </Typography>
                   </Box>
                 </Box>
-              )
+              );
             })}
           </Box>
         )}
@@ -326,7 +361,7 @@ const EventGuests = () => {
         title="Renomear Convidado"
         description="Altere a identificação do convidado no evento."
       >
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 1 }}>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 2, pt: 1 }}>
           <TextField
             autoFocus
             label="Nome do convidado"
@@ -336,12 +371,8 @@ const EventGuests = () => {
             disabled={actionLoadingId !== null}
             fullWidth
           />
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
-            <Button
-              variant="text"
-              onClick={() => setEditingGuest(null)}
-              disabled={actionLoadingId !== null}
-            >
+          <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1 }}>
+            <Button variant="text" onClick={() => setEditingGuest(null)} disabled={actionLoadingId !== null}>
               Cancelar
             </Button>
             <Button
@@ -361,27 +392,17 @@ const EventGuests = () => {
         title="Remover Convidado"
         description={`Tem certeza que deseja remover ${deletingGuest?.name} deste evento? O convidado perderá o acesso à sessão atual.`}
       >
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1, pt: 2 }}>
-          <Button
-            variant="text"
-            onClick={() => setDeletingGuest(null)}
-            disabled={actionLoadingId !== null}
-          >
+        <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1, pt: 2 }}>
+          <Button variant="text" onClick={() => setDeletingGuest(null)} disabled={actionLoadingId !== null}>
             Cancelar
           </Button>
-          <Button
-            variant="contained"
-            color="error"
-            onClick={handleConfirmDelete}
-            disabled={actionLoadingId !== null}
-          >
+          <Button variant="contained" color="error" onClick={handleConfirmDelete} disabled={actionLoadingId !== null}>
             Remover
           </Button>
         </Box>
       </Modal>
     </Box>
-  )
-}
+  );
+};
 
-export default EventGuests
-
+export default EventGuests;

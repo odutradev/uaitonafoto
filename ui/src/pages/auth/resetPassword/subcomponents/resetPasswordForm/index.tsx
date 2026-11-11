@@ -1,8 +1,8 @@
-import { Box, Button, Container, Paper, Stack, TextField, Typography } from '@mui/material'
-import { Link as RouterLink } from 'react-router-dom'
+import { Box, Button, Container, Paper, Stack, TextField, Typography } from "@mui/material";
+import { Link as RouterLink } from "react-router-dom";
 
-import Logo from '@components/logo'
-import ThemeToggle from '@components/themeToggle'
+import Logo from "@components/logo";
+import ThemeToggle from "@components/themeToggle";
 
 import {
   backButtonStyles,
@@ -11,11 +11,20 @@ import {
   submitButtonStyles,
   themeToggleStyles,
   titleStyles
-} from './styles'
-import useResetPasswordPage from '@pages/auth/resetPassword/hook'
+} from "./styles";
+import useResetPasswordPage from "@pages/auth/resetPassword/hook";
 
 export const ResetPasswordForm = () => {
-  const { token, email, setEmail, password, setPassword, submitting, submitted, handleSubmit: onSubmit } = useResetPasswordPage()
+  const {
+    token,
+    email,
+    setEmail,
+    password,
+    setPassword,
+    submitting,
+    submitted,
+    handleSubmit: onSubmit
+  } = useResetPasswordPage();
 
   return (
     <Container maxWidth="xs">
@@ -26,7 +35,7 @@ export const ResetPasswordForm = () => {
 
         <Paper elevation={0} sx={cardStyles}>
           <Stack component="form" onSubmit={onSubmit} spacing={2.5} alignItems="center">
-            <RouterLink to="/" style={{ textDecoration: 'none' }}>
+            <RouterLink to="/" style={{ textDecoration: "none" }}>
               <Logo size="medium" animation="eye" sx={{ mb: 1 }} />
             </RouterLink>
 
@@ -70,24 +79,17 @@ export const ResetPasswordForm = () => {
               startIcon={submitting ? <Logo display="symbol" loading="l3" size={20} /> : undefined}
               sx={submitButtonStyles}
             >
-              {token ? 'Salvar nova senha' : 'Enviar link de recuperação'}
+              {token ? "Salvar nova senha" : "Enviar link de recuperação"}
             </Button>
 
-            <Button
-              component={RouterLink}
-              to="/signin"
-              variant="text"
-              size="small"
-              sx={backButtonStyles}
-            >
+            <Button component={RouterLink} to="/signin" variant="text" size="small" sx={backButtonStyles}>
               Voltar ao login
             </Button>
           </Stack>
         </Paper>
       </Box>
     </Container>
-  )
-}
+  );
+};
 
-export default ResetPasswordForm
-
+export default ResetPasswordForm;

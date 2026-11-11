@@ -1,61 +1,62 @@
-import { Box, Typography } from '@mui/material'
-import { Favorite as LikeIcon, PhotoCameraOutlined as CameraIcon } from '@mui/icons-material'
+import { Box, Typography } from "@mui/material";
+import { Favorite as LikeIcon, PhotoCameraOutlined as CameraIcon } from "@mui/icons-material";
 
-import { formatGuestTaNaFoto } from '@utils/functions/events'
-import { brandColors } from '@styles/theme'
+import { formatGuestTaNaFoto } from "@utils/functions/events";
+import { brandColors } from "@styles/theme";
 
-import { bannerAuthorStyles, bannerLikesStyles, bannerTextRowStyles, bannerTextStyles, getMainCardStyles, getPhotoContainerStyles, getPhotoStyles, photoBackdropStyles, waitingEmptyStyles, yellowBannerStyles } from '@pages/app/eventScreen/styles'
-import type { EventPhoto } from '@utils/types/events'
-import type { ScreenPhotoFit } from '@pages/app/eventScreen/types'
+import {
+  bannerAuthorStyles,
+  bannerLikesStyles,
+  bannerTextRowStyles,
+  bannerTextStyles,
+  getMainCardStyles,
+  getPhotoContainerStyles,
+  getPhotoStyles,
+  photoBackdropStyles,
+  waitingEmptyStyles,
+  yellowBannerStyles
+} from "@pages/app/eventScreen/styles";
+import type { EventPhoto } from "@utils/types/events";
+import type { ScreenPhotoFit } from "@pages/app/eventScreen/types";
 
 interface ScreenPhotoStageProps {
-  currentPhoto: EventPhoto | null
-  isNewArrival: boolean
-  photoFit?: ScreenPhotoFit
+  currentPhoto: EventPhoto | null;
+  isNewArrival: boolean;
+  photoFit?: ScreenPhotoFit;
 }
 
-export const ScreenPhotoStage = ({
-  currentPhoto,
-  isNewArrival,
-  photoFit = 'cover'
-}: ScreenPhotoStageProps) => {
+export const ScreenPhotoStage = ({ currentPhoto, isNewArrival, photoFit = "cover" }: ScreenPhotoStageProps) => {
   return (
     <Box sx={getMainCardStyles(isNewArrival)}>
       {currentPhoto ? (
         <>
           <Box sx={getPhotoContainerStyles(photoFit)}>
             {/* Se photoFit for contain, renderiza backdrop sutil para quem desejar ver a imagem inteira */}
-            {photoFit === 'contain' && (
-              <Box
-                component="img"
-                src={currentPhoto.url}
-                alt=""
-                aria-hidden="true"
-                sx={photoBackdropStyles}
-              />
+            {photoFit === "contain" && (
+              <Box component="img" src={currentPhoto.url} alt="" aria-hidden="true" sx={photoBackdropStyles} />
             )}
 
             {/* Apenas o badge de evento recém-chegado (sem duplicar o texto da missão sobre a foto) */}
             {isNewArrival && (
               <Box
                 sx={{
-                  position: 'absolute',
+                  position: "absolute",
                   top: 18,
                   left: 18,
                   bgcolor: brandColors.flashYellow,
                   color: brandColors.ink,
                   fontWeight: 900,
-                  fontSize: '0.8rem',
-                  letterSpacing: '0.04em',
-                  textTransform: 'uppercase',
+                  fontSize: "0.8rem",
+                  letterSpacing: "0.04em",
+                  textTransform: "uppercase",
                   px: 2,
                   py: 0.7,
-                  borderRadius: '9999px',
-                  boxShadow: '0 4px 20px rgba(0,0,0,0.4)',
-                  display: 'flex',
-                  alignItems: 'center',
+                  borderRadius: "9999px",
+                  boxShadow: "0 4px 20px rgba(0,0,0,0.4)",
+                  display: "flex",
+                  alignItems: "center",
                   gap: 1,
-                  animation: 'photoEntrance 0.5s ease',
+                  animation: "photoEntrance 0.5s ease",
                   zIndex: 5
                 }}
               >
@@ -63,7 +64,7 @@ export const ScreenPhotoStage = ({
                   sx={{
                     width: 8,
                     height: 8,
-                    borderRadius: '50%',
+                    borderRadius: "50%",
                     bgcolor: brandColors.ink
                   }}
                 />
@@ -111,11 +112,11 @@ export const ScreenPhotoStage = ({
             <Typography
               variant="h4"
               fontWeight={900}
-              sx={{ fontFamily: "'Bricolage Grotesque', sans-serif", letterSpacing: '-0.03em' }}
+              sx={{ fontFamily: "'Bricolage Grotesque', sans-serif", letterSpacing: "-0.03em" }}
             >
               O mural ao vivo está aberto!
             </Typography>
-            <Typography variant="body1" sx={{ color: 'text.secondary', maxWidth: 440 }}>
+            <Typography variant="body1" sx={{ color: "text.secondary", maxWidth: 440 }}>
               Aponte a câmera do seu celular para o QR Code ao lado e seja o primeiro a mandar sua foto.
             </Typography>
           </Box>
@@ -133,7 +134,7 @@ export const ScreenPhotoStage = ({
         </>
       )}
     </Box>
-  )
-}
+  );
+};
 
-export default ScreenPhotoStage
+export default ScreenPhotoStage;

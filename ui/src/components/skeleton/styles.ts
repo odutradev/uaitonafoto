@@ -1,30 +1,29 @@
-import type { SxProps, Theme } from '@mui/material'
+import type { SxProps, Theme } from "@mui/material";
 
 export const getSkeletonStyles = (
   isDark: boolean,
   borderRadius?: number | string,
-  color: 'primary' | 'neutral' = 'primary'
+  color: "primary" | "neutral" = "primary"
 ): SxProps<Theme> => {
-  if (color === 'primary') {
+  if (color === "primary") {
     return {
-      bgcolor: isDark ? 'rgba(255, 207, 31, 0.14)' : 'rgba(255, 207, 31, 0.22)',
-      borderRadius: borderRadius ?? '8px',
-      '&::after': {
+      bgcolor: isDark ? "rgba(255, 207, 31, 0.14)" : "rgba(255, 207, 31, 0.22)",
+      borderRadius: borderRadius ?? "8px",
+      "&::after": {
         background: isDark
-          ? 'linear-gradient(90deg, transparent, rgba(255, 207, 31, 0.3), transparent)'
-          : 'linear-gradient(90deg, transparent, rgba(255, 207, 31, 0.45), transparent)'
+          ? "linear-gradient(90deg, transparent, rgba(255, 207, 31, 0.3), transparent)"
+          : "linear-gradient(90deg, transparent, rgba(255, 207, 31, 0.45), transparent)"
       }
-    }
+    };
   }
 
   return {
-    bgcolor: isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(23, 20, 15, 0.08)',
-    borderRadius: borderRadius ?? '8px',
-    '&::after': {
+    bgcolor: isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(23, 20, 15, 0.08)",
+    borderRadius: borderRadius ?? "8px",
+    "&::after": {
       background: isDark
-        ? 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent)'
-        : 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent)'
+        ? "linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent)"
+        : "linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent)"
     }
-  }
-}
-
+  };
+};

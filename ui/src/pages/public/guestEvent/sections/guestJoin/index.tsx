@@ -1,33 +1,33 @@
-import { useState } from 'react'
-import { Alert, Button, Paper, TextField, Typography } from '@mui/material'
+import { useState } from "react";
+import { Alert, Button, Paper, TextField, Typography } from "@mui/material";
 
-import PinInput from '@components/pinInput'
+import PinInput from "@components/pinInput";
 
-import { joinButtonStyles, joinPaperStyles } from './styles'
-import type { FormEvent } from 'react'
-import useGuestEventPage from '@pages/public/guestEvent/hook'
+import { joinButtonStyles, joinPaperStyles } from "./styles";
+import type { FormEvent } from "react";
+import useGuestEventPage from "@pages/public/guestEvent/hook";
 
 const GuestJoin = () => {
-  const { event: eventValue, join: onJoin, lockout } = useGuestEventPage()
-  const event = eventValue!
+  const { event: eventValue, join: onJoin, lockout } = useGuestEventPage();
+  const event = eventValue!;
 
-  const [name, setName] = useState('')
-  const [pin, setPin] = useState('')
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [name, setName] = useState("");
+  const [pin, setPin] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const isExpired = event.phase === 'expired'
-  const isLocked = Boolean(event.requiresPin && lockout?.isLocked)
-  const isPermanent = Boolean(event.requiresPin && lockout?.isPermanent)
-  const canSubmit = Boolean(name.trim()) && (!event.requiresPin || (/^\d{4}$/.test(pin) && !isLocked))
+  const isExpired = event.phase === "expired";
+  const isLocked = Boolean(event.requiresPin && lockout?.isLocked);
+  const isPermanent = Boolean(event.requiresPin && lockout?.isPermanent);
+  const canSubmit = Boolean(name.trim()) && (!event.requiresPin || (/^\d{4}$/.test(pin) && !isLocked));
 
   const handleSubmit = async (submitEvent: FormEvent<HTMLFormElement>) => {
-    submitEvent.preventDefault()
-    if (!canSubmit || isLocked) return
+    submitEvent.preventDefault();
+    if (!canSubmit || isLocked) return;
 
-    setIsSubmitting(true)
-    await onJoin(name.trim(), event.requiresPin ? pin : undefined)
-    setIsSubmitting(false)
-  }
+    setIsSubmitting(true);
+    await onJoin(name.trim(), event.requiresPin ? pin : undefined);
+    setIsSubmitting(false);
+  };
 
   return (
     <Paper variant="outlined" component="form" noValidate onSubmit={handleSubmit} sx={joinPaperStyles}>
@@ -43,7 +43,7 @@ const GuestJoin = () => {
       ) : (
         <>
           {event.requiresPin && isPermanent && (
-            <Alert severity="error" sx={{ width: '100%', textAlign: 'left' }}>
+            <Alert severity="error" sx={{ width: "100%", textAlign: "left" }}>
               <Typography variant="subtitle2" fontWeight={800}>
                 Acesso bloqueado definitivamente
               </Typography>
@@ -54,13 +54,13 @@ const GuestJoin = () => {
           )}
 
           {event.requiresPin && !isPermanent && isLocked && (
-            <Alert severity="warning" sx={{ width: '100%', textAlign: 'left' }}>
+            <Alert severity="warning" sx={{ width: "100%", textAlign: "left" }}>
               <Typography variant="subtitle2" fontWeight={800}>
                 Dispositivo bloqueado temporariamente
               </Typography>
               <Typography variant="body2" sx={{ mt: 0.5 }}>
-                Tente novamente em{' '}
-                <Typography component="span" fontWeight={900} sx={{ fontVariantNumeric: 'tabular-nums' }}>
+                Tente novamente em{" "}
+                <Typography component="span" fontWeight={900} sx={{ fontVariantNumeric: "tabular-nums" }}>
                   {lockout?.formattedTime}
                 </Typography>
               </Typography>
@@ -94,17 +94,17 @@ const GuestJoin = () => {
             sx={joinButtonStyles}
           >
             {isSubmitting
-              ? 'Entrando...'
+              ? "Entrando..."
               : isPermanent
-                ? 'Acesso bloqueado'
+                ? "Acesso bloqueado"
                 : isLocked
                   ? `Tente novamente em ${lockout?.formattedTime}`
-                  : 'Entrar no evento'}
+                  : "Entrar no evento"}
           </Button>
         </>
       )}
     </Paper>
-  )
-}
+  );
+};
 
-export default GuestJoin
+export default GuestJoin;

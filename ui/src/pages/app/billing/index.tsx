@@ -1,19 +1,19 @@
-import { Box, Button, CircularProgress, Typography } from '@mui/material'
-import { Refresh as RefreshIcon } from '@mui/icons-material'
+import { Box, Button, CircularProgress, Typography } from "@mui/material";
+import { Refresh as RefreshIcon } from "@mui/icons-material";
 
-import useBillingPage, { BillingPageProvider } from './hook'
-import BillingSummary from './sections/billingSummary'
-import CreditsAndPlans from './sections/creditsAndPlans'
-import CurrentPlanCard from './sections/currentPlanCard'
-import TransactionsHistory from './sections/transactionsHistory'
-import TransactionDetailsDialog from './subcomponents/transactionDetailsDialog'
-import CheckoutConfirmationDialog from './subcomponents/checkoutConfirmationDialog'
-import { billingPageStyles, headerButtonStyles, headerRowStyles, pageTitleStyles } from './styles'
+import useBillingPage, { BillingPageProvider } from "./hook";
+import BillingSummary from "./sections/billingSummary";
+import CreditsAndPlans from "./sections/creditsAndPlans";
+import CurrentPlanCard from "./sections/currentPlanCard";
+import TransactionsHistory from "./sections/transactionsHistory";
+import TransactionDetailsDialog from "./subcomponents/transactionDetailsDialog";
+import CheckoutConfirmationDialog from "./subcomponents/checkoutConfirmationDialog";
+import { billingPageStyles, headerButtonStyles, headerRowStyles, pageTitleStyles } from "./styles";
 
 const BillingContent = () => {
-  const { user, isLoadingInitial, isLoadingTransactions, handleRefreshAll } = useBillingPage()
+  const { user, isLoadingInitial, isLoadingTransactions, handleRefreshAll } = useBillingPage();
 
-  if (!user) return null
+  if (!user) return null;
 
   return (
     <Box sx={billingPageStyles}>
@@ -53,13 +53,13 @@ const BillingContent = () => {
 
       <CheckoutConfirmationDialog />
     </Box>
-  )
-}
+  );
+};
 
 const Billing = () => (
   <BillingPageProvider>
     <BillingContent />
   </BillingPageProvider>
-)
+);
 
-export default Billing
+export default Billing;

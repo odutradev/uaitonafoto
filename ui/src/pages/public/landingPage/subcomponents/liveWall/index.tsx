@@ -1,28 +1,34 @@
-import { Box, Stack, Typography } from '@mui/material'
-import { QrCode2 as QrCodeIcon } from '@mui/icons-material'
+import { Box, Stack, Typography } from "@mui/material";
+import { QrCode2 as QrCodeIcon } from "@mui/icons-material";
 
-import Logo from '@components/logo'
+import Logo from "@components/logo";
 
-import { getLiveWallBadgeStyles, getLiveWallBrandTitleStyles, getLiveWallOuterBoxStyles, getLiveWallScreenStyles, getLiveWallTitleStyles, getMosaicTileStyles, liveWallBrandBoxStyles, liveWallDescriptionStyles, liveWallHeaderStyles, liveWallQrCodeStyles, liveWallQrInstructionStyles, liveWallQrStackStyles } from './styles'
-import type { LiveWallProps } from './types'
+import {
+  getLiveWallBadgeStyles,
+  getLiveWallBrandTitleStyles,
+  getLiveWallOuterBoxStyles,
+  getLiveWallScreenStyles,
+  getLiveWallTitleStyles,
+  getMosaicTileStyles,
+  liveWallBrandBoxStyles,
+  liveWallDescriptionStyles,
+  liveWallHeaderStyles,
+  liveWallQrCodeStyles,
+  liveWallQrInstructionStyles,
+  liveWallQrStackStyles
+} from "./styles";
+import type { LiveWallProps } from "./types";
 
 export const LiveWall = ({ data, isDark, liveWallAccent, mosaicTiles }: LiveWallProps) => {
   return (
     <Box sx={getLiveWallOuterBoxStyles(isDark)}>
       <Box sx={liveWallHeaderStyles}>
         <Box sx={liveWallBrandBoxStyles}>
-          <Logo
-            display="symbol"
-            size={{ xs: 26, sm: 32 }}
-            variant="auto"
-            animation="live"
-          />
-          <Typography sx={getLiveWallBrandTitleStyles(liveWallAccent)}>
-            {data.brandName}
-          </Typography>
+          <Logo display="symbol" size={{ xs: 26, sm: 32 }} variant="auto" animation="live" />
+          <Typography sx={getLiveWallBrandTitleStyles(liveWallAccent)}>{data.brandName}</Typography>
         </Box>
         <Box sx={getLiveWallBadgeStyles(liveWallAccent)}>
-          <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: liveWallAccent }} />
+          <Box sx={{ width: 8, height: 8, borderRadius: "50%", bgcolor: liveWallAccent }} />
           {data.badge}
         </Box>
       </Box>
@@ -39,10 +45,7 @@ export const LiveWall = ({ data, isDark, liveWallAccent, mosaicTiles }: LiveWall
 
         <Stack spacing={1} alignItems="center" sx={liveWallQrStackStyles}>
           <QrCodeIcon sx={liveWallQrCodeStyles} />
-          <Typography
-            variant="caption"
-            sx={liveWallQrInstructionStyles}
-          >
+          <Typography variant="caption" sx={liveWallQrInstructionStyles}>
             {data.qrInstruction}
           </Typography>
         </Stack>
@@ -55,7 +58,7 @@ export const LiveWall = ({ data, isDark, liveWallAccent, mosaicTiles }: LiveWall
         <Box sx={getMosaicTileStyles(mosaicTiles[0])} />
       </Stack>
     </Box>
-  )
-}
+  );
+};
 
-export default LiveWall
+export default LiveWall;

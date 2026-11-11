@@ -1,68 +1,122 @@
-import { useState } from 'react'
-import { Box, Button, Card, Chip, CircularProgress, Dialog, DialogContent, DialogTitle, IconButton, Skeleton, Tooltip, Typography } from '@mui/material'
-import { CheckCircleOutline as ApproveIcon, Close as RejectIcon, CollectionsOutlined as AlbumIcon, DeleteOutline as DeleteIcon, DoneAllOutlined as DoneAllIcon, DownloadOutlined as DownloadIcon, EmojiEventsOutlined as ChallengeIcon, FavoriteBorder as LikeIcon, FolderZipOutlined as ZipIcon, ContentCopyOutlined as CopyIcon, VisibilityOutlined as ViewIcon, PhotoCameraOutlined as CameraIcon, PeopleOutline as GuestsIcon, AccessTimeOutlined as TimeIcon } from '@mui/icons-material'
-import dayjs from 'dayjs'
+import { useState } from "react";
+import {
+  Box,
+  Button,
+  Card,
+  Chip,
+  CircularProgress,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  IconButton,
+  Skeleton,
+  Tooltip,
+  Typography
+} from "@mui/material";
+import {
+  CheckCircleOutline as ApproveIcon,
+  Close as RejectIcon,
+  CollectionsOutlined as AlbumIcon,
+  DeleteOutline as DeleteIcon,
+  DoneAllOutlined as DoneAllIcon,
+  DownloadOutlined as DownloadIcon,
+  EmojiEventsOutlined as ChallengeIcon,
+  FavoriteBorder as LikeIcon,
+  FolderZipOutlined as ZipIcon,
+  ContentCopyOutlined as CopyIcon,
+  VisibilityOutlined as ViewIcon,
+  PhotoCameraOutlined as CameraIcon,
+  PeopleOutline as GuestsIcon,
+  AccessTimeOutlined as TimeIcon
+} from "@mui/icons-material";
+import dayjs from "dayjs";
 
-import { downloadEventAlbumZip } from '@actions/events'
-import Modal from '@components/modal'
-import Pagination from '@components/pagination'
-import { buildGuestLink } from '@utils/functions/events'
+import { downloadEventAlbumZip } from "@actions/events";
+import Modal from "@components/modal";
+import Pagination from "@components/pagination";
+import { buildGuestLink } from "@utils/functions/events";
 
-import useEventAlbum, { type AlbumStatusFilter } from '@pages/app/eventDetails/hook/album'
+import useEventAlbum, { type AlbumStatusFilter } from "@pages/app/eventDetails/hook/album";
 
-import { albumCardStyles, albumHeaderRowStyles, approveAllButtonStyles, approvePhotoButtonStyles, deletePhotoButtonStyles, downloadZipButtonStyles, endedDownloadBigButtonStyles, endedHeroCardStyles, endedHeroIconBoxStyles, endedHeroInfoStyles, endedStatItemStyles, endedStatsRowStyles, moderationBarStyles, moderationFilterButtonStyles, moderationTabsStyles, photoCardStyles, photoDirectDownloadButtonStyles, photoImageStyles, photoOverlayNameStyles, photoOverlayStyles, photoStatusBadgeStyles, photosGridStyles, rejectPhotoButtonStyles, stateBoxStyles, stateIconWrapperStyles } from './styles'
-import type { EventPhoto } from '@utils/types/events'
-import useEventDetailsPage from '@pages/app/eventDetails/hook'
-import useAction from '@hooks/useAction'
+import {
+  albumCardStyles,
+  albumHeaderRowStyles,
+  approveAllButtonStyles,
+  approvePhotoButtonStyles,
+  deletePhotoButtonStyles,
+  downloadZipButtonStyles,
+  endedDownloadBigButtonStyles,
+  endedHeroCardStyles,
+  endedHeroIconBoxStyles,
+  endedHeroInfoStyles,
+  endedStatItemStyles,
+  endedStatsRowStyles,
+  moderationBarStyles,
+  moderationFilterButtonStyles,
+  moderationTabsStyles,
+  photoCardStyles,
+  photoDirectDownloadButtonStyles,
+  photoImageStyles,
+  photoOverlayNameStyles,
+  photoOverlayStyles,
+  photoStatusBadgeStyles,
+  photosGridStyles,
+  rejectPhotoButtonStyles,
+  stateBoxStyles,
+  stateIconWrapperStyles
+} from "./styles";
+import type { EventPhoto } from "@utils/types/events";
+import useEventDetailsPage from "@pages/app/eventDetails/hook";
+import useAction from "@hooks/useAction";
 
 const downloadBlob = (blob: Blob, filename: string): void => {
-  const blobUrl = window.URL.createObjectURL(blob)
-  const link = document.createElement('a')
-  link.href = blobUrl
-  link.download = filename
-  document.body.appendChild(link)
-  link.click()
-  document.body.removeChild(link)
-  window.URL.revokeObjectURL(blobUrl)
-}
+  const blobUrl = window.URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = blobUrl;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  window.URL.revokeObjectURL(blobUrl);
+};
 
 const downloadPhotoFromUrl = async (url: string, filename: string): Promise<void> => {
   try {
-    const response = await fetch(url)
-    if (!response.ok) throw new Error('Falha ao baixar a imagem')
-    const blob = await response.blob()
-    downloadBlob(blob, filename)
+    const response = await fetch(url);
+    if (!response.ok) throw new Error("Falha ao baixar a imagem");
+    const blob = await response.blob();
+    downloadBlob(blob, filename);
   } catch {
-    const link = document.createElement('a')
-    link.href = url
-    link.target = '_blank'
-    link.rel = 'noopener noreferrer'
-    link.download = filename
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
+    const link = document.createElement("a");
+    link.href = url;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   }
-}
+};
 
 const moderationFilters: readonly { value: AlbumStatusFilter; label: string }[] = [
-  { value: 'pending', label: 'Pendentes' },
-  { value: 'approved', label: 'Aprovadas' },
-  { value: 'rejected', label: 'Rejeitadas' },
-  { value: 'all', label: 'Todas' }
-]
+  { value: "pending", label: "Pendentes" },
+  { value: "approved", label: "Aprovadas" },
+  { value: "rejected", label: "Rejeitadas" },
+  { value: "all", label: "Todas" }
+];
 
 const EventAlbum = () => {
-  const runAction = useAction()
-  const { event: eventValue } = useEventDetailsPage()
-  const event = eventValue!
+  const runAction = useAction();
+  const { event: eventValue } = useEventDetailsPage();
+  const event = eventValue!;
 
   const isEventEnded =
     dayjs().isAfter(dayjs(event.endsAt)) ||
     Boolean(event.closedAt) ||
-    event.phase === 'closed' ||
-    event.phase === 'expired'
+    event.phase === "closed" ||
+    event.phase === "expired";
 
-  const isModerationEnabled = Boolean(event.settings.moderationEnabled)
+  const isModerationEnabled = Boolean(event.settings.moderationEnabled);
 
   const {
     photos,
@@ -78,78 +132,81 @@ const EventAlbum = () => {
     approvePhoto,
     rejectPhoto,
     approveAll
-  } = useEventAlbum(event.id, isModerationEnabled)
+  } = useEventAlbum(event.id, isModerationEnabled);
 
-  const [photoToDelete, setPhotoToDelete] = useState<EventPhoto | null>(null)
-  const [photoToView, setPhotoToView] = useState<EventPhoto | null>(null)
-  const [isDeleting, setIsDeleting] = useState(false)
-  const [isDownloadingZip, setIsDownloadingZip] = useState(false)
-  const [isApprovingAll, setIsApprovingAll] = useState(false)
+  const [photoToDelete, setPhotoToDelete] = useState<EventPhoto | null>(null);
+  const [photoToView, setPhotoToView] = useState<EventPhoto | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isDownloadingZip, setIsDownloadingZip] = useState(false);
+  const [isApprovingAll, setIsApprovingAll] = useState(false);
 
-  const guestLink = buildGuestLink(event.guestToken)
+  const guestLink = buildGuestLink(event.guestToken);
 
-  const expiresAt = event.galleryExpiresAt ? dayjs(event.galleryExpiresAt) : null
-  const daysLeft = expiresAt ? Math.max(0, expiresAt.diff(dayjs(), 'day')) : null
+  const expiresAt = event.galleryExpiresAt ? dayjs(event.galleryExpiresAt) : null;
+  const daysLeft = expiresAt ? Math.max(0, expiresAt.diff(dayjs(), "day")) : null;
 
   const handleConfirmRemove = async () => {
-    if (!photoToDelete) return
-    setIsDeleting(true)
-    await removePhoto(photoToDelete.id)
-    setIsDeleting(false)
-    setPhotoToDelete(null)
+    if (!photoToDelete) return;
+    setIsDeleting(true);
+    await removePhoto(photoToDelete.id);
+    setIsDeleting(false);
+    setPhotoToDelete(null);
     if (photoToView?.id === photoToDelete.id) {
-      setPhotoToView(null)
+      setPhotoToView(null);
     }
-  }
+  };
 
   const handleApproveAll = async () => {
-    setIsApprovingAll(true)
+    setIsApprovingAll(true);
     try {
-      await approveAll()
+      await approveAll();
     } finally {
-      setIsApprovingAll(false)
+      setIsApprovingAll(false);
     }
-  }
+  };
 
   const handleDownloadPhoto = async (photo: EventPhoto) => {
     await runAction({
       action: async () => {
-        const extension = photo.url.split('?')[0].split('.').pop() || 'jpg'
-        const sanitizedEventName = event.name.replace(/[^a-zA-Z0-9_-]/g, '_')
-        const sanitizedGuestName = photo.guestName.replace(/[^a-zA-Z0-9_-]/g, '_')
-        const filename = `${sanitizedEventName}_${sanitizedGuestName}_${photo.id}.${extension}`
-        await downloadPhotoFromUrl(photo.url, filename)
+        const extension = photo.url.split("?")[0].split(".").pop() || "jpg";
+        const sanitizedEventName = event.name.replace(/[^a-zA-Z0-9_-]/g, "_");
+        const sanitizedGuestName = photo.guestName.replace(/[^a-zA-Z0-9_-]/g, "_");
+        const filename = `${sanitizedEventName}_${sanitizedGuestName}_${photo.id}.${extension}`;
+        await downloadPhotoFromUrl(photo.url, filename);
       },
-      toastMessages: { success: 'Download da foto iniciado!', error: 'Não foi possível baixar a foto.' },
+      toastMessages: { success: "Download da foto iniciado!", error: "Não foi possível baixar a foto." },
       shouldUseApiError: false
-    })
-  }
+    });
+  };
 
   const handleDownloadZip = async () => {
-    setIsDownloadingZip(true)
+    setIsDownloadingZip(true);
     await runAction({
       action: async () => {
-        const blob = await downloadEventAlbumZip(event.id)
-        const sanitizedEventName = event.name.replace(/[^a-zA-Z0-9_-]/g, '_')
-        const filename = `${sanitizedEventName || 'evento'}_fotos.zip`
-        downloadBlob(blob, filename)
+        const blob = await downloadEventAlbumZip(event.id);
+        const sanitizedEventName = event.name.replace(/[^a-zA-Z0-9_-]/g, "_");
+        const filename = `${sanitizedEventName || "evento"}_fotos.zip`;
+        downloadBlob(blob, filename);
       },
-      toastMessages: { success: 'Download do álbum (.zip) iniciado!', error: 'Não foi possível baixar o álbum em .zip.' }
-    })
-    setIsDownloadingZip(false)
-  }
+      toastMessages: {
+        success: "Download do álbum (.zip) iniciado!",
+        error: "Não foi possível baixar o álbum em .zip."
+      }
+    });
+    setIsDownloadingZip(false);
+  };
 
   const handleCopyGuestLink = async () => {
     await runAction({
       action: async () => {
-        await navigator.clipboard.writeText(guestLink)
+        await navigator.clipboard.writeText(guestLink);
       },
-      toastMessages: { success: 'Link da galeria pública copiado!', error: 'Não foi possível copiar o link.' },
+      toastMessages: { success: "Link da galeria pública copiado!", error: "Não foi possível copiar o link." },
       shouldUseApiError: false
-    })
-  }
+    });
+  };
 
-  const totalPhotosCount = meta?.total ?? photos.length
+  const totalPhotosCount = meta?.total ?? photos.length;
 
   return (
     <Card elevation={0} sx={albumCardStyles}>
@@ -161,7 +218,7 @@ const EventAlbum = () => {
               <ZipIcon sx={{ fontSize: 28 }} />
             </Box>
             <Box>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1, flexWrap: "wrap" }}>
                 <Typography variant="h6" fontWeight={800} lineHeight={1.2}>
                   Álbum Completo do Evento
                 </Typography>
@@ -169,7 +226,7 @@ const EventAlbum = () => {
                   label="Evento Encerrado"
                   size="small"
                   color="warning"
-                  sx={{ fontWeight: 700, height: 22, fontSize: '0.72rem' }}
+                  sx={{ fontWeight: 700, height: 22, fontSize: "0.72rem" }}
                 />
               </Box>
 
@@ -179,28 +236,28 @@ const EventAlbum = () => {
 
               <Box sx={endedStatsRowStyles}>
                 <Box sx={endedStatItemStyles}>
-                  <CameraIcon sx={{ fontSize: 16, color: 'primary.main' }} />
+                  <CameraIcon sx={{ fontSize: 16, color: "primary.main" }} />
                   <span>
-                    <strong>{totalPhotosCount}</strong> {totalPhotosCount === 1 ? 'foto' : 'fotos'}
+                    <strong>{totalPhotosCount}</strong> {totalPhotosCount === 1 ? "foto" : "fotos"}
                   </span>
                 </Box>
 
                 {guests.length > 0 && (
                   <Box sx={endedStatItemStyles}>
-                    <GuestsIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
+                    <GuestsIcon sx={{ fontSize: 16, color: "text.secondary" }} />
                     <span>
-                      <strong>{guests.length}</strong> {guests.length === 1 ? 'convidado' : 'convidados'}
+                      <strong>{guests.length}</strong> {guests.length === 1 ? "convidado" : "convidados"}
                     </span>
                   </Box>
                 )}
 
                 {expiresAt && (
                   <Box sx={endedStatItemStyles}>
-                    <TimeIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
+                    <TimeIcon sx={{ fontSize: 16, color: "text.secondary" }} />
                     <span>
                       {daysLeft !== null && daysLeft > 0
                         ? `Restam ${daysLeft} dias para download`
-                        : `Disponível até ${expiresAt.format('DD/MM/YYYY')}`}
+                        : `Disponível até ${expiresAt.format("DD/MM/YYYY")}`}
                     </span>
                   </Box>
                 )}
@@ -208,14 +265,14 @@ const EventAlbum = () => {
             </Box>
           </Box>
 
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25, flexWrap: 'wrap' }}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1.25, flexWrap: "wrap" }}>
             <Button
               variant="outlined"
               color="inherit"
               size="small"
               startIcon={<CopyIcon sx={{ fontSize: 16 }} />}
               onClick={handleCopyGuestLink}
-              sx={{ minHeight: 42, px: 2, borderRadius: '10px', fontWeight: 600 }}
+              sx={{ minHeight: 42, px: 2, borderRadius: "10px", fontWeight: 600 }}
             >
               Copiar link da galeria
             </Button>
@@ -223,8 +280,8 @@ const EventAlbum = () => {
             <Tooltip
               title={
                 totalPhotosCount === 0
-                  ? 'Nenhuma foto enviada para baixar'
-                  : 'Baixar todas as fotos originais compactadas em um único arquivo .zip'
+                  ? "Nenhuma foto enviada para baixar"
+                  : "Baixar todas as fotos originais compactadas em um único arquivo .zip"
               }
             >
               <span>
@@ -242,7 +299,7 @@ const EventAlbum = () => {
                   disabled={isDownloadingZip || totalPhotosCount === 0}
                   sx={endedDownloadBigButtonStyles}
                 >
-                  {isDownloadingZip ? 'Preparando arquivo ZIP...' : 'Baixar Álbum Completo (.zip)'}
+                  {isDownloadingZip ? "Preparando arquivo ZIP..." : "Baixar Álbum Completo (.zip)"}
                 </Button>
               </span>
             </Tooltip>
@@ -256,12 +313,12 @@ const EventAlbum = () => {
               Álbum do evento
             </Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mt: 0.25 }}>
-              {totalPhotosCount} {totalPhotosCount === 1 ? 'foto encontrada' : 'fotos encontradas'}
+              {totalPhotosCount} {totalPhotosCount === 1 ? "foto encontrada" : "fotos encontradas"}
               {isModerationEnabled && pendingCount > 0 && ` · ${pendingCount} aguardando aprovação`}
             </Typography>
           </Box>
 
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
             <Tooltip title="Copiar link da página de envio para convidados">
               <Button
                 variant="outlined"
@@ -283,11 +340,9 @@ const EventAlbum = () => {
         <Box sx={moderationBarStyles}>
           <Box sx={moderationTabsStyles}>
             {moderationFilters.map((filter) => {
-              const isActive = statusFilter === filter.value
+              const isActive = statusFilter === filter.value;
               const label =
-                filter.value === 'pending' && pendingCount > 0
-                  ? `${filter.label} (${pendingCount})`
-                  : filter.label
+                filter.value === "pending" && pendingCount > 0 ? `${filter.label} (${pendingCount})` : filter.label;
 
               return (
                 <Button
@@ -299,21 +354,17 @@ const EventAlbum = () => {
                 >
                   {label}
                 </Button>
-              )
+              );
             })}
           </Box>
 
-          {statusFilter === 'pending' && pendingCount > 0 && (
+          {statusFilter === "pending" && pendingCount > 0 && (
             <Button
               variant="contained"
               color="success"
               size="small"
               startIcon={
-                isApprovingAll ? (
-                  <CircularProgress size={14} color="inherit" />
-                ) : (
-                  <DoneAllIcon sx={{ fontSize: 16 }} />
-                )
+                isApprovingAll ? <CircularProgress size={14} color="inherit" /> : <DoneAllIcon sx={{ fontSize: 16 }} />
               }
               onClick={handleApproveAll}
               disabled={isApprovingAll}
@@ -332,7 +383,7 @@ const EventAlbum = () => {
             <Skeleton
               key={index}
               variant="rounded"
-              sx={{ aspectRatio: '1 / 1', height: 'auto', borderRadius: '14px' }}
+              sx={{ aspectRatio: "1 / 1", height: "auto", borderRadius: "14px" }}
             />
           ))}
         </Box>
@@ -342,23 +393,21 @@ const EventAlbum = () => {
       {!isLoading && photos.length === 0 && (
         <Box sx={stateBoxStyles}>
           <Box sx={stateIconWrapperStyles}>
-            {statusFilter === 'pending' ? (
+            {statusFilter === "pending" ? (
               <ApproveIcon fontSize="small" color="success" />
             ) : (
               <AlbumIcon fontSize="small" />
             )}
           </Box>
           <Typography variant="subtitle1" fontWeight={700}>
-            {statusFilter === 'pending'
-              ? 'Fila de aprovação zerada!'
-              : 'Nenhuma foto encontrada'}
+            {statusFilter === "pending" ? "Fila de aprovação zerada!" : "Nenhuma foto encontrada"}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            {statusFilter === 'pending'
-              ? 'Todas as fotos enviadas pelos convidados já foram moderadas. Novas fotos aparecerão aqui em tempo real.'
+            {statusFilter === "pending"
+              ? "Todas as fotos enviadas pelos convidados já foram moderadas. Novas fotos aparecerão aqui em tempo real."
               : isEventEnded
-                ? 'Nenhuma foto foi registrada durante o evento.'
-                : 'Nenhuma foto enviada ainda para este evento.'}
+                ? "Nenhuma foto foi registrada durante o evento."
+                : "Nenhuma foto enviada ainda para este evento."}
           </Typography>
         </Box>
       )}
@@ -368,22 +417,14 @@ const EventAlbum = () => {
         <>
           <Box sx={photosGridStyles}>
             {photos.map((photo) => {
-              const photoStatus = photo.status ?? 'approved'
+              const photoStatus = photo.status ?? "approved";
 
               return (
-                <Box
-                  key={photo.id}
-                  sx={photoCardStyles}
-                  onClick={() => setPhotoToView(photo)}
-                >
+                <Box key={photo.id} sx={photoCardStyles} onClick={() => setPhotoToView(photo)}>
                   {/* Badge de Moderação (exibido apenas se moderação ativa e evento ainda aberto) */}
                   {isModerationEnabled && !isEventEnded && (
                     <Box sx={photoStatusBadgeStyles(photoStatus)}>
-                      {photoStatus === 'pending'
-                        ? 'Pendente'
-                        : photoStatus === 'approved'
-                          ? 'Aprovada'
-                          : 'Rejeitada'}
+                      {photoStatus === "pending" ? "Pendente" : photoStatus === "approved" ? "Aprovada" : "Rejeitada"}
                     </Box>
                   )}
 
@@ -391,26 +432,26 @@ const EventAlbum = () => {
                   {photo.challengeTitle && (
                     <Box
                       sx={{
-                        position: 'absolute',
+                        position: "absolute",
                         top: isModerationEnabled && !isEventEnded ? 32 : 8,
                         left: 8,
-                        bgcolor: 'rgba(245, 158, 11, 0.95)',
-                        color: '#000',
+                        bgcolor: "rgba(245, 158, 11, 0.95)",
+                        color: "#000",
                         px: 1,
                         py: 0.25,
-                        borderRadius: '6px',
-                        fontSize: '0.68rem',
+                        borderRadius: "6px",
+                        fontSize: "0.68rem",
                         fontWeight: 800,
                         zIndex: 2,
-                        display: 'flex',
-                        alignItems: 'center',
+                        display: "flex",
+                        alignItems: "center",
                         gap: 0.5,
-                        maxWidth: 'calc(100% - 16px)',
-                        boxShadow: '0 2px 6px rgba(0,0,0,0.3)'
+                        maxWidth: "calc(100% - 16px)",
+                        boxShadow: "0 2px 6px rgba(0,0,0,0.3)"
                       }}
                     >
                       <ChallengeIcon sx={{ fontSize: 13 }} />
-                      <Typography component="span" noWrap sx={{ fontSize: '0.68rem', fontWeight: 800 }}>
+                      <Typography component="span" noWrap sx={{ fontSize: "0.68rem", fontWeight: 800 }}>
                         {photo.challengeTitle}
                       </Typography>
                     </Box>
@@ -425,17 +466,12 @@ const EventAlbum = () => {
                   />
 
                   {/* Overlay com Informações e Ações */}
-                  <Box
-                    sx={photoOverlayStyles}
-                    onClick={(e) => e.stopPropagation()}
-                  >
+                  <Box sx={photoOverlayStyles} onClick={(e) => e.stopPropagation()}>
                     <Typography variant="caption" sx={photoOverlayNameStyles}>
-                      {photo.guestName} ·{' '}
-                      <LikeIcon sx={{ fontSize: 12, verticalAlign: 'middle' }} />{' '}
-                      {photo.likesCount}
+                      {photo.guestName} · <LikeIcon sx={{ fontSize: 12, verticalAlign: "middle" }} /> {photo.likesCount}
                     </Typography>
 
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, flexShrink: 0 }}>
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, flexShrink: 0 }}>
                       {/* Ações quando o evento está encerrado: Download com 1 clique, Zoom e Excluir */}
                       {isEventEnded ? (
                         <>
@@ -475,7 +511,7 @@ const EventAlbum = () => {
                       ) : (
                         /* Ações durante o evento em andamento: Moderação e Download */
                         <>
-                          {photoStatus === 'pending' && (
+                          {photoStatus === "pending" && (
                             <>
                               <Tooltip title="Aprovar e enviar para o telão">
                                 <IconButton
@@ -501,7 +537,7 @@ const EventAlbum = () => {
                             </>
                           )}
 
-                          {photoStatus === 'rejected' && (
+                          {photoStatus === "rejected" && (
                             <Tooltip title="Aprovar foto e enviar ao telão">
                               <IconButton
                                 size="small"
@@ -514,7 +550,7 @@ const EventAlbum = () => {
                             </Tooltip>
                           )}
 
-                          {photoStatus === 'approved' && isModerationEnabled && (
+                          {photoStatus === "approved" && isModerationEnabled && (
                             <Tooltip title="Rejeitar foto (retirar do telão)">
                               <IconButton
                                 size="small"
@@ -553,7 +589,7 @@ const EventAlbum = () => {
                     </Box>
                   </Box>
                 </Box>
-              )
+              );
             })}
           </Box>
 
@@ -577,8 +613,8 @@ const EventAlbum = () => {
         PaperProps={{
           sx: {
             borderRadius: 3,
-            bgcolor: 'background.paper',
-            overflow: 'hidden'
+            bgcolor: "background.paper",
+            overflow: "hidden"
           }
         }}
       >
@@ -587,11 +623,11 @@ const EventAlbum = () => {
             <DialogTitle
               sx={{
                 p: 2,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                borderBottom: '1px solid',
-                borderColor: 'divider'
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                borderBottom: "1px solid",
+                borderColor: "divider"
               }}
             >
               <Box>
@@ -599,20 +635,20 @@ const EventAlbum = () => {
                   Foto de {photoToView.guestName}
                 </Typography>
                 <Typography variant="caption" color="text.secondary">
-                  {dayjs(photoToView.createdAt).format('DD/MM/YYYY [às] HH:mm')} ·{' '}
-                  {photoToView.likesCount} {photoToView.likesCount === 1 ? 'curtida' : 'curtidas'}
+                  {dayjs(photoToView.createdAt).format("DD/MM/YYYY [às] HH:mm")} · {photoToView.likesCount}{" "}
+                  {photoToView.likesCount === 1 ? "curtida" : "curtidas"}
                   {photoToView.challengeTitle && ` · Missão: ${photoToView.challengeTitle}`}
                 </Typography>
               </Box>
 
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                 <Button
                   size="small"
                   variant="contained"
                   color="primary"
                   startIcon={<DownloadIcon sx={{ fontSize: 16 }} />}
                   onClick={() => handleDownloadPhoto(photoToView)}
-                  sx={{ borderRadius: '8px', fontWeight: 700 }}
+                  sx={{ borderRadius: "8px", fontWeight: 700 }}
                 >
                   Baixar foto
                 </Button>
@@ -625,10 +661,10 @@ const EventAlbum = () => {
             <DialogContent
               sx={{
                 p: 2,
-                bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#0D0B08' : '#F5F5F3'),
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
+                bgcolor: (theme) => (theme.palette.mode === "dark" ? "#0D0B08" : "#F5F5F3"),
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
                 minHeight: 380
               }}
             >
@@ -637,11 +673,11 @@ const EventAlbum = () => {
                 src={photoToView.url}
                 alt={`Foto de ${photoToView.guestName}`}
                 sx={{
-                  maxWidth: '100%',
-                  maxHeight: '75vh',
-                  objectFit: 'contain',
+                  maxWidth: "100%",
+                  maxHeight: "75vh",
+                  objectFit: "contain",
                   borderRadius: 2,
-                  boxShadow: '0 8px 30px rgba(0,0,0,0.3)'
+                  boxShadow: "0 8px 30px rgba(0,0,0,0.3)"
                 }}
               />
             </DialogContent>
@@ -657,24 +693,23 @@ const EventAlbum = () => {
         title="Remover foto do álbum?"
         description={
           <>
-            Esta foto enviada por <strong>{photoToDelete?.guestName}</strong> será excluída
-            permanentemente do evento.
+            Esta foto enviada por <strong>{photoToDelete?.guestName}</strong> será excluída permanentemente do evento.
           </>
         }
         primaryAction={{
-          label: isDeleting ? 'Removendo...' : 'Remover foto',
+          label: isDeleting ? "Removendo..." : "Remover foto",
           onClick: handleConfirmRemove,
           loading: isDeleting,
-          color: 'error'
+          color: "error"
         }}
         secondaryAction={{
-          label: 'Cancelar',
+          label: "Cancelar",
           onClick: () => setPhotoToDelete(null),
           disabled: isDeleting
         }}
       />
     </Card>
-  )
-}
+  );
+};
 
-export default EventAlbum
+export default EventAlbum;

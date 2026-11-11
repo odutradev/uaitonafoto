@@ -1,136 +1,143 @@
-import { useEffect, useState } from 'react'
-import { Alert, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from '@mui/material'
-import { useNavigate } from 'react-router-dom'
-import { toast } from 'react-toastify'
+import { useEffect, useState } from "react";
+import { Alert, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
-import { getMeData } from '@actions/auth'
-import { createEvent } from '@actions/events'
-import EventFormFields, { buildInitialEventForm, isValidEventPeriod, isValidEventPin, toEventPayload } from '@components/eventFormFields'
-import Stepper from '@components/stepper'
-import useAuth from '@hooks/useAuth'
-import useAction from '@hooks/useAction'
-import useHomePage from '@pages/app/home/hook'
-import useAuthStore from '@stores/auth'
+import { getMeData } from "@actions/auth";
+import { createEvent } from "@actions/events";
+import EventFormFields, {
+  buildInitialEventForm,
+  isValidEventPeriod,
+  isValidEventPin,
+  toEventPayload
+} from "@components/eventFormFields";
+import Stepper from "@components/stepper";
+import useAuth from "@hooks/useAuth";
+import useAction from "@hooks/useAction";
+import useHomePage from "@pages/app/home/hook";
+import useAuthStore from "@stores/auth";
 
-import { dialogActionsStyles, dialogButtonStyles, dialogPaperStyles } from './styles'
-import type { FormEvent } from 'react'
-import type { EventFormState } from '@components/eventFormFields/types'
+import { dialogActionsStyles, dialogButtonStyles, dialogPaperStyles } from "./styles";
+import type { FormEvent } from "react";
+import type { EventFormState } from "@components/eventFormFields/types";
 
 const steps = [
-  { label: 'Básico', description: 'Dados essenciais' },
-  { label: 'Dinâmica', description: 'Fotos e telão' },
-  { label: 'Acesso', description: 'Senha e PIN' }
-]
+  { label: "Básico", description: "Dados essenciais" },
+  { label: "Dinâmica", description: "Fotos e telão" },
+  { label: "Acesso", description: "Senha e PIN" }
+];
 
 const CreateEventDialog = () => {
-  const { isCreateOpen: open, handleCloseCreate: onClose, handleEventCreated: onCreated } = useHomePage()
-  const runAction = useAction()
-  const navigate = useNavigate()
-  const { user } = useAuth()
-  const updateUser = useAuthStore((state) => state.updateUser)
+  const { isCreateOpen: open, handleCloseCreate: onClose, handleEventCreated: onCreated } = useHomePage();
+  const runAction = useAction();
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const updateUser = useAuthStore((state) => state.updateUser);
 
-  const paidCredits = user?.paidCredits ?? 0
-  const freeCredits = user?.freeCredits ?? 0
-  const hasCredits = paidCredits > 0 || freeCredits > 0
-  const defaultCreditType = paidCredits > 0 ? 'paid' : freeCredits > 0 ? 'free' : 'paid'
+  const paidCredits = user?.paidCredits ?? 0;
+  const freeCredits = user?.freeCredits ?? 0;
+  const hasCredits = paidCredits > 0 || freeCredits > 0;
+  const defaultCreditType = paidCredits > 0 ? "paid" : freeCredits > 0 ? "free" : "paid";
 
-  const [activeStep, setActiveStep] = useState(0)
-  const [form, setForm] = useState<EventFormState>(() => buildInitialEventForm(defaultCreditType))
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [activeStep, setActiveStep] = useState(0);
+  const [form, setForm] = useState<EventFormState>(() => buildInitialEventForm(defaultCreditType));
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (open) {
-      setActiveStep(0)
-      setForm(buildInitialEventForm(defaultCreditType))
+      setActiveStep(0);
+      setForm(buildInitialEventForm(defaultCreditType));
     }
-  }, [open, defaultCreditType])
+  }, [open, defaultCreditType]);
 
   const setField = <K extends keyof EventFormState>(key: K, value: EventFormState[K]) =>
-    setForm((current) => ({ ...current, [key]: value }))
+    setForm((current) => ({ ...current, [key]: value }));
 
   const validateStep = (stepIndex: number): boolean => {
     if (stepIndex === 0) {
       if (!hasCredits) {
-        toast.error('Você não possui créditos para criar um evento.')
-        return false
+        toast.error("Você não possui créditos para criar um evento.");
+        return false;
       }
-      if (form.creditType === 'paid' && paidCredits <= 0) {
-        toast.error('Você não possui créditos normais disponíveis.')
-        return false
+      if (form.creditType === "paid" && paidCredits <= 0) {
+        toast.error("Você não possui créditos normais disponíveis.");
+        return false;
       }
-      if (form.creditType === 'free' && freeCredits <= 0) {
-        toast.error('Você não possui créditos de teste grátis disponíveis.')
-        return false
+      if (form.creditType === "free" && freeCredits <= 0) {
+        toast.error("Você não possui créditos de teste grátis disponíveis.");
+        return false;
       }
       if (!form.name.trim()) {
-        toast.error('Informe o nome do evento.')
-        return false
+        toast.error("Informe o nome do evento.");
+        return false;
       }
       if (!form.startsAt) {
-        toast.error('Informe a data e hora de início.')
-        return false
+        toast.error("Informe a data e hora de início.");
+        return false;
       }
-      return true
+      return true;
     }
 
     if (stepIndex === 1) {
-      return true
+      return true;
     }
 
     if (stepIndex === 2) {
       if (!isValidEventPin(form)) {
-        toast.error('O PIN de acesso deve ter exatamente 4 dígitos numéricos.')
-        return false
+        toast.error("O PIN de acesso deve ter exatamente 4 dígitos numéricos.");
+        return false;
       }
-      return true
+      return true;
     }
 
-    return true
-  }
+    return true;
+  };
 
   const handleNext = () => {
     if (validateStep(activeStep)) {
-      setActiveStep((current) => Math.min(current + 1, steps.length - 1))
+      setActiveStep((current) => Math.min(current + 1, steps.length - 1));
     }
-  }
+  };
 
   const handleBack = () => {
-    setActiveStep((current) => Math.max(current - 1, 0))
-  }
+    setActiveStep((current) => Math.max(current - 1, 0));
+  };
 
   const handleCreateEvent = async () => {
     if (!validateStep(0) || !validateStep(1) || !validateStep(2)) {
-      return
+      return;
     }
 
     if (!isValidEventPeriod(form)) {
-      toast.error('O término do evento deve ser depois do início.')
-      return
+      toast.error("O término do evento deve ser depois do início.");
+      return;
     }
 
-    setIsSubmitting(true)
+    setIsSubmitting(true);
     await runAction({
       action: () => createEvent(toEventPayload(form)),
-      toastMessages: { success: 'Evento criado!', error: 'Não foi possível criar o evento.' },
+      toastMessages: { success: "Evento criado!", error: "Não foi possível criar o evento." },
       callback: (created) => {
-        getMeData().then(updateUser).catch(() => undefined)
-        setForm(buildInitialEventForm(defaultCreditType))
-        onCreated(created)
+        getMeData()
+          .then(updateUser)
+          .catch(() => undefined);
+        setForm(buildInitialEventForm(defaultCreditType));
+        onCreated(created);
       }
-    })
-    setIsSubmitting(false)
-  }
+    });
+    setIsSubmitting(false);
+  };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
+    event.preventDefault();
 
     if (activeStep < steps.length - 1) {
-      handleNext()
-      return
+      handleNext();
+      return;
     }
 
-    await handleCreateEvent()
-  }
+    await handleCreateEvent();
+  };
 
   return (
     <Dialog open={open} onClose={onClose} slotProps={{ paper: { sx: dialogPaperStyles } }}>
@@ -145,7 +152,7 @@ const CreateEventDialog = () => {
               activeStep={activeStep}
               onStepClick={(targetStep) => {
                 if (targetStep < activeStep || validateStep(activeStep)) {
-                  setActiveStep(targetStep)
+                  setActiveStep(targetStep);
                 }
               }}
               clickablePastSteps
@@ -172,13 +179,7 @@ const CreateEventDialog = () => {
 
         <DialogActions sx={dialogActionsStyles}>
           {activeStep === 0 ? (
-            <Button
-              key="btn-cancel"
-              type="button"
-              variant="outlined"
-              onClick={onClose}
-              sx={dialogButtonStyles}
-            >
+            <Button key="btn-cancel" type="button" variant="outlined" onClick={onClose} sx={dialogButtonStyles}>
               Cancelar
             </Button>
           ) : (
@@ -201,8 +202,8 @@ const CreateEventDialog = () => {
               variant="contained"
               color="primary"
               onClick={() => {
-                onClose()
-                navigate('/app/billing')
+                onClose();
+                navigate("/app/billing");
               }}
               sx={dialogButtonStyles}
             >
@@ -229,13 +230,13 @@ const CreateEventDialog = () => {
               disabled={isSubmitting}
               sx={dialogButtonStyles}
             >
-              {isSubmitting ? 'Criando...' : 'Criar evento'}
+              {isSubmitting ? "Criando..." : "Criar evento"}
             </Button>
           )}
         </DialogActions>
       </Box>
     </Dialog>
-  )
-}
+  );
+};
 
-export default CreateEventDialog
+export default CreateEventDialog;

@@ -1,196 +1,219 @@
-import { useState, useMemo } from 'react'
-import { Box, Button, Chip, CircularProgress, Dialog, Divider, FormControlLabel, IconButton, MenuItem, Select, Switch, TextField, Tooltip, Typography } from '@mui/material'
-import { Close as CloseIcon, DownloadOutlined as DownloadIcon, PrintOutlined as PrintIcon, FavoriteOutlined as WeddingIcon, CelebrationOutlined as PartyIcon, BusinessCenterOutlined as CorporateIcon, CropFreeOutlined as MinimalIcon, AutoAwesomeOutlined as NightlifeIcon, ParkOutlined as RusticIcon, QrCode2Outlined as DisplayHeaderIcon, PaletteOutlined as PaletteIcon, FormatColorResetOutlined as ResetColorIcon } from '@mui/icons-material'
-import { toast } from 'react-toastify'
+import { useState, useMemo } from "react";
+import {
+  Box,
+  Button,
+  Chip,
+  CircularProgress,
+  Dialog,
+  Divider,
+  FormControlLabel,
+  IconButton,
+  MenuItem,
+  Select,
+  Switch,
+  TextField,
+  Tooltip,
+  Typography
+} from "@mui/material";
+import {
+  Close as CloseIcon,
+  DownloadOutlined as DownloadIcon,
+  PrintOutlined as PrintIcon,
+  FavoriteOutlined as WeddingIcon,
+  CelebrationOutlined as PartyIcon,
+  BusinessCenterOutlined as CorporateIcon,
+  CropFreeOutlined as MinimalIcon,
+  AutoAwesomeOutlined as NightlifeIcon,
+  ParkOutlined as RusticIcon,
+  QrCode2Outlined as DisplayHeaderIcon,
+  PaletteOutlined as PaletteIcon,
+  FormatColorResetOutlined as ResetColorIcon
+} from "@mui/icons-material";
+import { toast } from "react-toastify";
 
-import type { EventItem } from '@utils/types/events'
-import { TableDisplayCard } from './subcomponents/tableDisplayCard'
-import { exportTableDisplayPng } from './exportPng'
-import type { TableDisplayConfig, TableDisplayTemplateId, PrintPageLayout, TableDisplayQrSize } from './types'
-import { controlCardStyles, controlsSectionStyles, dialogActionButtonStyles, dialogActionsStyles, dialogContentStyles, dialogHeaderStyles, dialogPaperStyles, previewWrapperStyles, templateOptionButtonStyles, templateSelectorGridStyles } from './styles'
+import type { EventItem } from "@utils/types/events";
+import { TableDisplayCard } from "./subcomponents/tableDisplayCard";
+import { exportTableDisplayPng } from "./exportPng";
+import type { TableDisplayConfig, TableDisplayTemplateId, PrintPageLayout, TableDisplayQrSize } from "./types";
+import {
+  controlCardStyles,
+  controlsSectionStyles,
+  dialogActionButtonStyles,
+  dialogActionsStyles,
+  dialogContentStyles,
+  dialogHeaderStyles,
+  dialogPaperStyles,
+  previewWrapperStyles,
+  templateOptionButtonStyles,
+  templateSelectorGridStyles
+} from "./styles";
 
 interface TableDisplayModalProps {
-  open: boolean
-  onClose: () => void
-  event: EventItem
-  guestUrl: string
+  open: boolean;
+  onClose: () => void;
+  event: EventItem;
+  guestUrl: string;
 }
 
 const defaultSubtitles: Record<TableDisplayTemplateId, string> = {
-  wedding: 'Deixe sua lembrança deste dia tão especial',
-  modern: 'Aponte a câmera e entre na foto!',
-  corporate: 'Compartilhe seus registros oficiais do evento',
-  minimal: 'Aponte a câmera para enviar suas fotos',
-  party: 'Tire sua foto e apareça no telão agora!',
-  rustic: 'Guarde este momento com a gente'
-}
+  wedding: "Deixe sua lembrança deste dia tão especial",
+  modern: "Aponte a câmera e entre na foto!",
+  corporate: "Compartilhe seus registros oficiais do evento",
+  minimal: "Aponte a câmera para enviar suas fotos",
+  party: "Tire sua foto e apareça no telão agora!",
+  rustic: "Guarde este momento com a gente"
+};
 
 const defaultTopBadges: Record<TableDisplayTemplateId, string> = {
-  wedding: 'Lembrança Especial',
-  modern: 'Fotos ao vivo',
-  corporate: 'Galeria Oficial',
-  minimal: 'Fotos do Evento',
-  party: 'Fotos ao vivo no telão',
-  rustic: 'Memórias do Dia'
-}
+  wedding: "Lembrança Especial",
+  modern: "Fotos ao vivo",
+  corporate: "Galeria Oficial",
+  minimal: "Fotos do Evento",
+  party: "Fotos ao vivo no telão",
+  rustic: "Memórias do Dia"
+};
 
 const quickSubtitles = [
-  'Aponte a câmera e entre na foto!',
-  'Deixe sua lembrança deste dia tão especial',
-  'Envie suas fotos sem baixar nenhum aplicativo',
-  'Suas fotos ao vivo no telão do evento!'
-]
+  "Aponte a câmera e entre na foto!",
+  "Deixe sua lembrança deste dia tão especial",
+  "Envie suas fotos sem baixar nenhum aplicativo",
+  "Suas fotos ao vivo no telão do evento!"
+];
 
 interface TemplateMeta {
-  id: TableDisplayTemplateId
-  label: string
-  icon: React.ReactNode
-  accentColor: string
-  previewBg: string
+  id: TableDisplayTemplateId;
+  label: string;
+  icon: React.ReactNode;
+  accentColor: string;
+  previewBg: string;
 }
 
 const templateList: TemplateMeta[] = [
   {
-    id: 'wedding',
-    label: 'Casamento',
+    id: "wedding",
+    label: "Casamento",
     icon: <WeddingIcon fontSize="small" />,
-    accentColor: '#9E7D47',
-    previewBg: '#FAF7F2'
+    accentColor: "#9E7D47",
+    previewBg: "#FAF7F2"
   },
   {
-    id: 'modern',
-    label: 'Moderno',
+    id: "modern",
+    label: "Moderno",
     icon: <PartyIcon fontSize="small" />,
-    accentColor: '#17140F',
-    previewBg: '#FFCF1F'
+    accentColor: "#17140F",
+    previewBg: "#FFCF1F"
   },
   {
-    id: 'corporate',
-    label: 'Corporativo',
+    id: "corporate",
+    label: "Corporativo",
     icon: <CorporateIcon fontSize="small" />,
-    accentColor: '#38BDF8',
-    previewBg: '#0F172A'
+    accentColor: "#38BDF8",
+    previewBg: "#0F172A"
   },
   {
-    id: 'minimal',
-    label: 'Minimalista',
+    id: "minimal",
+    label: "Minimalista",
     icon: <MinimalIcon fontSize="small" />,
-    accentColor: '#111827',
-    previewBg: '#FFFFFF'
+    accentColor: "#111827",
+    previewBg: "#FFFFFF"
   },
   {
-    id: 'party',
-    label: 'Festa/Neon',
+    id: "party",
+    label: "Festa/Neon",
     icon: <NightlifeIcon fontSize="small" />,
-    accentColor: '#F43F5E',
-    previewBg: '#180B24'
+    accentColor: "#F43F5E",
+    previewBg: "#180B24"
   },
   {
-    id: 'rustic',
-    label: 'Rústico',
+    id: "rustic",
+    label: "Rústico",
     icon: <RusticIcon fontSize="small" />,
-    accentColor: '#4A5D4E',
-    previewBg: '#F5EFEB'
+    accentColor: "#4A5D4E",
+    previewBg: "#F5EFEB"
   }
-]
+];
 
 const brandPresetColors = [
-  { label: 'Dourado / Champagne', hex: '#9E7D47' },
-  { label: 'Flash Yellow', hex: '#FFCF1F' },
-  { label: 'Azul Royal', hex: '#2563EB' },
-  { label: 'Rosa Carmim', hex: '#E11D48' },
-  { label: 'Verde Esmeralda', hex: '#059669' },
-  { label: 'Roxo Violeta', hex: '#7C3AED' },
-  { label: 'Terracota', hex: '#C2410C' },
-  { label: 'Preto Ink', hex: '#17140F' }
-]
+  { label: "Dourado / Champagne", hex: "#9E7D47" },
+  { label: "Flash Yellow", hex: "#FFCF1F" },
+  { label: "Azul Royal", hex: "#2563EB" },
+  { label: "Rosa Carmim", hex: "#E11D48" },
+  { label: "Verde Esmeralda", hex: "#059669" },
+  { label: "Roxo Violeta", hex: "#7C3AED" },
+  { label: "Terracota", hex: "#C2410C" },
+  { label: "Preto Ink", hex: "#17140F" }
+];
 
-export const TableDisplayModal = ({
-  open,
-  onClose,
-  event,
-  guestUrl
-}: TableDisplayModalProps) => {
+export const TableDisplayModal = ({ open, onClose, event, guestUrl }: TableDisplayModalProps) => {
   const initialTemplate: TableDisplayTemplateId = useMemo(() => {
-    if (event.type === 'wedding') return 'wedding'
-    if (event.type === 'corporate') return 'corporate'
-    return 'modern'
-  }, [event.type])
+    if (event.type === "wedding") return "wedding";
+    if (event.type === "corporate") return "corporate";
+    return "modern";
+  }, [event.type]);
 
   const [config, setConfig] = useState<TableDisplayConfig>({
     template: initialTemplate,
-    title: event.name || '',
+    title: event.name || "",
     subtitle: defaultSubtitles[initialTemplate],
-    customFooter: event.customization?.agencyName || '',
+    customFooter: event.customization?.agencyName || "",
     topBadgeText: defaultTopBadges[initialTemplate],
     showTopBadge: true,
     showPin: Boolean(event.settings.pinEnabled),
     showSteps: true,
     showBranding: true,
     showFrame: true,
-    qrSize: 'standard',
-    pageLayout: 'a6'
-  })
+    qrSize: "standard",
+    pageLayout: "a6"
+  });
 
-  const [isExportingPng, setIsExportingPng] = useState(false)
+  const [isExportingPng, setIsExportingPng] = useState(false);
 
   const handleTemplateChange = (template: TableDisplayTemplateId) => {
     setConfig((prev) => ({
       ...prev,
       template,
-      subtitle:
-        prev.subtitle === defaultSubtitles[prev.template]
-          ? defaultSubtitles[template]
-          : prev.subtitle,
+      subtitle: prev.subtitle === defaultSubtitles[prev.template] ? defaultSubtitles[template] : prev.subtitle,
       topBadgeText:
-        prev.topBadgeText === defaultTopBadges[prev.template]
-          ? defaultTopBadges[template]
-          : prev.topBadgeText
-    }))
-  }
+        prev.topBadgeText === defaultTopBadges[prev.template] ? defaultTopBadges[template] : prev.topBadgeText
+    }));
+  };
 
   const handleExportPng = async () => {
-    setIsExportingPng(true)
+    setIsExportingPng(true);
     try {
       await exportTableDisplayPng({
         event,
         guestUrl,
         config
-      })
-      toast.success('Imagem em alta resolução (300 DPI) gerada com sucesso!')
+      });
+      toast.success("Imagem em alta resolução (300 DPI) gerada com sucesso!");
     } catch (err) {
-      console.error(err)
-      toast.error('Erro ao gerar imagem para impressão.')
+      console.error(err);
+      toast.error("Erro ao gerar imagem para impressão.");
     } finally {
-      setIsExportingPng(false)
+      setIsExportingPng(false);
     }
-  }
+  };
 
   const handlePrint = () => {
-    window.print()
-  }
+    window.print();
+  };
 
   return (
     <>
-      <Dialog
-        open={open}
-        onClose={onClose}
-        maxWidth="lg"
-        fullWidth
-        PaperProps={{ sx: dialogPaperStyles }}
-      >
+      <Dialog open={open} onClose={onClose} maxWidth="lg" fullWidth PaperProps={{ sx: dialogPaperStyles }}>
         <Box sx={dialogHeaderStyles}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
             <Box
               sx={{
                 width: 40,
                 height: 40,
-                borderRadius: '12px',
-                bgcolor: 'primary.main',
-                color: 'primary.contrastText',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
+                borderRadius: "12px",
+                bgcolor: "primary.main",
+                color: "primary.contrastText",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
                 flexShrink: 0
               }}
             >
@@ -220,7 +243,7 @@ export const TableDisplayModal = ({
               </Typography>
               <Box sx={templateSelectorGridStyles}>
                 {templateList.map((tpl) => {
-                  const isSelected = config.template === tpl.id
+                  const isSelected = config.template === tpl.id;
                   return (
                     <Box
                       key={tpl.id}
@@ -233,15 +256,15 @@ export const TableDisplayModal = ({
                         sx={{
                           width: 28,
                           height: 28,
-                          borderRadius: '50%',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
+                          borderRadius: "50%",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
                           bgcolor: tpl.previewBg,
                           color: tpl.accentColor,
-                          border: '1px solid',
-                          borderColor: 'divider',
-                          boxShadow: '0 2px 5px rgba(0,0,0,0.1)'
+                          border: "1px solid",
+                          borderColor: "divider",
+                          boxShadow: "0 2px 5px rgba(0,0,0,0.1)"
                         }}
                       >
                         {tpl.icon}
@@ -251,25 +274,25 @@ export const TableDisplayModal = ({
                         fontWeight={isSelected ? 800 : 600}
                         sx={{
                           lineHeight: 1.2,
-                          textAlign: 'center'
+                          textAlign: "center"
                         }}
                       >
                         {tpl.label}
                       </Typography>
                     </Box>
-                  )
+                  );
                 })}
               </Box>
 
               <Divider sx={{ my: 0.5 }} />
 
               {/* Seletor de Cor Primária / Marca do Evento */}
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
                 <Box
                   sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between'
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between"
                   }}
                 >
                   <Typography variant="caption" fontWeight={700} color="text.secondary">
@@ -282,7 +305,7 @@ export const TableDisplayModal = ({
                       color="inherit"
                       onClick={() => setConfig((prev) => ({ ...prev, customColor: undefined }))}
                       startIcon={<ResetColorIcon sx={{ fontSize: 13 }} />}
-                      sx={{ fontSize: '0.68rem', py: 0, px: 0.5, minHeight: 0 }}
+                      sx={{ fontSize: "0.68rem", py: 0, px: 0.5, minHeight: 0 }}
                     >
                       Padrão do modelo
                     </Button>
@@ -291,42 +314,39 @@ export const TableDisplayModal = ({
 
                 <Box
                   sx={{
-                    display: 'flex',
-                    alignItems: 'center',
+                    display: "flex",
+                    alignItems: "center",
                     gap: 0.75,
-                    flexWrap: 'wrap'
+                    flexWrap: "wrap"
                   }}
                 >
                   {brandPresetColors.map((c) => {
-                    const isSelected =
-                      config.customColor?.toLowerCase() === c.hex.toLowerCase()
+                    const isSelected = config.customColor?.toLowerCase() === c.hex.toLowerCase();
                     return (
                       <Tooltip key={c.hex} title={c.label}>
                         <Box
                           component="button"
                           type="button"
-                          onClick={() =>
-                            setConfig((prev) => ({ ...prev, customColor: c.hex }))
-                          }
+                          onClick={() => setConfig((prev) => ({ ...prev, customColor: c.hex }))}
                           sx={{
                             width: 22,
                             height: 22,
-                            borderRadius: '50%',
+                            borderRadius: "50%",
                             bgcolor: c.hex,
-                            border: '2px solid',
-                            borderColor: isSelected ? 'text.primary' : 'transparent',
-                            outline: isSelected ? '2px solid #FFCF1F' : 'none',
-                            outlineOffset: '1px',
-                            cursor: 'pointer',
+                            border: "2px solid",
+                            borderColor: isSelected ? "text.primary" : "transparent",
+                            outline: isSelected ? "2px solid #FFCF1F" : "none",
+                            outlineOffset: "1px",
+                            cursor: "pointer",
                             p: 0,
-                            transition: 'transform 0.15s ease',
-                            '&:hover': {
-                              transform: 'scale(1.15)'
+                            transition: "transform 0.15s ease",
+                            "&:hover": {
+                              transform: "scale(1.15)"
                             }
                           }}
                         />
                       </Tooltip>
-                    )
+                    );
                   })}
 
                   {/* Color Picker nativo com ícone interativo */}
@@ -334,43 +354,41 @@ export const TableDisplayModal = ({
                     <Box
                       component="label"
                       sx={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
+                        display: "inline-flex",
+                        alignItems: "center",
+                        justifyContent: "center",
                         width: 26,
                         height: 26,
-                        borderRadius: '50%',
-                        border: '1.5px dashed',
-                        borderColor: config.customColor ? 'primary.main' : 'divider',
-                        bgcolor: config.customColor || 'action.hover',
-                        cursor: 'pointer',
-                        position: 'relative',
-                        overflow: 'hidden',
-                        transition: 'transform 0.15s ease',
-                        '&:hover': { transform: 'scale(1.1)' }
+                        borderRadius: "50%",
+                        border: "1.5px dashed",
+                        borderColor: config.customColor ? "primary.main" : "divider",
+                        bgcolor: config.customColor || "action.hover",
+                        cursor: "pointer",
+                        position: "relative",
+                        overflow: "hidden",
+                        transition: "transform 0.15s ease",
+                        "&:hover": { transform: "scale(1.1)" }
                       }}
                     >
                       <input
                         type="color"
-                        value={config.customColor || '#9E7D47'}
-                        onChange={(e) =>
-                          setConfig((prev) => ({ ...prev, customColor: e.target.value }))
-                        }
+                        value={config.customColor || "#9E7D47"}
+                        onChange={(e) => setConfig((prev) => ({ ...prev, customColor: e.target.value }))}
                         style={{
-                          position: 'absolute',
+                          position: "absolute",
                           top: -10,
                           left: -10,
                           width: 50,
                           height: 50,
                           opacity: 0,
-                          cursor: 'pointer'
+                          cursor: "pointer"
                         }}
                       />
                       <PaletteIcon
                         sx={{
                           fontSize: 14,
-                          color: config.customColor ? '#FFFFFF' : 'text.secondary',
-                          pointerEvents: 'none'
+                          color: config.customColor ? "#FFFFFF" : "text.secondary",
+                          pointerEvents: "none"
                         }}
                       />
                     </Box>
@@ -380,22 +398,20 @@ export const TableDisplayModal = ({
                   <TextField
                     size="small"
                     placeholder="#HEX"
-                    value={config.customColor || ''}
-                    onChange={(e) =>
-                      setConfig((prev) => ({ ...prev, customColor: e.target.value }))
-                    }
+                    value={config.customColor || ""}
+                    onChange={(e) => setConfig((prev) => ({ ...prev, customColor: e.target.value }))}
                     slotProps={{
                       htmlInput: {
                         maxLength: 9,
                         style: {
-                          fontSize: '0.72rem',
-                          padding: '3px 6px',
-                          width: '74px',
-                          fontFamily: 'monospace'
+                          fontSize: "0.72rem",
+                          padding: "3px 6px",
+                          width: "74px",
+                          fontFamily: "monospace"
                         }
                       }
                     }}
-                    sx={{ ml: 'auto' }}
+                    sx={{ ml: "auto" }}
                   />
                 </Box>
               </Box>
@@ -422,20 +438,20 @@ export const TableDisplayModal = ({
               />
 
               {/* Sugestões rápidas de subtítulo */}
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75 }}>
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 0.75 }}>
                 <Typography variant="caption" color="text.secondary" fontWeight={600}>
                   Sugestões rápidas:
                 </Typography>
-                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
                   {quickSubtitles.map((text) => (
                     <Chip
                       key={text}
                       label={text}
                       size="small"
-                      variant={config.subtitle === text ? 'filled' : 'outlined'}
-                      color={config.subtitle === text ? 'primary' : 'default'}
+                      variant={config.subtitle === text ? "filled" : "outlined"}
+                      color={config.subtitle === text ? "primary" : "default"}
                       onClick={() => setConfig((prev) => ({ ...prev, subtitle: text }))}
-                      sx={{ fontSize: '0.72rem', cursor: 'pointer' }}
+                      sx={{ fontSize: "0.72rem", cursor: "pointer" }}
                     />
                   ))}
                 </Box>
@@ -446,7 +462,7 @@ export const TableDisplayModal = ({
                 placeholder="Ex: #CasamentoGabiERafa ou @assessoria"
                 size="small"
                 fullWidth
-                value={config.customFooter || ''}
+                value={config.customFooter || ""}
                 onChange={(e) => setConfig((prev) => ({ ...prev, customFooter: e.target.value }))}
                 helperText="Aparecerá no rodapé do display junto ao branding oficial"
               />
@@ -463,9 +479,7 @@ export const TableDisplayModal = ({
                   <Switch
                     size="small"
                     checked={config.showTopBadge}
-                    onChange={(e) =>
-                      setConfig((prev) => ({ ...prev, showTopBadge: e.target.checked }))
-                    }
+                    onChange={(e) => setConfig((prev) => ({ ...prev, showTopBadge: e.target.checked }))}
                   />
                 }
                 label={<Typography variant="body2">Selo / Badge de destaque no topo</Typography>}
@@ -476,9 +490,7 @@ export const TableDisplayModal = ({
                   <Switch
                     size="small"
                     checked={config.showFrame}
-                    onChange={(e) =>
-                      setConfig((prev) => ({ ...prev, showFrame: e.target.checked }))
-                    }
+                    onChange={(e) => setConfig((prev) => ({ ...prev, showFrame: e.target.checked }))}
                   />
                 }
                 label={<Typography variant="body2">Moldura / Borda decorativa</Typography>}
@@ -490,16 +502,10 @@ export const TableDisplayModal = ({
                     <Switch
                       size="small"
                       checked={config.showPin}
-                      onChange={(e) =>
-                        setConfig((prev) => ({ ...prev, showPin: e.target.checked }))
-                      }
+                      onChange={(e) => setConfig((prev) => ({ ...prev, showPin: e.target.checked }))}
                     />
                   }
-                  label={
-                    <Typography variant="body2">
-                      Exibir PIN no cartão ({event.settings.pin})
-                    </Typography>
-                  }
+                  label={<Typography variant="body2">Exibir PIN no cartão ({event.settings.pin})</Typography>}
                 />
               )}
 
@@ -508,9 +514,7 @@ export const TableDisplayModal = ({
                   <Switch
                     size="small"
                     checked={config.showSteps}
-                    onChange={(e) =>
-                      setConfig((prev) => ({ ...prev, showSteps: e.target.checked }))
-                    }
+                    onChange={(e) => setConfig((prev) => ({ ...prev, showSteps: e.target.checked }))}
                   />
                 }
                 label={<Typography variant="body2">Instruções passo a passo (1, 2, 3)</Typography>}
@@ -521,15 +525,13 @@ export const TableDisplayModal = ({
                   <Switch
                     size="small"
                     checked={config.showBranding}
-                    onChange={(e) =>
-                      setConfig((prev) => ({ ...prev, showBranding: e.target.checked }))
-                    }
+                    onChange={(e) => setConfig((prev) => ({ ...prev, showBranding: e.target.checked }))}
                   />
                 }
                 label={<Typography variant="body2">Rodapé com marca / assessoria</Typography>}
               />
 
-              <Box sx={{ mt: 1, display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+              <Box sx={{ mt: 1, display: "flex", flexDirection: "column", gap: 0.5 }}>
                 <Typography variant="caption" color="text.secondary" fontWeight={600}>
                   Destaque do QR Code:
                 </Typography>
@@ -575,13 +577,13 @@ export const TableDisplayModal = ({
           <Box sx={previewWrapperStyles}>
             <Box
               sx={{
-                position: 'absolute',
+                position: "absolute",
                 top: 14,
                 left: 18,
                 right: 18,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
                 zIndex: 2
               }}
             >
@@ -589,11 +591,11 @@ export const TableDisplayModal = ({
                 variant="caption"
                 sx={{
                   fontWeight: 800,
-                  color: 'text.secondary',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.08em',
-                  display: 'flex',
-                  alignItems: 'center',
+                  color: "text.secondary",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.08em",
+                  display: "flex",
+                  alignItems: "center",
                   gap: 0.5
                 }}
               >
@@ -604,11 +606,11 @@ export const TableDisplayModal = ({
                 size="small"
                 sx={{
                   fontWeight: 700,
-                  fontSize: '0.7rem',
+                  fontSize: "0.7rem",
                   height: 22,
-                  bgcolor: 'background.paper',
-                  border: '1px solid',
-                  borderColor: 'divider'
+                  bgcolor: "background.paper",
+                  border: "1px solid",
+                  borderColor: "divider"
                 }}
               />
             </Box>
@@ -617,36 +619,25 @@ export const TableDisplayModal = ({
               sx={{
                 mt: 4,
                 mb: 1,
-                filter: 'drop-shadow(0 16px 32px rgba(0, 0, 0, 0.18))',
-                transition: 'transform 0.2s ease',
-                '&:hover': {
-                  transform: 'scale(1.01)'
+                filter: "drop-shadow(0 16px 32px rgba(0, 0, 0, 0.18))",
+                transition: "transform 0.2s ease",
+                "&:hover": {
+                  transform: "scale(1.01)"
                 }
               }}
             >
-              <TableDisplayCard
-                event={event}
-                guestUrl={guestUrl}
-                config={config}
-                scale={0.92}
-              />
+              <TableDisplayCard event={event} guestUrl={guestUrl} config={config} scale={0.92} />
             </Box>
           </Box>
         </Box>
 
         {/* Rodapé de Ações do Modal */}
         <Box sx={dialogActionsStyles}>
-          <Button
-            size="small"
-            variant="outlined"
-            color="inherit"
-            onClick={onClose}
-            sx={dialogActionButtonStyles}
-          >
+          <Button size="small" variant="outlined" color="inherit" onClick={onClose} sx={dialogActionButtonStyles}>
             Fechar
           </Button>
 
-          <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+          <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
             <Tooltip title="Gera imagem em alta resolução (300 DPI) com o QR Code nítido para envio a gráficas ou uso digital">
               <span>
                 <Button
@@ -675,10 +666,10 @@ export const TableDisplayModal = ({
               onClick={handlePrint}
               sx={{
                 ...dialogActionButtonStyles,
-                bgcolor: 'primary.main',
-                color: 'primary.contrastText',
-                '&:hover': {
-                  bgcolor: 'primary.dark'
+                bgcolor: "primary.main",
+                color: "primary.contrastText",
+                "&:hover": {
+                  bgcolor: "primary.dark"
                 }
               }}
             >
@@ -711,8 +702,8 @@ export const TableDisplayModal = ({
             display: block !important;
           }
           @page {
-            size: ${config.pageLayout === 'a6' ? '105mm 148mm' : 'A4 portrait'};
-            margin: ${config.pageLayout === 'a6' ? '0' : '10mm'};
+            size: ${config.pageLayout === "a6" ? "105mm 148mm" : "A4 portrait"};
+            margin: ${config.pageLayout === "a6" ? "0" : "10mm"};
           }
         }
       `}</style>
@@ -721,98 +712,78 @@ export const TableDisplayModal = ({
       <Box
         id="print-table-displays-root"
         sx={{
-          display: 'none',
-          '@media print': {
-            display: 'block !important'
+          display: "none",
+          "@media print": {
+            display: "block !important"
           }
         }}
       >
-        {config.pageLayout === 'a6' && (
+        {config.pageLayout === "a6" && (
           <Box
             sx={{
-              width: '100vw',
-              height: '100vh',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              pageBreakInside: 'avoid'
+              width: "100vw",
+              height: "100vh",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              pageBreakInside: "avoid"
             }}
           >
-            <TableDisplayCard
-              event={event}
-              guestUrl={guestUrl}
-              config={config}
-              scale={1}
-            />
+            <TableDisplayCard event={event} guestUrl={guestUrl} config={config} scale={1} />
           </Box>
         )}
 
-        {config.pageLayout === 'a4_double' && (
+        {config.pageLayout === "a4_double" && (
           <Box
             sx={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(2, 1fr)',
-              gap: '15mm',
-              justifyItems: 'center',
-              alignItems: 'center',
-              minHeight: '100vh',
-              p: '5mm',
-              boxSizing: 'border-box'
+              display: "grid",
+              gridTemplateColumns: "repeat(2, 1fr)",
+              gap: "15mm",
+              justifyItems: "center",
+              alignItems: "center",
+              minHeight: "100vh",
+              p: "5mm",
+              boxSizing: "border-box"
             }}
           >
-            <Box sx={{ borderRight: '1px dashed #999999', pr: '8mm' }}>
-              <TableDisplayCard
-                event={event}
-                guestUrl={guestUrl}
-                config={config}
-                scale={0.95}
-              />
+            <Box sx={{ borderRight: "1px dashed #999999", pr: "8mm" }}>
+              <TableDisplayCard event={event} guestUrl={guestUrl} config={config} scale={0.95} />
             </Box>
-            <Box sx={{ pl: '8mm' }}>
-              <TableDisplayCard
-                event={event}
-                guestUrl={guestUrl}
-                config={config}
-                scale={0.95}
-              />
+            <Box sx={{ pl: "8mm" }}>
+              <TableDisplayCard event={event} guestUrl={guestUrl} config={config} scale={0.95} />
             </Box>
           </Box>
         )}
 
-        {config.pageLayout === 'a4_quad' && (
+        {config.pageLayout === "a4_quad" && (
           <Box
             sx={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(2, 1fr)',
-              gridTemplateRows: 'repeat(2, 1fr)',
-              gap: '8mm',
-              justifyItems: 'center',
-              alignItems: 'center',
-              minHeight: '100vh',
-              p: '5mm',
-              boxSizing: 'border-box'
+              display: "grid",
+              gridTemplateColumns: "repeat(2, 1fr)",
+              gridTemplateRows: "repeat(2, 1fr)",
+              gap: "8mm",
+              justifyItems: "center",
+              alignItems: "center",
+              minHeight: "100vh",
+              p: "5mm",
+              boxSizing: "border-box"
             }}
           >
             {[1, 2, 3, 4].map((idx) => (
               <Box
                 key={idx}
                 sx={{
-                  outline: '1px dashed #aaaaaa',
-                  outlineOffset: '4mm',
-                  m: '2mm'
+                  outline: "1px dashed #aaaaaa",
+                  outlineOffset: "4mm",
+                  m: "2mm"
                 }}
               >
-                <TableDisplayCard
-                  event={event}
-                  guestUrl={guestUrl}
-                  config={config}
-                  scale={0.72}
-                />
+                <TableDisplayCard event={event} guestUrl={guestUrl} config={config} scale={0.72} />
               </Box>
             ))}
           </Box>
         )}
       </Box>
     </>
-  )
-}
+  );
+};

@@ -1,11 +1,11 @@
-import { Box, Button, Typography } from '@mui/material'
-import { Add as AddIcon } from '@mui/icons-material'
+import { Box, Button, Typography } from "@mui/material";
+import { Add as AddIcon } from "@mui/icons-material";
 
-import { createEventButtonStyles, subtitleStyles, titleStyles, welcomeWrapperStyles } from './styles'
-import useHomePage from '@pages/app/home/hook'
+import { createEventButtonStyles, subtitleStyles, titleStyles, welcomeWrapperStyles } from "./styles";
+import useHomePage from "@pages/app/home/hook";
 
 const Welcome = () => {
-  const { firstName, handleOpenCreate: onCreateEvent } = useHomePage()
+  const { firstName, handleOpenCreate: onCreateEvent } = useHomePage();
   return (
     <Box component="section" sx={welcomeWrapperStyles}>
       <Box sx={{ minWidth: 0 }}>
@@ -28,8 +28,7 @@ const Welcome = () => {
         Criar evento
       </Button>
     </Box>
-  )
-}
+  );
+};
 
-export default Welcome
-
+export default Welcome;

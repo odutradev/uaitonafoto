@@ -1,213 +1,249 @@
-import { useState } from 'react'
-import { Box, Button, Card, Chip, CircularProgress, IconButton, TextField, Tooltip, Typography } from '@mui/material'
-import { AddOutlined as AddIcon, CheckCircleOutline as CheckCircleIcon, ContentCopyOutlined as CopyIcon, DeleteOutline as DeleteIcon, EditOutlined as EditIcon, LockOpenOutlined as LockOpenIcon, LockOutlined as LockIcon, OpenInNewOutlined as OpenIcon, PowerOffOutlined as PowerOffIcon, RefreshOutlined as RefreshIcon } from '@mui/icons-material'
-import dayjs from 'dayjs'
-import { toast } from 'react-toastify'
+import { useState } from "react";
+import { Box, Button, Card, Chip, CircularProgress, IconButton, TextField, Tooltip, Typography } from "@mui/material";
+import {
+  AddOutlined as AddIcon,
+  CheckCircleOutline as CheckCircleIcon,
+  ContentCopyOutlined as CopyIcon,
+  DeleteOutline as DeleteIcon,
+  EditOutlined as EditIcon,
+  LockOpenOutlined as LockOpenIcon,
+  LockOutlined as LockIcon,
+  OpenInNewOutlined as OpenIcon,
+  PowerOffOutlined as PowerOffIcon,
+  RefreshOutlined as RefreshIcon
+} from "@mui/icons-material";
+import dayjs from "dayjs";
+import { toast } from "react-toastify";
 
-import Modal from '@components/modal'
-import { buildScreenLink, getEventLimits } from '@utils/functions/events'
+import Modal from "@components/modal";
+import { buildScreenLink, getEventLimits } from "@utils/functions/events";
 
-import { compactIconButtonStyles, countBadgeStyles, linkFieldBoxStyles, linkIconActionsStyles, linkTextStyles, pinCodeTextStyles, screenActionButtonStyles, screenCardStyles, screenHeaderActionsStyles, screenHeaderRowStyles, screenSectionStackStyles, screenSlotCardStyles, screenSlotHeaderStyles, screenSlotsGridStyles, statusPillStyles } from './styles'
-import type { EventScreenHistoryEntry, EventScreenSlot } from '@utils/types/events'
-import useEventDetailsPage from '@pages/app/eventDetails/hook'
+import {
+  compactIconButtonStyles,
+  countBadgeStyles,
+  linkFieldBoxStyles,
+  linkIconActionsStyles,
+  linkTextStyles,
+  pinCodeTextStyles,
+  screenActionButtonStyles,
+  screenCardStyles,
+  screenHeaderActionsStyles,
+  screenHeaderRowStyles,
+  screenSectionStackStyles,
+  screenSlotCardStyles,
+  screenSlotHeaderStyles,
+  screenSlotsGridStyles,
+  statusPillStyles
+} from "./styles";
+import type { EventScreenHistoryEntry, EventScreenSlot } from "@utils/types/events";
+import useEventDetailsPage from "@pages/app/eventDetails/hook";
 
-const screenOnlineTimeoutMs = 30_000
+const screenOnlineTimeoutMs = 30_000;
 
-const getScreenHistoryMeta = (action: EventScreenHistoryEntry['action']) => {
+const getScreenHistoryMeta = (action: EventScreenHistoryEntry["action"]) => {
   switch (action) {
-    case 'created':
+    case "created":
       return {
-        label: 'Criado',
-        color: 'info' as const,
-        description: 'Slot de telão gerado',
-        icon: <AddIcon sx={{ color: 'info.main', fontSize: 18 }} />
-      }
-    case 'updated':
+        label: "Criado",
+        color: "info" as const,
+        description: "Slot de telão gerado",
+        icon: <AddIcon sx={{ color: "info.main", fontSize: 18 }} />
+      };
+    case "updated":
       return {
-        label: 'Editado',
-        color: 'warning' as const,
-        description: 'Identificação do telão alterada',
-        icon: <EditIcon sx={{ color: 'warning.main', fontSize: 18 }} />
-      }
-    case 'deleted':
+        label: "Editado",
+        color: "warning" as const,
+        description: "Identificação do telão alterada",
+        icon: <EditIcon sx={{ color: "warning.main", fontSize: 18 }} />
+      };
+    case "deleted":
       return {
-        label: 'Apagado',
-        color: 'error' as const,
-        description: 'Telão removido do evento',
-        icon: <DeleteIcon sx={{ color: 'error.main', fontSize: 18 }} />
-      }
-    case 'connected':
+        label: "Apagado",
+        color: "error" as const,
+        description: "Telão removido do evento",
+        icon: <DeleteIcon sx={{ color: "error.main", fontSize: 18 }} />
+      };
+    case "connected":
       return {
-        label: 'Conectado',
-        color: 'success' as const,
-        description: 'Telão ativado com sucesso',
-        icon: <CheckCircleIcon sx={{ color: 'success.main', fontSize: 18 }} />
-      }
-    case 'disconnected':
+        label: "Conectado",
+        color: "success" as const,
+        description: "Telão ativado com sucesso",
+        icon: <CheckCircleIcon sx={{ color: "success.main", fontSize: 18 }} />
+      };
+    case "disconnected":
       return {
-        label: 'Desconectado',
-        color: 'default' as const,
-        description: 'Telão desconectado e vaga liberada',
-        icon: <PowerOffIcon sx={{ color: 'text.secondary', fontSize: 18 }} />
-      }
-    case 'blocked':
+        label: "Desconectado",
+        color: "default" as const,
+        description: "Telão desconectado e vaga liberada",
+        icon: <PowerOffIcon sx={{ color: "text.secondary", fontSize: 18 }} />
+      };
+    case "blocked":
       return {
-        label: 'Bloqueado',
-        color: 'error' as const,
-        description: 'Telão bloqueado pela organização',
-        icon: <LockIcon sx={{ color: 'error.main', fontSize: 18 }} />
-      }
-    case 'unblocked':
+        label: "Bloqueado",
+        color: "error" as const,
+        description: "Telão bloqueado pela organização",
+        icon: <LockIcon sx={{ color: "error.main", fontSize: 18 }} />
+      };
+    case "unblocked":
       return {
-        label: 'Desbloqueado',
-        color: 'success' as const,
-        description: 'Acesso ao telão liberado',
-        icon: <LockOpenIcon sx={{ color: 'success.main', fontSize: 18 }} />
-      }
+        label: "Desbloqueado",
+        color: "success" as const,
+        description: "Acesso ao telão liberado",
+        icon: <LockOpenIcon sx={{ color: "success.main", fontSize: 18 }} />
+      };
     default:
       return {
-        label: 'Registro',
-        color: 'default' as const,
-        description: 'Ação registrada no telão',
-        icon: <RefreshIcon sx={{ color: 'text.secondary', fontSize: 18 }} />
-      }
+        label: "Registro",
+        color: "default" as const,
+        description: "Ação registrada no telão",
+        icon: <RefreshIcon sx={{ color: "text.secondary", fontSize: 18 }} />
+      };
   }
-}
+};
 
 const getScreenStatusBadge = (slot: EventScreenSlot) => {
   if (slot.isBlocked) {
     return {
-      status: 'blocked' as const,
-      label: 'Bloqueado',
-      detail: 'Telão bloqueado pela organização'
-    }
+      status: "blocked" as const,
+      label: "Bloqueado",
+      detail: "Telão bloqueado pela organização"
+    };
   }
 
   if (!slot.activatedAt) {
     return {
-      status: 'pending' as const,
-      label: 'Aguardando',
-      detail: 'Aguardando inserção do PIN no navegador do telão'
-    }
+      status: "pending" as const,
+      label: "Aguardando",
+      detail: "Aguardando inserção do PIN no navegador do telão"
+    };
   }
 
-  const lastSeenMs = slot.lastSeenAt ? Date.parse(slot.lastSeenAt) : NaN
-  const isOnline = !Number.isNaN(lastSeenMs) && Date.now() - lastSeenMs < screenOnlineTimeoutMs
+  const lastSeenMs = slot.lastSeenAt ? Date.parse(slot.lastSeenAt) : NaN;
+  const isOnline = !Number.isNaN(lastSeenMs) && Date.now() - lastSeenMs < screenOnlineTimeoutMs;
 
   if (isOnline) {
     return {
-      status: 'online' as const,
-      label: 'Online',
-      detail: `Conectado · Sinal às ${dayjs(slot.lastSeenAt).format('HH:mm:ss')}`
-    }
+      status: "online" as const,
+      label: "Online",
+      detail: `Conectado · Sinal às ${dayjs(slot.lastSeenAt).format("HH:mm:ss")}`
+    };
   }
 
   return {
-    status: 'offline' as const,
-    label: 'Offline',
+    status: "offline" as const,
+    label: "Offline",
     detail: slot.lastSeenAt
-      ? `Último sinal em ${dayjs(slot.lastSeenAt).format('DD/MM [às] HH:mm')}`
-      : `Ativado em ${dayjs(slot.activatedAt).format('DD/MM [às] HH:mm')}`
-  }
-}
+      ? `Último sinal em ${dayjs(slot.lastSeenAt).format("DD/MM [às] HH:mm")}`
+      : `Ativado em ${dayjs(slot.activatedAt).format("DD/MM [às] HH:mm")}`
+  };
+};
 
 const EventScreens = () => {
-  const { event: eventValue, openScreen: onOpenScreen, addScreen: onAddScreen, disconnectScreen: onDisconnectScreen, updateScreen: onUpdateScreen, toggleBlockScreen: onToggleBlockScreen, refresh: onRefresh, handleUnlockScreenLockouts: onUnlockLockouts } = useEventDetailsPage()
-  const event = eventValue!
+  const {
+    event: eventValue,
+    openScreen: onOpenScreen,
+    addScreen: onAddScreen,
+    disconnectScreen: onDisconnectScreen,
+    updateScreen: onUpdateScreen,
+    toggleBlockScreen: onToggleBlockScreen,
+    refresh: onRefresh,
+    handleUnlockScreenLockouts: onUnlockLockouts
+  } = useEventDetailsPage();
+  const event = eventValue!;
 
-  const screenLink = buildScreenLink(event.guestToken)
-  const screens = event.screens ?? []
-  const screenHistory = [...(event.screenHistory ?? [])].reverse()
-  const limits = getEventLimits(event)
-  const maxScreens = limits.maxScreens
-  const isScreenLimitReached = screens.length >= maxScreens
+  const screenLink = buildScreenLink(event.guestToken);
+  const screens = event.screens ?? [];
+  const screenHistory = [...(event.screenHistory ?? [])].reverse();
+  const limits = getEventLimits(event);
+  const maxScreens = limits.maxScreens;
+  const isScreenLimitReached = screens.length >= maxScreens;
 
-  const [isManagingScreen, setIsManagingScreen] = useState(false)
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false)
-  const [screenNameInput, setScreenNameInput] = useState('')
-  const [editingSlot, setEditingSlot] = useState<EventScreenSlot | null>(null)
-  const [editNameInput, setEditNameInput] = useState('')
-  const [isRefreshing, setIsRefreshing] = useState(false)
-  const [isUnlocking, setIsUnlocking] = useState(false)
+  const [isManagingScreen, setIsManagingScreen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [screenNameInput, setScreenNameInput] = useState("");
+  const [editingSlot, setEditingSlot] = useState<EventScreenSlot | null>(null);
+  const [editNameInput, setEditNameInput] = useState("");
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isUnlocking, setIsUnlocking] = useState(false);
 
   const handleUnlockLockouts = async () => {
-    if (!onUnlockLockouts) return
-    setIsUnlocking(true)
+    if (!onUnlockLockouts) return;
+    setIsUnlocking(true);
     try {
-      await onUnlockLockouts()
+      await onUnlockLockouts();
     } finally {
-      setIsUnlocking(false)
+      setIsUnlocking(false);
     }
-  }
+  };
 
   const handleCopyScreenLink = async () => {
-    await navigator.clipboard.writeText(screenLink)
-    toast.success('Link do telão copiado!')
-  }
+    await navigator.clipboard.writeText(screenLink);
+    toast.success("Link do telão copiado!");
+  };
 
   const handleCopyScreenPin = async (pin: string) => {
-    await navigator.clipboard.writeText(pin)
-    toast.success('PIN do telão copiado!')
-  }
+    await navigator.clipboard.writeText(pin);
+    toast.success("PIN do telão copiado!");
+  };
 
   const handleRefresh = async () => {
-    if (!onRefresh) return
-    setIsRefreshing(true)
+    if (!onRefresh) return;
+    setIsRefreshing(true);
     try {
-      await onRefresh()
-      toast.success('Status dos telões atualizado!')
+      await onRefresh();
+      toast.success("Status dos telões atualizado!");
     } finally {
-      setIsRefreshing(false)
+      setIsRefreshing(false);
     }
-  }
+  };
 
   const handleOpenAddModal = () => {
-    setScreenNameInput('')
-    setIsAddModalOpen(true)
-  }
+    setScreenNameInput("");
+    setIsAddModalOpen(true);
+  };
 
   const handleConfirmAddScreen = async () => {
-    setIsManagingScreen(true)
-    await onAddScreen(screenNameInput.trim() || undefined)
-    setIsManagingScreen(false)
-    setIsAddModalOpen(false)
-  }
+    setIsManagingScreen(true);
+    await onAddScreen(screenNameInput.trim() || undefined);
+    setIsManagingScreen(false);
+    setIsAddModalOpen(false);
+  };
 
   const handleDisconnectScreen = async (screenId: string) => {
-    setIsManagingScreen(true)
-    await onDisconnectScreen(screenId)
-    setIsManagingScreen(false)
-  }
+    setIsManagingScreen(true);
+    await onDisconnectScreen(screenId);
+    setIsManagingScreen(false);
+  };
 
   const handleToggleBlockScreen = async (screenId: string, blocked: boolean) => {
-    if (!onToggleBlockScreen) return
-    setIsManagingScreen(true)
+    if (!onToggleBlockScreen) return;
+    setIsManagingScreen(true);
     try {
-      await onToggleBlockScreen(screenId, blocked)
+      await onToggleBlockScreen(screenId, blocked);
     } finally {
-      setIsManagingScreen(false)
+      setIsManagingScreen(false);
     }
-  }
+  };
 
   const handleOpenRenameModal = (slot: EventScreenSlot) => {
-    setEditingSlot(slot)
-    setEditNameInput(slot.name ?? '')
-  }
+    setEditingSlot(slot);
+    setEditNameInput(slot.name ?? "");
+  };
 
   const handleConfirmRename = async () => {
-    if (!editingSlot) return
-    setIsManagingScreen(true)
-    await onUpdateScreen(editingSlot.id, editNameInput.trim() || undefined)
-    setIsManagingScreen(false)
-    setEditingSlot(null)
-  }
+    if (!editingSlot) return;
+    setIsManagingScreen(true);
+    await onUpdateScreen(editingSlot.id, editNameInput.trim() || undefined);
+    setIsManagingScreen(false);
+    setEditingSlot(null);
+  };
 
   return (
     <Box sx={screenSectionStackStyles}>
       <Card elevation={0} sx={screenCardStyles}>
         <Box sx={screenHeaderRowStyles}>
           <Box>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1, flexWrap: "wrap" }}>
               <Typography variant="subtitle1" fontWeight={700} component="h2">
                 Telões do evento
               </Typography>
@@ -254,7 +290,7 @@ const EventScreens = () => {
                   }
                   onClick={handleUnlockLockouts}
                   disabled={isUnlocking}
-                  sx={{ ...screenActionButtonStyles, borderColor: 'divider', color: 'text.secondary' }}
+                  sx={{ ...screenActionButtonStyles, borderColor: "divider", color: "text.secondary" }}
                 >
                   Desbloquear
                 </Button>
@@ -290,12 +326,7 @@ const EventScreens = () => {
               </IconButton>
             </Tooltip>
             <Tooltip title="Abrir telão">
-              <IconButton
-                size="small"
-                onClick={onOpenScreen}
-                aria-label="Abrir telão"
-                sx={compactIconButtonStyles}
-              >
+              <IconButton size="small" onClick={onOpenScreen} aria-label="Abrir telão" sx={compactIconButtonStyles}>
                 <OpenIcon sx={{ fontSize: 16 }} />
               </IconButton>
             </Tooltip>
@@ -309,12 +340,12 @@ const EventScreens = () => {
         ) : (
           <Box sx={screenSlotsGridStyles}>
             {screens.map((slot, index) => {
-              const badge = getScreenStatusBadge(slot)
+              const badge = getScreenStatusBadge(slot);
 
               return (
                 <Box key={slot.id} sx={screenSlotCardStyles}>
                   <Box sx={screenSlotHeaderStyles}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 0 }}>
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1, minWidth: 0 }}>
                       <Typography variant="subtitle2" fontWeight={700} noWrap>
                         {slot.name || `Telão ${index + 1}`}
                       </Typography>
@@ -323,18 +354,18 @@ const EventScreens = () => {
                       </Box>
                     </Box>
 
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.25, flexShrink: 0 }}>
-                      <Tooltip title={slot.isBlocked ? 'Desbloquear telão' : 'Bloquear telão'}>
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 0.25, flexShrink: 0 }}>
+                      <Tooltip title={slot.isBlocked ? "Desbloquear telão" : "Bloquear telão"}>
                         <IconButton
                           size="small"
                           onClick={() => handleToggleBlockScreen(slot.id, !slot.isBlocked)}
                           disabled={isManagingScreen}
-                          aria-label={slot.isBlocked ? 'Desbloquear telão' : 'Bloquear telão'}
+                          aria-label={slot.isBlocked ? "Desbloquear telão" : "Bloquear telão"}
                           sx={{
                             ...compactIconButtonStyles,
-                            color: slot.isBlocked ? 'warning.main' : 'text.secondary',
-                            '&:hover': {
-                              color: slot.isBlocked ? 'warning.light' : 'text.primary'
+                            color: slot.isBlocked ? "warning.main" : "text.secondary",
+                            "&:hover": {
+                              color: slot.isBlocked ? "warning.light" : "text.primary"
                             }
                           }}
                         >
@@ -359,7 +390,7 @@ const EventScreens = () => {
                           onClick={() => handleDisconnectScreen(slot.id)}
                           disabled={isManagingScreen}
                           aria-label="Desconectar telão"
-                          sx={{ ...compactIconButtonStyles, color: 'error.main' }}
+                          sx={{ ...compactIconButtonStyles, color: "error.main" }}
                         >
                           <DeleteIcon sx={{ fontSize: 16 }} />
                         </IconButton>
@@ -368,8 +399,8 @@ const EventScreens = () => {
                   </Box>
 
                   {!slot.activatedAt && (
-                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1 }}>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 1 }}>
+                      <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                         <Typography variant="caption" color="text.secondary" fontWeight={700}>
                           PIN
                         </Typography>
@@ -393,7 +424,7 @@ const EventScreens = () => {
                     {badge.detail}
                   </Typography>
                 </Box>
-              )
+              );
             })}
           </Box>
         )}
@@ -402,7 +433,7 @@ const EventScreens = () => {
       <Card variant="outlined" sx={screenCardStyles}>
         <Box sx={screenHeaderRowStyles}>
           <Box>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
               <Typography variant="h6" fontWeight={700}>
                 Histórico de Telões
               </Typography>
@@ -422,11 +453,11 @@ const EventScreens = () => {
           <Box
             sx={{
               p: 3,
-              textAlign: 'center',
-              borderRadius: '12px',
-              border: '1px dashed',
-              borderColor: 'divider',
-              bgcolor: 'action.hover'
+              textAlign: "center",
+              borderRadius: "12px",
+              border: "1px dashed",
+              borderColor: "divider",
+              bgcolor: "action.hover"
             }}
           >
             <Typography variant="body2" color="text.secondary">
@@ -434,30 +465,30 @@ const EventScreens = () => {
             </Typography>
           </Box>
         ) : (
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
             {screenHistory.map((item) => {
-              const meta = getScreenHistoryMeta(item.action)
+              const meta = getScreenHistoryMeta(item.action);
               return (
                 <Box
                   key={item.id}
                   sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    flexWrap: 'wrap',
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    flexWrap: "wrap",
                     gap: 1.5,
                     p: 1.5,
-                    borderRadius: '10px',
-                    border: '1px solid',
-                    borderColor: 'divider',
-                    bgcolor: 'action.hover'
+                    borderRadius: "10px",
+                    border: "1px solid",
+                    borderColor: "divider",
+                    bgcolor: "action.hover"
                   }}
                 >
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25 }}>
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1.25 }}>
                     {meta.icon}
                     <Box>
                       <Typography variant="subtitle2" fontWeight={700}>
-                        {item.name || 'Telão'}
+                        {item.name || "Telão"}
                       </Typography>
                       <Typography variant="caption" color="text.secondary">
                         {meta.description}
@@ -465,20 +496,20 @@ const EventScreens = () => {
                     </Box>
                   </Box>
 
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
                     <Chip
                       size="small"
                       color={meta.color}
                       variant="outlined"
                       label={meta.label}
-                      sx={{ height: 22, fontSize: '0.7rem', fontWeight: 700 }}
+                      sx={{ height: 22, fontSize: "0.7rem", fontWeight: 700 }}
                     />
-                    <Typography variant="caption" color="text.secondary" sx={{ fontVariantNumeric: 'tabular-nums' }}>
-                      {dayjs(item.timestamp).format('DD/MM/YYYY [às] HH:mm:ss')}
+                    <Typography variant="caption" color="text.secondary" sx={{ fontVariantNumeric: "tabular-nums" }}>
+                      {dayjs(item.timestamp).format("DD/MM/YYYY [às] HH:mm:ss")}
                     </Typography>
                   </Box>
                 </Box>
-              )
+              );
             })}
           </Box>
         )}
@@ -490,12 +521,12 @@ const EventScreens = () => {
         title="Gerar PIN de telão"
         description="Defina opcionalmente um nome ou local para identificar este dispositivo (ex: Telão Entrada, Palco Principal)."
         primaryAction={{
-          label: 'Gerar PIN',
+          label: "Gerar PIN",
           onClick: handleConfirmAddScreen,
           loading: isManagingScreen
         }}
         secondaryAction={{
-          label: 'Cancelar',
+          label: "Cancelar",
           onClick: () => setIsAddModalOpen(false),
           disabled: isManagingScreen
         }}
@@ -510,9 +541,9 @@ const EventScreens = () => {
           autoFocus
           disabled={isManagingScreen}
           onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              e.preventDefault()
-              handleConfirmAddScreen()
+            if (e.key === "Enter") {
+              e.preventDefault();
+              handleConfirmAddScreen();
             }
           }}
         />
@@ -524,12 +555,12 @@ const EventScreens = () => {
         title="Renomear telão"
         description="Altere a identificação ou local deste telão (ex: Palco Principal, Área VIP). Deixe em branco para restaurar a identificação padrão."
         primaryAction={{
-          label: 'Salvar',
+          label: "Salvar",
           onClick: handleConfirmRename,
           loading: isManagingScreen
         }}
         secondaryAction={{
-          label: 'Cancelar',
+          label: "Cancelar",
           onClick: () => setEditingSlot(null),
           disabled: isManagingScreen
         }}
@@ -544,17 +575,15 @@ const EventScreens = () => {
           autoFocus
           disabled={isManagingScreen}
           onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              e.preventDefault()
-              handleConfirmRename()
+            if (e.key === "Enter") {
+              e.preventDefault();
+              handleConfirmRename();
             }
           }}
         />
       </Modal>
     </Box>
-  )
-}
+  );
+};
 
-export default EventScreens
-
-
+export default EventScreens;

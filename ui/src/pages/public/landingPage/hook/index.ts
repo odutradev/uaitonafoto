@@ -1,30 +1,25 @@
-import { useEffect, useState } from 'react'
-import { useTheme } from '@mui/material/styles'
+import { useEffect, useState } from "react";
+import { useTheme } from "@mui/material/styles";
 
-import { getPlans } from '@actions/payments'
-import { trackEvent } from '@utils/functions/firebase'
-import { formatPriceInBrl } from '@utils/functions/formatters'
-import createPageContext from '@utils/functions/createPageContext'
-import useAuth from '@hooks/useAuth'
-import type { PlanApiItem } from '@utils/types/payments'
+import { getPlans } from "@actions/payments";
+import { trackEvent } from "@utils/functions/firebase";
+import { formatPriceInBrl } from "@utils/functions/formatters";
+import createPageContext from "@utils/functions/createPageContext";
+import useAuth from "@hooks/useAuth";
+import type { PlanApiItem } from "@utils/types/payments";
 
-import landingPageData from '@pages/public/landingPage/data'
-import type { PlanCardData } from '@pages/public/landingPage/sections/plans/types'
-import type { UseLandingPageReturn } from './types'
+import landingPageData from "@pages/public/landingPage/data";
+import type { PlanCardData } from "@pages/public/landingPage/sections/plans/types";
+import type { UseLandingPageReturn } from "./types";
 
 const formatPlanCard = (item: PlanApiItem): PlanCardData => {
   const period =
-    item.period ||
-    (item.type === 'SUBSCRIPTION'
-      ? '/mês'
-      : item.type === 'FREE'
-        ? 'sem cartão'
-        : 'pagamento único')
+    item.period || (item.type === "SUBSCRIPTION" ? "/mês" : item.type === "FREE" ? "sem cartão" : "pagamento único");
 
   return {
     id: item.id || item.abacateProductId,
     abacateProductId: item.abacateProductId,
-    tag: item.tag || '',
+    tag: item.tag || "",
     badge: item.badge,
     title: item.title || item.name,
     price: formatPriceInBrl(item.price),
@@ -33,143 +28,143 @@ const formatPlanCard = (item: PlanApiItem): PlanCardData => {
     costPerEvent: item.costPerEvent,
     description: item.description,
     features: item.features || [],
-    ctaText: item.ctaText || 'Escolher Plano',
+    ctaText: item.ctaText || "Escolher Plano",
     ctaHref: item.ctaHref || item.id || item.abacateProductId,
     highlighted: Boolean(item.highlighted)
-  }
-}
+  };
+};
 
 const defaultFallbackPlans: PlanCardData[] = [
   {
-    id: 'prod_b2c_event_pass',
-    abacateProductId: 'prod_b2c_event_pass',
-    tag: 'Evento Único',
-    title: 'Passe do Evento',
-    price: 'R$ 147,00',
-    period: 'pagamento único',
-    subBadge: 'Fotos e convidados ilimitados',
-    description: 'Para casamentos, aniversários e festas em data única.',
+    id: "prod_b2c_event_pass",
+    abacateProductId: "prod_b2c_event_pass",
+    tag: "Evento Único",
+    title: "Passe do Evento",
+    price: "R$ 147,00",
+    period: "pagamento único",
+    subBadge: "Fotos e convidados ilimitados",
+    description: "Para casamentos, aniversários e festas em data única.",
     features: [
-      '1 evento completo com fotos ilimitadas',
-      '8 horas de telão ao vivo e recepção de fotos',
-      '2 telões simultâneos com PIN individual',
-      '1 convidado na equipe organizadora',
-      'Convidados ilimitados sem app e sem cadastro',
-      'Moderação de fotos em tempo real com PIN',
-      'Missões fotográficas interativas',
-      'Display de mesa com QR Code para impressão',
-      'Download de todas as fotos em alta resolução (.zip)',
-      'Galeria online ativa por 90 dias'
+      "1 evento completo com fotos ilimitadas",
+      "8 horas de telão ao vivo e recepção de fotos",
+      "2 telões simultâneos com PIN individual",
+      "1 convidado na equipe organizadora",
+      "Convidados ilimitados sem app e sem cadastro",
+      "Moderação de fotos em tempo real com PIN",
+      "Missões fotográficas interativas",
+      "Display de mesa com QR Code para impressão",
+      "Download de todas as fotos em alta resolução (.zip)",
+      "Galeria online ativa por 90 dias"
     ],
-    ctaText: 'Criar meu evento',
-    ctaHref: 'prod_b2c_event_pass',
+    ctaText: "Criar meu evento",
+    ctaHref: "prod_b2c_event_pass",
     highlighted: false
   },
   {
-    id: 'prod_agency_essential',
-    abacateProductId: 'prod_agency_essential',
-    tag: 'Cerimonialistas',
-    title: 'Agência Essencial',
-    price: 'R$ 247,00',
-    period: '/mês',
-    costPerEvent: 'R$ 61,75 por evento (58% de economia)',
-    description: 'Para assessores e cerimonialistas com eventos regulares.',
+    id: "prod_agency_essential",
+    abacateProductId: "prod_agency_essential",
+    tag: "Cerimonialistas",
+    title: "Agência Essencial",
+    price: "R$ 247,00",
+    period: "/mês",
+    costPerEvent: "R$ 61,75 por evento (58% de economia)",
+    description: "Para assessores e cerimonialistas com eventos regulares.",
     features: [
-      'Tudo que tem no Avulso, mais:',
-      '4 eventos inclusos por mês',
-      '3 telões simultâneos por evento',
-      '2 convidados na equipe organizadora',
-      'Sua própria marca White-Label no telão e app',
-      'Créditos acumulativos enquanto o plano estiver ativo',
-      'Crédito extra avulso por R$ 69,00'
+      "Tudo que tem no Avulso, mais:",
+      "4 eventos inclusos por mês",
+      "3 telões simultâneos por evento",
+      "2 convidados na equipe organizadora",
+      "Sua própria marca White-Label no telão e app",
+      "Créditos acumulativos enquanto o plano estiver ativo",
+      "Crédito extra avulso por R$ 69,00"
     ],
-    ctaText: 'Assinar Essencial',
-    ctaHref: 'prod_agency_essential',
+    ctaText: "Assinar Essencial",
+    ctaHref: "prod_agency_essential",
     highlighted: false
   },
   {
-    id: 'prod_agency_pro',
-    abacateProductId: 'prod_agency_pro',
-    badge: 'Mais Escolhido',
-    tag: 'Alta Demanda',
-    title: 'Agência Pro',
-    price: 'R$ 447,00',
-    period: '/mês',
-    costPerEvent: 'R$ 44,70 por evento (70% de economia)',
-    description: 'Para agências consolidadas com múltiplos eventos semanais.',
+    id: "prod_agency_pro",
+    abacateProductId: "prod_agency_pro",
+    badge: "Mais Escolhido",
+    tag: "Alta Demanda",
+    title: "Agência Pro",
+    price: "R$ 447,00",
+    period: "/mês",
+    costPerEvent: "R$ 44,70 por evento (70% de economia)",
+    description: "Para agências consolidadas com múltiplos eventos semanais.",
     features: [
-      'Tudo que tem no Essencial, mais:',
-      '10 eventos inclusos por mês',
-      '4 telões simultâneos por evento',
-      '5 convidados na equipe organizadora',
-      'Sua marca em destaque para atrair novos clientes',
-      'Botão direto para seu WhatsApp no mural de fotos'
+      "Tudo que tem no Essencial, mais:",
+      "10 eventos inclusos por mês",
+      "4 telões simultâneos por evento",
+      "5 convidados na equipe organizadora",
+      "Sua marca em destaque para atrair novos clientes",
+      "Botão direto para seu WhatsApp no mural de fotos"
     ],
-    ctaText: 'Assinar Pro',
-    ctaHref: 'prod_agency_pro',
+    ctaText: "Assinar Pro",
+    ctaHref: "prod_agency_pro",
     highlighted: true
   }
-]
+];
 
 const useLandingPageState = (): UseLandingPageReturn => {
-  const theme = useTheme()
-  const isDark = theme.palette.mode === 'dark'
-  const { user } = useAuth()
+  const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
+  const { user } = useAuth();
 
-  const [isLoadingPlans, setIsLoadingPlans] = useState(true)
-  const [plans, setPlans] = useState<PlanCardData[]>([])
+  const [isLoadingPlans, setIsLoadingPlans] = useState(true);
+  const [plans, setPlans] = useState<PlanCardData[]>([]);
 
   useEffect(() => {
-    let isMounted = true
+    let isMounted = true;
 
     getPlans()
       .then((items: PlanApiItem[]) => {
-        if (!isMounted) return
+        if (!isMounted) return;
         if (Array.isArray(items) && items.length > 0) {
           const displayPlans = items
-            .filter((p) => p.type !== 'UPSELL' && p.abacateProductId !== 'prod_agency_extra_credit')
-            .map(formatPlanCard)
+            .filter((p) => p.type !== "UPSELL" && p.abacateProductId !== "prod_agency_extra_credit")
+            .map(formatPlanCard);
 
-          setPlans(displayPlans)
+          setPlans(displayPlans);
         }
       })
       .catch(() => {
         if (isMounted) {
-          setPlans(defaultFallbackPlans)
+          setPlans(defaultFallbackPlans);
         }
       })
       .finally(() => {
         if (isMounted) {
-          setIsLoadingPlans(false)
+          setIsLoadingPlans(false);
         }
-      })
+      });
 
     return () => {
-      isMounted = false
-    }
-  }, [])
+      isMounted = false;
+    };
+  }, []);
 
   useEffect(() => {
     if (!isLoadingPlans && plans.length > 0) {
-      trackEvent('view_item_list', {
-        item_list_name: 'landing_plans',
+      trackEvent("view_item_list", {
+        item_list_name: "landing_plans",
         items: plans.map((p) => ({
           item_id: p.abacateProductId || p.id,
           item_name: p.title,
           price: p.price
         }))
-      })
+      });
     }
-  }, [isLoadingPlans, plans])
+  }, [isLoadingPlans, plans]);
 
   const onSelectPlan = (plan: PlanCardData) => {
-    trackEvent('select_item', {
-      item_list_name: 'landing_plans',
+    trackEvent("select_item", {
+      item_list_name: "landing_plans",
       item_id: plan.abacateProductId || plan.id,
       item_name: plan.title,
       price: plan.price
-    })
-  }
+    });
+  };
 
   return {
     isDark,
@@ -179,14 +174,14 @@ const useLandingPageState = (): UseLandingPageReturn => {
     user,
     isAuthenticated: Boolean(user),
     onSelectPlan
-  }
-}
+  };
+};
 
 const { PageProvider: LandingPageProvider, usePage: useLandingPage } = createPageContext(
   useLandingPageState,
-  'useLandingPage'
-)
+  "useLandingPage"
+);
 
-export { LandingPageProvider }
-export default useLandingPage
-export * from './types'
+export { LandingPageProvider };
+export default useLandingPage;
+export * from "./types";

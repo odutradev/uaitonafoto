@@ -1,1 +1,1 @@
-export type PageLoaderProps = Record<string, never>
+export type PageLoaderProps = Record<string, never>;

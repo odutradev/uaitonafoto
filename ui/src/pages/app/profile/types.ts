@@ -1,5 +1,5 @@
 export interface ProfileFormValues {
-  name: string
-  fullName: string
-  phone: string
+  name: string;
+  fullName: string;
+  phone: string;
 }

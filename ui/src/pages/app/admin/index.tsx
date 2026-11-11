@@ -1,29 +1,21 @@
-import {
-  Box,
-  Button,
-  CircularProgress,
-  MenuItem,
-  Select,
-  Stack,
-  Typography
-} from '@mui/material'
+import { Box, Button, CircularProgress, MenuItem, Select, Stack, Typography } from "@mui/material";
 import {
   AdminPanelSettings as AdminIcon,
   CalendarMonthOutlined as CalendarIcon,
   Refresh as RefreshIcon
-} from '@mui/icons-material'
+} from "@mui/icons-material";
 
-import useAdminDashboardPage, { AdminDashboardPageProvider } from './hook'
+import useAdminDashboardPage, { AdminDashboardPageProvider } from "./hook";
 
-import type { AdminPeriod } from '@utils/types/admin'
-import AdminCharts from './sections/adminCharts'
-import AdminKpis from './sections/adminKpis'
-import AdminUsersTable from './sections/adminUsersTable'
-import AddCreditsDialog from './subcomponents/addCreditsDialog'
-import { adminPageStyles, headerRowStyles, pageTitleStyles } from './styles'
+import type { AdminPeriod } from "@utils/types/admin";
+import AdminCharts from "./sections/adminCharts";
+import AdminKpis from "./sections/adminKpis";
+import AdminUsersTable from "./sections/adminUsersTable";
+import AddCreditsDialog from "./subcomponents/addCreditsDialog";
+import { adminPageStyles, headerRowStyles, pageTitleStyles } from "./styles";
 
 const AdminDashboardContent = () => {
-  const { period, setPeriod, isLoadingMetrics, isRefreshing, handleRefresh } = useAdminDashboardPage()
+  const { period, setPeriod, isLoadingMetrics, isRefreshing, handleRefresh } = useAdminDashboardPage();
 
   return (
     <Box sx={adminPageStyles}>
@@ -38,14 +30,14 @@ const AdminDashboardContent = () => {
           </Typography>
         </Box>
 
-        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} alignItems="center">
+        <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} alignItems="center">
           <Select
             size="small"
             value={period}
             onChange={(e) => setPeriod(e.target.value as AdminPeriod)}
             disabled={isLoadingMetrics}
-            startAdornment={<CalendarIcon fontSize="small" sx={{ mr: 1, color: 'text.secondary' }} />}
-            sx={{ minWidth: 170, borderRadius: '10px' }}
+            startAdornment={<CalendarIcon fontSize="small" sx={{ mr: 1, color: "text.secondary" }} />}
+            sx={{ minWidth: 170, borderRadius: "10px" }}
           >
             <MenuItem value="7d">Últimos 7 dias</MenuItem>
             <MenuItem value="30d">Últimos 30 dias</MenuItem>
@@ -60,7 +52,7 @@ const AdminDashboardContent = () => {
             disabled={isRefreshing}
             onClick={handleRefresh}
             startIcon={isRefreshing ? <CircularProgress size={18} color="inherit" /> : <RefreshIcon />}
-            sx={{ borderRadius: '10px', textTransform: 'none', fontWeight: 700 }}
+            sx={{ borderRadius: "10px", textTransform: "none", fontWeight: 700 }}
           >
             Atualizar dados
           </Button>
@@ -75,14 +67,13 @@ const AdminDashboardContent = () => {
 
       <AddCreditsDialog />
     </Box>
-  )
-}
+  );
+};
 
 export const AdminDashboard = () => (
   <AdminDashboardPageProvider>
     <AdminDashboardContent />
   </AdminDashboardPageProvider>
-)
+);
 
-export default AdminDashboard
-
+export default AdminDashboard;

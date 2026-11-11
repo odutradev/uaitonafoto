@@ -1,10 +1,17 @@
-import { Box, Button, Card, CircularProgress, Typography } from '@mui/material'
+import { Box, Button, Card, CircularProgress, Typography } from "@mui/material";
 
-import { claimButtonStyles, kpiCardStyles, kpiGridStyles, kpiValueStyles, trialRowStyles } from './styles'
-import useBillingPage from '@pages/app/billing/hook'
+import { claimButtonStyles, kpiCardStyles, kpiGridStyles, kpiValueStyles, trialRowStyles } from "./styles";
+import useBillingPage from "@pages/app/billing/hook";
 
 const BillingSummary = () => {
-  const { paidCredits, freeCredits, freeTrialClaimed, isCheckingOutFreeTrial, isCheckoutBusy, handleClaimFreeTrial: onClaimFreeTrial } = useBillingPage()
+  const {
+    paidCredits,
+    freeCredits,
+    freeTrialClaimed,
+    isCheckingOutFreeTrial,
+    isCheckoutBusy,
+    handleClaimFreeTrial: onClaimFreeTrial
+  } = useBillingPage();
 
   return (
     <Box component="section" sx={kpiGridStyles}>
@@ -16,7 +23,7 @@ const BillingSummary = () => {
           {paidCredits}
         </Typography>
         <Typography variant="caption" color="text.secondary">
-          {paidCredits === 1 ? 'Evento completo disponível' : 'Eventos completos disponíveis'}
+          {paidCredits === 1 ? "Evento completo disponível" : "Eventos completos disponíveis"}
         </Typography>
       </Card>
 
@@ -37,20 +44,20 @@ const BillingSummary = () => {
               startIcon={isCheckingOutFreeTrial ? <CircularProgress size={14} color="inherit" /> : undefined}
               sx={claimButtonStyles}
             >
-              {isCheckingOutFreeTrial ? 'Ativando...' : 'Resgatar grátis'}
+              {isCheckingOutFreeTrial ? "Ativando..." : "Resgatar grátis"}
             </Button>
           )}
         </Box>
         <Typography variant="caption" color="text.secondary">
           {freeTrialClaimed
             ? freeCredits > 0
-              ? 'Teste grátis pronto para uso (até 25 fotos)'
-              : 'Teste grátis já utilizado nesta conta'
-            : '1 evento de teste grátis disponível'}
+              ? "Teste grátis pronto para uso (até 25 fotos)"
+              : "Teste grátis já utilizado nesta conta"
+            : "1 evento de teste grátis disponível"}
         </Typography>
       </Card>
     </Box>
-  )
-}
+  );
+};
 
-export default BillingSummary
+export default BillingSummary;

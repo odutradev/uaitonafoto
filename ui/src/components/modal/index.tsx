@@ -1,17 +1,10 @@
-import {
-  Box,
-  Button,
-  CircularProgress,
-  Dialog,
-  IconButton,
-  Typography
-} from '@mui/material'
+import { Box, Button, CircularProgress, Dialog, IconButton, Typography } from "@mui/material";
 import {
   Close as CloseIcon,
   ErrorOutlineRounded as DangerIcon,
   InfoOutlined as InfoIcon,
   WarningAmberRounded as WarningIcon
-} from '@mui/icons-material'
+} from "@mui/icons-material";
 
 import {
   closeButtonStyles,
@@ -22,21 +15,21 @@ import {
   modalDescriptionStyles,
   modalPaperStyles,
   modalTitleStyles
-} from './styles'
-import type { ModalProps, ModalVariant } from './types'
+} from "./styles";
+import type { ModalProps, ModalVariant } from "./types";
 
 const getDefaultIcon = (variant?: ModalVariant) => {
   switch (variant) {
-    case 'danger':
-      return <DangerIcon />
-    case 'warning':
-      return <WarningIcon />
-    case 'info':
-      return <InfoIcon />
+    case "danger":
+      return <DangerIcon />;
+    case "warning":
+      return <WarningIcon />;
+    case "info":
+      return <InfoIcon />;
     default:
-      return null
+      return null;
   }
-}
+};
 
 export const Modal = ({
   open,
@@ -44,8 +37,8 @@ export const Modal = ({
   title,
   description,
   icon,
-  variant = 'default',
-  maxWidth = 'xs',
+  variant = "default",
+  maxWidth = "xs",
   fullWidth = true,
   showCloseButton = true,
   primaryAction,
@@ -53,13 +46,13 @@ export const Modal = ({
   children,
   actions
 }: ModalProps) => {
-  const resolvedIcon = icon ?? getDefaultIcon(variant)
-  const isPrimaryBusy = Boolean(primaryAction?.loading)
+  const resolvedIcon = icon ?? getDefaultIcon(variant);
+  const isPrimaryBusy = Boolean(primaryAction?.loading);
 
   const handleClose = () => {
-    if (isPrimaryBusy) return
-    onClose()
-  }
+    if (isPrimaryBusy) return;
+    onClose();
+  };
 
   return (
     <Dialog
@@ -118,13 +111,11 @@ export const Modal = ({
 
           {!actions && primaryAction && (
             <Button
-              variant={primaryAction.variant ?? 'contained'}
-              color={primaryAction.color ?? (variant === 'danger' ? 'error' : 'primary')}
+              variant={primaryAction.variant ?? "contained"}
+              color={primaryAction.color ?? (variant === "danger" ? "error" : "primary")}
               disabled={primaryAction.disabled || isPrimaryBusy}
               onClick={primaryAction.onClick}
-              startIcon={
-                isPrimaryBusy ? <CircularProgress size={16} color="inherit" /> : undefined
-              }
+              startIcon={isPrimaryBusy ? <CircularProgress size={16} color="inherit" /> : undefined}
               sx={modalActionButtonStyles}
             >
               {primaryAction.label}
@@ -133,7 +124,7 @@ export const Modal = ({
         </Box>
       )}
     </Dialog>
-  )
-}
+  );
+};
 
-export default Modal
+export default Modal;

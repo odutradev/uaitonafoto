@@ -1,78 +1,97 @@
-import { Box, Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Stack, Tooltip, Typography } from '@mui/material'
-import { ContentCopy as CopyIcon, OpenInNew as OpenIcon, ReceiptLong as ReceiptIcon } from '@mui/icons-material'
-import { toast } from 'react-toastify'
+import {
+  Box,
+  Button,
+  Chip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  IconButton,
+  Stack,
+  Tooltip,
+  Typography
+} from "@mui/material";
+import { ContentCopy as CopyIcon, OpenInNew as OpenIcon, ReceiptLong as ReceiptIcon } from "@mui/icons-material";
+import { toast } from "react-toastify";
 
-import { formatPriceInBrl } from '@utils/functions/formatters'
+import { formatPriceInBrl } from "@utils/functions/formatters";
 
-import { dialogActionsStyles, dialogButtonStyles, dialogPaperStyles, metaRowStyles, metaStackStyles, monoIdStyles } from './styles'
-import type { TransactionStatus } from '@utils/types/payments'
-import useBillingPage from '@pages/app/billing/hook'
+import {
+  dialogActionsStyles,
+  dialogButtonStyles,
+  dialogPaperStyles,
+  metaRowStyles,
+  metaStackStyles,
+  monoIdStyles
+} from "./styles";
+import type { TransactionStatus } from "@utils/types/payments";
+import useBillingPage from "@pages/app/billing/hook";
 
 const formatDateTimePtBr = (isoDate?: string): string => {
-  if (!isoDate) return '-'
-  const parsed = new Date(isoDate)
-  if (Number.isNaN(parsed.getTime())) return '-'
-  return parsed.toLocaleString('pt-BR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  })
-}
+  if (!isoDate) return "-";
+  const parsed = new Date(isoDate);
+  if (Number.isNaN(parsed.getTime())) return "-";
+  return parsed.toLocaleString("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit"
+  });
+};
 
 const getStatusLabel = (status: TransactionStatus, cancelReason?: string) => {
   switch (status) {
-    case 'PAID':
-      return { label: 'Pago', color: 'success' as const }
-    case 'PENDING':
-      return { label: 'Aguardando pagamento', color: 'warning' as const }
-    case 'REFUNDED':
-      return { label: 'Reembolsado', color: 'info' as const }
-    case 'DISPUTED':
-      return { label: 'Em disputa', color: 'error' as const }
-    case 'EXPIRED':
-      return { label: 'Expirado', color: 'default' as const }
-    case 'CANCELLED':
-      if (cancelReason === 'cancelled_by_user') {
-        return { label: 'Cancelado pelo usuário', color: 'default' as const }
+    case "PAID":
+      return { label: "Pago", color: "success" as const };
+    case "PENDING":
+      return { label: "Aguardando pagamento", color: "warning" as const };
+    case "REFUNDED":
+      return { label: "Reembolsado", color: "info" as const };
+    case "DISPUTED":
+      return { label: "Em disputa", color: "error" as const };
+    case "EXPIRED":
+      return { label: "Expirado", color: "default" as const };
+    case "CANCELLED":
+      if (cancelReason === "cancelled_by_user") {
+        return { label: "Cancelado pelo usuário", color: "default" as const };
       }
-      return { label: 'Cancelado', color: 'default' as const }
+      return { label: "Cancelado", color: "default" as const };
     default:
-      return { label: 'Cancelado', color: 'default' as const }
+      return { label: "Cancelado", color: "default" as const };
   }
-}
+};
 
 const getPlanTypeLabel = (planType: string): string => {
-  if (planType === 'SUBSCRIPTION') return 'Assinatura recorrente'
-  if (planType === 'UPSELL') return 'Complemento'
-  if (planType === 'FREE') return 'Teste grátis'
-  return 'Compra avulsa'
-}
+  if (planType === "SUBSCRIPTION") return "Assinatura recorrente";
+  if (planType === "UPSELL") return "Complemento";
+  if (planType === "FREE") return "Teste grátis";
+  return "Compra avulsa";
+};
 
 const formatMethodLabel = (method?: string): string => {
-  if (method === 'PIX') return 'PIX'
-  if (method === 'CARD') return 'Cartão de Crédito'
-  if (method === 'BOLETO') return 'Boleto'
-  return 'Não informado'
-}
+  if (method === "PIX") return "PIX";
+  if (method === "CARD") return "Cartão de Crédito";
+  if (method === "BOLETO") return "Boleto";
+  return "Não informado";
+};
 
 const TransactionDetailsDialog = () => {
-  const { selectedTransaction: transaction, handleCloseTransaction: onClose } = useBillingPage()
+  const { selectedTransaction: transaction, handleCloseTransaction: onClose } = useBillingPage();
 
-  if (!transaction) return null
+  if (!transaction) return null;
 
-  const statusMeta = getStatusLabel(transaction.status, transaction.cancelReason)
-  const displayAmount = formatPriceInBrl(transaction.paidAmount ?? transaction.amount)
+  const statusMeta = getStatusLabel(transaction.status, transaction.cancelReason);
+  const displayAmount = formatPriceInBrl(transaction.paidAmount ?? transaction.amount);
 
   const handleCopyId = async () => {
     try {
-      await navigator.clipboard.writeText(transaction.id)
-      toast.info('ID da transação copiado!')
+      await navigator.clipboard.writeText(transaction.id);
+      toast.info("ID da transação copiado!");
     } catch {
-      toast.error('Não foi possível copiar o ID.')
+      toast.error("Não foi possível copiar o ID.");
     }
-  }
+  };
 
   return (
     <Dialog open={Boolean(transaction)} onClose={onClose} slotProps={{ paper: { sx: dialogPaperStyles } }}>
@@ -95,15 +114,13 @@ const TransactionDetailsDialog = () => {
             <Chip size="small" color={statusMeta.color} label={statusMeta.label} sx={{ fontWeight: 700 }} />
           </Box>
 
-          {transaction.status === 'CANCELLED' && (
+          {transaction.status === "CANCELLED" && (
             <Box sx={metaRowStyles}>
               <Typography variant="caption" color="text.secondary" fontWeight={700}>
                 MOTIVO
               </Typography>
               <Typography variant="body2" fontWeight={700}>
-                {transaction.cancelReason === 'cancelled_by_user'
-                  ? 'Cancelado pelo usuário'
-                  : 'Cancelado pelo gateway'}
+                {transaction.cancelReason === "cancelled_by_user" ? "Cancelado pelo usuário" : "Cancelado pelo gateway"}
               </Typography>
             </Box>
           )}
@@ -172,7 +189,7 @@ const TransactionDetailsDialog = () => {
           Fechar
         </Button>
 
-        {transaction.status === 'PENDING' && transaction.checkoutUrl && (
+        {transaction.status === "PENDING" && transaction.checkoutUrl && (
           <Button
             component="a"
             href={transaction.checkoutUrl}
@@ -203,7 +220,7 @@ const TransactionDetailsDialog = () => {
         )}
       </DialogActions>
     </Dialog>
-  )
-}
+  );
+};
 
-export default TransactionDetailsDialog
+export default TransactionDetailsDialog;

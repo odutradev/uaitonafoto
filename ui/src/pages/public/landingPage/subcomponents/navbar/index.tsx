@@ -1,23 +1,32 @@
-import { Avatar, Box, Button, Container, Stack, Typography } from '@mui/material'
-import { ArrowForward as ArrowForwardIcon } from '@mui/icons-material'
-import { Link as RouterLink } from 'react-router-dom'
+import { Avatar, Box, Button, Container, Stack, Typography } from "@mui/material";
+import { ArrowForward as ArrowForwardIcon } from "@mui/icons-material";
+import { Link as RouterLink } from "react-router-dom";
 
-import Logo from '@components/logo'
-import ThemeToggle from '@components/themeToggle'
+import Logo from "@components/logo";
+import ThemeToggle from "@components/themeToggle";
 
-import { getHeaderStyles, getUserBadgeStyles, loginButtonStyles, navContainerStyles, userAvatarStyles, userGreetingStyles, userNameStyles, userTextContainerStyles } from './styles'
-import useLandingPage from '@pages/public/landingPage/hook'
+import {
+  getHeaderStyles,
+  getUserBadgeStyles,
+  loginButtonStyles,
+  navContainerStyles,
+  userAvatarStyles,
+  userGreetingStyles,
+  userNameStyles,
+  userTextContainerStyles
+} from "./styles";
+import useLandingPage from "@pages/public/landingPage/hook";
 
 export const Navbar = () => {
-  const { isDark, user, data: content } = useLandingPage()
-  const data = content.header
+  const { isDark, user, data: content } = useLandingPage();
+  const data = content.header;
 
-  const displayName = user?.fullName || user?.name || user?.email?.split('@')[0] || 'Usuário'
+  const displayName = user?.fullName || user?.name || user?.email?.split("@")[0] || "Usuário";
 
   return (
     <Box component="header" sx={getHeaderStyles(isDark)}>
       <Container maxWidth="lg" sx={navContainerStyles}>
-        <RouterLink to="/" style={{ textDecoration: 'none', display: 'inline-flex' }}>
+        <RouterLink to="/" style={{ textDecoration: "none", display: "inline-flex" }}>
           <Logo size="medium" variant="auto" animation="breathe" />
         </RouterLink>
 
@@ -54,10 +63,10 @@ export const Navbar = () => {
                 endIcon={<ArrowForwardIcon />}
                 sx={loginButtonStyles}
               >
-                <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>
+                <Box component="span" sx={{ display: { xs: "none", sm: "inline" } }}>
                   Acessar painel
                 </Box>
-                <Box component="span" sx={{ display: { xs: 'inline', sm: 'none' } }}>
+                <Box component="span" sx={{ display: { xs: "inline", sm: "none" } }}>
                   Entrar
                 </Box>
               </Button>
@@ -78,7 +87,7 @@ export const Navbar = () => {
         </Stack>
       </Container>
     </Box>
-  )
-}
+  );
+};
 
-export default Navbar
+export default Navbar;

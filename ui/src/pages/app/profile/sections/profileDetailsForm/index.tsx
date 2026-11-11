@@ -1,5 +1,5 @@
-import { Box, Button, Card, CircularProgress, TextField, Typography } from '@mui/material'
-import { LockReset as LockResetIcon, SaveOutlined as SaveIcon } from '@mui/icons-material'
+import { Box, Button, Card, CircularProgress, TextField, Typography } from "@mui/material";
+import { LockReset as LockResetIcon, SaveOutlined as SaveIcon } from "@mui/icons-material";
 
 import {
   actionButtonStyles,
@@ -8,8 +8,8 @@ import {
   formCardStyles,
   sectionsStackStyles,
   securityRowStyles
-} from './styles'
-import useProfilePage from '@pages/app/profile/hook'
+} from "./styles";
+import useProfilePage from "@pages/app/profile/hook";
 
 const ProfileDetailsForm = () => {
   const {
@@ -22,8 +22,8 @@ const ProfileDetailsForm = () => {
     handleSubmit: onSubmit,
     handleResetChanges: onReset,
     handleSendPasswordReset: onSendPasswordReset
-  } = useProfilePage()
-  const email = user?.email ?? ''
+  } = useProfilePage();
+  const email = user?.email ?? "";
 
   return (
     <Box sx={sectionsStackStyles}>
@@ -42,7 +42,7 @@ const ProfileDetailsForm = () => {
             label="Nome de exibição"
             placeholder="Ex: João"
             value={values.name}
-            onChange={(e) => onChangeField('name', e.target.value)}
+            onChange={(e) => onChangeField("name", e.target.value)}
             required
             fullWidth
           />
@@ -51,7 +51,7 @@ const ProfileDetailsForm = () => {
             label="Nome completo ou assessoria"
             placeholder="Ex: João Silva Eventos"
             value={values.fullName}
-            onChange={(e) => onChangeField('fullName', e.target.value)}
+            onChange={(e) => onChangeField("fullName", e.target.value)}
             fullWidth
           />
 
@@ -67,20 +67,14 @@ const ProfileDetailsForm = () => {
             label="Telefone / WhatsApp"
             placeholder="Ex: 31999999999"
             value={values.phone}
-            onChange={(e) => onChangeField('phone', e.target.value)}
+            onChange={(e) => onChangeField("phone", e.target.value)}
             fullWidth
           />
         </Box>
 
         <Box sx={actionsRowStyles}>
           {isDirty && (
-            <Button
-              type="button"
-              variant="outlined"
-              disabled={isSaving}
-              onClick={onReset}
-              sx={actionButtonStyles}
-            >
+            <Button type="button" variant="outlined" disabled={isSaving} onClick={onReset} sx={actionButtonStyles}>
               Descartar alterações
             </Button>
           )}
@@ -93,7 +87,7 @@ const ProfileDetailsForm = () => {
             startIcon={isSaving ? <CircularProgress size={18} color="inherit" /> : <SaveIcon />}
             sx={actionButtonStyles}
           >
-            {isSaving ? 'Salvando...' : 'Salvar informações'}
+            {isSaving ? "Salvando..." : "Salvar informações"}
           </Button>
         </Box>
       </Card>
@@ -117,12 +111,12 @@ const ProfileDetailsForm = () => {
             startIcon={isSendingReset ? <CircularProgress size={18} color="inherit" /> : <LockResetIcon />}
             sx={actionButtonStyles}
           >
-            {isSendingReset ? 'Enviando e-mail...' : 'Redefinir senha'}
+            {isSendingReset ? "Enviando e-mail..." : "Redefinir senha"}
           </Button>
         </Box>
       </Card>
     </Box>
-  )
-}
+  );
+};
 
-export default ProfileDetailsForm
+export default ProfileDetailsForm;

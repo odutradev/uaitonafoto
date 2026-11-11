@@ -1,7 +1,7 @@
-import { NotFoundContent } from './subcomponents/notFoundContent'
+import { NotFoundContent } from "./subcomponents/notFoundContent";
 
 const NotFound = () => {
-  return <NotFoundContent />
-}
+  return <NotFoundContent />;
+};
 
-export default NotFound
+export default NotFound;

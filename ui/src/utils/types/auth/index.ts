@@ -1,29 +1,29 @@
-import type { SyncPayload } from '@hooks/useAuth/types'
-import type { AuthUser, UserCustomization } from '@stores/auth/types'
+import type { SyncPayload } from "@hooks/useAuth/types";
+import type { AuthUser, UserCustomization } from "@stores/auth/types";
 
 export interface SyncServicePayload extends SyncPayload {
-  firebaseToken: string
+  firebaseToken: string;
 }
 
 export interface SyncResponse {
-  token: string
-  user: AuthUser
+  token: string;
+  user: AuthUser;
 }
 
 export interface UpdateMePayload {
-  fullName?: string
-  photoUrl?: string
-  phone?: string
-  name?: string
-  customization?: UserCustomization
+  fullName?: string;
+  photoUrl?: string;
+  phone?: string;
+  name?: string;
+  customization?: UserCustomization;
 }
 
 export interface ForgotPasswordPayload {
-  email: string
-  redirectUrl?: string
+  email: string;
+  redirectUrl?: string;
 }
 
 export interface ResetPasswordPayload {
-  token: string
-  password: string
+  token: string;
+  password: string;
 }

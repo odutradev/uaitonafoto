@@ -1,15 +1,15 @@
-import { Box, Typography } from '@mui/material'
+import { Box, Typography } from "@mui/material";
 
-import { footerStyles, headerBoxStyles, pageTitleStyles, profilePageStyles } from './styles'
-import useProfilePage, { ProfilePageProvider } from './hook'
-import ProfileDetailsForm from './sections/profileDetailsForm'
-import UserOverview from './sections/userOverview'
-import { version } from '@assets/config'
+import { footerStyles, headerBoxStyles, pageTitleStyles, profilePageStyles } from "./styles";
+import useProfilePage, { ProfilePageProvider } from "./hook";
+import ProfileDetailsForm from "./sections/profileDetailsForm";
+import UserOverview from "./sections/userOverview";
+import { version } from "@assets/config";
 
 const ProfileContent = () => {
-  const { user } = useProfilePage()
+  const { user } = useProfilePage();
 
-  if (!user) return null
+  if (!user) return null;
 
   return (
     <Box sx={profilePageStyles}>
@@ -32,13 +32,13 @@ const ProfileContent = () => {
         </Typography>
       </Box>
     </Box>
-  )
-}
+  );
+};
 
 const Profile = () => (
   <ProfilePageProvider>
     <ProfileContent />
   </ProfilePageProvider>
-)
+);
 
-export default Profile
+export default Profile;

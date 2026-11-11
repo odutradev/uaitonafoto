@@ -1,13 +1,4 @@
-import {
-  Box,
-  Button,
-  Chip,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Typography
-} from '@mui/material'
+import { Box, Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from "@mui/material";
 
 import {
   closeBtnStyles,
@@ -16,36 +7,36 @@ import {
   dialogPaperStyles,
   infoRowStyles,
   jsonPreStyles
-} from './styles'
-import type { LogLevel } from '@utils/types/logs'
-import useLogsPage from '@pages/app/logs/hook'
+} from "./styles";
+import type { LogLevel } from "@utils/types/logs";
+import useLogsPage from "@pages/app/logs/hook";
 
 const formatFullDateTime = (isoDate: string): string => {
-  const parsed = new Date(isoDate)
-  if (Number.isNaN(parsed.getTime())) return isoDate
-  return parsed.toLocaleString('pt-BR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit'
-  })
-}
+  const parsed = new Date(isoDate);
+  if (Number.isNaN(parsed.getTime())) return isoDate;
+  return parsed.toLocaleString("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit"
+  });
+};
 
 const getLevelChip = (level: LogLevel) => {
-  if (level === 'error') return { label: 'Erro', color: 'error' as const }
-  if (level === 'warn') return { label: 'Alerta', color: 'warning' as const }
-  return { label: 'Informação', color: 'info' as const }
-}
+  if (level === "error") return { label: "Erro", color: "error" as const };
+  if (level === "warn") return { label: "Alerta", color: "warning" as const };
+  return { label: "Informação", color: "info" as const };
+};
 
 const LogDetailsDialog = () => {
-  const { selectedLog: log, isAdmin, handleCloseLog: onClose } = useLogsPage()
+  const { selectedLog: log, isAdmin, handleCloseLog: onClose } = useLogsPage();
 
-  if (!log) return null
+  if (!log) return null;
 
-  const levelMeta = getLevelChip(log.level)
-  const hasDetailsPayload = log.details !== undefined && log.details !== null
+  const levelMeta = getLevelChip(log.level);
+  const hasDetailsPayload = log.details !== undefined && log.details !== null;
 
   return (
     <Dialog open={Boolean(log)} onClose={onClose} slotProps={{ paper: { sx: dialogPaperStyles } }}>
@@ -56,8 +47,8 @@ const LogDetailsDialog = () => {
             <Typography variant="caption" color="text.secondary" fontWeight={700}>
               AÇÃO / SEVERIDADE
             </Typography>
-            <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-              <Chip size="small" variant="outlined" label={log.action} sx={{ fontFamily: 'monospace' }} />
+            <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
+              <Chip size="small" variant="outlined" label={log.action} sx={{ fontFamily: "monospace" }} />
               <Chip size="small" color={levelMeta.color} label={levelMeta.label} sx={{ fontWeight: 700 }} />
             </Box>
           </Box>
@@ -86,7 +77,7 @@ const LogDetailsDialog = () => {
                 USUÁRIO
               </Typography>
               <Typography variant="body2">
-                {log.userName ? `${log.userName} (${log.userEmail ?? '-'})` : log.userEmail}
+                {log.userName ? `${log.userName} (${log.userEmail ?? "-"})` : log.userEmail}
               </Typography>
             </Box>
           )}
@@ -107,7 +98,7 @@ const LogDetailsDialog = () => {
               <Typography variant="caption" color="text.secondary" fontWeight={700}>
                 ENDEREÇO IP
               </Typography>
-              <Typography variant="body2" sx={{ fontFamily: 'monospace' }}>
+              <Typography variant="body2" sx={{ fontFamily: "monospace" }}>
                 {log.ipAddress}
               </Typography>
             </Box>
@@ -126,7 +117,7 @@ const LogDetailsDialog = () => {
 
           {hasDetailsPayload && (
             <Box>
-              <Typography variant="caption" color="text.secondary" fontWeight={700} sx={{ display: 'block', mb: 0.75 }}>
+              <Typography variant="caption" color="text.secondary" fontWeight={700} sx={{ display: "block", mb: 0.75 }}>
                 METADADOS ADICIONAIS
               </Typography>
               <Box component="pre" sx={jsonPreStyles}>
@@ -143,8 +134,7 @@ const LogDetailsDialog = () => {
         </Button>
       </DialogActions>
     </Dialog>
-  )
-}
+  );
+};
 
-export default LogDetailsDialog
-
+export default LogDetailsDialog;

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState } from "react";
 import {
   Avatar,
   Box,
@@ -16,49 +16,52 @@ import {
   Stack,
   TextField,
   Typography
-} from '@mui/material'
-import { AddCircleOutline as AddIcon } from '@mui/icons-material'
+} from "@mui/material";
+import { AddCircleOutline as AddIcon } from "@mui/icons-material";
 
-import useAdminDashboardPage from '@pages/app/admin/hook'
-
+import useAdminDashboardPage from "@pages/app/admin/hook";
 
 export const AddCreditsDialog = () => {
-  const { isAddCreditsOpen: open, selectedUserForCredits: user, isSubmittingCredits: isSubmitting, handleCloseAddCredits: onClose, handleConfirmAddCredits: onConfirm } = useAdminDashboardPage()
+  const {
+    isAddCreditsOpen: open,
+    selectedUserForCredits: user,
+    isSubmittingCredits: isSubmitting,
+    handleCloseAddCredits: onClose,
+    handleConfirmAddCredits: onConfirm
+  } = useAdminDashboardPage();
 
-  const [amount, setAmount] = useState<number>(1)
-  const [creditType, setCreditType] = useState<'paid' | 'free'>('paid')
-  const [reason, setReason] = useState('')
+  const [amount, setAmount] = useState<number>(1);
+  const [creditType, setCreditType] = useState<"paid" | "free">("paid");
+  const [reason, setReason] = useState("");
 
-  if (!user) return null
+  if (!user) return null;
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (amount < 1) return
+    e.preventDefault();
+    if (amount < 1) return;
     onConfirm({
       amount: Math.floor(amount),
       type: creditType,
       reason: reason.trim() || undefined
-    })
-  }
+    });
+  };
 
-  const displayName = user.fullName || user.name
+  const displayName = user.fullName || user.name;
 
   return (
     <Dialog open={open} onClose={isSubmitting ? undefined : onClose} maxWidth="sm" fullWidth>
-      <DialogTitle sx={{ pb: 1, fontWeight: 700 }}>
-        Conceder créditos ao usuário
-      </DialogTitle>
+      <DialogTitle sx={{ pb: 1, fontWeight: 700 }}>Conceder créditos ao usuário</DialogTitle>
 
       <Box component="form" onSubmit={handleSubmit}>
-        <DialogContent dividers sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+        <DialogContent dividers sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}>
           <Box
             sx={{
-              display: 'flex',
-              alignItems: 'center',
+              display: "flex",
+              alignItems: "center",
               gap: 2,
               p: 2,
-              borderRadius: '12px',
-              bgcolor: 'action.hover'
+              borderRadius: "12px",
+              bgcolor: "action.hover"
             }}
           >
             <Avatar src={user.photoUrl} alt={displayName} sx={{ width: 48, height: 48 }}>
@@ -89,14 +92,10 @@ export const AddCreditsDialog = () => {
           />
 
           <FormControl component="fieldset">
-            <FormLabel component="legend" sx={{ fontSize: '0.875rem', fontWeight: 700, mb: 0.5 }}>
+            <FormLabel component="legend" sx={{ fontSize: "0.875rem", fontWeight: 700, mb: 0.5 }}>
               Tipo de crédito
             </FormLabel>
-            <RadioGroup
-              row
-              value={creditType}
-              onChange={(e) => setCreditType(e.target.value as 'paid' | 'free')}
-            >
+            <RadioGroup row value={creditType} onChange={(e) => setCreditType(e.target.value as "paid" | "free")}>
               <FormControlLabel
                 value="paid"
                 control={<Radio size="small" />}
@@ -152,13 +151,12 @@ export const AddCreditsDialog = () => {
             disabled={isSubmitting || amount < 1}
             startIcon={isSubmitting ? <CircularProgress size={18} color="inherit" /> : <AddIcon />}
           >
-            {isSubmitting ? 'Concedendo...' : `Adicionar ${amount} crédito(s)`}
+            {isSubmitting ? "Concedendo..." : `Adicionar ${amount} crédito(s)`}
           </Button>
         </DialogActions>
       </Box>
     </Dialog>
-  )
-}
+  );
+};
 
-export default AddCreditsDialog
-
+export default AddCreditsDialog;

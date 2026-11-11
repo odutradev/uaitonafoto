@@ -1,40 +1,40 @@
-import api from '@utils/api'
+import api from "@utils/api";
 
-import type { AuthUser } from '@stores/auth/types'
+import type { AuthUser } from "@stores/auth/types";
 import type {
   SyncServicePayload,
   SyncResponse,
   UpdateMePayload,
   ForgotPasswordPayload,
   ResetPasswordPayload
-} from '@utils/types/auth'
+} from "@utils/types/auth";
 
 export const syncAuthUser = async ({ firebaseToken, ...payload }: SyncServicePayload): Promise<SyncResponse> => {
-  const response = await api.post<SyncResponse>('/auth/sync', payload, {
+  const response = await api.post<SyncResponse>("/auth/sync", payload, {
     headers: {
       Authorization: `Bearer ${firebaseToken}`
     }
-  })
-  return response.data
-}
+  });
+  return response.data;
+};
 
 export const getMeData = async (): Promise<AuthUser> => {
-  const response = await api.get<AuthUser>('/auth/me/details')
-  return response.data
-}
+  const response = await api.get<AuthUser>("/auth/me/details");
+  return response.data;
+};
 
 export const updateMeData = async (payload: UpdateMePayload): Promise<AuthUser> => {
-  const response = await api.patch<AuthUser>('/auth/me/update', payload)
-  return response.data
-}
+  const response = await api.patch<AuthUser>("/auth/me/update", payload);
+  return response.data;
+};
 
 export const requestPasswordReset = async (payload: ForgotPasswordPayload): Promise<void> => {
-  await api.post('/auth/forgot-password', {
+  await api.post("/auth/forgot-password", {
     ...payload,
     redirectUrl: payload.redirectUrl ?? window.location.origin
-  })
-}
+  });
+};
 
 export const confirmPasswordReset = async (payload: ResetPasswordPayload): Promise<void> => {
-  await api.post('/auth/reset-password', payload)
-}
+  await api.post("/auth/reset-password", payload);
+};

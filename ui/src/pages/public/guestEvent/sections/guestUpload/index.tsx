@@ -1,105 +1,142 @@
-import { useMemo, useRef, useState } from 'react'
-import { Alert, Box, Button, Chip, Dialog, DialogContent, DialogTitle, IconButton, Paper, Stack, Typography } from '@mui/material'
-import { AddAPhotoOutlined as CameraIcon, CasinoOutlined as DiceIcon, CheckCircleRounded as CheckIcon, Close as CloseIcon, EmojiEventsOutlined as ChallengeIcon, Replay as RepeatIcon, ShuffleOutlined as ShuffleIcon } from '@mui/icons-material'
-import dayjs from 'dayjs'
-import { toast } from 'react-toastify'
+import { useMemo, useRef, useState } from "react";
+import {
+  Alert,
+  Box,
+  Button,
+  Chip,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  IconButton,
+  Paper,
+  Stack,
+  Typography
+} from "@mui/material";
+import {
+  AddAPhotoOutlined as CameraIcon,
+  CasinoOutlined as DiceIcon,
+  CheckCircleRounded as CheckIcon,
+  Close as CloseIcon,
+  EmojiEventsOutlined as ChallengeIcon,
+  Replay as RepeatIcon,
+  ShuffleOutlined as ShuffleIcon
+} from "@mui/icons-material";
+import dayjs from "dayjs";
+import { toast } from "react-toastify";
 
-import { challengeActiveBadgeStyles, challengeButtonStyles, challengeCompletedItemCardStyles, challengeItemCardStyles, randomChallengeCardStyles, uploadButtonStyles, uploadButtonsRowStyles, uploadHeaderStyles, uploadPaperStyles } from './styles'
-import type { ChangeEvent } from 'react'
-import type { EventChallenge } from '@utils/types/events'
-import useGuestEventPage from '@pages/public/guestEvent/hook'
+import {
+  challengeActiveBadgeStyles,
+  challengeButtonStyles,
+  challengeCompletedItemCardStyles,
+  challengeItemCardStyles,
+  randomChallengeCardStyles,
+  uploadButtonStyles,
+  uploadButtonsRowStyles,
+  uploadHeaderStyles,
+  uploadPaperStyles
+} from "./styles";
+import type { ChangeEvent } from "react";
+import type { EventChallenge } from "@utils/types/events";
+import useGuestEventPage from "@pages/public/guestEvent/hook";
 
-const maxPhotoAgeMs = 5 * 60 * 1000
+const maxPhotoAgeMs = 5 * 60 * 1000;
 
 const GuestUpload = () => {
-  const { event: eventValue, guest: guestValue, photosSent, completedChallengeIds = [], isUploading, upload: onUpload } = useGuestEventPage()
-  const event = eventValue!
-  const guest = guestValue!
+  const {
+    event: eventValue,
+    guest: guestValue,
+    photosSent,
+    completedChallengeIds = [],
+    isUploading,
+    upload: onUpload
+  } = useGuestEventPage();
+  const event = eventValue!;
+  const guest = guestValue!;
 
-  const inputRef = useRef<HTMLInputElement | null>(null)
-  const [isChallengeModalOpen, setIsChallengeModalOpen] = useState(false)
-  const [selectedChallenge, setSelectedChallenge] = useState<EventChallenge | null>(null)
-  const [randomChallenge, setRandomChallenge] = useState<EventChallenge | null>(null)
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const [isChallengeModalOpen, setIsChallengeModalOpen] = useState(false);
+  const [selectedChallenge, setSelectedChallenge] = useState<EventChallenge | null>(null);
+  const [randomChallenge, setRandomChallenge] = useState<EventChallenge | null>(null);
 
-  const canUpload = event.phase === 'open'
-  const hasChallenges = Boolean(event.challengesEnabled && (event.challenges?.length ?? 0) > 0)
-  const isRandomMode = event.challengesMode === 'random'
+  const canUpload = event.phase === "open";
+  const hasChallenges = Boolean(event.challengesEnabled && (event.challenges?.length ?? 0) > 0);
+  const isRandomMode = event.challengesMode === "random";
 
-  const completedIds = useMemo(() => completedChallengeIds ?? [], [completedChallengeIds])
-  const isCompleted = (id: string) => completedIds.includes(id)
+  const completedIds = useMemo(() => completedChallengeIds ?? [], [completedChallengeIds]);
+  const isCompleted = (id: string) => completedIds.includes(id);
 
   const activeChallenges = useMemo(
     () => (event.challenges ?? []).filter((c) => c.active !== false),
     [event.challenges]
-  )
+  );
   const completedChallenges = useMemo(
     () => activeChallenges.filter((c) => isCompleted(c.id)),
     [activeChallenges, completedIds]
-  )
+  );
   const pendingChallenges = useMemo(
     () => activeChallenges.filter((c) => !isCompleted(c.id)),
     [activeChallenges, completedIds]
-  )
+  );
 
   const pickRandom = (excludeId?: string) => {
-    const candidates = pendingChallenges.length > 0 ? pendingChallenges : activeChallenges
-    if (candidates.length === 0) return null
+    const candidates = pendingChallenges.length > 0 ? pendingChallenges : activeChallenges;
+    if (candidates.length === 0) return null;
 
-    const pool = candidates.length > 1 && excludeId
-      ? candidates.filter((c) => c.id !== excludeId)
-      : candidates
+    const pool = candidates.length > 1 && excludeId ? candidates.filter((c) => c.id !== excludeId) : candidates;
 
-    const chosen = pool[Math.floor(Math.random() * pool.length)] || candidates[0]
-    setRandomChallenge(chosen)
-    return chosen
-  }
+    const chosen = pool[Math.floor(Math.random() * pool.length)] || candidates[0];
+    setRandomChallenge(chosen);
+    return chosen;
+  };
 
   const handleOpenChallengeModal = () => {
     if (isRandomMode) {
       if (!randomChallenge || !activeChallenges.some((c) => c.id === randomChallenge.id)) {
-        pickRandom()
+        pickRandom();
       }
     }
-    setIsChallengeModalOpen(true)
-  }
+    setIsChallengeModalOpen(true);
+  };
 
   const handleNormalPhotoClick = () => {
-    setSelectedChallenge(null)
-    inputRef.current?.click()
-  }
+    setSelectedChallenge(null);
+    inputRef.current?.click();
+  };
 
   const handleSelectChallenge = (challenge: EventChallenge) => {
-    setSelectedChallenge(challenge)
-    setIsChallengeModalOpen(false)
+    setSelectedChallenge(challenge);
+    setIsChallengeModalOpen(false);
     setTimeout(() => {
-      inputRef.current?.click()
-    }, 150)
-  }
+      inputRef.current?.click();
+    }, 150);
+  };
 
   const handleCancelSelectedChallenge = () => {
-    setSelectedChallenge(null)
-  }
+    setSelectedChallenge(null);
+  };
 
   const handleFileChange = async (changeEvent: ChangeEvent<HTMLInputElement>) => {
-    const file = changeEvent.target.files?.[0]
-    changeEvent.target.value = ''
-    if (!file) return
+    const file = changeEvent.target.files?.[0];
+    changeEvent.target.value = "";
+    if (!file) return;
 
     if (file.lastModified) {
-      const fileAgeMs = Date.now() - file.lastModified
+      const fileAgeMs = Date.now() - file.lastModified;
       if (fileAgeMs > maxPhotoAgeMs || fileAgeMs < -60000) {
-        toast.error('Apenas fotos tiradas na hora com a câmera são permitidas. Não é possível selecionar fotos antigas da galeria.')
-        return
+        toast.error(
+          "Apenas fotos tiradas na hora com a câmera são permitidas. Não é possível selecionar fotos antigas da galeria."
+        );
+        return;
       }
     }
 
-    const currentChallenge = selectedChallenge
+    const currentChallenge = selectedChallenge;
     try {
-      await onUpload(file, currentChallenge?.id, currentChallenge?.title)
+      await onUpload(file, currentChallenge?.id, currentChallenge?.title);
     } finally {
-      setSelectedChallenge(null)
+      setSelectedChallenge(null);
     }
-  }
+  };
 
   return (
     <>
@@ -108,63 +145,56 @@ const GuestUpload = () => {
           <Typography variant="subtitle1" fontWeight={700}>
             Olá, {guest.name}
           </Typography>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1, flexWrap: "wrap" }}>
             {photosSent > 0 && (
               <Chip
                 size="small"
                 color="primary"
-                label={`${photosSent} ${photosSent === 1 ? 'foto enviada' : 'fotos enviadas'}`}
+                label={`${photosSent} ${photosSent === 1 ? "foto enviada" : "fotos enviadas"}`}
               />
             )}
             {hasChallenges && completedChallenges.length > 0 && (
               <Chip
                 size="small"
                 color="success"
-                icon={<ChallengeIcon sx={{ fontSize: '15px !important', color: 'inherit !important' }} />}
-                label={`${completedChallenges.length} ${completedChallenges.length === 1 ? 'missão cumprida' : 'missões cumpridas'}`}
+                icon={<ChallengeIcon sx={{ fontSize: "15px !important", color: "inherit !important" }} />}
+                label={`${completedChallenges.length} ${completedChallenges.length === 1 ? "missão cumprida" : "missões cumpridas"}`}
               />
             )}
           </Box>
         </Box>
 
-        {event.phase === 'upcoming' && (
+        {event.phase === "upcoming" && (
           <Alert severity="info">
-            O envio de fotos começa em {dayjs(event.startsAt).format('DD/MM/YYYY [às] HH:mm')}.
+            O envio de fotos começa em {dayjs(event.startsAt).format("DD/MM/YYYY [às] HH:mm")}.
           </Alert>
         )}
 
-        {event.phase === 'closed' && <Alert severity="info">O período de envio de fotos já se encerrou.</Alert>}
+        {event.phase === "closed" && <Alert severity="info">O período de envio de fotos já se encerrou.</Alert>}
 
         {selectedChallenge && (
           <Box sx={challengeActiveBadgeStyles}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 0, flexWrap: 'wrap' }}>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1, minWidth: 0, flexWrap: "wrap" }}>
               <ChallengeIcon sx={{ fontSize: 20, flexShrink: 0 }} />
               <Typography variant="body2" noWrap>
                 Missão ativa: <strong>{selectedChallenge.title}</strong>
               </Typography>
               {isCompleted(selectedChallenge.id) && (
-                <Chip size="small" color="success" label="Já cumprida" sx={{ height: 20, fontSize: '0.65rem' }} />
+                <Chip size="small" color="success" label="Já cumprida" sx={{ height: 20, fontSize: "0.65rem" }} />
               )}
             </Box>
             <IconButton
               size="small"
               onClick={handleCancelSelectedChallenge}
               aria-label="Cancelar missão"
-              sx={{ p: 0.5, color: 'inherit' }}
+              sx={{ p: 0.5, color: "inherit" }}
             >
               <CloseIcon fontSize="small" />
             </IconButton>
           </Box>
         )}
 
-        <input
-          ref={inputRef}
-          type="file"
-          accept="image/*"
-          capture="environment"
-          hidden
-          onChange={handleFileChange}
-        />
+        <input ref={inputRef} type="file" accept="image/*" capture="environment" hidden onChange={handleFileChange} />
 
         {hasChallenges && activeChallenges.length > 0 ? (
           <Box sx={uploadButtonsRowStyles}>
@@ -176,7 +206,7 @@ const GuestUpload = () => {
               onClick={handleNormalPhotoClick}
               sx={uploadButtonStyles}
             >
-              {isUploading && !selectedChallenge ? 'Enviando foto...' : 'Tirar foto normal'}
+              {isUploading && !selectedChallenge ? "Enviando foto..." : "Tirar foto normal"}
             </Button>
 
             <Button
@@ -188,10 +218,10 @@ const GuestUpload = () => {
               sx={challengeButtonStyles}
             >
               {isUploading && selectedChallenge
-                ? 'Enviando missão...'
+                ? "Enviando missão..."
                 : isRandomMode
-                  ? 'Sortear uma missão'
-                  : 'Cumprir um desafio'}
+                  ? "Sortear uma missão"
+                  : "Cumprir um desafio"}
             </Button>
           </Box>
         ) : (
@@ -203,11 +233,11 @@ const GuestUpload = () => {
             onClick={handleNormalPhotoClick}
             sx={uploadButtonStyles}
           >
-            {isUploading ? 'Enviando foto...' : 'Tirar foto'}
+            {isUploading ? "Enviando foto..." : "Tirar foto"}
           </Button>
         )}
 
-        <Typography variant="caption" color="text.secondary" sx={{ textAlign: 'center', display: 'block' }}>
+        <Typography variant="caption" color="text.secondary" sx={{ textAlign: "center", display: "block" }}>
           Abre a câmera na hora • Fotos antigas da galeria não são permitidas
         </Typography>
       </Paper>
@@ -226,38 +256,43 @@ const GuestUpload = () => {
           }
         }}
       >
-        <DialogTitle sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', pb: 1 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            {isRandomMode ? (
-              <DiceIcon sx={{ color: '#f59e0b' }} />
-            ) : (
-              <ChallengeIcon sx={{ color: '#f59e0b' }} />
-            )}
+        <DialogTitle sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", pb: 1 }}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            {isRandomMode ? <DiceIcon sx={{ color: "#f59e0b" }} /> : <ChallengeIcon sx={{ color: "#f59e0b" }} />}
             <Typography variant="h6" fontWeight={800}>
-              {isRandomMode ? 'Missão Sorteada' : 'Escolha uma Missão'}
+              {isRandomMode ? "Missão Sorteada" : "Escolha uma Missão"}
             </Typography>
           </Box>
           <IconButton
             size="small"
             onClick={() => setIsChallengeModalOpen(false)}
             aria-label="Fechar"
-            sx={{ color: 'text.secondary' }}
+            sx={{ color: "text.secondary" }}
           >
             <CloseIcon fontSize="small" />
           </IconButton>
         </DialogTitle>
 
         <DialogContent sx={{ pt: 1 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2, flexWrap: 'wrap', gap: 1 }}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              mb: 2,
+              flexWrap: "wrap",
+              gap: 1
+            }}
+          >
             <Typography variant="body2" color="text.secondary">
               {isRandomMode
-                ? 'Cumpra a missão sorteada para destacar seu registro no telão!'
-                : 'Tire fotos temáticas e complete as missões do evento!'}
+                ? "Cumpra a missão sorteada para destacar seu registro no telão!"
+                : "Tire fotos temáticas e complete as missões do evento!"}
             </Typography>
             <Chip
               size="small"
-              icon={<CheckIcon sx={{ fontSize: '15px !important' }} />}
-              color={completedChallenges.length > 0 ? 'success' : 'default'}
+              icon={<CheckIcon sx={{ fontSize: "15px !important" }} />}
+              color={completedChallenges.length > 0 ? "success" : "default"}
               variant="outlined"
               label={`${completedChallenges.length}/${activeChallenges.length} concluídas`}
             />
@@ -267,12 +302,12 @@ const GuestUpload = () => {
             <Stack spacing={2.5}>
               {randomChallenge ? (
                 <Box sx={randomChallengeCardStyles}>
-                  <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                  <Box sx={{ display: "flex", justifyContent: "center" }}>
                     <Chip
                       size="small"
-                      icon={<DiceIcon sx={{ fontSize: '15px !important', color: '#000 !important' }} />}
+                      icon={<DiceIcon sx={{ fontSize: "15px !important", color: "#000 !important" }} />}
                       label="Sua missão da vez"
-                      sx={{ bgcolor: '#f59e0b', color: '#000', fontWeight: 800, fontSize: '0.72rem' }}
+                      sx={{ bgcolor: "#f59e0b", color: "#000", fontWeight: 800, fontSize: "0.72rem" }}
                     />
                   </Box>
 
@@ -290,27 +325,27 @@ const GuestUpload = () => {
                   {isCompleted(randomChallenge.id) && (
                     <Chip
                       size="small"
-                      icon={<CheckIcon sx={{ fontSize: '15px !important' }} />}
+                      icon={<CheckIcon sx={{ fontSize: "15px !important" }} />}
                       color="success"
                       label="Você já cumpriu esta missão antes!"
-                      sx={{ alignSelf: 'center', fontWeight: 600 }}
+                      sx={{ alignSelf: "center", fontWeight: 600 }}
                     />
                   )}
 
-                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, mt: 1 }}>
+                  <Box sx={{ display: "flex", flexDirection: "column", gap: 1, mt: 1 }}>
                     <Button
                       variant="contained"
                       size="medium"
                       startIcon={<CameraIcon />}
                       onClick={() => handleSelectChallenge(randomChallenge)}
                       sx={{
-                        bgcolor: '#f59e0b',
-                        color: '#000',
+                        bgcolor: "#f59e0b",
+                        color: "#000",
                         fontWeight: 800,
-                        '&:hover': { bgcolor: '#d97706' }
+                        "&:hover": { bgcolor: "#d97706" }
                       }}
                     >
-                      {isCompleted(randomChallenge.id) ? 'Cumprir novamente' : 'Tirar foto desta missão'}
+                      {isCompleted(randomChallenge.id) ? "Cumprir novamente" : "Tirar foto desta missão"}
                     </Button>
 
                     {activeChallenges.length > 1 && (
@@ -319,7 +354,7 @@ const GuestUpload = () => {
                         size="small"
                         startIcon={<ShuffleIcon />}
                         onClick={() => pickRandom(randomChallenge.id)}
-                        sx={{ color: 'text.secondary', borderColor: 'divider' }}
+                        sx={{ color: "text.secondary", borderColor: "divider" }}
                       >
                         Sortear outra missão
                       </Button>
@@ -331,7 +366,11 @@ const GuestUpload = () => {
               )}
 
               <Box>
-                <Typography variant="subtitle2" fontWeight={800} sx={{ mb: 1, display: 'flex', alignItems: 'center', gap: 0.75 }}>
+                <Typography
+                  variant="subtitle2"
+                  fontWeight={800}
+                  sx={{ mb: 1, display: "flex", alignItems: "center", gap: 0.75 }}
+                >
                   <CheckIcon color="success" sx={{ fontSize: 18 }} />
                   Missões que você já cumpriu ({completedChallenges.length})
                 </Typography>
@@ -345,19 +384,28 @@ const GuestUpload = () => {
                         sx={challengeCompletedItemCardStyles}
                       >
                         <Box sx={{ minWidth: 0, flex: 1 }}>
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+                          <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
                             <CheckIcon color="success" sx={{ fontSize: 16, flexShrink: 0 }} />
                             <Typography variant="subtitle2" fontWeight={700} sx={{ lineHeight: 1.3 }}>
                               {challenge.title}
                             </Typography>
                           </Box>
                           {challenge.description && (
-                            <Typography variant="caption" color="text.secondary" sx={{ mt: 0.25, display: 'block', pl: 2.75 }}>
+                            <Typography
+                              variant="caption"
+                              color="text.secondary"
+                              sx={{ mt: 0.25, display: "block", pl: 2.75 }}
+                            >
                               {challenge.description}
                             </Typography>
                           )}
                         </Box>
-                        <Chip size="small" color="success" label="Cumprida" sx={{ fontWeight: 700, fontSize: '0.7rem' }} />
+                        <Chip
+                          size="small"
+                          color="success"
+                          label="Cumprida"
+                          sx={{ fontWeight: 700, fontSize: "0.7rem" }}
+                        />
                       </Box>
                     ))}
                   </Stack>
@@ -366,9 +414,10 @@ const GuestUpload = () => {
                     variant="outlined"
                     sx={{
                       p: 2,
-                      textAlign: 'center',
+                      textAlign: "center",
                       borderRadius: 2,
-                      bgcolor: (theme) => (theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.02)')
+                      bgcolor: (theme) =>
+                        theme.palette.mode === "dark" ? "rgba(255,255,255,0.02)" : "rgba(0,0,0,0.02)"
                     }}
                   >
                     <Typography variant="caption" color="text.secondary">
@@ -382,7 +431,12 @@ const GuestUpload = () => {
             <Stack spacing={2}>
               {pendingChallenges.length > 0 && (
                 <Box>
-                  <Typography variant="caption" fontWeight={700} color="text.secondary" sx={{ textTransform: 'uppercase', mb: 1, display: 'block', letterSpacing: 0.5 }}>
+                  <Typography
+                    variant="caption"
+                    fontWeight={700}
+                    color="text.secondary"
+                    sx={{ textTransform: "uppercase", mb: 1, display: "block", letterSpacing: 0.5 }}
+                  >
                     Disponíveis para cumprir ({pendingChallenges.length})
                   </Typography>
                   <Stack spacing={1.25}>
@@ -397,7 +451,7 @@ const GuestUpload = () => {
                             {challenge.title}
                           </Typography>
                           {challenge.description && (
-                            <Typography variant="caption" color="text.secondary" sx={{ mt: 0.25, display: 'block' }}>
+                            <Typography variant="caption" color="text.secondary" sx={{ mt: 0.25, display: "block" }}>
                               {challenge.description}
                             </Typography>
                           )}
@@ -405,14 +459,14 @@ const GuestUpload = () => {
                         <Button
                           size="small"
                           variant="contained"
-                          startIcon={<CameraIcon sx={{ fontSize: '15px !important' }} />}
+                          startIcon={<CameraIcon sx={{ fontSize: "15px !important" }} />}
                           sx={{
-                            bgcolor: '#f59e0b',
-                            color: '#000',
+                            bgcolor: "#f59e0b",
+                            color: "#000",
                             fontWeight: 700,
-                            fontSize: '0.75rem',
+                            fontSize: "0.75rem",
                             flexShrink: 0,
-                            '&:hover': { bgcolor: '#d97706' }
+                            "&:hover": { bgcolor: "#d97706" }
                           }}
                         >
                           Cumprir
@@ -425,7 +479,19 @@ const GuestUpload = () => {
 
               {completedChallenges.length > 0 && (
                 <Box sx={{ pt: pendingChallenges.length > 0 ? 1 : 0 }}>
-                  <Typography variant="caption" fontWeight={700} color="success.main" sx={{ textTransform: 'uppercase', mb: 1, display: 'flex', alignItems: 'center', gap: 0.5, letterSpacing: 0.5 }}>
+                  <Typography
+                    variant="caption"
+                    fontWeight={700}
+                    color="success.main"
+                    sx={{
+                      textTransform: "uppercase",
+                      mb: 1,
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 0.5,
+                      letterSpacing: 0.5
+                    }}
+                  >
                     <CheckIcon sx={{ fontSize: 16 }} />
                     Já cumpridas por você ({completedChallenges.length})
                   </Typography>
@@ -437,21 +503,35 @@ const GuestUpload = () => {
                         sx={challengeCompletedItemCardStyles}
                       >
                         <Box sx={{ minWidth: 0, flex: 1 }}>
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+                          <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
                             <CheckIcon color="success" sx={{ fontSize: 16, flexShrink: 0 }} />
                             <Typography variant="subtitle2" fontWeight={700} sx={{ lineHeight: 1.3 }}>
                               {challenge.title}
                             </Typography>
                           </Box>
                           {challenge.description && (
-                            <Typography variant="caption" color="text.secondary" sx={{ mt: 0.25, display: 'block', pl: 2.75 }}>
+                            <Typography
+                              variant="caption"
+                              color="text.secondary"
+                              sx={{ mt: 0.25, display: "block", pl: 2.75 }}
+                            >
                               {challenge.description}
                             </Typography>
                           )}
                         </Box>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexShrink: 0 }}>
-                          <Chip size="small" color="success" label="Cumprida" sx={{ fontWeight: 700, fontSize: '0.7rem' }} />
-                          <IconButton size="small" color="inherit" aria-label="Cumprir novamente" title="Cumprir novamente">
+                        <Box sx={{ display: "flex", alignItems: "center", gap: 1, flexShrink: 0 }}>
+                          <Chip
+                            size="small"
+                            color="success"
+                            label="Cumprida"
+                            sx={{ fontWeight: 700, fontSize: "0.7rem" }}
+                          />
+                          <IconButton
+                            size="small"
+                            color="inherit"
+                            aria-label="Cumprir novamente"
+                            title="Cumprir novamente"
+                          >
                             <RepeatIcon fontSize="small" />
                           </IconButton>
                         </Box>
@@ -469,7 +549,7 @@ const GuestUpload = () => {
         </DialogContent>
       </Dialog>
     </>
-  )
-}
+  );
+};
 
-export default GuestUpload
+export default GuestUpload;

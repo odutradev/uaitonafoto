@@ -1,35 +1,42 @@
-import { Box, Container, Link, Stack, Typography } from '@mui/material'
-import { Link as RouterLink } from 'react-router-dom'
+import { Box, Container, Link, Stack, Typography } from "@mui/material";
+import { Link as RouterLink } from "react-router-dom";
 
-import { footerBoxStyles, footerCompanyStyles, footerContainerStyles, footerCopyrightStyles, footerLinkItemStyles, footerLinksStyles } from './styles'
-import useLandingPage from '@pages/public/landingPage/hook'
+import {
+  footerBoxStyles,
+  footerCompanyStyles,
+  footerContainerStyles,
+  footerCopyrightStyles,
+  footerLinkItemStyles,
+  footerLinksStyles
+} from "./styles";
+import useLandingPage from "@pages/public/landingPage/hook";
 
 const formatCompanyName = (name: string): string => {
-  return name.toLowerCase().replace(/(?:^|\s|-)\S/g, char => char.toUpperCase())
-}
+  return name.toLowerCase().replace(/(?:^|\s|-)\S/g, (char) => char.toUpperCase());
+};
 
 const formatCnpj = (cnpj: string): string => {
-  const digits = cnpj.replace(/\D/g, '')
+  const digits = cnpj.replace(/\D/g, "");
   if (digits.length === 14) {
-    return digits.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, '$1.$2.$3/$4-$5')
+    return digits.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, "$1.$2.$3/$4-$5");
   }
-  return cnpj
-}
+  return cnpj;
+};
 
 export const Footer = () => {
-  const { data: content } = useLandingPage()
-  const data = content.footer
+  const { data: content } = useLandingPage();
+  const data = content.footer;
 
-  const copyrightText = data.copyrightSuffix.startsWith('©')
+  const copyrightText = data.copyrightSuffix.startsWith("©")
     ? data.copyrightSuffix
-    : `© ${new Date().getFullYear()} ${data.copyrightSuffix}`
+    : `© ${new Date().getFullYear()} ${data.copyrightSuffix}`;
 
   const companyInfo = [
     data.companyName ? formatCompanyName(data.companyName) : null,
     data.cnpj ? `CNPJ: ${formatCnpj(data.cnpj)}` : null
   ]
     .filter(Boolean)
-    .join(' • ')
+    .join(" • ");
 
   return (
     <Box component="footer" sx={footerBoxStyles}>
@@ -63,7 +70,7 @@ export const Footer = () => {
         )}
       </Container>
     </Box>
-  )
-}
+  );
+};
 
-export default Footer
+export default Footer;
