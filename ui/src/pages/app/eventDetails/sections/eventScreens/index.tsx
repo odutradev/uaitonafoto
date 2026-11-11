@@ -11,7 +11,7 @@ import { compactIconButtonStyles, countBadgeStyles, linkFieldBoxStyles, linkIcon
 import type { EventScreenHistoryEntry, EventScreenSlot } from '@utils/types/events'
 import useEventDetailsPage from '@pages/app/eventDetails/hook'
 
-const SCREEN_ONLINE_TIMEOUT_MS = 30_000
+const screenOnlineTimeoutMs = 30_000
 
 const getScreenHistoryMeta = (action: EventScreenHistoryEntry['action']) => {
   switch (action) {
@@ -92,7 +92,7 @@ const getScreenStatusBadge = (slot: EventScreenSlot) => {
   }
 
   const lastSeenMs = slot.lastSeenAt ? Date.parse(slot.lastSeenAt) : NaN
-  const isOnline = !Number.isNaN(lastSeenMs) && Date.now() - lastSeenMs < SCREEN_ONLINE_TIMEOUT_MS
+  const isOnline = !Number.isNaN(lastSeenMs) && Date.now() - lastSeenMs < screenOnlineTimeoutMs
 
   if (isOnline) {
     return {

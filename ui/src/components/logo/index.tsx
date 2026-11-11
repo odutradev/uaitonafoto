@@ -16,7 +16,7 @@ import {
 } from './styles'
 import type { LogoProps } from './types'
 
-const REVEAL_WORDS = [
+const revealWords = [
   { text: 'uai', delay: '300ms' },
   { text: 'To', delay: '420ms' },
   { text: 'Na', delay: '540ms' },
@@ -66,8 +66,8 @@ const Logo = ({
       const dx = e.clientX - centerX
       const dy = e.clientY - centerY
       const dist = Math.hypot(dx, dy) || 1
-      const MAX_OFFSET = 18
-      const strength = Math.min(dist / 120, 1) * MAX_OFFSET
+      const maxOffset = 18
+      const strength = Math.min(dist / 120, 1) * maxOffset
       setEyeOffset({
         x: (dx / dist) * strength,
         y: (dy / dist) * strength
@@ -293,7 +293,7 @@ const Logo = ({
           sx={getLogoTextStyles(dimensions.fontSize, anim === 'reveal')}
         >
           {anim === 'reveal' ? (
-            REVEAL_WORDS.map((w, i) => (
+            revealWords.map((w, i) => (
               <Box
                 key={i}
                 component="span"

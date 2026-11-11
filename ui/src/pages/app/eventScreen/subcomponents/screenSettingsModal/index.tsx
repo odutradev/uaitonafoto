@@ -4,7 +4,7 @@ import { CheckCircle as CheckIcon, Close as CloseIcon, CropFree as FitIcon, Dash
 import useSystemStore from '@stores/system'
 import { brandColors } from '@styles/theme'
 
-import { SCREEN_LAYOUT_OPTIONS, SCREEN_PHOTO_FIT_OPTIONS } from '@pages/app/eventScreen/types'
+import { screenLayoutOptions, screenPhotoFitOptions } from '@pages/app/eventScreen/types'
 import { getLayoutCardStyles, modalBodyStyles, modalDialogPaperStyles, settingRowStyles, settingsSectionStyles, settingsSectionTitleStyles } from './styles'
 import useEventScreenPage from '@pages/app/eventScreen/hook'
 
@@ -110,7 +110,7 @@ export const ScreenSettingsModal = () => {
                 gap: 1.5
               }}
             >
-              {SCREEN_LAYOUT_OPTIONS.map((option) => {
+              {screenLayoutOptions.map((option) => {
                 const isSelected = layout === option.id
                 return (
                   <Box
@@ -183,7 +183,7 @@ export const ScreenSettingsModal = () => {
                 gap: 1.5
               }}
             >
-              {SCREEN_PHOTO_FIT_OPTIONS.map((option) => {
+              {screenPhotoFitOptions.map((option) => {
                 const isSelected = photoFit === option.id
                 return (
                   <Box

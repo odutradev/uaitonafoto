@@ -1,5 +1,5 @@
-export const CLIENT_DEVICE_ID_KEY = 'uaitonafoto:client_device_id'
-export const CLIENT_DEVICE_COOKIE_KEY = 'uaitonafoto_device_id'
+export const clientDeviceIdKey = 'uaitonafoto:client_device_id'
+export const clientDeviceCookieKey = 'uaitonafoto_device_id'
 
 const getCookie = (name: string): string | null => {
   if (typeof document === 'undefined') return null
@@ -30,12 +30,12 @@ export const getClientDeviceId = (): string => {
   if (typeof window === 'undefined') return 'server_device'
 
   try {
-    let id = localStorage.getItem(CLIENT_DEVICE_ID_KEY)
+    let id = localStorage.getItem(clientDeviceIdKey)
 
     if (!id) {
-      id = getCookie(CLIENT_DEVICE_COOKIE_KEY)
+      id = getCookie(clientDeviceCookieKey)
       if (id) {
-        localStorage.setItem(CLIENT_DEVICE_ID_KEY, id)
+        localStorage.setItem(clientDeviceIdKey, id)
       }
     }
 
@@ -44,10 +44,10 @@ export const getClientDeviceId = (): string => {
         typeof crypto !== 'undefined' && crypto.randomUUID
           ? crypto.randomUUID()
           : `dev_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`
-      localStorage.setItem(CLIENT_DEVICE_ID_KEY, id)
-      setCookie(CLIENT_DEVICE_COOKIE_KEY, id)
+      localStorage.setItem(clientDeviceIdKey, id)
+      setCookie(clientDeviceCookieKey, id)
     } else {
-      setCookie(CLIENT_DEVICE_COOKIE_KEY, id)
+      setCookie(clientDeviceCookieKey, id)
     }
 
     return id

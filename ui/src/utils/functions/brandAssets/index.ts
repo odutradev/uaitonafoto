@@ -11,7 +11,7 @@ export interface ColorDefinition {
   textColor: string
 }
 
-export const COLOR_SCHEMES: Record<LogoColorScheme, ColorDefinition & { name: string; description: string }> = {
+export const colorSchemes: Record<LogoColorScheme, ColorDefinition & { name: string; description: string }> = {
   light: {
     name: 'Padrão Claro (Tinta + Amarelo Flash)',
     description: 'Versão principal para fundos claros ou transparentes.',
@@ -49,7 +49,7 @@ export const COLOR_SCHEMES: Record<LogoColorScheme, ColorDefinition & { name: st
   }
 }
 
-export const BACKGROUND_COLORS: Record<LogoBackgroundOption, { name: string; hex: string | null }> = {
+export const backgroundColors: Record<LogoBackgroundOption, { name: string; hex: string | null }> = {
   transparent: { name: 'Transparente', hex: null },
   paper: { name: 'Papel (#FBF8F1)', hex: brandColors.paper },
   dark: { name: 'Tinta (#17140F)', hex: brandColors.ink },
@@ -75,8 +75,8 @@ export const getLogoSvgString = ({
   backgroundColor = 'transparent',
   aspectRatio = 'original'
 }: SvgOptions): string => {
-  const scheme = COLOR_SCHEMES[colorScheme]
-  const bgHex = BACKGROUND_COLORS[backgroundColor].hex
+  const scheme = colorSchemes[colorScheme]
+  const bgHex = backgroundColors[backgroundColor].hex
 
   let baseWidth = 320
   let baseHeight = 64
@@ -234,7 +234,7 @@ export const downloadLogoPng = (
         }
 
         // Se houver fundo, preenche
-        const bgHex = BACKGROUND_COLORS[options.backgroundColor || 'transparent'].hex
+        const bgHex = backgroundColors[options.backgroundColor || 'transparent'].hex
         if (bgHex) {
           ctx.fillStyle = bgHex
           ctx.fillRect(0, 0, width, height)

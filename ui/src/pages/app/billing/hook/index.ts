@@ -14,10 +14,10 @@ import type { BillingQueryParams, TransactionDirectionFilter, TransactionStatusF
 import createPageContext from '@utils/functions/createPageContext'
 import type { UseBillingPageReturn } from './types'
 
-const FREE_PLAN_ID = 'free_trial'
-const TRANSACTIONS_FETCH_LIMIT = 100
-const CREDITS_REFRESH_ATTEMPTS = 5
-const CREDITS_REFRESH_INTERVAL_MS = 2000
+const freePlanId = 'free_trial'
+const transactionsFetchLimit = 100
+const creditsRefreshAttempts = 5
+const creditsRefreshIntervalMs = 2000
 
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
@@ -29,7 +29,7 @@ const useBillingPageState = (): UseBillingPageReturn => {
   const updateUser = useAuthStore((state) => state.updateUser)
 
   const handledParamsRef = useRef('')
-  const isInitialFreeTrialRef = useRef(checkout === FREE_PLAN_ID)
+  const isInitialFreeTrialRef = useRef(checkout === freePlanId)
 
   const [plans, setPlans] = useState<PlanApiItem[]>([])
   const [subscriptions, setSubscriptions] = useState<SubscriptionItem[]>([])
@@ -58,7 +58,7 @@ const useBillingPageState = (): UseBillingPageReturn => {
       try {
         const response = await getMyTransactions({
           page: 1,
-          limit: TRANSACTIONS_FETCH_LIMIT,
+          limit: transactionsFetchLimit,
           status: status === 'ALL' ? undefined : status,
           planType: planType === 'ALL' ? undefined : planType
         })
@@ -155,7 +155,7 @@ const useBillingPageState = (): UseBillingPageReturn => {
     async (planId: string) => {
       setCheckoutPlanId(planId)
 
-      if (planId === FREE_PLAN_ID) {
+      if (planId === freePlanId) {
         await runAction({
           action: async () => {
             const { user: updatedUser } = await claimFreeTrial()
@@ -190,16 +190,16 @@ const useBillingPageState = (): UseBillingPageReturn => {
   const handleOpenCheckoutConfirmation = useCallback(
     (planIdOrPlan: string | PlanApiItem) => {
       if (typeof planIdOrPlan === 'object') {
-        if (planIdOrPlan.id === FREE_PLAN_ID || planIdOrPlan.abacateProductId === FREE_PLAN_ID) {
-          startCheckout(FREE_PLAN_ID)
+        if (planIdOrPlan.id === freePlanId || planIdOrPlan.abacateProductId === freePlanId) {
+          startCheckout(freePlanId)
           return
         }
         setConfirmingPlan(planIdOrPlan)
         return
       }
 
-      if (planIdOrPlan === FREE_PLAN_ID) {
-        startCheckout(FREE_PLAN_ID)
+      if (planIdOrPlan === freePlanId) {
+        startCheckout(freePlanId)
         return
       }
 
@@ -269,15 +269,15 @@ const useBillingPageState = (): UseBillingPageReturn => {
 
   const pollPostPaymentUpdate = useCallback(
     async (initialPaidCredits: number) => {
-      for (let attempt = 0; attempt < CREDITS_REFRESH_ATTEMPTS; attempt++) {
-        await wait(CREDITS_REFRESH_INTERVAL_MS)
+      for (let attempt = 0; attempt < creditsRefreshAttempts; attempt++) {
+        await wait(creditsRefreshIntervalMs)
 
         try {
           const [freshUser, freshSubs, freshPurchases, freshTransactions] = await Promise.all([
             getMeData(),
             getMySubscriptions(),
             getMyPurchases(),
-            getMyTransactions({ page: 1, limit: TRANSACTIONS_FETCH_LIMIT })
+            getMyTransactions({ page: 1, limit: transactionsFetchLimit })
           ])
 
           updateUser(freshUser)
@@ -312,8 +312,8 @@ const useBillingPageState = (): UseBillingPageReturn => {
     navigate('/app/billing', { replace: true })
 
     if (checkout) {
-      if (checkout === FREE_PLAN_ID) {
-        startCheckout(FREE_PLAN_ID)
+      if (checkout === freePlanId) {
+        startCheckout(freePlanId)
       } else {
         handleOpenCheckoutConfirmation(checkout)
       }
@@ -349,7 +349,7 @@ const useBillingPageState = (): UseBillingPageReturn => {
     .map((sub) => sub.planId)
   const isCheckoutBusy = checkoutPlanId !== null
 
-  const handleClaimFreeTrial = useCallback(() => startCheckout(FREE_PLAN_ID), [startCheckout])
+  const handleClaimFreeTrial = useCallback(() => startCheckout(freePlanId), [startCheckout])
   const handleCloseTransaction = useCallback(() => setSelectedTransaction(null), [])
 
   return {
@@ -357,7 +357,7 @@ const useBillingPageState = (): UseBillingPageReturn => {
     paidCredits: user?.paidCredits ?? 0,
     freeCredits: user?.freeCredits ?? 0,
     freeTrialClaimed: Boolean(user?.freeTrialClaimedAt),
-    isCheckingOutFreeTrial: checkoutPlanId === FREE_PLAN_ID,
+    isCheckingOutFreeTrial: checkoutPlanId === freePlanId,
     isCheckoutBusy,
     hasActiveSubscription,
     activeSubscriptionPlanIds,

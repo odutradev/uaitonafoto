@@ -44,7 +44,7 @@ const downloadPhotoFromUrl = async (url: string, filename: string): Promise<void
   }
 }
 
-const MODERATION_FILTERS: readonly { value: AlbumStatusFilter; label: string }[] = [
+const moderationFilters: readonly { value: AlbumStatusFilter; label: string }[] = [
   { value: 'pending', label: 'Pendentes' },
   { value: 'approved', label: 'Aprovadas' },
   { value: 'rejected', label: 'Rejeitadas' },
@@ -282,7 +282,7 @@ const EventAlbum = () => {
       {isModerationEnabled && !isEventEnded && (
         <Box sx={moderationBarStyles}>
           <Box sx={moderationTabsStyles}>
-            {MODERATION_FILTERS.map((filter) => {
+            {moderationFilters.map((filter) => {
               const isActive = statusFilter === filter.value
               const label =
                 filter.value === 'pending' && pendingCount > 0

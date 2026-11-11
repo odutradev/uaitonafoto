@@ -21,7 +21,7 @@ export interface TemplateTheme {
   titleFont: string
 }
 
-export const TEMPLATE_THEMES: Record<TableDisplayTemplateId, TemplateTheme> = {
+export const templateThemes: Record<TableDisplayTemplateId, TemplateTheme> = {
   wedding: {
     background: '#FAF7F2',
     color: '#2B2623',

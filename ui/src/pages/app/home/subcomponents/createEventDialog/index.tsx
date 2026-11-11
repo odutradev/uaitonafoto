@@ -16,7 +16,7 @@ import { dialogActionsStyles, dialogButtonStyles, dialogPaperStyles } from './st
 import type { FormEvent } from 'react'
 import type { EventFormState } from '@components/eventFormFields/types'
 
-const STEPS = [
+const steps = [
   { label: 'Básico', description: 'Dados essenciais' },
   { label: 'Dinâmica', description: 'Fotos e telão' },
   { label: 'Acesso', description: 'Senha e PIN' }
@@ -90,7 +90,7 @@ const CreateEventDialog = () => {
 
   const handleNext = () => {
     if (validateStep(activeStep)) {
-      setActiveStep((current) => Math.min(current + 1, STEPS.length - 1))
+      setActiveStep((current) => Math.min(current + 1, steps.length - 1))
     }
   }
 
@@ -124,7 +124,7 @@ const CreateEventDialog = () => {
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
 
-    if (activeStep < STEPS.length - 1) {
+    if (activeStep < steps.length - 1) {
       handleNext()
       return
     }
@@ -141,7 +141,7 @@ const CreateEventDialog = () => {
           </Typography>
           <Box sx={{ mt: 1.5 }}>
             <Stepper
-              steps={STEPS}
+              steps={steps}
               activeStep={activeStep}
               onStepClick={(targetStep) => {
                 if (targetStep < activeStep || validateStep(activeStep)) {
@@ -208,7 +208,7 @@ const CreateEventDialog = () => {
             >
               Adquirir créditos
             </Button>
-          ) : activeStep < STEPS.length - 1 ? (
+          ) : activeStep < steps.length - 1 ? (
             <Button
               key="btn-next"
               type="button"

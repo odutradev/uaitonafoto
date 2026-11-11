@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { CLIENT_DEVICE_ID_KEY, getClientDeviceId, getClientFingerprint } from '@utils/functions/deviceIdentity'
+import { clientDeviceIdKey, getClientDeviceId, getClientFingerprint } from '@utils/functions/deviceIdentity'
 import type { PinLockoutOptions, PinLockoutState, StoredPinLockout } from './types'
 
-export { CLIENT_DEVICE_ID_KEY, getClientDeviceId, getClientFingerprint }
-export const PIN_LOCKOUT_STORAGE_PREFIX = 'uaitonafoto:lockout:'
-export const PIN_LOCKOUT_MAX_FREE_ATTEMPTS = 4
-export const PIN_LOCKOUT_PERMANENT_THRESHOLD = 10
+export { clientDeviceIdKey, getClientDeviceId, getClientFingerprint }
+export const pinLockoutStoragePrefix = 'uaitonafoto:lockout:'
+export const pinLockoutMaxFreeAttempts = 4
+export const pinLockoutPermanentThreshold = 10
 
-export const PIN_LOCKOUT_DURATIONS: Record<number, number> = {
+export const pinLockoutDurations: Record<number, number> = {
   5: 60,
   6: 300,
   7: 900,
@@ -16,7 +16,7 @@ export const PIN_LOCKOUT_DURATIONS: Record<number, number> = {
 }
 
 const getStorageKey = (scope: string, targetId: string): string =>
-  `${PIN_LOCKOUT_STORAGE_PREFIX}${scope}:${targetId}`
+  `${pinLockoutStoragePrefix}${scope}:${targetId}`
 
 const readStoredLockout = (storageKey: string): StoredPinLockout => {
   try {
@@ -149,7 +149,7 @@ const usePinLockout = ({ scope, targetId }: PinLockoutOptions): PinLockoutState 
 
       const nextAttempts = parsed.serverAttempts ?? currentStored.attempts + 1
       const becomesPermanent =
-        currentStored.isPermanent || parsed.isPermanent || nextAttempts >= PIN_LOCKOUT_PERMANENT_THRESHOLD
+        currentStored.isPermanent || parsed.isPermanent || nextAttempts >= pinLockoutPermanentThreshold
 
       let nextLockedUntil: number | null = null
       let nextRemaining = 0
@@ -160,7 +160,7 @@ const usePinLockout = ({ scope, targetId }: PinLockoutOptions): PinLockoutState 
         nextRemaining = parsed.retryAfterSeconds
         nextLockedUntil = Date.now() + parsed.retryAfterSeconds * 1000
       } else if (nextAttempts >= 5) {
-        const duration = PIN_LOCKOUT_DURATIONS[nextAttempts] ?? 3600
+        const duration = pinLockoutDurations[nextAttempts] ?? 3600
         nextRemaining = duration
         nextLockedUntil = Date.now() + duration * 1000
       }

@@ -5,7 +5,7 @@ import { Link as RouterLink } from 'react-router-dom'
 import Logo from '@components/logo'
 import ThemeToggle from '@components/themeToggle'
 import { brandColors } from '@styles/theme'
-import { BACKGROUND_COLORS, COLOR_SCHEMES, downloadLogoPng, downloadLogoSvg } from '@utils/functions/brandAssets'
+import { backgroundColors, colorSchemes, downloadLogoPng, downloadLogoSvg } from '@utils/functions/brandAssets'
 
 import { badgeStyles, cardStyles, colorBlockStyles, footerBoxStyles, headerBoxStyles, headerContainerStyles, heroBoxStyles, heroLeadStyles, heroTitleStyles, pageWrapperStyles, previewCheckerboardStyles, sectionLeadStyles, sectionNavStyles, sectionTitleStyles } from './styles'
 import useBrandIdentityPage, { BrandIdentityPageProvider } from './hook'
@@ -770,9 +770,9 @@ const BrandIdentityContent = () => {
                         label="Paleta de Cores"
                         onChange={(e) => setSelectedScheme(e.target.value as LogoColorScheme)}
                       >
-                        {(Object.keys(COLOR_SCHEMES) as LogoColorScheme[]).map((key) => (
+                        {(Object.keys(colorSchemes) as LogoColorScheme[]).map((key) => (
                           <MenuItem value={key} key={key}>
-                            {COLOR_SCHEMES[key].name}
+                            {colorSchemes[key].name}
                           </MenuItem>
                         ))}
                       </Select>
@@ -787,9 +787,9 @@ const BrandIdentityContent = () => {
                         label="Cor de Fundo"
                         onChange={(e) => setSelectedBg(e.target.value as LogoBackgroundOption)}
                       >
-                        {(Object.keys(BACKGROUND_COLORS) as LogoBackgroundOption[]).map((key) => (
+                        {(Object.keys(backgroundColors) as LogoBackgroundOption[]).map((key) => (
                           <MenuItem value={key} key={key}>
-                            {BACKGROUND_COLORS[key].name}
+                            {backgroundColors[key].name}
                           </MenuItem>
                         ))}
                       </Select>
@@ -878,7 +878,7 @@ const BrandIdentityContent = () => {
                   </Box>
 
                   <Typography variant="body2" color="text.secondary" sx={{ mt: 2, mb: 3, fontSize: '0.85rem' }}>
-                    {COLOR_SCHEMES[selectedScheme].description} O arquivo exportado respeita a proporção {selectedRatio} e o fundo selecionado.
+                    {colorSchemes[selectedScheme].description} O arquivo exportado respeita a proporção {selectedRatio} e o fundo selecionado.
                   </Typography>
 
                   {/* Botões de Ação de Download */}

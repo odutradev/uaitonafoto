@@ -11,7 +11,7 @@ import type { GuestEventInfo, GuestPhoto, GuestProfile } from '@utils/types/gues
 import type { UseGuestEventPageReturn } from './types'
 import createPageContext from '@utils/functions/createPageContext'
 
-const FEED_PAGE_SIZE = 24
+const feedPageSize = 24
 
 const useGuestEventPageState = (): UseGuestEventPageReturn => {
   const { token: eventToken = '' } = useParams()
@@ -32,7 +32,7 @@ const useGuestEventPageState = (): UseGuestEventPageReturn => {
   const loadFeed = useCallback(
     async (sessionToken: string, targetPage = page) => {
       try {
-        const result = await getGuestFeed(sessionToken, { page: targetPage, limit: FEED_PAGE_SIZE })
+        const result = await getGuestFeed(sessionToken, { page: targetPage, limit: feedPageSize })
         setPhotos(result.data)
         setMeta(result.meta)
       } catch {
@@ -111,7 +111,7 @@ const useGuestEventPageState = (): UseGuestEventPageReturn => {
                 ...photo,
                 mine: photo.guestName === guest?.name
               }
-              return [adaptedPhoto, ...current].slice(0, FEED_PAGE_SIZE)
+              return [adaptedPhoto, ...current].slice(0, feedPageSize)
             }
             return current
           })
@@ -122,7 +122,7 @@ const useGuestEventPageState = (): UseGuestEventPageReturn => {
             return {
               ...prev,
               total,
-              totalPages: Math.ceil(total / FEED_PAGE_SIZE)
+              totalPages: Math.ceil(total / feedPageSize)
             }
           })
         } catch {
@@ -142,7 +142,7 @@ const useGuestEventPageState = (): UseGuestEventPageReturn => {
             return {
               ...prev,
               total,
-              totalPages: Math.max(1, Math.ceil(total / FEED_PAGE_SIZE))
+              totalPages: Math.max(1, Math.ceil(total / feedPageSize))
             }
           })
         } catch {
