@@ -1,35 +1,14 @@
 import { Box, Button, CircularProgress, Typography } from '@mui/material'
 import { Refresh as RefreshIcon } from '@mui/icons-material'
 
-import useLogs from './hooks/useLogs'
+import useLogsPage, { LogsPageProvider } from './hook'
 import LogsFilters from './sections/logsFilters'
 import LogsTimeline from './sections/logsTimeline'
 import LogDetailsDialog from './subcomponents/logDetailsDialog'
 import { headerRowStyles, logsPageStyles, pageTitleStyles, refreshButtonStyles } from './styles'
 
-const Logs = () => {
-  const {
-    isAdmin,
-    logs,
-    page,
-    total,
-    totalPages,
-    searchInput,
-    levelFilter,
-    categoryFilter,
-    scope,
-    isLoading,
-    hasActiveFilters,
-    selectedLog,
-    setSelectedLog,
-    setSearchInput,
-    handleLevelChange,
-    handleCategoryChange,
-    handleScopeChange,
-    handleClearFilters,
-    handlePageChange,
-    handleRefresh
-  } = useLogs()
+const LogsContent = () => {
+  const { isAdmin, isLoading, handleRefresh } = useLogsPage()
 
   return (
     <Box sx={logsPageStyles}>
@@ -56,40 +35,19 @@ const Logs = () => {
         </Button>
       </Box>
 
-      <LogsFilters
-        isAdmin={isAdmin}
-        searchInput={searchInput}
-        levelFilter={levelFilter}
-        categoryFilter={categoryFilter}
-        scope={scope}
-        hasActiveFilters={hasActiveFilters}
-        onSearchChange={setSearchInput}
-        onLevelChange={handleLevelChange}
-        onCategoryChange={handleCategoryChange}
-        onScopeChange={handleScopeChange}
-        onClearFilters={handleClearFilters}
-      />
+      <LogsFilters />
 
-      <LogsTimeline
-        logs={logs}
-        isAdmin={isAdmin}
-        scope={scope}
-        page={page}
-        total={total}
-        totalPages={totalPages}
-        isLoading={isLoading}
-        onPageChange={handlePageChange}
-        onSelectLog={setSelectedLog}
-      />
+      <LogsTimeline />
 
-      <LogDetailsDialog
-        log={selectedLog}
-        isAdmin={isAdmin}
-        onClose={() => setSelectedLog(null)}
-      />
+      <LogDetailsDialog />
     </Box>
   )
 }
 
-export default Logs
+const Logs = () => (
+  <LogsPageProvider>
+    <LogsContent />
+  </LogsPageProvider>
+)
 
+export default Logs

@@ -5,12 +5,14 @@ import useSystemStore from '@stores/system'
 import useAuthStore from '@stores/auth'
 
 import type { LogItem, LogScope } from '@utils/types/logs'
-import type { LogCategoryFilter, LogLevelFilter, UseLogsReturn } from '@pages/app/logs/types'
+import type { LogCategoryFilter, LogLevelFilter } from '@pages/app/logs/types'
+import createPageContext from '@utils/functions/createPageContext'
+import type { UseLogsPageReturn } from './types'
 
 const LOGS_PER_PAGE = 10
 const SEARCH_DEBOUNCE_MS = 350
 
-export const useLogs = (): UseLogsReturn => {
+const useLogsPageState = (): UseLogsPageReturn => {
   const user = useAuthStore((state) => state.auth.user)
   const hasPermissions = useSystemStore((state) => state.hasPermissions)
   const isAdmin = hasPermissions(user?.role, ['view_all_logs'])
@@ -105,6 +107,8 @@ export const useLogs = (): UseLogsReturn => {
     setPage(nextPage)
   }, [])
 
+  const handleCloseLog = useCallback(() => setSelectedLog(null), [])
+
   const handleRefresh = useCallback(() => {
     setRefreshTick((prev) => prev + 1)
   }, [])
@@ -135,9 +139,15 @@ export const useLogs = (): UseLogsReturn => {
     handleScopeChange,
     handleClearFilters,
     handlePageChange,
+    handleCloseLog,
     handleRefresh
   }
 }
 
-export default useLogs
+const { PageProvider: LogsPageProvider, usePage: useLogsPage } = createPageContext(
+  useLogsPageState,
+  'useLogsPage'
+)
 
+export { LogsPageProvider }
+export default useLogsPage

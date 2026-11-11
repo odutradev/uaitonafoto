@@ -14,21 +14,11 @@ import { FilterAltOff as ClearIcon, Search as SearchIcon } from '@mui/icons-mate
 import { clearButtonStyles, clearRowStyles, filterCardStyles, getFilterGridStyles } from './styles'
 import type { LogScope } from '@utils/types/logs'
 import type { LogCategoryFilter, LogLevelFilter } from '@pages/app/logs/types'
-import type { LogsFiltersProps } from './types'
+import useLogsPage from '@pages/app/logs/hook'
 
-const LogsFilters = ({
-  isAdmin,
-  searchInput,
-  levelFilter,
-  categoryFilter,
-  scope,
-  hasActiveFilters,
-  onSearchChange,
-  onLevelChange,
-  onCategoryChange,
-  onScopeChange,
-  onClearFilters
-}: LogsFiltersProps) => {
+const LogsFilters = () => {
+  const { isAdmin, searchInput, levelFilter, categoryFilter, scope, hasActiveFilters, setSearchInput: onSearchChange, handleLevelChange: onLevelChange, handleCategoryChange: onCategoryChange, handleScopeChange: onScopeChange, handleClearFilters: onClearFilters } = useLogsPage()
+
   return (
     <Card component="section" elevation={0} sx={filterCardStyles}>
       <Box sx={getFilterGridStyles(isAdmin)}>
