@@ -20,6 +20,31 @@ export const brandColors = {
 
 export const brandColor = brandColors;
 
+export const landingColors = {
+  live: "#FF3B4E",
+  approve: "#2BD576",
+  reject: "#FF5A4F",
+  whatsapp: "#25D366",
+  flashWhite: "#FFFDF5",
+  glass: "rgba(23, 20, 15, 0.55)",
+  glassLight: "rgba(251, 248, 241, 0.08)",
+  glassBorder: "rgba(251, 248, 241, 0.12)",
+  yellowGlow: "rgba(255, 207, 31, 0.35)",
+  yellowSoft: "rgba(255, 207, 31, 0.14)",
+  shadowDeep: "rgba(0, 0, 0, 0.55)"
+} as const;
+
+export const photoTones = {
+  amber: ["#FFB020", "#E0590B"],
+  rose: ["#FF8FA3", "#B83B5E"],
+  dusk: ["#6C4BD8", "#E2674A"],
+  sage: ["#B8C99A", "#4E6B47"],
+  night: ["#2B2547", "#0F0C1C"],
+  cream: ["#F4E7C8", "#C9A46A"],
+  sky: ["#8EC5FF", "#3A64C8"],
+  gold: ["#FFE266", "#D89A00"]
+} as const;
+
 export const getAppTheme = (mode: "light" | "dark"): Theme => {
   const isLight = mode === "light";
 
@@ -113,7 +138,7 @@ export const getAppTheme = (mode: "light" | "dark"): Theme => {
             backgroundColor: isLight ? brandColors.paper : brandColors.darkBg,
             color: isLight ? brandColors.ink : brandColors.darkTextPrimary,
             transition: "background-color 0.3s ease, color 0.3s ease",
-            overflowX: "hidden",
+            overflowX: "clip",
             width: "100%",
             maxWidth: "100%",
             WebkitFontSmoothing: "antialiased",
@@ -121,7 +146,7 @@ export const getAppTheme = (mode: "light" | "dark"): Theme => {
             textRendering: "optimizeLegibility"
           },
           "#root": {
-            overflowX: "hidden",
+            overflowX: "clip",
             width: "100%",
             maxWidth: "100%",
             minHeight: "100vh",
