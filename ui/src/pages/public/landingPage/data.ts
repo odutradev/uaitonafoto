@@ -20,6 +20,7 @@ export interface LiveToast {
 
 export interface HeaderData {
   loginButton: LinkItem;
+  signupButton: LinkItem;
   links: LinkItem[];
 }
 
@@ -187,6 +188,19 @@ export interface AudienceItem {
   text: string;
 }
 
+export interface InlineCtaData {
+  title: string;
+  text: string;
+  primary: LinkItem;
+  secondary: LinkItem;
+}
+
+export interface InlineCtasData {
+  organizer: InlineCtaData;
+  afterParty: InlineCtaData;
+  hostSteps: InlineCtaData;
+}
+
 export interface FinalCtaData {
   title: string;
   description: string;
@@ -212,6 +226,7 @@ export interface LandingPageData {
   features: FeaturesSectionData;
   plans: PlansSectionData;
   audiences: AudienceItem[];
+  inlineCtas: InlineCtasData;
   finalCta: FinalCtaData;
   footer: FooterData;
 }
@@ -219,6 +234,7 @@ export interface LandingPageData {
 export const landingPageData: LandingPageData = {
   header: {
     loginButton: { text: "Entrar", href: "/signin" },
+    signupButton: { text: "Criar evento", href: "/signup" },
     links: [
       { text: "o produto", href: "#produto" },
       { text: "convidado", href: "#convidado" },
@@ -600,6 +616,26 @@ export const landingPageData: LandingPageData = {
     { title: "convidados", text: "Participam sem conta e sem app." },
     { title: "agências", text: "Cada festa vira vitrine da sua marca." }
   ],
+  inlineCtas: {
+    organizer: {
+      title: "quer esse controle na sua festa?",
+      text: "Você decide o que vai para o telão, de qualquer celular, enquanto curte o evento.",
+      primary: { text: "Criar meu evento", href: "/signup" },
+      secondary: { text: "Ver planos", href: "#planos" }
+    },
+    afterParty: {
+      title: "todas as fotos da festa, originais, num link só.",
+      text: "Garanta o álbum completo do seu evento pelo olhar de cada convidado.",
+      primary: { text: "Garantir meu álbum", href: "/signup" },
+      secondary: { text: "Ver planos", href: "#planos" }
+    },
+    hostSteps: {
+      title: "em poucos minutos seu evento está no ar.",
+      text: "Crie agora e teste o QR Code antes da festa.",
+      primary: { text: "Começar agora", href: "/signup" },
+      secondary: { text: "Ver planos", href: "#planos" }
+    }
+  },
   finalCta: {
     title: "pronto para transformar as fotos do seu evento?",
     description: "Crie o evento em minutos e veja a primeira foto subir no telão.",

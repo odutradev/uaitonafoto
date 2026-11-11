@@ -2,6 +2,7 @@ import { useRef } from "react";
 
 import useScrollProgress from "@hooks/useScrollProgress";
 import useLandingPage from "@pages/public/landingPage/hook";
+import InlineCta from "@pages/public/landingPage/subcomponents/inlineCta";
 import SectionHeading from "@pages/public/landingPage/subcomponents/sectionHeading";
 
 import { Aside, Inner, Item, List, Section, StepNumber } from "./styles";
@@ -24,6 +25,7 @@ const HostSteps = () => {
             description={host.description}
             tone="light"
           />
+          <InlineCta {...data.inlineCtas.hostSteps} tone="light" layout="stack" />
         </Aside>
         <List ref={listRef}>
           {host.steps.map((step, index) => (
