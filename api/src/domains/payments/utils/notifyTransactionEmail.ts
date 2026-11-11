@@ -1,17 +1,20 @@
-import subscriptionActivatedEmail from '@domains/payments/emails/subscriptionActivated'
 import { formatPaymentMethodLabel, resolveCheckoutExpirationHours } from './emailFormat'
+import subscriptionActivatedEmail from '@domains/payments/emails/subscriptionActivated'
 import transactionRepository from '@domains/payments/repositories/transactions'
 import purchaseConfirmedEmail from '@domains/payments/emails/purchaseConfirmed'
 import paymentPendingEmail from '@domains/payments/emails/paymentPending'
 import paymentExpiredEmail from '@domains/payments/emails/paymentExpired'
+import { buildFrontendUrl, resolveFrontendBaseUrl } from '@email/links'
 import { formatDateBR, formatDateTimeBR } from '@utils/date'
 import { formatCurrencyBRL } from '@utils/currency'
-import { buildFrontendUrl } from '@email/links'
 
 import type { SubscriptionEntity } from '@domains/payments/repositories/subscriptions/types'
 import type { TransactionEntity } from '@domains/payments/repositories/transactions/types'
 
 const HourMs = 60 * 60 * 1000
+
+const resolveTransactionBaseUrl = (transaction: TransactionEntity): string =>
+  resolveFrontendBaseUrl(transaction.completionUrl, transaction.returnUrl)
 
 export const sendPaymentPendingEmail = async (transaction: TransactionEntity, checkoutUrl: string, methods: string[]): Promise<void> => {
   const expiresAt = new Date(new Date(transaction.createdAt).getTime() + resolveCheckoutExpirationHours() * HourMs)
@@ -34,6 +37,7 @@ export const sendPaymentConfirmedEmail = async (
   creditsAdded: number,
   subscription: SubscriptionEntity | null
 ): Promise<void> => {
+  const appUrl = buildFrontendUrl('/app', resolveTransactionBaseUrl(transaction))
   const amountFormatted = formatCurrencyBRL(transaction.paidAmount ?? transaction.amount)
   const paymentMethodLabel = formatPaymentMethodLabel(transaction.paymentMethod)
 
@@ -47,7 +51,7 @@ export const sendPaymentConfirmedEmail = async (
         creditsAdded,
         paymentMethodLabel,
         nextBillingDate: subscription?.nextBillingAt ? formatDateBR(new Date(subscription.nextBillingAt)) : undefined,
-        appUrl: buildFrontendUrl('/app')
+        appUrl
       }
     })
     return
@@ -63,7 +67,7 @@ export const sendPaymentConfirmedEmail = async (
       paymentMethodLabel,
       paidAt: formatDateTimeBR(new Date(transaction.paidAt ?? Date.now())),
       receiptUrl: transaction.receiptUrl,
-      appUrl: buildFrontendUrl('/app')
+      appUrl
     }
   })
 }
@@ -87,7 +91,7 @@ export const sendPaymentExpiredEmail = async (transaction: TransactionEntity): P
       userName: transaction.userName,
       planName: transaction.planName,
       amountFormatted: formatCurrencyBRL(transaction.amount),
-      billingUrl: buildFrontendUrl('/app/billing')
+      billingUrl: buildFrontendUrl('/app/billing', resolveTransactionBaseUrl(transaction))
     }
   })
 }

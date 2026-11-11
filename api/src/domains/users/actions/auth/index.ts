@@ -4,49 +4,18 @@ import { forgotPasswordSchema, resetPasswordSchema, syncResponseSchema, updateUs
 import { getUserByEmail, updateUser, verifyIdToken } from '@firebase/services/auth'
 import subscriptionRepository from '@domains/payments/repositories/subscriptions'
 import passwordChangedEmail from '@domains/users/emails/passwordChanged'
+import { buildFrontendUrl, resolveFrontendBaseUrl } from '@email/links'
 import passwordResetEmail from '@domains/users/emails/passwordReset'
 import userRepository from '@domains/users/repositories/users'
 import logRepository from '@domains/system/repositories/logs'
 import { authRateLimiter } from '@middlewares/rateLimit'
 import welcomeEmail from '@domains/users/emails/welcome'
 import defineAction from '@factories/defineAction'
-import { buildFrontendUrl } from '@email/links'
 import { formatDateTimeBR } from '@utils/date'
 import { getJwtSecret } from '@config/env'
-import env from '@config/env'
 
 import type { ForgotPasswordRequest, ResetPasswordRequest, SyncUserResponse, UpdateUserRequest, SyncUserRequest, UserResponse, PasswordResetTokenPayload } from './types'
 import type { ManageRequestResponse, ManageRequestBody } from '@middlewares/manageRequest/types'
-
-const resolveFrontendBaseUrl = (redirectUrl?: string, requestOrigin?: string): string => {
-  const allowedOrigins = env.CORS_ORIGIN
-    .split(',')
-    .map((o) => o.trim().replace(/\/+$/, ''))
-    .filter((o) => o && o !== '*')
-
-  if (redirectUrl) {
-    try {
-      const parsed = new URL(redirectUrl)
-      const origin = parsed.origin.replace(/\/+$/, '')
-      if (allowedOrigins.length === 0 || allowedOrigins.includes(origin)) {
-        return origin
-      }
-    } catch {}
-  }
-
-  if (requestOrigin) {
-    const cleanOrigin = requestOrigin.replace(/\/+$/, '')
-    if (allowedOrigins.length === 0 || allowedOrigins.includes(cleanOrigin)) {
-      return cleanOrigin
-    }
-  }
-
-  if (allowedOrigins.length > 0) {
-    return allowedOrigins[0]
-  }
-
-  return env.FRONTEND_URL.replace(/\/+$/, '')
-}
 
 const verifyResetToken = (token: string, secret: string): PasswordResetTokenPayload | null => {
   try {
@@ -109,12 +78,13 @@ export const syncAuthUser = defineAction(
       const isNewUser = user.createdAt === user.updatedAt
 
       if (isNewUser) {
+        const baseUrl = resolveFrontendBaseUrl(defaultExpress.req.headers.origin)
         void welcomeEmail.send({
           to: user.email,
           variables: {
             userName: user.fullName || user.name,
-            appUrl: buildFrontendUrl('/app'),
-            billingUrl: buildFrontendUrl('/app/billing')
+            appUrl: buildFrontendUrl('/app', baseUrl),
+            billingUrl: buildFrontendUrl('/app/billing', baseUrl)
           }
         })
       }
@@ -303,7 +273,7 @@ export const resetPassword = defineAction(
       204: { description: 'Sucesso' }
     }
   },
-  async ({ data, manageError }: ManageRequestBody<ResetPasswordRequest>): ManageRequestResponse => {
+  async ({ defaultExpress, data, manageError }: ManageRequestBody<ResetPasswordRequest>): ManageRequestResponse => {
     const secret = getJwtSecret()
     const decoded = verifyResetToken(data.token, secret)
 
@@ -344,7 +314,7 @@ export const resetPassword = defineAction(
         variables: {
           userName: dbUser?.fullName || dbUser?.name || 'Usuário',
           changedAt: formatDateTimeBR(new Date()),
-          recoveryUrl: buildFrontendUrl('/signin')
+          recoveryUrl: buildFrontendUrl('/signin', resolveFrontendBaseUrl(defaultExpress.req.headers.origin))
         }
       })
 

@@ -3,10 +3,10 @@ import subscriptionPaymentFailedEmail from '@domains/payments/emails/subscriptio
 import subscriptionCancelledEmail from '@domains/payments/emails/subscriptionCancelled'
 import subscriptionRenewedEmail from '@domains/payments/emails/subscriptionRenewed'
 import transactionRepository from '@domains/payments/repositories/transactions'
+import { buildFrontendUrl, resolveFrontendBaseUrl } from '@email/links'
 import userRepository from '@domains/users/repositories/users'
 import { formatPaymentMethodLabel } from './emailFormat'
 import { formatCurrencyBRL } from '@utils/currency'
-import { buildFrontendUrl } from '@email/links'
 import { formatDateBR } from '@utils/date'
 
 import type { SubscriptionEntity } from '@domains/payments/repositories/subscriptions/types'
@@ -16,16 +16,23 @@ const DayMs = 24 * 60 * 60 * 1000
 type Subscriber = {
   email: string
   name: string
+  baseUrl: string
 }
 
 const resolveSubscriber = async (subscription: SubscriptionEntity): Promise<Subscriber | null> => {
-  const user = await userRepository.findById(subscription.userId)
-  const initialTransaction = user ? null : await transactionRepository.findById(subscription.initialTransactionId)
+  const [user, initialTransaction] = await Promise.all([
+    userRepository.findById(subscription.userId),
+    transactionRepository.findById(subscription.initialTransactionId)
+  ])
 
   const email = user?.email ?? initialTransaction?.userEmail
   if (!email) return null
 
-  return { email, name: user?.fullName || user?.name || initialTransaction?.userName || 'Assinante' }
+  return {
+    email,
+    name: user?.fullName || user?.name || initialTransaction?.userName || 'Assinante',
+    baseUrl: resolveFrontendBaseUrl(initialTransaction?.completionUrl, initialTransaction?.returnUrl)
+  }
 }
 
 export interface SendRenewedEmailParams {
@@ -35,6 +42,7 @@ export interface SendRenewedEmailParams {
   amount: number
   creditsAdded: number
   nextBillingAt: string
+  baseUrl?: string
 }
 
 export const sendSubscriptionRenewedEmail = async ({
@@ -43,7 +51,8 @@ export const sendSubscriptionRenewedEmail = async ({
   planName,
   amount,
   creditsAdded,
-  nextBillingAt
+  nextBillingAt,
+  baseUrl
 }: SendRenewedEmailParams): Promise<void> => {
   await subscriptionRenewedEmail.send({
     to: userEmail,
@@ -53,7 +62,7 @@ export const sendSubscriptionRenewedEmail = async ({
       amountFormatted: formatCurrencyBRL(amount),
       creditsAdded,
       nextBillingDate: formatDateBR(new Date(nextBillingAt)),
-      appUrl: buildFrontendUrl('/app')
+      appUrl: buildFrontendUrl('/app', baseUrl)
     }
   })
 }
@@ -69,12 +78,12 @@ export const sendSubscriptionPaymentFailedEmail = async (subscription: Subscript
       planName: subscription.planName,
       amountFormatted: formatCurrencyBRL(subscription.amount),
       paymentMethodLabel: formatPaymentMethodLabel(method ?? subscription.method),
-      appUrl: buildFrontendUrl('/app/billing')
+      appUrl: buildFrontendUrl('/app/billing', subscriber.baseUrl)
     }
   })
 }
 
-export const sendSubscriptionCancelledEmail = async (subscription: SubscriptionEntity): Promise<void> => {
+export const sendSubscriptionCancelledEmail = async (subscription: SubscriptionEntity, baseUrl?: string): Promise<void> => {
   const subscriber = await resolveSubscriber(subscription)
   if (!subscriber) return
 
@@ -86,7 +95,7 @@ export const sendSubscriptionCancelledEmail = async (subscription: SubscriptionE
       userName: subscriber.name,
       planName: subscription.planName,
       validUntil: hasFutureBilling && subscription.nextBillingAt ? formatDateBR(new Date(subscription.nextBillingAt)) : undefined,
-      billingUrl: buildFrontendUrl('/app/billing')
+      billingUrl: buildFrontendUrl('/app/billing', baseUrl ?? subscriber.baseUrl)
     }
   })
 }
@@ -106,7 +115,7 @@ export const sendSubscriptionRenewalReminderEmail = async (subscription: Subscri
       billingDate: formatDateBR(new Date(billingAt)),
       daysUntilBilling,
       paymentMethodLabel: formatPaymentMethodLabel(subscription.method),
-      billingUrl: buildFrontendUrl('/app/billing')
+      billingUrl: buildFrontendUrl('/app/billing', subscriber.baseUrl)
     }
   })
 

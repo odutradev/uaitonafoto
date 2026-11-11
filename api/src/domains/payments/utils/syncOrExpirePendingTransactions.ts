@@ -1,6 +1,6 @@
 import transactionRepository from '@domains/payments/repositories/transactions'
-import { resolveCheckoutExpirationHours } from './emailFormat'
 import { sendPaymentExpiredEmail } from './notifyTransactionEmail'
+import { resolveCheckoutExpirationHours } from './emailFormat'
 import confirmPayment from './confirmPayment'
 import { getPaymentClient } from '@payment'
 import runSequentially from '@utils/async'

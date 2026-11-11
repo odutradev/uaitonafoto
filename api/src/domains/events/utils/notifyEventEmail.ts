@@ -9,8 +9,8 @@ import eventRepository from '@domains/events/repositories/events'
 import teamRemovedEmail from '@domains/events/emails/teamRemoved'
 import teamInviteEmail from '@domains/events/emails/teamInvite'
 import userRepository from '@domains/users/repositories/users'
-import { formatDateTimeBR } from '@utils/date'
 import { buildFrontendUrl } from '@email/links'
+import { formatDateTimeBR } from '@utils/date'
 import runSequentially from '@utils/async'
 
 import type { UserEntity } from '@domains/users/repositories/users/types'
@@ -20,10 +20,10 @@ const DayMs = 24 * 60 * 60 * 1000
 
 const resolveUserName = (user: UserEntity): string => user.fullName || user.name || 'Organizador'
 
-const buildEventLinks = (event: EventEntity) => ({
-  eventUrl: buildFrontendUrl(`/app/events/${event.id}`),
-  guestUrl: buildFrontendUrl(`/e/${event.guestToken}`),
-  screenUrl: buildFrontendUrl(`/e/${event.guestToken}/screen`)
+const buildEventLinks = (event: EventEntity, baseUrl?: string) => ({
+  eventUrl: buildFrontendUrl(`/app/events/${event.id}`, baseUrl),
+  guestUrl: buildFrontendUrl(`/e/${event.guestToken}`, baseUrl),
+  screenUrl: buildFrontendUrl(`/e/${event.guestToken}/screen`, baseUrl)
 })
 
 const describeGuestPin = (event: EventEntity): string => {
@@ -40,8 +40,8 @@ const sendToTeam = async (event: EventEntity, send: (user: UserEntity) => Promis
   await runSequentially(teamUsers, send)
 }
 
-export const sendEventCreatedEmail = async (event: EventEntity, creator: UserEntity): Promise<void> => {
-  const { eventUrl, guestUrl } = buildEventLinks(event)
+export const sendEventCreatedEmail = async (event: EventEntity, creator: UserEntity, baseUrl?: string): Promise<void> => {
+  const { eventUrl, guestUrl } = buildEventLinks(event, baseUrl)
 
   await eventCreatedEmail.send({
     to: creator.email,
@@ -58,7 +58,7 @@ export const sendEventCreatedEmail = async (event: EventEntity, creator: UserEnt
   })
 }
 
-export const sendTeamInviteEmail = async (event: EventEntity, member: UserEntity, inviterId: string): Promise<void> => {
+export const sendTeamInviteEmail = async (event: EventEntity, member: UserEntity, inviterId: string, baseUrl?: string): Promise<void> => {
   const inviter = await userRepository.findById(inviterId)
 
   await teamInviteEmail.send({
@@ -68,12 +68,12 @@ export const sendTeamInviteEmail = async (event: EventEntity, member: UserEntity
       inviterName: inviter ? resolveUserName(inviter) : 'O criador do evento',
       eventName: event.name,
       eventStartsAt: formatDateTimeBR(new Date(event.startsAt)),
-      eventUrl: buildEventLinks(event).eventUrl
+      eventUrl: buildEventLinks(event, baseUrl).eventUrl
     }
   })
 }
 
-export const sendTeamRemovedEmail = async (event: EventEntity, memberId: string): Promise<void> => {
+export const sendTeamRemovedEmail = async (event: EventEntity, memberId: string, baseUrl?: string): Promise<void> => {
   const member = await userRepository.findById(memberId)
   if (!member) return
 
@@ -82,7 +82,7 @@ export const sendTeamRemovedEmail = async (event: EventEntity, memberId: string)
     variables: {
       memberName: resolveUserName(member),
       eventName: event.name,
-      appUrl: buildFrontendUrl('/app')
+      appUrl: buildFrontendUrl('/app', baseUrl)
     }
   })
 }
@@ -107,7 +107,7 @@ export const sendEventReminderEmails = async (event: EventEntity): Promise<void>
   )
 }
 
-export const sendEventSummaryEmails = async (event: EventEntity): Promise<void> => {
+export const sendEventSummaryEmails = async (event: EventEntity, baseUrl?: string): Promise<void> => {
   if (!(await eventRepository.claimNotification(event.id, 'summarySentAt'))) return
 
   const [photosCount, guestsCount] = await Promise.all([
@@ -124,7 +124,7 @@ export const sendEventSummaryEmails = async (event: EventEntity): Promise<void> 
         photosCount,
         guestsCount,
         galleryExpiresAt: formatDateTimeBR(new Date(event.galleryExpiresAt)),
-        eventUrl: buildEventLinks(event).eventUrl
+        eventUrl: buildEventLinks(event, baseUrl).eventUrl
       }
     })
   )

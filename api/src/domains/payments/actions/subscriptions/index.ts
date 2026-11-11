@@ -5,6 +5,7 @@ import subscriptionRepository from '@domains/payments/repositories/subscriptions
 import transactionRepository from '@domains/payments/repositories/transactions'
 import userRepository from '@domains/users/repositories/users'
 import logRepository from '@domains/system/repositories/logs'
+import { resolveFrontendBaseUrl } from '@email/links'
 import defineAction from '@factories/defineAction'
 import { getPaymentClient } from '@payment'
 import runSequentially from '@utils/async'
@@ -92,7 +93,7 @@ export const cancelMySubscription = defineAction(
       409: { description: 'Assinatura já se encontra cancelada' }
     }
   },
-  async ({ ids, params, manageError }: ManageRequestBody<CancelSubscriptionRequest>): ManageRequestResponse<SubscriptionResponse> => {
+  async ({ ids, params, defaultExpress, manageError }: ManageRequestBody<CancelSubscriptionRequest>): ManageRequestResponse<SubscriptionResponse> => {
     if (!ids.userId) return manageError({ code: 'unauthorized' })
 
     const subscription =
@@ -114,7 +115,7 @@ export const cancelMySubscription = defineAction(
 
       if (!updated) return manageError({ code: 'internal_error' })
 
-      void sendSubscriptionCancelledEmail(updated)
+      void sendSubscriptionCancelledEmail(updated, resolveFrontendBaseUrl(defaultExpress.req.headers.origin))
 
       const user = await userRepository.findById(ids.userId)
       const userEmail = user?.email ?? 'unknown@user'

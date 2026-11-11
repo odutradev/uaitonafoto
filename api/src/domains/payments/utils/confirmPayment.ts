@@ -1,6 +1,6 @@
 import transactionRepository from '@domains/payments/repositories/transactions'
-import { sendPaymentConfirmedEmail } from './notifyTransactionEmail'
 import purchaseRepository from '@domains/payments/repositories/purchases'
+import { sendPaymentConfirmedEmail } from './notifyTransactionEmail'
 import ensureSubscriptionRecord from './ensureSubscriptionRecord'
 import userRepository from '@domains/users/repositories/users'
 import logRepository from '@domains/system/repositories/logs'
