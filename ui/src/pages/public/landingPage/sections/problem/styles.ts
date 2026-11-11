@@ -8,15 +8,15 @@ const glow = keyframes`
 `;
 
 const textIn = keyframes`
-  from { opacity: 0; transform: translateY(16px); filter: blur(4px); }
-  to { opacity: 1; transform: none; filter: none; }
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
 `;
 
-const ease = "cubic-bezier(0.65, 0, 0.35, 1)";
+const ease = "cubic-bezier(0.22, 1, 0.36, 1)";
 
 export const Section = styled("section")`
   position: relative;
-  height: 320vh;
+  height: 250vh;
   background: ${brandColors.paper};
   color: ${brandColors.ink};
 `;
@@ -89,7 +89,7 @@ export const Stage = styled("div")`
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(1.25)};
   min-height: 9.5rem;
-  animation: ${textIn} 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: ${textIn} 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
 
   ${({ theme }) => theme.breakpoints.up("md")} {
     min-height: 13rem;
@@ -185,8 +185,8 @@ export const Album = styled("div")`
   opacity: 0;
   transform: scale(0.9);
   transition:
-    opacity 0.8s ${ease},
-    transform 0.8s ${ease};
+    opacity 0.5s ${ease},
+    transform 0.5s ${ease};
 
   [data-stage="2"] > & {
     opacity: 1;
@@ -244,11 +244,11 @@ export const Item = styled("article")`
   flex-direction: column;
   gap: 6px;
   transition:
-    left 0.9s ${ease},
-    top 0.9s ${ease},
-    width 0.9s ${ease},
-    height 0.9s ${ease},
-    transform 0.9s ${ease};
+    left 0.6s ${ease},
+    top 0.6s ${ease},
+    width 0.6s ${ease},
+    height 0.6s ${ease},
+    transform 0.6s ${ease};
 
   [data-stage="0"] > &:nth-of-type(1) {
     left: 0%;
@@ -362,13 +362,13 @@ export const Shell = styled("div")`
   background: ${brandColors.ink};
   box-shadow: 0 24px 50px -20px ${landingColors.shadowDeep};
   transition:
-    padding 0.9s ${ease},
-    border-radius 0.9s ${ease},
-    background 0.9s ${ease};
+    padding 0.6s ${ease},
+    border-radius 0.6s ${ease},
+    background 0.6s ${ease};
 
   & > figure {
     border-radius: 17px;
-    transition: border-radius 0.9s ${ease};
+    transition: border-radius 0.6s ${ease};
   }
 
   [data-stage="1"] &,

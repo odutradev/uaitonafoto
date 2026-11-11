@@ -43,7 +43,7 @@ const Features = () => {
           {features.items.map((item, index) => {
             const FeatureIcon = featureIcons[item.icon];
             return (
-              <Reveal key={item.id} delay={(index % 3) * 90}>
+              <Reveal key={item.id} delay={(index % 3) * 50}>
                 <Card onPointerMove={handleSpotlight}>
                   <Icon>
                     <FeatureIcon />

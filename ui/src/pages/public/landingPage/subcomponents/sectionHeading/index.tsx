@@ -22,7 +22,7 @@ const SectionHeading = ({
       <Reveal effect="fade">
         <Eyebrow>{eyebrow}</Eyebrow>
       </Reveal>
-      <Reveal delay={80}>
+      <Reveal delay={40}>
         <Title>
           {title}
           {highlight && (
@@ -34,7 +34,7 @@ const SectionHeading = ({
         </Title>
       </Reveal>
       {description && (
-        <Reveal delay={160}>
+        <Reveal delay={80}>
           <Description>{description}</Description>
         </Reveal>
       )}

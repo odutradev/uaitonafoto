@@ -1,3 +1,5 @@
+import { GlobalStyles } from "@mui/material";
+
 import { LandingPageProvider } from "./hook";
 import AfterParty from "./sections/afterParty";
 import Features from "./sections/features";
@@ -12,10 +14,11 @@ import Problem from "./sections/problem";
 import { Footer } from "./subcomponents/footer";
 import { Navbar } from "./subcomponents/navbar";
 import ViewfinderCursor from "./subcomponents/viewfinderCursor";
-import { Page } from "./styles";
+import { Page, smoothScrollStyles } from "./styles";
 
 const LandingPageContent = () => (
   <Page>
+    <GlobalStyles styles={smoothScrollStyles} />
     <ViewfinderCursor />
     <Navbar />
     <main>

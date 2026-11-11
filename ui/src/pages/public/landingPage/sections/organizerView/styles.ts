@@ -3,7 +3,7 @@ import { keyframes, styled } from "@mui/material/styles";
 import { brandColors, landingColors } from "@styles/theme";
 
 const enter = keyframes`
-  from { opacity: 0; transform: translateY(30px) scale(0.92) rotate(-2deg); }
+  from { opacity: 0; transform: translateY(16px) scale(0.96); }
   to { opacity: 1; transform: none; }
 `;
 
@@ -194,14 +194,14 @@ export const Card = styled("div")`
   overflow: hidden;
   border-radius: 20px;
   background: ${brandColors.darkSurface};
-  animation: ${enter} 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: ${enter} 0.38s cubic-bezier(0.22, 1, 0.36, 1) both;
 
   &[data-exit="approve"] {
-    animation: ${exitApprove} 0.5s cubic-bezier(0.6, 0, 0.4, 1) forwards;
+    animation: ${exitApprove} 0.34s cubic-bezier(0.5, 0, 0.75, 0) forwards;
   }
 
   &[data-exit="reject"] {
-    animation: ${exitReject} 0.45s cubic-bezier(0.6, 0, 0.4, 1) forwards;
+    animation: ${exitReject} 0.32s cubic-bezier(0.5, 0, 0.75, 0) forwards;
   }
 `;
 

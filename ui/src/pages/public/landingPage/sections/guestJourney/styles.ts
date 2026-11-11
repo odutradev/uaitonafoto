@@ -24,7 +24,7 @@ const flash = keyframes`
 
 export const Section = styled("section")`
   position: relative;
-  height: 300vh;
+  height: 240vh;
   background: ${brandColors.darkBg};
   color: ${brandColors.paper};
 `;
@@ -278,8 +278,8 @@ export const Screen = styled("div")`
   flex-direction: column;
   padding: 44px 14px 16px;
   transition:
-    opacity 0.5s ease,
-    transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    opacity 0.3s ease-out,
+    transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 
   &[data-visible="false"] {
     opacity: 0;

@@ -41,8 +41,8 @@ const ViewfinderCursor = () => {
     const frame = { id: 0 };
 
     const tick = () => {
-      current.x += (target.x - current.x) * 0.22;
-      current.y += (target.y - current.y) * 0.22;
+      current.x += (target.x - current.x) * 0.32;
+      current.y += (target.y - current.y) * 0.32;
       const tilt = Math.max(-12, Math.min(12, (target.x - current.x) * 0.25));
       if (finderRef.current) {
         finderRef.current.style.transform = `translate3d(${current.x}px, ${current.y}px, 0) rotate(${tilt}deg)`;

@@ -58,10 +58,10 @@ const FinalCta = () => {
             <Reveal>
               <h2>{cta.title}</h2>
             </Reveal>
-            <Reveal delay={100}>
+            <Reveal delay={60}>
               <p>{cta.description}</p>
             </Reveal>
-            <Reveal delay={200}>
+            <Reveal delay={100}>
               <ButtonWrap>
                 <Button
                   component={RouterLink}
@@ -75,7 +75,7 @@ const FinalCta = () => {
               </ButtonWrap>
             </Reveal>
           </Copy>
-          <Reveal effect="slideLeft" delay={250}>
+          <Reveal effect="slideLeft" delay={100}>
             <QrBox>
               <QRCodeSVG value={`https://${cta.domain}`} bgColor={brandColors.paper} fgColor={brandColors.ink} />
               <div>

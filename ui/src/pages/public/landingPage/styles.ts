@@ -27,3 +27,8 @@ export const Page = styled("div")`
     outline-offset: 3px;
   }
 `;
+
+export const smoothScrollStyles = {
+  html: { scrollBehavior: "smooth", scrollPaddingTop: "88px" },
+  "@media (prefers-reduced-motion: reduce)": { html: { scrollBehavior: "auto" } }
+};

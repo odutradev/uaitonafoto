@@ -3,12 +3,12 @@ import { keyframes, styled } from "@mui/material/styles";
 import { brandColors, landingColors } from "@styles/theme";
 
 const wordRise = keyframes`
-  from { transform: translateY(105%) rotate(4deg); }
+  from { transform: translateY(100%); }
   to { transform: none; }
 `;
 
 const fadeUp = keyframes`
-  from { opacity: 0; transform: translateY(18px); }
+  from { opacity: 0; transform: translateY(12px); }
   to { opacity: 1; transform: none; }
 `;
 
@@ -111,7 +111,7 @@ export const Eyebrow = styled("span")`
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  animation: ${fadeUp} 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: ${fadeUp} 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
 
   &::before {
     content: "";
@@ -141,8 +141,8 @@ export const Word = styled("span")`
 
   & > span {
     display: inline-block;
-    animation: ${wordRise} 1s cubic-bezier(0.16, 1, 0.3, 1) both;
-    animation-delay: calc(var(--i) * 70ms + 120ms);
+    animation: ${wordRise} 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: calc(var(--i) * 35ms + 60ms);
   }
 
   &[data-highlight="true"] > span {
@@ -156,7 +156,7 @@ export const Description = styled("p")`
   font-size: clamp(1rem, 2.6vw, 1.12rem);
   line-height: 1.65;
   color: ${brandColors.darkTextSecondary};
-  animation: ${fadeUp} 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.6s both;
+  animation: ${fadeUp} 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.3s both;
 
   & strong {
     color: ${brandColors.flashYellow};
@@ -171,7 +171,7 @@ export const Chips = styled("ul")`
   margin: 0;
   padding: 0;
   list-style: none;
-  animation: ${fadeUp} 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.75s both;
+  animation: ${fadeUp} 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.38s both;
 `;
 
 export const Chip = styled("li")`
@@ -193,7 +193,7 @@ export const Actions = styled("div")`
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
-  animation: ${fadeUp} 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.9s both;
+  animation: ${fadeUp} 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.45s both;
 
   & .MuiButton-root {
     padding: 14px 26px;
@@ -211,7 +211,7 @@ export const Stage = styled("div")`
   --ry: 0deg;
   position: relative;
   perspective: 1400px;
-  animation: ${fadeUp} 1.1s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both;
+  animation: ${fadeUp} 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both;
 `;
 
 export const StageTilt = styled("div")`
@@ -252,7 +252,7 @@ export const MainPhoto = styled("div")`
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  animation: ${crossIn} 0.7s ease both;
+  animation: ${crossIn} 0.45s ease-out both;
 
   & svg {
     animation: ${kenBurns} 3.2s ease-out both;
@@ -265,7 +265,7 @@ export const ShutterFlash = styled("span")`
   z-index: 3;
   background: ${landingColors.flashWhite};
   pointer-events: none;
-  animation: ${shutter} 0.7s ease both;
+  animation: ${shutter} 0.45s ease-out both;
 `;
 
 export const LiveBadge = styled("span")`
@@ -309,7 +309,7 @@ export const Tile = styled("div")`
   position: relative;
   overflow: hidden;
   border-radius: 14px;
-  animation: ${crossIn} 0.6s ease both;
+  animation: ${crossIn} 0.4s ease-out both;
 `;
 
 export const QrCard = styled("div")`
@@ -358,7 +358,7 @@ export const Toast = styled("div")`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  animation: ${toastIn} 2.8s ease both;
+  animation: ${toastIn} 2.4s ease both;
 
   & strong {
     font-weight: 800;
@@ -426,7 +426,7 @@ export const FlyingPhoto = styled("div")`
   border-radius: 14px;
   box-shadow: 0 20px 40px -10px ${landingColors.shadowDeep};
   pointer-events: none;
-  animation: ${fly} 1.1s cubic-bezier(0.5, 0, 0.2, 1) both;
+  animation: ${fly} 0.8s cubic-bezier(0.45, 0, 0.2, 1) both;
 
   @media (prefers-reduced-motion: reduce) {
     display: none;
