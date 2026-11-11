@@ -27,6 +27,7 @@ This repository holds the API in `api/` and the frontend in `ui/`. This guide de
 │   └── src  # frontend code
 ├── .env.example
 ├── docker-compose.yml
+├── docker-compose.override.yml  # local host ports only
 └── package.json
 ```
 
@@ -88,7 +89,9 @@ This repository holds the API in `api/` and the frontend in `ui/`. This guide de
 
 - Every service uses `restart: unless-stopped` and the same `app-network` bridge network.
 - Inside the network, apps reach services by name (`redis://redis:6379`), never `localhost`.
-- Published ports use a variable with a default: `"${PORT:-5000}:80"`. Secrets have no default.
+- `docker-compose.yml` never binds host ports: services use `expose: ["80"]`. In the deploy (Dokploy), Traefik owns ports 80/443 and routes each domain to the service on port 80, so a host bind fails with "port is already allocated".
+- Published ports for local runs live in `docker-compose.override.yml` and use a variable with a default: `"${PORT:-5000}:80"`. `docker compose up` loads the override automatically; Dokploy runs with `-f ./docker-compose.yml` and ignores it.
+- Secrets have no default.
 - `depends_on` sets the startup order: support services before the API and the API before the frontend.
 - Every new variable goes into `.env.example` and into the compose service in the same commit.
 
@@ -184,8 +187,8 @@ services:
     restart: unless-stopped
     env_file:
       - .env
-    ports:
-      - "${PORT:-5000}:80"
+    expose:
+      - "80"
     environment:
       - PORT=80
       - NODE_ENV=production
@@ -197,8 +200,8 @@ services:
       args:
         - VITE_API_URL=${VITE_API_URL:-http://localhost:5000}
     restart: unless-stopped
-    ports:
-      - "${FRONTEND_PORT:-3000}:80"
+    expose:
+      - "80"
     depends_on:
       - api
     networks:
@@ -207,6 +210,18 @@ services:
 networks:
   app-network:
     driver: bridge
+```
+
+#### `docker-compose.override.yml`
+
+```yaml
+services:
+  api:
+    ports:
+      - "${PORT:-5000}:80"
+  ui:
+    ports:
+      - "${FRONTEND_PORT:-3000}:80"
 ```
 
 #### `ui/nginx.conf`
