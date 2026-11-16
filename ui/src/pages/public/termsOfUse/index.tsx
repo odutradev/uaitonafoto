@@ -3,6 +3,7 @@ import { ArrowBack as ArrowBackIcon } from "@mui/icons-material";
 import { Link as RouterLink } from "react-router-dom";
 
 import Logo from "@components/logo";
+import usePageTitle from "@hooks/usePageTitle";
 import ThemeToggle from "@components/themeToggle";
 
 import {
@@ -22,6 +23,8 @@ import {
 import type { TermsOfUseProps } from "./types";
 
 export const TermsOfUse = ({ lastUpdated = "04 de novembro de 2026" }: TermsOfUseProps) => {
+  usePageTitle("termsOfUse");
+
   return (
     <Box sx={pageWrapperStyles}>
       <Box component="header" sx={headerBoxStyles}>

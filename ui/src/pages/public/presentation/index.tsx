@@ -1,3 +1,4 @@
+import usePageTitle from "@hooks/usePageTitle";
 import { PresentationProvider } from "./hook";
 import usePresentation from "./hook";
 import AfterParty from "./slides/afterParty";
@@ -50,10 +51,14 @@ const PresentationContent = () => {
   );
 };
 
-const Presentation = () => (
-  <PresentationProvider>
-    <PresentationContent />
-  </PresentationProvider>
-);
+const Presentation = () => {
+  usePageTitle("presentation");
+
+  return (
+    <PresentationProvider>
+      <PresentationContent />
+    </PresentationProvider>
+  );
+};
 
 export default Presentation;

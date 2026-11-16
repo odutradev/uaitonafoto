@@ -3,6 +3,7 @@ import { ArrowBack as ArrowBackIcon, VerifiedUser as VerifiedUserIcon } from "@m
 import { Link as RouterLink } from "react-router-dom";
 
 import Logo from "@components/logo";
+import usePageTitle from "@hooks/usePageTitle";
 import ThemeToggle from "@components/themeToggle";
 
 import {
@@ -23,6 +24,8 @@ import {
 import type { RefundPolicyProps } from "./types";
 
 export const RefundPolicy = ({ lastUpdated = "04 de novembro de 2026" }: RefundPolicyProps) => {
+  usePageTitle("refundPolicy");
+
   return (
     <Box sx={pageWrapperStyles}>
       <Box component="header" sx={headerBoxStyles}>

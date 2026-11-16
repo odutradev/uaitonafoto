@@ -34,6 +34,7 @@ import { Link as RouterLink } from "react-router-dom";
 import Logo from "@components/logo";
 import ThemeToggle from "@components/themeToggle";
 import { brandColors } from "@styles/theme";
+import usePageTitle from "@hooks/usePageTitle";
 import { backgroundColors, colorSchemes, downloadLogoPng, downloadLogoSvg } from "@utils/functions/brandAssets";
 
 import {
@@ -1181,10 +1182,14 @@ const BrandIdentityContent = () => {
   );
 };
 
-export const BrandIdentity = () => (
-  <BrandIdentityPageProvider>
-    <BrandIdentityContent />
-  </BrandIdentityPageProvider>
-);
+export const BrandIdentity = () => {
+  usePageTitle("brandIdentity");
+
+  return (
+    <BrandIdentityPageProvider>
+      <BrandIdentityContent />
+    </BrandIdentityPageProvider>
+  );
+};
 
 export default BrandIdentity;

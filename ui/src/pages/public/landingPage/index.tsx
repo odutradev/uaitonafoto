@@ -1,7 +1,10 @@
 import { GlobalStyles } from "@mui/material";
 
+import usePageTitle from "@hooks/usePageTitle";
+
 import { LandingPageProvider } from "./hook";
 import AfterParty from "./sections/afterParty";
+import Faq from "./sections/faq";
 import Features from "./sections/features";
 import FinalCta from "./sections/finalCta";
 import GuestJourney from "./sections/guestJourney";
@@ -31,16 +34,21 @@ const LandingPageContent = () => (
       <HostSteps />
       <Features />
       <Plans />
+      <Faq />
       <FinalCta />
     </main>
     <Footer />
   </Page>
 );
 
-const LandingPage = () => (
-  <LandingPageProvider>
-    <LandingPageContent />
-  </LandingPageProvider>
-);
+const LandingPage = () => {
+  usePageTitle("landing");
+
+  return (
+    <LandingPageProvider>
+      <LandingPageContent />
+    </LandingPageProvider>
+  );
+};
 
 export default LandingPage;
