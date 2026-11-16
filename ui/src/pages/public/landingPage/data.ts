@@ -1,4 +1,6 @@
 import type { SceneKind, SceneTone } from "@components/scenePhoto/types";
+import { faqItems } from "@assets/data/seo";
+import type { FaqItem } from "@assets/data/seo";
 
 export interface LinkItem {
   text: string;
@@ -201,6 +203,13 @@ export interface InlineCtasData {
   hostSteps: InlineCtaData;
 }
 
+export interface FaqSectionData {
+  eyebrow: string;
+  title: string;
+  highlight: string;
+  items: FaqItem[];
+}
+
 export interface FinalCtaData {
   title: string;
   description: string;
@@ -227,6 +236,7 @@ export interface LandingPageData {
   plans: PlansSectionData;
   audiences: AudienceItem[];
   inlineCtas: InlineCtasData;
+  faq: FaqSectionData;
   finalCta: FinalCtaData;
   footer: FooterData;
 }
@@ -635,6 +645,12 @@ export const landingPageData: LandingPageData = {
       primary: { text: "Começar agora", href: "/signup" },
       secondary: { text: "Ver planos", href: "#planos" }
     }
+  },
+  faq: {
+    eyebrow: "dúvidas",
+    title: "perguntas",
+    highlight: "frequentes.",
+    items: faqItems
   },
   finalCta: {
     title: "pronto para transformar as fotos do seu evento?",
