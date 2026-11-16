@@ -3,6 +3,8 @@ import path from "path";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
+import seoPlugin from "./plugins/seo";
+
 const resolveAppVersion = (): string => {
   const candidates = [
     path.resolve(__dirname, "uaitonafoto-package.json"),
@@ -44,7 +46,7 @@ const resolveAppVersion = (): string => {
 const appVersion = resolveAppVersion();
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), seoPlugin()],
   define: {
     "import.meta.env.VITE_APP_VERSION": JSON.stringify(appVersion)
   },
